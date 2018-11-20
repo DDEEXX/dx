@@ -1,0 +1,101 @@
+#mmenu.ui-menu { 
+	width: 76px;
+	border: 0px;	
+	left : -4px;
+}
+
+#mmenu.ui-menu .ui-menu-item {
+    height: 76px;
+	padding: 0px;    
+	margin-top: 4px;	
+	margin-bottom: 4px;	
+    min-height: 76px;
+	border: 3px solid #336699;
+}
+
+#mmenu.ui-menu .ui-menu-item .ui-icon {
+	position: absolute;
+	top: 4px;
+	bottom: 0;
+	left: 2px;
+	margin: 2px;
+	width: 64px;
+	height: 64px;
+}
+
+#mmenu.ui-menu .ui-state-focus,
+#mmenu.ui-menu .ui-state-selected{
+	border: 3px solid #99ffff;
+	font-weight: normal;
+	color: #ffffff;
+	background: none;	
+}
+
+/* Corner radius */
+#mmenu.ui-menu .ui-corner-all.ui-menu-item  {
+	border-radius: 15px;
+}
+
+#mmenu.ui-menu .ui-icon-mmhome{
+	background-image: url(../img2/mmenu/home_.png);
+}
+
+#mmenu.ui-menu .ui-state-selected .ui-icon-mmhome{
+	background-image: url(../img2/mmenu/home_sel.png);
+}
+
+#mmenu.ui-menu .ui-icon-mmtemp{
+	background-image: url(../img2/mmenu/temperature_.png);
+}
+
+#mmenu.ui-menu .ui-state-selected .ui-icon-mmtemp{
+	background-image: url(../img2/mmenu/temperature_sel.png);
+}
+
+#mmenu.ui-menu .ui-icon-mmbulb{
+	background-image: url(../img2/mmenu/bulb_.png);
+}
+
+#mmenu.ui-menu .ui-state-selected .ui-icon-mmbulb{
+	background-image: url(../img2/mmenu/bulb_sel.png);
+}
+
+#mmenu.ui-menu .ui-icon-mmheater{
+	background-image: url(../img2/mmenu/heater_.png);
+}
+
+#mmenu.ui-menu .ui-state-selected .ui-icon-mmheater{
+	background-image: url(../img2/mmenu/heater_sel.png);
+}
+
+#mmenu.ui-menu .ui-icon-mmip_camera{
+	background-image: url(../img2/mmenu/ip_camera_.png);
+}
+
+#mmenu.ui-menu .ui-state-selected .ui-icon-mmip_camera{
+	background-image: url(../img2/mmenu/ip_camera_sel.png);
+}
+
+#mmenu.ui-menu .ui-icon-mmkey{
+	background-image: url(../img2/mmenu/key_.png);
+}
+
+#mmenu.ui-menu .ui-state-selected .ui-icon-mmkey{
+	background-image: url(../img2/mmenu/key_sel.png);
+}
+
+#mmenu.ui-menu .ui-icon-mmpower{
+	background-image: url(../img2/mmenu/power_.png);
+}
+
+#mmenu.ui-menu .ui-state-selected .ui-icon-mmpower{
+	background-image: url(../img2/mmenu/power_sel.png);
+}
+
+#mmenu.ui-menu .ui-icon-mmpref{
+	background-image: url(../img2/mmenu/power_button_.png);
+}
+
+#mmenu.ui-menu .ui-state-selected .ui-icon-mmpref{
+	background-image: url(../img2/mmenu/power_button_sel.png);
+}

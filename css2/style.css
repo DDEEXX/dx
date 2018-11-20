@@ -1,0 +1,64 @@
+#temp_out {
+  font-size:200%;
+  font-weight:600;
+  color: #5272BF;
+}
+
+#temp_hall {
+  color: #8B4513;
+}
+
+.g_temp {
+  font-size:100%;
+  font-weight:600;
+  color: #DDDDDD;
+  float:right
+}
+
+.TekTime {
+  color: #DDDDDD;
+  float:right
+}
+
+.TekDate {
+  color: #DDDDDD;
+  float:right
+}
+
+
+body {
+  background-image: url(temes/dx/images/background.jpg);
+}
+
+.ui-button-text-only .ui-button-text {
+	padding: .1em 1em;
+}
+
+.ui-accordion .dx.ui-accordion-header {
+	padding-top: 0em;
+	padding-bottom: 0em;
+}
+
+.ui-state-default,
+.ui-widget-content .ui-state-default {
+  background: transparent;
+}
+
+.ui-widget-content, .ui-state-default {
+  background: transparent;
+}
+
+.ui-button.ui-button-icon-only {
+  background: transparent;
+}
+
+.ui-button.ui-button-icon-only.ui-state-active {
+  background: #036;
+}
+.ui-button.ui-button-icon-only.ui-state-focus {
+  border: 1px solid #369;
+}
+
+.ui-button.ui-button-icon-only.ui-state-hover {
+  border: 1px solid #6CF;
+}

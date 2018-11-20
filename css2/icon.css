@@ -1,0 +1,15 @@
+.ui-state-default .ui-icon.ui-icon-upDown {
+	background-image: url(/img2/icon/upDown.png);	
+	width: 20px;
+	height: 35px;	
+	position: absolute;
+	left: 7px;	
+	top: 10px;
+	margin-left: 0;
+	margin-top: 0;
+}
+
+button.ui-button-icon-only.upDown {
+	width: 35px;
+	height: 54px;	
+}
