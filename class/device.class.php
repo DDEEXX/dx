@@ -17,6 +17,13 @@ interface typeDevice{
 }
 
 /**
+ * Interface iSensor
+ */
+interface iSensor{
+    public function getValue();
+}
+
+/**
  * Class device - абстрактный класс описывающий физическое устройство
  */
 abstract class device {
@@ -37,7 +44,15 @@ abstract class device {
 
 }
 
-class temperatureDevice extends device {
+class Sensor implements iSensor {
+
+    public function getValue()
+    {
+        // TODO: Implement getValue() method.
+    }
+}
+
+class temperatureDevice extends iSensor {
 
     public function __construct($net, $adr) {
         parent::__construct($net, $adr, typeDevice::TEMPERATURE);
