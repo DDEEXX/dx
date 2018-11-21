@@ -44,7 +44,7 @@ abstract class device {
 
 }
 
-class Sensor implements iSensor {
+class sensor extends device implements iSensor {
 
     public function getValue()
     {
@@ -52,7 +52,7 @@ class Sensor implements iSensor {
     }
 }
 
-class temperatureDevice extends iSensor {
+class temperatureDevice extends sensor {
 
     public function __construct($net, $adr) {
         parent::__construct($net, $adr, typeDevice::TEMPERATURE);
