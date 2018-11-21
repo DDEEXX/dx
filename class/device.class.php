@@ -19,7 +19,7 @@ interface typeDevice{
 /**
  * Interface iSensor
  */
-interface iSensor{
+interface iTemperatureSensor{
     public function getValue();
 }
 
@@ -44,18 +44,19 @@ abstract class device {
 
 }
 
-class sensor extends device implements iSensor {
+class sensor extends device {
+
+}
+
+class temperatureSensor extends sensor implements iTemperatureSensor  {
+
+    public function __construct($net, $adr) {
+        parent::__construct($net, $adr, typeDevice::TEMPERATURE);
+    }
 
     public function getValue()
     {
         // TODO: Implement getValue() method.
-    }
-}
-
-class temperatureDevice extends sensor {
-
-    public function __construct($net, $adr) {
-        parent::__construct($net, $adr, typeDevice::TEMPERATURE);
     }
 
 }
