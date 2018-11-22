@@ -41,6 +41,8 @@ abstract class device {
     public function getNet() { return $this->net; }
 
     public function getAdress() { return $this->adress; }
+    
+    public function getType() { return $this->type; }
 
 }
 
