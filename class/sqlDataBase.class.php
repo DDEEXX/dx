@@ -47,18 +47,19 @@ class otherDBException extends DBException {
     }
 }
 
+
 class sqlDataBase {
 	
 	private static $db = null;
 	private $dbConnect;
 	
-	private function __construct() {
+	private function __construct(iConfigDB $configDB) {
 		//error_reporting(sqlConfig::err_rep);
-		$this->dbConnect=new mysqli(sqlConfig::db_host, 
-									sqlConfig::db_user, 
-									sqlConfig::db_pwd, 
-									sqlConfig::db_name, 
-									3306); //порт
+		$this->dbConnect=new mysqli($configDB->getHost(),
+                                    $configDB->getUser(),
+                                    $configDB->getPassword(),
+                                    $configDB->getNameDB(),
+                                    $configDB->getPort()); //порт
 		if($this->dbConnect->connect_errno)
 			$this->error(new connectDBException($this->dbConnect->connect_error));
 	}
@@ -68,7 +69,7 @@ class sqlDataBase {
      * @return null|sqlDataBase
      */
     public static function getConnect() {
-		if (self::$db == null) self::$db = new sqlDataBase();
+		if (self::$db == null) self::$db = new sqlDataBase(new sqlConfig());
 		return self::$db;
 	}
 

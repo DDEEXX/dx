@@ -41,7 +41,7 @@ catch (querySelectDBException $e) {
     die();
 }
 
-$dev = new temperatureDevice(netDevice::ONE_WIRE, "123");
+$dev = new temperatureSensor(netDevice::ONE_WIRE, "123");
 echo "Net = ".$dev->getNet();
 echo "Adress = ".$dev->getAdress();
 
