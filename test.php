@@ -19,7 +19,7 @@ require_once("class/logger.class.php");
 <?php
 
 try {
-$dx = sqlDataBase::getConnect();
+//$dx = sqlDataBase::getConnect();
 }
 catch(connectDBException $e) {
 	echo $e->getErrorInfoHTML();
@@ -32,7 +32,8 @@ $query = "SELECT a.DeviceID, a.Adress, a.set_alarm, b.Title NetTitle, c.Title Se
 				LEFT JOIN tsensortype c ON a.SensorTypeID = c.SensorTypeID";
 
 try {
-    $ar = $dx->getOne($query);
+    //$ar = $dx->getOne($dx);
+    $ar = quelyDataBase::getOne(sqlDataBase::Connect(), $query);
     //$ar = $dx->getAll($query);
     echo var_dump($ar);
 }
@@ -40,6 +41,18 @@ catch (querySelectDBException $e) {
     echo $e->getErrorInfoHTML();
     die();
 }
+
+try {
+    $ar = quelyDataBase::getOne(sqlDataBase::Connect(), $query);
+    //$ar = $dx->getAll($query);
+    echo var_dump($ar);
+}
+catch (querySelectDBException $e) {
+    echo $e->getErrorInfoHTML();
+    die();
+}
+
+
 
 $dev = new temperatureSensor(netDevice::ONE_WIRE, "123");
 echo "Net = ".$dev->getNet();

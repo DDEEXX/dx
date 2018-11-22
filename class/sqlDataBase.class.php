@@ -47,13 +47,18 @@ class otherDBException extends DBException {
     }
 }
 
+interface iSqlDataBase {
 
-class sqlDataBase {
+    public function getConnect();
+
+}
+
+class sqlDataBase implements iSqlDataBase {
 	
 	private static $db = null;
 	private $dbConnect;
-	
-	private function __construct(iConfigDB $configDB) {
+
+    private function __construct(iConfigDB $configDB) {
 		//error_reporting(sqlConfig::err_rep);
 		$this->dbConnect=new mysqli($configDB->getHost(),
                                     $configDB->getUser(),
@@ -65,13 +70,32 @@ class sqlDataBase {
 	}
 
     /**
+     * @return mysqli
+     */
+    public function getConnect() {
+        return $this->dbConnect;
+    }
+
+    /**
      * Подключиться к базе данных
      * @return null|sqlDataBase
      */
-    public static function getConnect() {
-		if (self::$db == null) self::$db = new sqlDataBase(new sqlConfig());
+    public static function Connect() {
+		if (self::$db == null) {
+		    $config = new sqlConfig();
+		    self::$db = new sqlDataBase($config);
+            unset($config);
+        }
 		return self::$db;
 	}
+
+    public function __destruct() {
+        if ($this->dbConnect) $this->dbConnect->close();
+    }
+
+}
+
+class quelyDataBase {
 
     /**
      * Возвращает результат запроса в виде 2-х мерного ассоциативного массива
@@ -79,9 +103,9 @@ class sqlDataBase {
      * @return array
      * @throws errorDBException
      */
-    public function getAll($query) {
+    public static function getAll(iSqlDataBase $conn, $query) {
         $res = array();
-        if ($resQ = $this->getRaw($query)) {
+        if ($resQ = self::getRaw($conn, $query)) {
             while ($row = $resQ->fetch_assoc()) {
                 $res[] = $row;
             }
@@ -96,21 +120,16 @@ class sqlDataBase {
      * @return array
      * @throws errorDBException
      */
-    public function getOne($query) {
+    public static function getOne(iSqlDataBase $conn, $query) {
         $row = array();
-        if ($resQ = $this->getRaw($query)) {
+        if ($resQ = self::getRaw($conn, $query)) {
             $row = $resQ->fetch_assoc();
             if (!is_array($row)) {
-                $this->error(new otherDBException("Не могу результат запроса преобразовать в массив"));
+                self::error(new otherDBException("Не могу результат запроса преобразовать в массив"));
             }
             $resQ->free();
         }
         return $row;
-    }
-
-    private function error($E) {
-        //trigger_error($err_mes,E_USER_ERROR);
-    	throw $E;
     }
 
     /**
@@ -119,17 +138,18 @@ class sqlDataBase {
      * @return bool|mysqli_result
      * @throws errorDBException
      */
-    private function getRaw($query) {
-        $res = $this->dbConnect->query($query, MYSQLI_USE_RESULT);
+    private static function getRaw(iSqlDataBase $conn, $query) {
+        $res = $conn->getConnect()->query($query, MYSQLI_USE_RESULT);
         if (!$res) {
-        	$this->error(new querySelectDBException($this->dbConnect->error));
+            self::error(new querySelectDBException($conn->getConnect()->error));
         }
         return $res;
-	}
+    }
 
-    public function __destruct() {
-        if ($this->dbConnect) $this->dbConnect->close();
+    private static function error($E) {
+        throw $E;
     }
 
 }
+
 ?>
