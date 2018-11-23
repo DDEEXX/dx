@@ -2,6 +2,12 @@
 
 require_once(dirname(__FILE__)."/config.class.php");
 
+interface iSqlDataBase {
+
+    public function getConnect();
+
+}
+
 class DBException extends Exception {
     public function __construct($mess) {
         parent::__construct($mess);
@@ -10,6 +16,14 @@ class DBException extends Exception {
 }
 
 class connectDBException extends DBException {
+
+    /**
+     * connectDBException constructor.
+     */
+    public function __construct($mess)
+    {
+        parent::__construct($mess);
+    }
 
     /**
      * Возвращает описание ошибки подключения к базе в виде html для вывода на странице
@@ -47,12 +61,6 @@ class otherDBException extends DBException {
     }
 }
 
-interface iSqlDataBase {
-
-    public function getConnect();
-
-}
-
 class sqlDataBase implements iSqlDataBase {
 	
 	private static $db = null;
@@ -64,12 +72,13 @@ class sqlDataBase implements iSqlDataBase {
                                     $configDB->getUser(),
                                     $configDB->getPassword(),
                                     $configDB->getNameDB(),
-                                    $configDB->getPort()); //порт
+                                    $configDB->getPort());
 		if($this->dbConnect->connect_errno)
-			$this->error(new connectDBException($this->dbConnect->connect_error));
+            throw new connectDBException($this->dbConnect->connect_error);
 	}
 
     /**
+     * Получить соединение mysqli
      * @return mysqli
      */
     public function getConnect() {
@@ -95,10 +104,11 @@ class sqlDataBase implements iSqlDataBase {
 
 }
 
-class quelyDataBase {
+class queryDataBase {
 
     /**
      * Возвращает результат запроса в виде 2-х мерного ассоциативного массива
+     * @param iSqlDataBase $conn
      * @param $query
      * @return array
      * @throws errorDBException
@@ -116,6 +126,7 @@ class quelyDataBase {
 
     /**
      * возвращает первую строку результата запроса в виде ассоциативного массива
+     * @param iSqlDataBase $conn
      * @param $query
      * @return array
      * @throws errorDBException
@@ -134,6 +145,7 @@ class quelyDataBase {
 
     /**
      * Возразает "сырой" результат запроса SELECT
+     * @param iSqlDataBase $conn
      * @param $query
      * @return bool|mysqli_result
      * @throws errorDBException

@@ -2,6 +2,7 @@
 require_once("class/sqlDataBase.class.php");
 require_once("class/device.class.php");
 require_once("class/logger.class.php");
+require_once("class/managerDevices.class.php");
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -19,7 +20,7 @@ require_once("class/logger.class.php");
 <?php
 
 try {
-//$dx = sqlDataBase::getConnect();
+    $con = sqlDataBase::Connect();
 }
 catch(connectDBException $e) {
 	echo $e->getErrorInfoHTML();
@@ -32,9 +33,7 @@ $query = "SELECT a.DeviceID, a.Adress, a.set_alarm, b.Title NetTitle, c.Title Se
 				LEFT JOIN tsensortype c ON a.SensorTypeID = c.SensorTypeID";
 
 try {
-    //$ar = $dx->getOne($dx);
-    $ar = quelyDataBase::getOne(sqlDataBase::Connect(), $query);
-    //$ar = $dx->getAll($query);
+    $ar = queryDataBase::getOne($con, $query);
     echo var_dump($ar);
 }
 catch (querySelectDBException $e) {
@@ -42,23 +41,12 @@ catch (querySelectDBException $e) {
     die();
 }
 
-try {
-    $ar = quelyDataBase::getOne(sqlDataBase::Connect(), $query);
-    //$ar = $dx->getAll($query);
-    echo var_dump($ar);
+$am = managerDevices::arrayManagersDevices();
+
+foreach ($am as &$nameManager) {
+    $z = $nameManager::showType();
+    echo $z;
 }
-catch (querySelectDBException $e) {
-    echo $e->getErrorInfoHTML();
-    die();
-}
-
-
-
-$dev = new temperatureSensor(netDevice::ONE_WIRE, "123");
-echo "Net = ".$dev->getNet();
-echo "Adress = ".$dev->getAdress();
-
-logger::getLogger()->log("test");
 
 ?>	
 
