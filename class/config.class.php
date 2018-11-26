@@ -28,7 +28,7 @@ class sqlConfig implements iConfigDB {
      */
     public function __construct()
     {
-        $DatabaseAccess = parse_ini_file('ini/access.ini');
+        $DatabaseAccess = parse_ini_file(dirname(__FILE__).'/../ini/access.ini');
         $this->db_host  = $DatabaseAccess['dbhost'];
         $this->db_user  = $DatabaseAccess['username'];
         $this->db_pwd   = $DatabaseAccess['password'];

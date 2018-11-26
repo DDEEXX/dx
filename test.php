@@ -44,7 +44,8 @@ catch (querySelectDBException $e) {
 $am = managerDevices::arrayManagersDevices();
 
 foreach ($am as &$nameManager) {
-    $z = $nameManager::showType();
+    $manager = managerDevices::getDeviceManager($nameManager);
+    $z = $manager::showType();
     echo $z;
 }
 

@@ -6,28 +6,33 @@
  * Time: 15:01
  */
 
-require_once("class/managerDevice.interface.php");
-require_once("class/managerTemperatureSensor.class.php");
-require_once("class/managerVoltageSensor.class.php");
-
-const aManagersDevices = ['managerTemperatureSensor', 'managerVoltageSensor'];
+require_once(dirname(__FILE__)."/sqlDataBase.class.php");
+require_once(dirname(__FILE__)."/managerDevice.interface.php");
+require_once(dirname(__FILE__)."/managerTemperatureSensor.class.php");
+require_once(dirname(__FILE__)."/managerVoltageSensor.class.php");
+require_once(dirname(__FILE__)."/lists.class.php");
 
 class managerDevices
 {
 
     public static function arrayManagersDevices(){
-        return aManagersDevices;
+        $aManagersDevices = ['managerTemperatureSensor', 'managerVoltageSensor'];
+        return $aManagersDevices;
     }
 
     public static function getDeviceManager($nameManager) {
-        switch ($nameManager) {
-            case 'temperatureSensor' : {
-                return 'managerTemperatureSensor';
-                break;
-            }
+        if (class_exists($nameManager)) {
+            return $nameManager;
+        } else {
+            throw new \Exception("Unknown manager");
         }
+    }
 
-        return $nameManager;
+    /**
+     * ѕолучить список всех физ. устройств в виде массива
+     */
+    public static function getListDevices($sel = null){
+        return DB::getListDevices($sel);
     }
 
 }

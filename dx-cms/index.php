@@ -1,6 +1,5 @@
 <?php
-require_once("../class/class.php");
-$d = new DX();
+    require_once("../class/managerDevices.class.php");
 ?>
 
 <!DOCTYPE html>
@@ -23,7 +22,7 @@ $d = new DX();
 
 	<?php
 
-	//Если не задан параметр p установим его
+    //Если не задан параметр p установим его
 	if ( !isset($_REQUEST['p']) ) {
 		$_REQUEST['p'] = "list";
 	};
@@ -33,14 +32,15 @@ $d = new DX();
 	<div id="tabs"
 		style="width: 980px; margin-left: auto; margin-right: auto;">
 		<ul>
-			<li><a href="#tabs-1">Датчики</a></li>
-			<li><a href="#tabs-2">Модули</a></li>
-			<li><a href="#tabs-3">i-Button</a></li>
-			<li><a href="#tabs-4">Видео</a></li>
-			<li><a href="#tabs-5">Физ. устройства</a></li>
+            <li><a href="#tabs-1">Датчики</a></li>
+            <li><a href="#tabs-2">Модули</a></li>
+            <li><a href="#tabs-3">i-Button</a></li>
+            <li><a href="#tabs-4">Видео</a></li>
+            <li><a href="#tabs-5">Физ. устройства</a></li>
 		</ul>
 		<div id="tabs-1">
 			<?php
+            /**
 			if (isset($_REQUEST['btUpdate']) || isset($_REQUEST['btAdd']) || isset($_REQUEST['btDelete'])) {
 				include 'UpdateSensor.php';
 			}
@@ -53,6 +53,7 @@ $d = new DX();
 			else {
 				include 'ListSensors.php';
 			}
+			*/
 			?>
 		</div>
 		<div id="tabs-2">
@@ -92,7 +93,12 @@ $d = new DX();
 		</div>
 		<div id="tabs-5">
 			<?php
-			include 'ListDevices.php';
+			if ($_REQUEST['p'] == "deleteDevice") {
+				//include 'DeleteSensor.php';
+			}
+			else {
+				include 'ListDevices.php';
+			}
 			?>
 		</div>
 	</div>

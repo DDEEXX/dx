@@ -1,6 +1,7 @@
 <?php
 
 require_once(dirname(__FILE__)."/config.class.php");
+require_once(dirname(__FILE__)."/lists.class.php");
 
 interface iSqlDataBase {
 
@@ -164,4 +165,73 @@ class queryDataBase {
 
 }
 
+class DB {
+
+    /**
+     * @param iterable|null $sel
+     * @return listDevices
+     * @throws errorDBException
+     */
+    static public function getListDevices($sel = null){
+
+        $query = "SELECT a.DeviceID, a.Adress, a.set_alarm, b.Title NetTitle, c.Title SensorType
+				FROM tdevice a
+				LEFT JOIN tnettype b ON a.NetTypeID = b.NetTypeID
+				LEFT JOIN tsensortype c ON a.SensorTypeID = c.SensorTypeID";
+
+        $con = sqlDataBase::Connect();
+
+        $w = "";
+
+        if (!is_null($sel)) {
+            if ($sel instanceof selectOption) {
+                foreach ($sel as $key => $value) {
+                    switch ($key) {
+                        case 'netType' :
+                            {
+                                $netType = $con->getConnect()->real_escape_string($value);
+                                $w = $w . " b.Title = '$netType'";
+                            }
+                    }
+
+                }
+
+
+                /**
+                 * if (!empty($netType)) {
+                 * $netType = $this->dbConnect->real_escape_string($netType);
+                 * $w = $w." b.Title = '$netType'";
+                 * }
+                 *
+                 * if (!empty($sensorType)) {
+                 * $sensorType = $this->dbConnect->real_escape_string($sensorType);
+                 * if (!empty($w)) {
+                 * $w = $w." AND";
+                 * }
+                 * $w = $w." c.Title = '$sensorType'";
+                 * }
+                 *
+                 * if ($dis===0 || $dis === 1) {
+                 * if (!empty($w)) {
+                 * $w = $w." AND";
+                 * }
+                 * $w = $w." a.Disabled = $dis";
+                 * }
+                 */
+
+                if (!empty($w)) {
+                    $query = $query . " WHERE" . $w;
+                }
+            }
+        }
+
+        $aDevices = queryDataBase::getAll($con, $query);
+
+        $l = new listDevices($aDevices);
+
+        return $l;
+
+    }
+
+}
 ?>
