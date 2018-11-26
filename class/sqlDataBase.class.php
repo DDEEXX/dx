@@ -5,6 +5,9 @@ require_once(dirname(__FILE__)."/lists.class.php");
 
 interface iSqlDataBase {
 
+    /**
+     * @return mixed
+     */
     public function getConnect();
 
 }
@@ -17,14 +20,6 @@ class DBException extends Exception {
 }
 
 class connectDBException extends DBException {
-
-    /**
-     * connectDBException constructor.
-     */
-    public function __construct($mess)
-    {
-        parent::__construct($mess);
-    }
 
     /**
      * Возвращает описание ошибки подключения к базе в виде html для вывода на странице
@@ -67,6 +62,11 @@ class sqlDataBase implements iSqlDataBase {
 	private static $db = null;
 	private $dbConnect;
 
+    /**
+     * sqlDataBase constructor.
+     * @param iConfigDB $configDB
+     * @throws connectDBException
+     */
     private function __construct(iConfigDB $configDB) {
 		//error_reporting(sqlConfig::err_rep);
 		$this->dbConnect=new mysqli($configDB->getHost(),
@@ -80,7 +80,7 @@ class sqlDataBase implements iSqlDataBase {
 
     /**
      * Получить соединение mysqli
-     * @return mysqli
+     * @return mixed|mysqli
      */
     public function getConnect() {
         return $this->dbConnect;
@@ -89,6 +89,7 @@ class sqlDataBase implements iSqlDataBase {
     /**
      * Подключиться к базе данных
      * @return null|sqlDataBase
+     * @throws connectDBException
      */
     public static function Connect() {
 		if (self::$db == null) {
@@ -112,7 +113,7 @@ class queryDataBase {
      * @param iSqlDataBase $conn
      * @param $query
      * @return array
-     * @throws errorDBException
+     * @throws querySelectDBException
      */
     public static function getAll(iSqlDataBase $conn, $query) {
         $res = array();
@@ -130,14 +131,15 @@ class queryDataBase {
      * @param iSqlDataBase $conn
      * @param $query
      * @return array
-     * @throws errorDBException
+     * @throws otherDBException
+     * @throws querySelectDBException
      */
     public static function getOne(iSqlDataBase $conn, $query) {
         $row = array();
         if ($resQ = self::getRaw($conn, $query)) {
             $row = $resQ->fetch_assoc();
             if (!is_array($row)) {
-                self::error(new otherDBException("Не могу результат запроса преобразовать в массив"));
+                throw new otherDBException("Не могу результат запроса преобразовать в массив");
             }
             $resQ->free();
         }
@@ -148,19 +150,15 @@ class queryDataBase {
      * Возразает "сырой" результат запроса SELECT
      * @param iSqlDataBase $conn
      * @param $query
-     * @return bool|mysqli_result
-     * @throws errorDBException
+     * @return mixed
+     * @throws querySelectDBException
      */
     private static function getRaw(iSqlDataBase $conn, $query) {
         $res = $conn->getConnect()->query($query, MYSQLI_USE_RESULT);
         if (!$res) {
-            self::error(new querySelectDBException($conn->getConnect()->error));
+            throw new querySelectDBException($conn->getConnect()->error);
         }
         return $res;
-    }
-
-    private static function error($E) {
-        throw $E;
     }
 
 }
@@ -168,11 +166,13 @@ class queryDataBase {
 class DB {
 
     /**
-     * @param iterable|null $sel
-     * @return listDevices
-     * @throws errorDBException
+     * Получить список физ. устройств в виде ассоциативного массива в соответствии с отбором
+     * @param Iterator|null $sel
+     * @return array
+     * @throws connectDBException
+     * @throws querySelectDBException
      */
-    static public function getListDevices($sel = null){
+    static public function getListDevices(Iterator $sel = null){
 
         $query = "SELECT a.DeviceID, a.Adress, a.set_alarm, b.Title NetTitle, c.Title SensorType
 				FROM tdevice a
@@ -181,43 +181,26 @@ class DB {
 
         $con = sqlDataBase::Connect();
 
-        $w = "";
-
         if (!is_null($sel)) {
             if ($sel instanceof selectOption) {
+
+                $w = "";
+
                 foreach ($sel as $key => $value) {
-                    switch ($key) {
-                        case 'netType' :
-                            {
-                                $netType = $con->getConnect()->real_escape_string($value);
-                                $w = $w . " b.Title = '$netType'";
-                            }
+
+                    if (!empty($w)) {
+                        $w = $w." AND";
+                    }
+
+                    $netType = $con->getConnect()->real_escape_string($value);
+                    if (is_int($value)) {
+                        $w = $w . " a.$key = $netType";
+                    }
+                    else {
+                        $w = $w . " a.$key = '$netType'";
                     }
 
                 }
-
-
-                /**
-                 * if (!empty($netType)) {
-                 * $netType = $this->dbConnect->real_escape_string($netType);
-                 * $w = $w." b.Title = '$netType'";
-                 * }
-                 *
-                 * if (!empty($sensorType)) {
-                 * $sensorType = $this->dbConnect->real_escape_string($sensorType);
-                 * if (!empty($w)) {
-                 * $w = $w." AND";
-                 * }
-                 * $w = $w." c.Title = '$sensorType'";
-                 * }
-                 *
-                 * if ($dis===0 || $dis === 1) {
-                 * if (!empty($w)) {
-                 * $w = $w." AND";
-                 * }
-                 * $w = $w." a.Disabled = $dis";
-                 * }
-                 */
 
                 if (!empty($w)) {
                     $query = $query . " WHERE" . $w;
@@ -227,9 +210,7 @@ class DB {
 
         $aDevices = queryDataBase::getAll($con, $query);
 
-        $l = new listDevices($aDevices);
-
-        return $l;
+        return $aDevices;
 
     }
 

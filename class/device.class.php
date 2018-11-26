@@ -1,20 +1,6 @@
 <?php
 
-interface netDevice {
-    const NONE          = 0;
-    const ONE_WIRE      = 1;
-    const ETHERNET      = 2;
-    const CUBIEBOARD    = 3;
-}
-
-interface typeDevice{
-    const NONE              = 0;
-    const TEMPERATURE       = 1;
-    const LABEL             = 2;
-    const POWER_KEY         = 3;
-    const KEY_IN            = 4;
-    const KEY_OUT           = 5;
-}
+require_once(dirname(__FILE__)."/globalConst.interface.php");
 
 /**
  * Interface iSensor

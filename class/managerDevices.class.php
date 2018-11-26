@@ -30,9 +30,14 @@ class managerDevices
 
     /**
      * ѕолучить список всех физ. устройств в виде массива
+     * @param Iterator|null $sel
+     * @return listDevices
+     * @throws connectDBException
+     * @throws errorDBException
      */
-    public static function getListDevices($sel = null){
-        return DB::getListDevices($sel);
+    public static function getListDevices(Iterator $sel = null){
+        $list = new listDevices(DB::getListDevices($sel));
+        return $list;
     }
 
 }
