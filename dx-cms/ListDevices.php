@@ -47,39 +47,36 @@ td, th {
 /**Получить список всех физ. устройств*/
 $listDevices = managerDevices::getListDevices();
 
+/**
 $sel = new selectOption();
 $sel->set('netTypeID', netDevice::ONE_WIRE);
 //$sel->set('SensorTypeID', typeDevice::TEMPERATURE);
 //$sel->set('Disabled', 1);
 $listDevices = managerDevices::getListDevices($sel);
 unset($sel);
+*/
 
 foreach($listDevices as $key => $value) {
     echo "<tr>";
 
-    $DeviceID = $value['DeviceID'];
-    $Adress = $value['Adress'];
-    $NetTitle = $value['NetTitle'];
-    $SensorType = $value['SensorType'];
-    if (!isset($SensorType)) {
-        $SensorType = 'NA';
-    }
+    $deviceID = $value->getDeviceID();
+    $adress = $value->getAdress();
+    $netTitle = $value->getNet(); //['NetTitle'];
+    $deviceType = $value->getType(); //['SensorType'];
 
-    echo "<td><a class='btEditDevice' href='index.php?p=recordDevice&id=$DeviceID'></a></td>";
-    echo "<td><a class='btDeleteDevice' href='index.php?p=deleteDevice&id=$DeviceID'></a></td>";
+    echo "<td><a class='btEditDevice' href='index.php?p=recordDevice&id=$deviceID'></a></td>";
+    echo "<td><a class='btDeleteDevice' href='index.php?p=deleteDevice&id=$deviceID'></a></td>";
 
-    if (is_null($NetTitle)){
-        echo "<td align='center'><img src='../img2/disconnect.png' alt='N/A'></td>";
-    }
-    elseif ($NetTitle == '1-wire'){
-        echo "<td align='center'><img src='../img2/1-wire.png' alt='1-wire'></td>";
-    }
+    echo "<td><img src='img2/netDevice_".$netTitle.".png'></td>";
 
-    echo "<td>".$Adress."</td>";
-    echo "<td><img src='img2/".$SensorType.".png'></td>";
+    echo "<td>".$adress."</td>";
+
+    echo "<td><img src='img2/deviceType_".$deviceType.".png'></td>";
 
     echo "</tr>";
 }
+
+unset($listDevices);
 
 ?>
 

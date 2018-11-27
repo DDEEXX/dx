@@ -6,7 +6,7 @@
  * Time: 14:33
  */
 
-class lists implements Iterator
+abstract class listArray implements Iterator
 {
 
     protected $list = array();
@@ -34,6 +34,17 @@ class lists implements Iterator
     }
 
     /**
+     * Return the key of the current element - возвращает ключ текущего элемента
+     * @link http://php.net/manual/en/iterator.key.php
+     * @return mixed scalar on success, or null on failure.
+     * @since 5.0.0
+     */
+    public function key()
+    {
+        return key($this->list);
+    }
+
+    /**
      * Move forward to next element - передвигаемся вперед на один элемент
      * // возвращает текущий элемент
      * @link http://php.net/manual/en/iterator.next.php
@@ -43,17 +54,6 @@ class lists implements Iterator
     public function next()
     {
         next($this->list);
-    }
-
-    /**
-     * Return the key of the current element - возвращает ключ текущего элемента
-     * @link http://php.net/manual/en/iterator.key.php
-     * @return mixed scalar on success, or null on failure.
-     * @since 5.0.0
-     */
-    public function key()
-    {
-        return key($this->list);
     }
 
     /**
@@ -92,7 +92,8 @@ class lists implements Iterator
     }
 
     /**
-     * метод для получения настройки из хранилища
+     * !!!d метод для получения настройки из хранилища
+     * что возвращать если $key неопределен
      * @param $key
      * @return mixed
      */
@@ -103,14 +104,14 @@ class lists implements Iterator
 
 }
 
-class listDevices extends lists {
+class listDevices extends ArrayIterator {
 
 }
 
-class selectOption extends lists {
+class selectOption extends listArray {
 
-    public function __construct()
-    {
-    }
-
+    /**
+     * selectOption constructor.
+     */
+    public function __construct() {}
 }

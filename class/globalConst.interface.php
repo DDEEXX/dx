@@ -15,9 +15,10 @@ interface netDevice {
 
 interface typeDevice{
     const NONE              = 0;
-    const TEMPERATURE       = 1;
-    const LABEL             = 2;
-    const POWER_KEY         = 3;
-    const KEY_IN            = 4;
-    const KEY_OUT           = 5;
+    const TEMPERATURE       = 1; //Датчик температуры
+    const LABEL             = 2; //Метка
+    const POWER_KEY         = 3; //Силовой ключ (коммутирует высокое наряжение)
+    const KEY_IN            = 4; //Входящий ключ (сухой контакт и т.д.)
+    const KEY_OUT           = 5; //Выходной ключ - коммутирует маленькие токи
+    const VOLTAGE           = 6; //Датчик наличия напряжения
 }

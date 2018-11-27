@@ -174,10 +174,14 @@ class DB {
      */
     static public function getListDevices(Iterator $sel = null){
 
+        /**
         $query = "SELECT a.DeviceID, a.Adress, a.set_alarm, b.Title NetTitle, c.Title SensorType
 				FROM tdevice a
 				LEFT JOIN tnettype b ON a.NetTypeID = b.NetTypeID
 				LEFT JOIN tsensortype c ON a.SensorTypeID = c.SensorTypeID";
+        */
+
+        $query = "SELECT * FROM tdevice";
 
         $con = sqlDataBase::Connect();
 
@@ -192,12 +196,12 @@ class DB {
                         $w = $w." AND";
                     }
 
-                    $netType = $con->getConnect()->real_escape_string($value);
+                    $realValue = $con->getConnect()->real_escape_string($value);
                     if (is_int($value)) {
-                        $w = $w . " a.$key = $netType";
+                        $w = $w . " a.$key = $realValue";
                     }
                     else {
-                        $w = $w . " a.$key = '$netType'";
+                        $w = $w . " a.$key = '$realValue'";
                     }
 
                 }

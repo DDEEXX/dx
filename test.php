@@ -49,6 +49,14 @@ foreach ($am as &$nameManager) {
     echo $z;
 }
 
+
+$a = new ArrayObject(array(), ArrayObject::STD_PROP_LIST);
+$a['arr'] = 'array data';
+$a->prop = 'prop data';
+$b = new ArrayObject();
+$b['arr'] = 'array data';
+$b->prop = 'prop data';
+
 ?>	
 
 </body>
