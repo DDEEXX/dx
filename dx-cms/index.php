@@ -87,17 +87,23 @@
 				vehicula velit eu tellus interdum rutrum. Maecenas commodo.
 				Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus
 				hendrerit hendrerit.</p>
+            <?php
+            if ($_REQUEST['p'] == 'list')
+                echo "LIST";
+            else
+                echo "NO LIST";
+            ?>
 		</div>
 		<div id="tabs-4">
 			<p>Видео</p>
 		</div>
 		<div id="tabs-5">
 			<?php
-			if ($_REQUEST['p'] == "deleteDevice") {
-				//include 'DeleteSensor.php';
+			if ($_REQUEST['p'] == "formDevice") {
+				include 'formDevice.php';
 			}
 			else {
-				include 'ListDevices.php';
+				include 'listDevices.php';
 			}
 			?>
 		</div>
