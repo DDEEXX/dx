@@ -27,7 +27,12 @@ td, th {
 </style>
 
 <div style="margin-bottom: 5px">
-	<a class='btAddDevice' href='index.php?p=formDevice&Operation=Add#tabs-5'>Добавить</a>
+    <form action="index.php#tabsDevices" method="get">
+        <input name="pDevices" type="hidden" value="addDevice">
+        <!-- <input name="operationDevices" type="hidden" value="Add">
+        <a class='btAddDevice1' href='index.php?p=formDevice&Operation=Add#tabs-5'>Добавить</a> -->
+        <input class='btAddDevice' type="submit" value="Добавить">
+    </form>
 </div>
 
 <table>
