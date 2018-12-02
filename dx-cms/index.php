@@ -33,8 +33,6 @@
         $_REQUEST['pDevices'] = "list";
     };
 
-
-
 	?>
 
 	<div id="tabs"
