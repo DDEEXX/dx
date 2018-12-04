@@ -79,8 +79,11 @@
 		</div>
 		<div id="tabsDevices">
 			<?php
-			if ($_REQUEST['pDevices'] == "addDevice") {
-				include 'addDevice.php';
+            if ($_REQUEST['pDevices'] == "updateDevice") {
+                include 'updateDevice.php';
+            }
+			elseif ($_REQUEST['pDevices'] == "addDevice") {
+				include 'formDevice.php';
 			}
 			else {
 				include 'listDevices.php';

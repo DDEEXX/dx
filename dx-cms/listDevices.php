@@ -28,9 +28,8 @@ td, th {
 
 <div style="margin-bottom: 5px">
     <form action="index.php#tabsDevices" method="get">
+        <!--Отправляем на сервер команду по нажатии кнопки "Добавить"-->
         <input name="pDevices" type="hidden" value="addDevice">
-        <!-- <input name="operationDevices" type="hidden" value="Add">
-        <a class='btAddDevice1' href='index.php?p=formDevice&Operation=Add#tabs-5'>Добавить</a> -->
         <input class='btAddDevice' type="submit" value="Добавить">
     </form>
 </div>
@@ -53,22 +52,18 @@ td, th {
 $listDevices = managerDevices::getListDevices();
 
 foreach($listDevices as $key => $value) {
-    echo "<tr>";
 
     $deviceID = $value->getDeviceID();
     $adress = $value->getAdress();
     $netTitle = $value->getNet(); //['NetTitle'];
     $deviceType = $value->getType(); //['SensorType'];
 
+    echo "<tr>";
     echo "<td><a class='btEditDevice' href='index.php?p=formDevice&Operation=Edit&id=$deviceID'></a></td>";
     echo "<td><a class='btDeleteDevice' href='index.php?p=deleteDevice&id=$deviceID'></a></td>";
-
     echo "<td><img src='img2/netDevice_".$netTitle.".png'></td>";
-
     echo "<td>".$adress."</td>";
-
     echo "<td><img src='img2/deviceType_".$deviceType.".png'></td>";
-
     echo "</tr>";
 }
 
