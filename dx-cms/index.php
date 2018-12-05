@@ -1,4 +1,5 @@
 <?php
+    require_once("../class/sqlDataBase.class.php");
     require_once("../class/managerDevices.class.php");
 ?>
 
@@ -79,10 +80,10 @@
 		</div>
 		<div id="tabsDevices">
 			<?php
-            if ($_REQUEST['pDevices'] == "updateDevice") {
+            if ($_REQUEST['pDevices'] == "updateDataDevice") {
                 include 'updateDevice.php';
             }
-			elseif ($_REQUEST['pDevices'] == "addDevice") {
+			elseif ($_REQUEST['pDevices'] == "addDevice" || $_REQUEST['pDevices'] == "updateDevice") {
 				include 'formDevice.php';
 			}
 			else {

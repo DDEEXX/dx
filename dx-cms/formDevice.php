@@ -11,6 +11,7 @@
 <script>
     $(function() {
         $( ".btAdd" ).button();
+        $( ".btUpdate" ).button();
         $( ".btCancel" ).button();
     });
 
@@ -71,7 +72,7 @@
         </tr>
     </table>
 
-    <input type='hidden' name='pDevices' value='updateDevice' >
+    <input type='hidden' name='pDevices' value='updateDataDevice' >
     <input class='btAdd' type='submit' value='OK' name='btAdd'>
     <input class='btCancel' type='button' onclick='history.back();' value='Cancel'>
 </form>
