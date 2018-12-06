@@ -4,12 +4,10 @@ require_once(dirname(__FILE__)."/config.class.php");
 require_once(dirname(__FILE__)."/lists.class.php");
 
 interface iSqlDataBase {
-
-    /**
-     * @return mixed
-     */
     public function getConnect();
-
+}
+interface iDBException {
+    public function getErrorInfoHTML();
 }
 
 class DBException extends Exception {
@@ -19,7 +17,7 @@ class DBException extends Exception {
     }
 }
 
-class connectDBException extends DBException {
+class connectDBException extends DBException implements iDBException {
 
     /**
      * Возвращает описание ошибки подключения к базе в виде html для вывода на странице
@@ -33,7 +31,7 @@ class connectDBException extends DBException {
     }
 }
 
-class querySelectDBException extends DBException {
+class querySelectDBException extends DBException implements iDBException {
     /**
      * Возвращает описание ошибки выполнения SELECT запроса в виде html для вывода на странице
      * @return string
@@ -45,7 +43,7 @@ class querySelectDBException extends DBException {
     }
 }
 
-class otherDBException extends DBException {
+class otherDBException extends DBException implements iDBException {
     /**
      * Возвращает описание прочих ошибок виде html для вывода на странице
      * @return string
@@ -109,6 +107,22 @@ class sqlDataBase implements iSqlDataBase {
 class queryDataBase {
 
     /**
+     * Запросы типа INSERT и UPDATE
+     * @param iSqlDataBase $conn
+     * @param $query
+     * @return bool
+     * @throws querySelectDBException
+     */
+    public static function execute(iSqlDataBase $conn, $query)
+    {
+        $res = $conn->getConnect()->query($query, MYSQLI_USE_RESULT);
+        if (!$res) {
+            throw new querySelectDBException($conn->getConnect()->error);
+        }
+        return true;
+    }
+
+    /**
      * Возвращает результат запроса в виде 2-х мерного ассоциативного массива
      * @param iSqlDataBase $conn
      * @param $query
@@ -127,20 +141,21 @@ class queryDataBase {
     }
 
     /**
-     * возвращает первую строку результата запроса в виде ассоциативного массива
+     * возвращает первую строку результата запроса в виде ассоциативного массива или null если ничего не выбрано
      * @param iSqlDataBase $conn
      * @param $query
-     * @return array
-     * @throws otherDBException
+     * @return array|null
      * @throws querySelectDBException
      */
     public static function getOne(iSqlDataBase $conn, $query) {
         $row = array();
         if ($resQ = self::getRaw($conn, $query)) {
             $row = $resQ->fetch_assoc();
+            /**
             if (!is_array($row)) {
                 throw new otherDBException("Не могу результат запроса преобразовать в массив");
             }
+            */
             $resQ->free();
         }
         return $row;

@@ -6,6 +6,21 @@
  * Time: 11:01
  */
 
+//Ес//ли это изменение данных, то получаем все значения из текщего объекта
+if ($_REQUEST['pDevices'] == "updateDevice") {
+    //$device = managerDevices::getDevice($_REQUEST['ID']);
+    try {
+        $device = managerDevices::getDevice('30');
+        $deviceID = $device->getDeviceID();
+        $adress = $device->getAdress();
+        $netTitle = $device->getNet();
+        $deviceType = $device->getType();
+    }
+    catch (managerException $e) {
+        $qwer = 123;
+        $e->getErrorInfoHTML();
+    }
+}
 ?>
 
 <script>

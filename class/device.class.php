@@ -9,34 +9,50 @@ interface iTemperatureSensor{
     public function getValue();
 }
 
+interface iDevice{
+    public function getDeviceID();
+    public function getNet();
+    public function getAdress();
+    public function getType();
+    public function addInBD();
+}
+
 /**
  * Class device - абстрактный класс описывающий физическое устройство
  */
-abstract class device {
+abstract class device implements iDevice {
 
     private $net = netDevice::NONE;
     private $adress = null;
     private $type = typeDevice::NONE;
     private $deviceID = 0;
+    private $disabled = 0;
+    private $alarm    = '';
 
-
-    public function __construct($deviceID, $net, $adr, $type) {
+    public function __construct($deviceID, $net, $adr, $type, $disabled, $alarm = '') {
         $this->net = $net;
         $this->adress = $adr;
         $this->type = $type;
         $this->deviceID = $deviceID;
+        $this->disabled = $disabled;
+        $this->alarm = $alarm;
     }
 
-    /**
-     * @return int
-     */
     public function getDeviceID() { return $this->deviceID; }
-
     public function getNet() { return $this->net; }
-
     public function getAdress() { return $this->adress; }
-    
     public function getType() { return $this->type; }
+
+    public function addInBD()
+    {
+        $conn = sqlDataBase::Connect();
+        $adr = $conn->getConnect()->real_escape_string($this->adress);
+        $alarm = $conn->getConnect()->real_escape_string($this->alarm);
+
+        $query = "INSERT tdevice (Adress, NetTypeID, SensorTypeID, Disabled, set_alarm) VALUES ('$adr', '$this->net', '$this->type', '$this->disabled', '$alarm')";
+
+        return queryDataBase::execute($conn, $query);
+    }
 
 }
 
@@ -50,8 +66,11 @@ class sensor extends device {
         $deviceID = $options['DeviceID'];
         $net = $options['NetTypeID'];
         $adress = $options['Adress'];
-        parent::__construct($deviceID, $net, $adress, $typeDevice);
+        $disabled = $options['Disabled'];
+        $alarm = $options['set_alarm'];
+        parent::__construct($deviceID, $net, $adress, $typeDevice, $disabled, $alarm);
     }
+
 }
 
 class maker extends device {
@@ -64,7 +83,8 @@ class maker extends device {
         $deviceID = $options['DeviceID'];
         $net = $options['NetTypeID'];
         $adress = $options['Adress'];
-        parent::__construct($deviceID, $net, $adress, $typeDevice);
+        $disabled = $options['Disabled'];
+        parent::__construct($deviceID, $net, $adress, $typeDevice, $disabled);
     }
 }
 

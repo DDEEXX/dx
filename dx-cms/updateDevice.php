@@ -20,32 +20,34 @@
     }
     else { // обновляем или добавляем запись
 
+        if ( !isset($_REQUEST['Disabled']) ) {$_REQUEST['Disabled'] = "off";}
+
         if (!isset($_REQUEST['ID']) || !isset($_REQUEST['Disabled']) || !isset($_REQUEST['deviceType']) ||
             !isset($_REQUEST['deviceNet']) || !isset($_REQUEST['Adress']) || !isset($_REQUEST['setAlarm'])) {
 
         }
 
-        //В массив заносим все параметры пришедшие в форму
+        //В массив заносим все параметры пришедшие из форму
+
         $arDevice = array(
             "DeviceID" =>  $_REQUEST['ID'],
             "Adress" =>  $_REQUEST['Adress'],
             "NetTypeID" =>  $_REQUEST['deviceNet'],
             "SensorTypeID" =>  $_REQUEST['deviceType'],
-            "Disabled" =>  $_REQUEST['Disabled'],
+            "Disabled" =>  ($_REQUEST['Disabled'] == 'on')?1:0,
             "set_alarm" =>  $_REQUEST['setAlarm'],
         );
 
+        $device = managerDevices::createDevice($arDevice);
+
         if (isset($_REQUEST['btAdd'])) { //Добавляем запись
             try {
-
-
-
+                managerDevices::addDevice($device);
+                unset($device);
                 echo "<span style='color:blue;'>Устройство добавленно в базу данных</span>", "\n";
-
-                throw new Exception();
-
             }
             catch (Exception $e) { //надо прописать исключение для каждоко своего типа
+                unset($device);
                 echo "<span style='color:red;'>Произошла ошибка при добавлении устройства в БД</span>";
                 //echo $e->getErrorInfoHTML();
             }
