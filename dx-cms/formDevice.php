@@ -8,17 +8,19 @@
 
 //Ес//ли это изменение данных, то получаем все значения из текщего объекта
 if ($_REQUEST['pDevices'] == "updateDevice") {
-    //$device = managerDevices::getDevice($_REQUEST['ID']);
     try {
-        $device = managerDevices::getDevice('30');
-        $deviceID = $device->getDeviceID();
-        $adress = $device->getAdress();
-        $netTitle = $device->getNet();
+        $device = managerDevices::getDevice($_REQUEST['ID']);
+        $deviceID   = $device->getDeviceID();
+        $adress     = $device->getAdress();
+        $netTitle   = $device->getNet();
         $deviceType = $device->getType();
+        $disabled   = $device->getDisabled();
+        $alarm      = $device->getAlarm();
     }
     catch (managerException $e) {
-        $qwer = 123;
-        $e->getErrorInfoHTML();
+        $err = "<span style='color:red;'>".$e->getErrorInfoHTML()."</span>";
+        echo $err;
+        die();
     }
 }
 ?>

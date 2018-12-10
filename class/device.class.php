@@ -14,6 +14,8 @@ interface iDevice{
     public function getNet();
     public function getAdress();
     public function getType();
+    public function getDisabled();
+    public function getAlarm();
     public function addInBD();
 }
 
@@ -23,7 +25,7 @@ interface iDevice{
 abstract class device implements iDevice {
 
     private $net = netDevice::NONE;
-    private $adress = null;
+    private $adress = '';
     private $type = typeDevice::NONE;
     private $deviceID = 0;
     private $disabled = 0;
@@ -42,6 +44,8 @@ abstract class device implements iDevice {
     public function getNet() { return $this->net; }
     public function getAdress() { return $this->adress; }
     public function getType() { return $this->type; }
+    public function getDisabled() {return $this->disabled;}
+    public function getAlarm() { return ""; }
 
     public function addInBD()
     {
