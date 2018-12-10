@@ -57,6 +57,8 @@
 
         }
 
+        unset($device);
+
     }
 
 ?>

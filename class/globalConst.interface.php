@@ -11,6 +11,7 @@ interface netDevice {
     const ONE_WIRE      = 1;
     const ETHERNET      = 2;
     const CUBIEBOARD    = 3;
+    const I2C           = 4;
 }
 
 interface typeDevice{

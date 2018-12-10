@@ -102,7 +102,7 @@ class managerDevices
      */
     public static function getDevice($idDevice) {
         $conn = sqlDataBase::Connect();
-        $query = "SELECT * FROM `tdevice` WHERE DeviceID = $idDevice";
+        $query = 'SELECT * FROM `tdevice` WHERE DeviceID = '.$idDevice;
         $arDevice = queryDataBase::getOne($conn, $query);
         if (is_null($arDevice)) {
             throw new managerException('не могу создать объект физ. устройства по его ID');

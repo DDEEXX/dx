@@ -76,6 +76,7 @@ if ($_REQUEST['pDevices'] == "updateDevice") {
                     <option value = '1'>1-wire</option>
                     <option value = '2'>Ethernet</option>
                     <option value = '3'>Cubieboard GPIO</option>
+                    <option value = '4'>I2C</option>
                 </select>
             </td>
         </tr>
