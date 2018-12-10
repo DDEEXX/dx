@@ -57,7 +57,7 @@ if ($p=="alarm") {
 
 <div id="page_alarm", class="grid_11">
 	<div class = "grid_11 alpha ui-corner-all ui-widget-header" style="margin-top: 5px">
-		<h2 style="margin-left:5px;font-size:150%;">Введите код снятия с сигнализации</h2>
+		<h2 style="margin-left:5px;font-size:150%;">Р’РІРµРґРёС‚Рµ РєРѕРґ СЃРЅСЏС‚РёСЏ СЃ СЃРёРіРЅР°Р»РёР·Р°С†РёРё</h2>
 	</div>
 	<div class = "clear"></div>
 	<div class = "grid_11 alpha">
@@ -146,7 +146,7 @@ if ( $p == "home" || empty($p) ) {
 <div id="page_home", class="grid_11">
 	<!--
 	<div class = "grid_11 alpha ui-corner-all ui-widget-header" style="margin-top: 5px">
-		<h2 style="margin-left:5px;font-size:150%;">Общая информация</h2>
+		<h2 style="margin-left:5px;font-size:150%;">РћР±С‰Р°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ</h2>
 	</div>
 	<div class = "clear"></div>
 	-->
@@ -160,7 +160,7 @@ if ( $p == "home" || empty($p) ) {
 	<div class = "clear"></div>
 	
 	<div id="alarm_key" class = "grid_2 alpha ui-corner-all ui-state-default" style="margin-top:5px;height:100px;width:138px">
-		<h2 style="margin-left:5px">Охрана</h2>
+		<h2 style="margin-left:5px">РћС…СЂР°РЅР°</h2>
 		<div style="text-align:center;margin-top:5px">
 			<img src="img2/icon/lock a.png">
 		</div>
@@ -182,9 +182,9 @@ if ( $p == "temp" ) {
 				$.get("dxMainPage.php?p=power1", function(data){});
 		});
 		
-		/* dev=temp - событие = температура */
-		/* label=temp_out_1 - имя датчика в базе = temp_out_1*/
-		/* type=last - тип события = последнее показание */
+		/* dev=temp - СЃРѕР±С‹С‚РёРµ = С‚РµРјРїРµСЂР°С‚СѓСЂР° */
+		/* label=temp_out_1 - РёРјСЏ РґР°С‚С‡РёРєР° РІ Р±Р°Р·Рµ = temp_out_1*/
+		/* type=last - С‚РёРї СЃРѕР±С‹С‚РёСЏ = РїРѕСЃР»РµРґРЅРµРµ РїРѕРєР°Р·Р°РЅРёРµ */
 		$.get("getData.php?dev=temp&label=temp_out_1&type=last", function(data)	{
 			$(".temp_out").html(data);
 		});
@@ -221,18 +221,18 @@ if ( $p == "temp" ) {
 <div id="page_temp", class="grid_11">
 	<div class = "grid_11 alpha">
 		<div class = "ui-corner-all ui-widget-header" style="margin-top: 5px">
-			<h2 style="margin-left:5px;font-size:150%;">Температура</h2>
+			<h2 style="margin-left:5px;font-size:150%;">РўРµРјРїРµСЂР°С‚СѓСЂР°</h2>
 		</div>
 	</div>
 	<div class = "clear"></div>
 	
 	<div id="accordion">
 		
-		<h3 class='dx'>План</h3>
+		<h3 class='dx'>РџР»Р°РЅ</h3>
 		<div style="padding:0;border:0;overflow:visible">
 			<div class = "grid_3 alpha">
 				<div class = "ui-corner-all ui-state-default" style="margin-top:5px;height:80px">
-					<h2 style="margin-left:5px">Температура на улице</h2>
+					<h2 style="margin-left:5px">РўРµРјРїРµСЂР°С‚СѓСЂР° РЅР° СѓР»РёС†Рµ</h2>
 					<img style="margin-top:5px;float:left" src="img2/temp.png">
 					<div id="temp_out" class="temp_out" style="margin-top:10px;"></div>
 				</div>
@@ -254,10 +254,10 @@ if ( $p == "temp" ) {
 			</div>
 			<div class = "clear"></div>	
 		</div>
-		<h3 class='dx'>Графики</h3>
+		<h3 class='dx'>Р“СЂР°С„РёРєРё</h3>
 		<div style="padding:0;border:0;overflow:visible">
 			<div class = "grid_5 alpha ui-corner-all ui-state-default" style="margin-top:5px;height:215px;width:418px">
-				<h2 style="margin-left:5px;float:left">Температура на улице</h2>
+				<h2 style="margin-left:5px;float:left">РўРµРјРїРµСЂР°С‚СѓСЂР° РЅР° СѓР»РёС†Рµ</h2>
 				<div class="temp_out g_temp"></div>
 				<div style="text-align: center">
 					<?php
@@ -265,13 +265,13 @@ if ( $p == "temp" ) {
 					?>
 				</div>
 				<div class="rg_g_temp" style="margin-left:5px;float:left">
-					<input type="radio" name="period" class="set_period" dev_type="temp_out_1" dev_period="day" checked id="day"><label for="day">за сутки</label>
-					<input type="radio" name="period" class="set_period" dev_type="temp_out_1" dev_period="month" id="month"><label for="month">за месяц</label>
+					<input type="radio" name="period" class="set_period" dev_type="temp_out_1" dev_period="day" checked id="day"><label for="day">Р·Р° СЃСѓС‚РєРё</label>
+					<input type="radio" name="period" class="set_period" dev_type="temp_out_1" dev_period="month" id="month"><label for="month">Р·Р° РјРµСЃСЏС†</label>
 				</div>
 			</div>
 			
 			<div class = "grid_5 omega ui-corner-all ui-state-default" style="margin-top:5px;height:215px;width:418px">
-				<h2 style="margin-left:5px;float:left">Температура дома</h2>
+				<h2 style="margin-left:5px;float:left">РўРµРјРїРµСЂР°С‚СѓСЂР° РґРѕРјР°</h2>
 				<div class="temp_hall g_temp"></div>
 				<div style="text-align: center">
 					<?php
@@ -279,8 +279,8 @@ if ( $p == "temp" ) {
 					?>
 				</div>
 				<div class="rg_g_temp" style="margin-left:5px;float:left">
-					<input type="radio" name="period2" class="set_period" dev_type="temp_hall" dev_period="day" checked id="day2"><label for="day2">за сутки</label>
-					<input type="radio" name="period2" class="set_period" dev_type="temp_hall" dev_period="month" id="month2"><label for="month2">за месяц</label>
+					<input type="radio" name="period2" class="set_period" dev_type="temp_hall" dev_period="day" checked id="day2"><label for="day2">Р·Р° СЃСѓС‚РєРё</label>
+					<input type="radio" name="period2" class="set_period" dev_type="temp_hall" dev_period="month" id="month2"><label for="month2">Р·Р° РјРµСЃСЏС†</label>
 				</div>
 			</div>
 			
@@ -292,7 +292,7 @@ if ( $p == "temp" ) {
 <?php
 }
 
-//Освещение
+//РћСЃРІРµС‰РµРЅРёРµ
 if ( $p == "light" ) {
 ?>
 
@@ -335,7 +335,7 @@ if ( $p == "light" ) {
 <div id="page_light", class="grid_11">
 	<div class = "grid_11 alpha">
 		<div class = "ui-corner-all ui-widget-header" style="margin-top: 5px">
-			<h2 style="margin-left:5px;font-size:150%;">Освещение</h2>
+			<h2 style="margin-left:5px;font-size:150%;">РћСЃРІРµС‰РµРЅРёРµ</h2>
 		</div>
 	</div>
 	<div class = "clear"></div>
@@ -366,9 +366,9 @@ if ( $p == "power") {
 <script type="text/javascript">
 
 	$(document).ready(function() {
-		/* dev=label - событие = считать показания цифрового датчика */
-		/* label=label_garage_door - имя датчика в базе = label_garage_door*/
-		/* type=last - тип события = последнее показание */
+		/* dev=label - СЃРѕР±С‹С‚РёРµ = СЃС‡РёС‚Р°С‚СЊ РїРѕРєР°Р·Р°РЅРёСЏ С†РёС„СЂРѕРІРѕРіРѕ РґР°С‚С‡РёРєР° */
+		/* label=label_garage_door - РёРјСЏ РґР°С‚С‡РёРєР° РІ Р±Р°Р·Рµ = label_garage_door*/
+		/* type=last - С‚РёРї СЃРѕР±С‹С‚РёСЏ = РїРѕСЃР»РµРґРЅРµРµ РїРѕРєР°Р·Р°РЅРёРµ */
 		$.get("getData.php?dev=label&label=label_garage_door&type=last", function(data)	{
 			$("#label_garage_door").html(data);
 		});
@@ -384,25 +384,25 @@ if ( $p == "power") {
 <div id="page_power" class="grid_11">
 	<div class = "grid_11 alpha">
 		<div class = "ui-corner-all ui-widget-header" style="margin-top: 5px">
-			<h2 style="margin-left:5px;font-size:150%;">Исполнители</h2>
+			<h2 style="margin-left:5px;font-size:150%;">РСЃРїРѕР»РЅРёС‚РµР»Рё</h2>
 		</div>
 	</div>
 	<div class = "clear"></div>
 	<div class = "grid_3 alpha">
 		<div class = "ui-corner-all ui-state-default ui-widget-content" style="margin-top:5px;height:90px;position:relative">
-			<h2 style="margin-left:5px">Гаражные ворота</h2>
+			<h2 style="margin-left:5px">Р“Р°СЂР°Р¶РЅС‹Рµ РІРѕСЂРѕС‚Р°</h2>
 			<div id="label_garage_door" style="float:left;margin-left:8px;margin-top:2px"></div>
 			<button style="margin-left:20px;margin-top:10px;" class="upDown"></button>
 		</div>
 	</div>
 	<div class = "grid_3 alpha">
 		<div class = "ui-corner-all ui-state-default ui-widget-content" style="margin-top:5px;height:90px;position:relative">
-			<h2 style="margin-left:5px">Ворота</h2>
+			<h2 style="margin-left:5px">Р’РѕСЂРѕС‚Р°</h2>
 		</div>
 	</div>
 	<div class = "grid_3 alpha">
 		<div class = "ui-corner-all ui-state-default ui-widget-content" style="margin-top:5px;height:90px;position:relative">
-			<h2 style="margin-left:5px">Калитка</h2>
+			<h2 style="margin-left:5px">РљР°Р»РёС‚РєР°</h2>
 		</div>
 	</div>
 </div>
@@ -426,7 +426,7 @@ if ( $p == "cam") {
 <div id="page_power" class="grid_11">
 	<div class = "grid_11 alpha">
 		<div class = "ui-corner-all ui-widget-header" style="margin-top: 5px">
-			<h2 style="margin-left:5px;font-size:150%;">Видеонаблюдение<h2>
+			<h2 style="margin-left:5px;font-size:150%;">Р’РёРґРµРѕРЅР°Р±Р»СЋРґРµРЅРёРµ<h2>
 		</div>
 	</div>
 	<div class = "clear"></div>
@@ -434,8 +434,8 @@ if ( $p == "cam") {
 		<div style="text-align: center">
 			<img id="monitor1" style="margin-top:5px;height:225px;width:400px" src="/zm/cgi-bin/nph-zms?mode=jpeg&scale=35&maxfps=0.5&buffer=1000&monitor=1&connkey=967224&rand=1483467515">
 		</div>
-		<a class="button" href="/zm/index.php?view=watch&mid=1" target="_blank" style="margin-left:5px;margin-top:5px">Просмотр в ZM</a>
-		<a class="button" href="cam_archive.php?m=1" target="_blank" style="margin-left:5px;margin-top:5px">Архив</a>
+		<a class="button" href="/zm/index.php?view=watch&mid=1" target="_blank" style="margin-left:5px;margin-top:5px">РџСЂРѕСЃРјРѕС‚СЂ РІ ZM</a>
+		<a class="button" href="cam_archive.php?m=1" target="_blank" style="margin-left:5px;margin-top:5px">РђСЂС…РёРІ</a>
 	</div>
 	<div class = "grid_5 omega ui-corner-all ui-state-default ui-widget-content" style="margin-top:5px;height:270px;position:relative;width:418px">
 	</div>

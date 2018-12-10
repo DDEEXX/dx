@@ -20,7 +20,7 @@ interface iDevice{
 }
 
 /**
- * Class device - абстрактный класс описывающий физическое устройство
+ * Class device - Р°Р±СЃС‚СЂР°РєС‚РЅС‹Р№ РєР»Р°СЃСЃ РѕРїРёСЃС‹РІР°СЋС‰РёР№ С„РёР·РёС‡РµСЃРєРѕРµ СѓСЃС‚СЂРѕР№СЃС‚РІРѕ
  */
 abstract class device implements iDevice {
 

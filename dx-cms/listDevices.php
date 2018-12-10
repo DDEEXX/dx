@@ -22,15 +22,15 @@ require_once(dirname(__FILE__)."/../class/globalConst.interface.php");
 
 <style>
 td, th {
-	padding: 1px 5px; /* Поля вокруг текста */
+	padding: 1px 5px; /* РџРѕР»СЏ РІРѕРєСЂСѓРі С‚РµРєСЃС‚Р° */
 }
 </style>
 
 <div style="margin-bottom: 5px">
     <form action="index.php#tabsDevices" method="get">
-        <!--Отправляем на сервер команду по нажатии кнопки "Добавить"-->
+        <!--РћС‚РїСЂР°РІР»СЏРµРј РЅР° СЃРµСЂРІРµСЂ РєРѕРјР°РЅРґСѓ РїРѕ РЅР°Р¶Р°С‚РёРё РєРЅРѕРїРєРё "Р”РѕР±Р°РІРёС‚СЊ"-->
         <input name="pDevices" type="hidden" value="addDevice">
-        <input class='btAddDevice' type="submit" value="Добавить">
+        <input class='btAddDevice' type="submit" value="Р”РѕР±Р°РІРёС‚СЊ">
     </form>
 </div>
 
@@ -39,16 +39,16 @@ td, th {
 <tr  style='padding-right: 5px'>
 <th></th>
 <th></th>
-<th>Сеть</th>
-<th>Адрес</th>
-<th>Тип</th>
+<th>РЎРµС‚СЊ</th>
+<th>РђРґСЂРµСЃ</th>
+<th>РўРёРї</th>
 </tr>
 </thead>
 <tbody>
 
 <?php
 
-/**Получить список всех физ. устройств*/
+/**РџРѕР»СѓС‡РёС‚СЊ СЃРїРёСЃРѕРє РІСЃРµС… С„РёР·. СѓСЃС‚СЂРѕР№СЃС‚РІ*/
 $listDevices = managerDevices::getListDevices();
 
 foreach($listDevices as $key => $device) {
@@ -67,7 +67,7 @@ foreach($listDevices as $key => $device) {
     echo "</tr>";
 }
 
-unset($listDevices); //!!! наверное надо освобождать каждый объект в массиае а не массив целиком
+unset($listDevices); //!!! РЅР°РІРµСЂРЅРѕРµ РЅР°РґРѕ РѕСЃРІРѕР±РѕР¶РґР°С‚СЊ РєР°Р¶РґС‹Р№ РѕР±СЉРµРєС‚ РІ РјР°СЃСЃРёР°Рµ Р° РЅРµ РјР°СЃСЃРёРІ С†РµР»РёРєРѕРј
 
 ?>
 

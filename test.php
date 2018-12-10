@@ -11,7 +11,7 @@ require_once("class/managerDevices.class.php");
 
 <head>
 <?php header('Content-type: text/html; charset=windows-1251')?>	
-	<title>без имени</title>
+	<title>Р±РµР· РёРјРµРЅРё</title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 	<meta name="generator" content="Geany 1.24.1" />
 </head>

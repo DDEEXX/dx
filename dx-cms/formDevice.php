@@ -6,7 +6,7 @@
  * Time: 11:01
  */
 
-//Ес//ли это изменение данных, то получаем все значения из текщего объекта
+//Р•СЃ//Р»Рё СЌС‚Рѕ РёР·РјРµРЅРµРЅРёРµ РґР°РЅРЅС‹С…, С‚Рѕ РїРѕР»СѓС‡Р°РµРј РІСЃРµ Р·РЅР°С‡РµРЅРёСЏ РёР· С‚РµРєС‰РµРіРѕ РѕР±СЉРµРєС‚Р°
 if ($_REQUEST['pDevices'] == "updateDevice") {
     try {
         $device = managerDevices::getDevice($_REQUEST['ID']);
@@ -51,28 +51,28 @@ if ($_REQUEST['pDevices'] == "updateDevice") {
     <table>
         <input id='deviceID' type='hidden' name='ID' value='-1'>
         <tr>
-            <td><label for='deviceDisabled'>Отключен</label></td>
+            <td><label for='deviceDisabled'>РћС‚РєР»СЋС‡РµРЅ</label></td>
             <td><input id='deviceDisabled' type='checkbox' name="Disabled"></td>
         </tr>
         <tr>
-            <td><label for='deviceType'>Тип</label></td>
+            <td><label for='deviceType'>РўРёРї</label></td>
             <td>
                 <select name='deviceType'>
-                    <option selected value = '0'>не выбран</option>
-                    <option value = '1'>Датчик температуры</option>
-                    <option value = '2'>Метка</option>
-                    <option value = '3'>Силовой ключ</option>
-                    <option value = '4'>Входящий ключ</option>
-                    <option value = '5'>Выходной ключ</option>
-                    <option value = '6'>Датчик наличия напряжения</option>
+                    <option selected value = '0'>РЅРµ РІС‹Р±СЂР°РЅ</option>
+                    <option value = '1'>Р”Р°С‚С‡РёРє С‚РµРјРїРµСЂР°С‚СѓСЂС‹</option>
+                    <option value = '2'>РњРµС‚РєР°</option>
+                    <option value = '3'>РЎРёР»РѕРІРѕР№ РєР»СЋС‡</option>
+                    <option value = '4'>Р’С…РѕРґСЏС‰РёР№ РєР»СЋС‡</option>
+                    <option value = '5'>Р’С‹С…РѕРґРЅРѕР№ РєР»СЋС‡</option>
+                    <option value = '6'>Р”Р°С‚С‡РёРє РЅР°Р»РёС‡РёСЏ РЅР°РїСЂСЏР¶РµРЅРёСЏ</option>
                 </select>
             </td>
         </tr>
         <tr>
-            <td><label for='deviceNet'>Соединение</label></td>
+            <td><label for='deviceNet'>РЎРѕРµРґРёРЅРµРЅРёРµ</label></td>
             <td>
                 <select name='deviceNet' id="deviceNet">
-                    <option selected value = '0'>не выбран</option>
+                    <option selected value = '0'>РЅРµ РІС‹Р±СЂР°РЅ</option>
                     <option value = '1'>1-wire</option>
                     <option value = '2'>Ethernet</option>
                     <option value = '3'>Cubieboard GPIO</option>
@@ -80,7 +80,7 @@ if ($_REQUEST['pDevices'] == "updateDevice") {
             </td>
         </tr>
         <tr>
-            <td><label for='deviceAdress'>Адрес</label></td>
+            <td><label for='deviceAdress'>РђРґСЂРµСЃ</label></td>
             <td><input id='deviceAdress' type='text' name="Adress"></td>
         </tr>
         <tr>

@@ -23,7 +23,7 @@ abstract class listArray implements Iterator
     }
 
     /**
-     * Return the current element - возвращает текущий элемент
+     * Return the current element - РІРѕР·РІСЂР°С‰Р°РµС‚ С‚РµРєСѓС‰РёР№ СЌР»РµРјРµРЅС‚
      * @link http://php.net/manual/en/iterator.current.php
      * @return mixed Can return any type.
      * @since 5.0.0
@@ -34,7 +34,7 @@ abstract class listArray implements Iterator
     }
 
     /**
-     * Return the key of the current element - возвращает ключ текущего элемента
+     * Return the key of the current element - РІРѕР·РІСЂР°С‰Р°РµС‚ РєР»СЋС‡ С‚РµРєСѓС‰РµРіРѕ СЌР»РµРјРµРЅС‚Р°
      * @link http://php.net/manual/en/iterator.key.php
      * @return mixed scalar on success, or null on failure.
      * @since 5.0.0
@@ -45,8 +45,8 @@ abstract class listArray implements Iterator
     }
 
     /**
-     * Move forward to next element - передвигаемся вперед на один элемент
-     * // возвращает текущий элемент
+     * Move forward to next element - РїРµСЂРµРґРІРёРіР°РµРјСЃСЏ РІРїРµСЂРµРґ РЅР° РѕРґРёРЅ СЌР»РµРјРµРЅС‚
+     * // РІРѕР·РІСЂР°С‰Р°РµС‚ С‚РµРєСѓС‰РёР№ СЌР»РµРјРµРЅС‚
      * @link http://php.net/manual/en/iterator.next.php
      * @return void Any returned value is ignored.
      * @since 5.0.0
@@ -57,7 +57,7 @@ abstract class listArray implements Iterator
     }
 
     /**
-     * Checks if current position is valid - проверяет, достигли ли мы конца массива
+     * Checks if current position is valid - РїСЂРѕРІРµСЂСЏРµС‚, РґРѕСЃС‚РёРіР»Рё Р»Рё РјС‹ РєРѕРЅС†Р° РјР°СЃСЃРёРІР°
      * @link http://php.net/manual/en/iterator.valid.php
      * @return boolean The return value will be casted to boolean and then evaluated.
      * Returns true on success or false on failure.
@@ -69,7 +69,7 @@ abstract class listArray implements Iterator
     }
 
     /**
-     * Rewind the Iterator to the first element - возвращает указатель на начало списка
+     * Rewind the Iterator to the first element - РІРѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РЅР°С‡Р°Р»Рѕ СЃРїРёСЃРєР°
      * @link http://php.net/manual/en/iterator.rewind.php
      * @return void Any returned value is ignored.
      * @since 5.0.0
@@ -80,7 +80,7 @@ abstract class listArray implements Iterator
     }
 
     /**
-     * метод для добавления настройки в хранилище
+     * РјРµС‚РѕРґ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РЅР°СЃС‚СЂРѕР№РєРё РІ С…СЂР°РЅРёР»РёС‰Рµ
      * @param $key
      * @param $value
      * @return $this
@@ -92,8 +92,8 @@ abstract class listArray implements Iterator
     }
 
     /**
-     * !!!d метод для получения настройки из хранилища
-     * что возвращать если $key неопределен
+     * !!!d РјРµС‚РѕРґ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РЅР°СЃС‚СЂРѕР№РєРё РёР· С…СЂР°РЅРёР»РёС‰Р°
+     * С‡С‚Рѕ РІРѕР·РІСЂР°С‰Р°С‚СЊ РµСЃР»Рё $key РЅРµРѕРїСЂРµРґРµР»РµРЅ
      * @param $key
      * @return mixed
      */

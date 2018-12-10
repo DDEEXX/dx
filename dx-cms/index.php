@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<?php header('Content-type: text/html; charset=windows-1251')?>
+<?php header('Content-type: text/html; charset=utf-8')?>
 <title>DX HOME CMS</title>
 <script src="../js2/jquery.js"></script>
 <script src="../js2/jquery-ui.js"></script>
@@ -26,7 +26,7 @@
 
 	<?php
 
-    //Если не задан параметр p установим его
+    //Р•СЃР»Рё РЅРµ Р·Р°РґР°РЅ РїР°СЂР°РјРµС‚СЂ p СѓСЃС‚Р°РЅРѕРІРёРј РµРіРѕ
 	if ( !isset($_REQUEST['p']) ) {
 		$_REQUEST['p'] = "list";
 	};
@@ -39,11 +39,11 @@
 	<div id="tabs"
 		style="width: 980px; margin-left: auto; margin-right: auto;">
 		<ul>
-            <li><a href="#tabs-1">Датчики</a></li>
-            <li><a href="#tabs-2">Модули</a></li>
+            <li><a href="#tabs-1">Р”Р°С‚С‡РёРєРё</a></li>
+            <li><a href="#tabs-2">РњРѕРґСѓР»Рё</a></li>
             <li><a href="#tabs-3">i-Button</a></li>
-            <li><a href="#tabs-4">Видео</a></li>
-            <li><a href="#tabsDevices">Физ. устройства</a></li>
+            <li><a href="#tabs-4">Р’РёРґРµРѕ</a></li>
+            <li><a href="#tabsDevices">Р¤РёР·. СѓСЃС‚СЂРѕР№СЃС‚РІР°</a></li>
 		</ul>
 		<div id="tabs-1">
 			<?php
@@ -76,7 +76,7 @@
             ?>
 		</div>
 		<div id="tabs-4">
-			<p>Видео</p>
+			<p>Р’РёРґРµРѕ</p>
 		</div>
 		<div id="tabsDevices">
 			<?php

@@ -20,12 +20,12 @@ class DBException extends Exception {
 class connectDBException extends DBException implements iDBException {
 
     /**
-     * Возвращает описание ошибки подключения к базе в виде html для вывода на странице
+     * Р’РѕР·РІСЂР°С‰Р°РµС‚ РѕРїРёСЃР°РЅРёРµ РѕС€РёР±РєРё РїРѕРґРєР»СЋС‡РµРЅРёСЏ Рє Р±Р°Р·Рµ РІ РІРёРґРµ html РґР»СЏ РІС‹РІРѕРґР° РЅР° СЃС‚СЂР°РЅРёС†Рµ
      * @return string
      */
     public function getErrorInfoHTML() {
-        $txt = "<h1>Сайт " . $_SERVER['SERVER_NAME'] . "</h1>";
-        $txt .= "<h2>Не могу подключиться к базе даных.</h2>";
+        $txt = "<h1>РЎР°Р№С‚ " . $_SERVER['SERVER_NAME'] . "</h1>";
+        $txt .= "<h2>РќРµ РјРѕРіСѓ РїРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ Рє Р±Р°Р·Рµ РґР°РЅС‹С….</h2>";
         $txt .= "<h3>" . $this->GetMessage() . "</h3>";
         return $txt;
     }
@@ -33,11 +33,11 @@ class connectDBException extends DBException implements iDBException {
 
 class querySelectDBException extends DBException implements iDBException {
     /**
-     * Возвращает описание ошибки выполнения SELECT запроса в виде html для вывода на странице
+     * Р’РѕР·РІСЂР°С‰Р°РµС‚ РѕРїРёСЃР°РЅРёРµ РѕС€РёР±РєРё РІС‹РїРѕР»РЅРµРЅРёСЏ SELECT Р·Р°РїСЂРѕСЃР° РІ РІРёРґРµ html РґР»СЏ РІС‹РІРѕРґР° РЅР° СЃС‚СЂР°РЅРёС†Рµ
      * @return string
      */
     public function getErrorInfoHTML() {
-        $txt = "<h1>Не могу получить данные из таблиц базы данных.</h1>";
+        $txt = "<h1>РќРµ РјРѕРіСѓ РїРѕР»СѓС‡РёС‚СЊ РґР°РЅРЅС‹Рµ РёР· С‚Р°Р±Р»РёС† Р±Р°Р·С‹ РґР°РЅРЅС‹С….</h1>";
         $txt .= "<h2>".$this->GetMessage()."</h2>";
         return $txt;
     }
@@ -45,11 +45,11 @@ class querySelectDBException extends DBException implements iDBException {
 
 class otherDBException extends DBException implements iDBException {
     /**
-     * Возвращает описание прочих ошибок виде html для вывода на странице
+     * Р’РѕР·РІСЂР°С‰Р°РµС‚ РѕРїРёСЃР°РЅРёРµ РїСЂРѕС‡РёС… РѕС€РёР±РѕРє РІРёРґРµ html РґР»СЏ РІС‹РІРѕРґР° РЅР° СЃС‚СЂР°РЅРёС†Рµ
      * @return string
      */
     public function getErrorInfoHTML() {
-        $txt = "<h1>Ошибка при работе с базой данных</h1>";
+        $txt = "<h1>РћС€РёР±РєР° РїСЂРё СЂР°Р±РѕС‚Рµ СЃ Р±Р°Р·РѕР№ РґР°РЅРЅС‹С…</h1>";
         $txt .= "<h2>".$this->GetMessage()."</h2>";
         return $txt;
     }
@@ -77,7 +77,7 @@ class sqlDataBase implements iSqlDataBase {
 	}
 
     /**
-     * Получить соединение mysqli
+     * РџРѕР»СѓС‡РёС‚СЊ СЃРѕРµРґРёРЅРµРЅРёРµ mysqli
      * @return mixed|mysqli
      */
     public function getConnect() {
@@ -85,7 +85,7 @@ class sqlDataBase implements iSqlDataBase {
     }
 
     /**
-     * Подключиться к базе данных
+     * РџРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ Рє Р±Р°Р·Рµ РґР°РЅРЅС‹С…
      * @return null|sqlDataBase
      * @throws connectDBException
      */
@@ -107,7 +107,7 @@ class sqlDataBase implements iSqlDataBase {
 class queryDataBase {
 
     /**
-     * Запросы типа INSERT и UPDATE
+     * Р—Р°РїСЂРѕСЃС‹ С‚РёРїР° INSERT Рё UPDATE
      * @param iSqlDataBase $conn
      * @param $query
      * @return bool
@@ -123,7 +123,7 @@ class queryDataBase {
     }
 
     /**
-     * Возвращает результат запроса в виде 2-х мерного ассоциативного массива
+     * Р’РѕР·РІСЂР°С‰Р°РµС‚ СЂРµР·СѓР»СЊС‚Р°С‚ Р·Р°РїСЂРѕСЃР° РІ РІРёРґРµ 2-С… РјРµСЂРЅРѕРіРѕ Р°СЃСЃРѕС†РёР°С‚РёРІРЅРѕРіРѕ РјР°СЃСЃРёРІР°
      * @param iSqlDataBase $conn
      * @param $query
      * @return array
@@ -141,7 +141,7 @@ class queryDataBase {
     }
 
     /**
-     * возвращает первую строку результата запроса в виде ассоциативного массива или null если ничего не выбрано
+     * РІРѕР·РІСЂР°С‰Р°РµС‚ РїРµСЂРІСѓСЋ СЃС‚СЂРѕРєСѓ СЂРµР·СѓР»СЊС‚Р°С‚Р° Р·Р°РїСЂРѕСЃР° РІ РІРёРґРµ Р°СЃСЃРѕС†РёР°С‚РёРІРЅРѕРіРѕ РјР°СЃСЃРёРІР° РёР»Рё null РµСЃР»Рё РЅРёС‡РµРіРѕ РЅРµ РІС‹Р±СЂР°РЅРѕ
      * @param iSqlDataBase $conn
      * @param $query
      * @return array|null
@@ -153,7 +153,7 @@ class queryDataBase {
             $row = $resQ->fetch_assoc();
             /**
             if (!is_array($row)) {
-                throw new otherDBException("Не могу результат запроса преобразовать в массив");
+                throw new otherDBException("РќРµ РјРѕРіСѓ СЂРµР·СѓР»СЊС‚Р°С‚ Р·Р°РїСЂРѕСЃР° РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ РІ РјР°СЃСЃРёРІ");
             }
             */
             $resQ->free();
@@ -162,7 +162,7 @@ class queryDataBase {
     }
 
     /**
-     * Возразает "сырой" результат запроса SELECT
+     * Р’РѕР·СЂР°Р·Р°РµС‚ "СЃС‹СЂРѕР№" СЂРµР·СѓР»СЊС‚Р°С‚ Р·Р°РїСЂРѕСЃР° SELECT
      * @param iSqlDataBase $conn
      * @param $query
      * @return mixed
@@ -181,7 +181,7 @@ class queryDataBase {
 class DB {
 
     /**
-     * Получить список физ. устройств в виде ассоциативного массива в соответствии с отбором
+     * РџРѕР»СѓС‡РёС‚СЊ СЃРїРёСЃРѕРє С„РёР·. СѓСЃС‚СЂРѕР№СЃС‚РІ РІ РІРёРґРµ Р°СЃСЃРѕС†РёР°С‚РёРІРЅРѕРіРѕ РјР°СЃСЃРёРІР° РІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРё СЃ РѕС‚Р±РѕСЂРѕРј
      * @param Iterator|null $sel
      * @return array
      * @throws connectDBException

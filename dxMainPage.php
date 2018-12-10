@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<?php header('Content-type: text/html; charset=windows-1251')?>
+<?php header('Content-type: text/html; charset=utf-8')?>
 <title>DX HOME</title>
 <script src="js2/jquery.js"></script>
 <script src="js2/jquery.timers.js"></script>
@@ -40,18 +40,18 @@ $(function() {
         event.preventDefault();
     });    
     
-    //подсвечиваем выбранный пунк меню
-    $('#mmenu li:first').addClass('ui-state-selected'); // при загрузке страницы сразу даем класс первой ссылке, то есть индексной странице
-    $('#mmenu a').each(function () { // проходим по нужным нам ссылками
-      var location = window.location.href; // переменная с адресом страницы
-      var link = this.href; // переменная с url ссылки
+    //РїРѕРґСЃРІРµС‡РёРІР°РµРј РІС‹Р±СЂР°РЅРЅС‹Р№ РїСѓРЅРє РјРµРЅСЋ
+    $('#mmenu li:first').addClass('ui-state-selected'); // РїСЂРё Р·Р°РіСЂСѓР·РєРµ СЃС‚СЂР°РЅРёС†С‹ СЃСЂР°Р·Сѓ РґР°РµРј РєР»Р°СЃСЃ РїРµСЂРІРѕР№ СЃСЃС‹Р»РєРµ, С‚Рѕ РµСЃС‚СЊ РёРЅРґРµРєСЃРЅРѕР№ СЃС‚СЂР°РЅРёС†Рµ
+    $('#mmenu a').each(function () { // РїСЂРѕС…РѕРґРёРј РїРѕ РЅСѓР¶РЅС‹Рј РЅР°Рј СЃСЃС‹Р»РєР°РјРё
+      var location = window.location.href; // РїРµСЂРµРјРµРЅРЅР°СЏ СЃ Р°РґСЂРµСЃРѕРј СЃС‚СЂР°РЅРёС†С‹
+      var link = this.href; // РїРµСЂРµРјРµРЅРЅР°СЏ СЃ url СЃСЃС‹Р»РєРё
       if(location == link) {
-        $('#mmenu li:first').removeClass('ui-state-selected'); // сначала удаляем класс с индексной страницы
-        $(this).parent().addClass('ui-state-selected'); // добавляем класс
+        $('#mmenu li:first').removeClass('ui-state-selected'); // СЃРЅР°С‡Р°Р»Р° СѓРґР°Р»СЏРµРј РєР»Р°СЃСЃ СЃ РёРЅРґРµРєСЃРЅРѕР№ СЃС‚СЂР°РЅРёС†С‹
+        $(this).parent().addClass('ui-state-selected'); // РґРѕР±Р°РІР»СЏРµРј РєР»Р°СЃСЃ
       }    
     });    
 
-    $('#mmenu').removeClass('ui-widget-content'); // при загрузке страницы сразу даем класс первой ссылке, то есть индексной странице
+    $('#mmenu').removeClass('ui-widget-content'); // РїСЂРё Р·Р°РіСЂСѓР·РєРµ СЃС‚СЂР°РЅРёС†С‹ СЃСЂР°Р·Сѓ РґР°РµРј РєР»Р°СЃСЃ РїРµСЂРІРѕР№ СЃСЃС‹Р»РєРµ, С‚Рѕ РµСЃС‚СЊ РёРЅРґРµРєСЃРЅРѕР№ СЃС‚СЂР°РЅРёС†Рµ
     
 });
 </script>
@@ -62,9 +62,9 @@ $(function() {
 <div class="container_12">
   <div class="grid_1">
 	<ul id="mmenu" class="ui-corner-all">
-		<li class="ui-corner-all"><a href="dxMainPage.php?p=home"><span class="ui-icon ui-icon-mmhome" title="Основная">1</span></a></li>
-		<li class="ui-corner-all"><a href="dxMainPage.php?p=temp"><span class="ui-icon ui-icon-mmtemp" title="Температура">2</span></a></li>
-		<li class="ui-corner-all"><a href="dxMainPage.php?p=light"><span class="ui-icon ui-icon-mmbulb" title="Освещение">3</span></a></li>
+		<li class="ui-corner-all"><a href="dxMainPage.php?p=home"><span class="ui-icon ui-icon-mmhome" title="РћСЃРЅРѕРІРЅР°СЏ">1</span></a></li>
+		<li class="ui-corner-all"><a href="dxMainPage.php?p=temp"><span class="ui-icon ui-icon-mmtemp" title="РўРµРјРїРµСЂР°С‚СѓСЂР°">2</span></a></li>
+		<li class="ui-corner-all"><a href="dxMainPage.php?p=light"><span class="ui-icon ui-icon-mmbulb" title="РћСЃРІРµС‰РµРЅРёРµ">3</span></a></li>
 		<li class="ui-corner-all"><a href="dxMainPage.php?p=power"><span class="ui-icon ui-icon-mmpower">4</span></a></li>
 		<li class="ui-corner-all"><a href="dxMainPage.php?p=n5"><span class="ui-icon ui-icon-mmheater">5</span></a></li>
 		<li class="ui-corner-all"><a href="dxMainPage.php?p=cam"><span class="ui-icon ui-icon-mmip_camera">6</span></a></li>

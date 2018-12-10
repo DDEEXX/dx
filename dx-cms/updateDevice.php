@@ -13,12 +13,12 @@
  */
 
 
-    if (isset($_REQUEST['btDelete'])) { //Удаляем запись
+    if (isset($_REQUEST['btDelete'])) { //РЈРґР°Р»СЏРµРј Р·Р°РїРёСЃСЊ
 
-        echo "<span style='color:blue;'>Данные из БД удалены</span>";
+        echo "<span style='color:blue;'>Р”Р°РЅРЅС‹Рµ РёР· Р‘Р” СѓРґР°Р»РµРЅС‹</span>";
 
     }
-    else { // обновляем или добавляем запись
+    else { // РѕР±РЅРѕРІР»СЏРµРј РёР»Рё РґРѕР±Р°РІР»СЏРµРј Р·Р°РїРёСЃСЊ
 
         if ( !isset($_REQUEST['Disabled']) ) {$_REQUEST['Disabled'] = "off";}
 
@@ -27,7 +27,7 @@
 
         }
 
-        //В массив заносим все параметры пришедшие из форму
+        //Р’ РјР°СЃСЃРёРІ Р·Р°РЅРѕСЃРёРј РІСЃРµ РїР°СЂР°РјРµС‚СЂС‹ РїСЂРёС€РµРґС€РёРµ РёР· С„РѕСЂРјСѓ
 
         $arDevice = array(
             "DeviceID" =>  $_REQUEST['ID'],
@@ -40,20 +40,20 @@
 
         $device = managerDevices::createDevice($arDevice);
 
-        if (isset($_REQUEST['btAdd'])) { //Добавляем запись
+        if (isset($_REQUEST['btAdd'])) { //Р”РѕР±Р°РІР»СЏРµРј Р·Р°РїРёСЃСЊ
             try {
                 managerDevices::addDevice($device);
                 unset($device);
-                echo "<span style='color:blue;'>Устройство добавленно в базу данных</span>", "\n";
+                echo "<span style='color:blue;'>РЈСЃС‚СЂРѕР№СЃС‚РІРѕ РґРѕР±Р°РІР»РµРЅРЅРѕ РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С…</span>", "\n";
             }
-            catch (Exception $e) { //надо прописать исключение для каждоко своего типа
+            catch (Exception $e) { //РЅР°РґРѕ РїСЂРѕРїРёСЃР°С‚СЊ РёСЃРєР»СЋС‡РµРЅРёРµ РґР»СЏ РєР°Р¶РґРѕРєРѕ СЃРІРѕРµРіРѕ С‚РёРїР°
                 unset($device);
-                echo "<span style='color:red;'>Произошла ошибка при добавлении устройства в БД</span>";
+                echo "<span style='color:red;'>РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР° РїСЂРё РґРѕР±Р°РІР»РµРЅРёРё СѓСЃС‚СЂРѕР№СЃС‚РІР° РІ Р‘Р”</span>";
                 //echo $e->getErrorInfoHTML();
             }
 
         }
-        elseif (isset($_REQUEST['btUpdate'])) { //Изменяем запись
+        elseif (isset($_REQUEST['btUpdate'])) { //РР·РјРµРЅСЏРµРј Р·Р°РїРёСЃСЊ
 
         }
 
@@ -62,6 +62,6 @@
 ?>
 
 <div>
-    <a href='index.php?pDevices=list#tabsDevices'><input class='btMainPage' type='button' value='На главную'></a>
+    <a href='index.php?pDevices=list#tabsDevices'><input class='btMainPage' type='button' value='РќР° РіР»Р°РІРЅСѓСЋ'></a>
 </div>
 

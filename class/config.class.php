@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Interface iConfigDB - âîçðàùàåò íàñòðîéêè ïîäêëþ÷åíèÿ ê áàçå äàííûõ mySQL
+ * Interface iConfigDB - Ð²Ð¾Ð·Ñ€Ð°Ñ‰Ð°ÐµÑ‚ Ð½Ð°ÑÑ‚Ñ€Ð¾Ð¹ÐºÐ¸ Ð¿Ð¾Ð´ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ñ Ðº Ð±Ð°Ð·Ðµ Ð´Ð°Ð½Ð½Ñ‹Ñ… mySQL
  */
 interface iConfigDB {
 	public function getHost();
@@ -13,7 +13,7 @@ interface iConfigDB {
 }
 
 /**
- * Class sqlConfig - íàñòðîéêè ïîäêëþ÷èåíèÿ ê áàçå äàííûõ
+ * Class sqlConfig - Ð½Ð°ÑÑ‚Ñ€Ð¾Ð¹ÐºÐ¸ Ð¿Ð¾Ð´ÐºÐ»ÑŽÑ‡Ð¸ÐµÐ½Ð¸Ñ Ðº Ð±Ð°Ð·Ðµ Ð´Ð°Ð½Ð½Ñ‹Ñ…
  */
 class sqlConfig implements iConfigDB {
     private $db_host;

@@ -21,11 +21,11 @@ class managerException extends Exception {
     }
 
     /**
-     * Возвращает описание ошибки выполнения SELECT запроса в виде html для вывода на странице
+     * Р’РѕР·РІСЂР°С‰Р°РµС‚ РѕРїРёСЃР°РЅРёРµ РѕС€РёР±РєРё РІС‹РїРѕР»РЅРµРЅРёСЏ SELECT Р·Р°РїСЂРѕСЃР° РІ РІРёРґРµ html РґР»СЏ РІС‹РІРѕРґР° РЅР° СЃС‚СЂР°РЅРёС†Рµ
      * @return string
      */
     public function getErrorInfoHTML() {
-        $txt = "<h1>ошибка при работе с физическими устройствами.</h1>";
+        $txt = "<h1>РѕС€РёР±РєР° РїСЂРё СЂР°Р±РѕС‚Рµ СЃ С„РёР·РёС‡РµСЃРєРёРјРё СѓСЃС‚СЂРѕР№СЃС‚РІР°РјРё.</h1>";
         $txt .= "<h2>".$this->GetMessage()."</h2>";
         return $txt;
     }
@@ -62,7 +62,7 @@ class deviceFactory {
         if (class_exists($className)) {
             return new $className($value);
         } else {
-            throw new \Exception("Неверный тип продукта");
+            throw new \Exception("РќРµРІРµСЂРЅС‹Р№ С‚РёРї РїСЂРѕРґСѓРєС‚Р°");
         }
 
     }
@@ -74,7 +74,7 @@ class managerDevices
 
     public static function createDevice(array $value) {
 
-        // Здесь создаём продукт с помощью Фабричного метода
+        // Р—РґРµСЃСЊ СЃРѕР·РґР°С‘Рј РїСЂРѕРґСѓРєС‚ СЃ РїРѕРјРѕС‰СЊСЋ Р¤Р°Р±СЂРёС‡РЅРѕРіРѕ РјРµС‚РѕРґР°
         $device = deviceFactory::build($value);
 
         return $device;
@@ -82,7 +82,7 @@ class managerDevices
     }
 
     /**
-     * Добавляет в базу данных новое физ. устройство
+     * Р”РѕР±Р°РІР»СЏРµС‚ РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С… РЅРѕРІРѕРµ С„РёР·. СѓСЃС‚СЂРѕР№СЃС‚РІРѕ
      * @param iDevice $device
      * @return bool
      */
@@ -93,7 +93,7 @@ class managerDevices
     }
 
     /**
-     * возвращает объект физ. устройства по его ID либо вызывает исключение
+     * РІРѕР·РІСЂР°С‰Р°РµС‚ РѕР±СЉРµРєС‚ С„РёР·. СѓСЃС‚СЂРѕР№СЃС‚РІР° РїРѕ РµРіРѕ ID Р»РёР±Рѕ РІС‹Р·С‹РІР°РµС‚ РёСЃРєР»СЋС‡РµРЅРёРµ
      * @param $idDevice
      * @return mixed
      * @throws connectDBException
@@ -105,14 +105,14 @@ class managerDevices
         $query = "SELECT * FROM `tdevice` WHERE DeviceID = $idDevice";
         $arDevice = queryDataBase::getOne($conn, $query);
         if (is_null($arDevice)) {
-            throw new managerException('не могу создать объект физ. устройства по его ID');
+            throw new managerException('РЅРµ РјРѕРіСѓ СЃРѕР·РґР°С‚СЊ РѕР±СЉРµРєС‚ С„РёР·. СѓСЃС‚СЂРѕР№СЃС‚РІР° РїРѕ РµРіРѕ ID');
         }
         $device = self::createDevice($arDevice);
         return $device;
     }
 
     /**
-     * Возвращает массив с именами менеджеров устройств (имена классов)
+     * Р’РѕР·РІСЂР°С‰Р°РµС‚ РјР°СЃСЃРёРІ СЃ РёРјРµРЅР°РјРё РјРµРЅРµРґР¶РµСЂРѕРІ СѓСЃС‚СЂРѕР№СЃС‚РІ (РёРјРµРЅР° РєР»Р°СЃСЃРѕРІ)
      * @return array
      */
     public static function arrayManagersDevices(){
@@ -121,7 +121,7 @@ class managerDevices
     }
 
     /**
-     * Проверяем есть ли менеджер с именем и возвращет это имя либо вызывает исключение (для отладки)
+     * РџСЂРѕРІРµСЂСЏРµРј РµСЃС‚СЊ Р»Рё РјРµРЅРµРґР¶РµСЂ СЃ РёРјРµРЅРµРј Рё РІРѕР·РІСЂР°С‰РµС‚ СЌС‚Рѕ РёРјСЏ Р»РёР±Рѕ РІС‹Р·С‹РІР°РµС‚ РёСЃРєР»СЋС‡РµРЅРёРµ (РґР»СЏ РѕС‚Р»Р°РґРєРё)
      * @param $nameManager
      * @return mixed
      * @throws Exception
@@ -135,7 +135,7 @@ class managerDevices
     }
 
     /**
-     * Получить все физ. устройства как объекты в виде массива
+     * РџРѕР»СѓС‡РёС‚СЊ РІСЃРµ С„РёР·. СѓСЃС‚СЂРѕР№СЃС‚РІР° РєР°Рє РѕР±СЉРµРєС‚С‹ РІ РІРёРґРµ РјР°СЃСЃРёРІР°
      * @param Iterator|null $sel
      * @return listDevices
      * @throws connectDBException
