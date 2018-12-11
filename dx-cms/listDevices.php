@@ -58,13 +58,14 @@ foreach($listDevices as $key => $device) {
     $netTitle = $device->getNet();
     $deviceType = $device->getType();
 
-    echo "<tr>";
-    echo "<td><a class='btEditDevice' href='index.php?pDevices=updateDevice&ID=$deviceID#tabsDevices'></a></td>";
-    echo "<td><a class='btDeleteDevice' href='index.php?pDevices=deleteDevice&ID=$deviceID'></a></td>";
-    echo "<td><img src='img2/netDevice_".$netTitle.".png'></td>";
-    echo "<td>".$adress."</td>";
-    echo "<td><img src='img2/deviceType_".$deviceType.".png'></td>";
-    echo "</tr>";
+    echo '<tr>';
+    echo '<td><a class="btEditDevice" href="index.php?pDevices=updateDevice&ID='.$deviceID.'#tabsDevices"></a></td>';
+    echo '<td><a class="btDeleteDevice" href="index.php?pDevices=deleteDevice&ID='.$deviceID.'"></a></td>';
+    echo '<td><img src="img2/netDevice_'.$netTitle.'.png"></td>';
+    echo '<td>'.$adress.'</td>';
+    echo '<td><img src="img2/deviceType_'.$deviceType.'.png"></td>';
+    echo '</tr>';
+
 }
 
 unset($listDevices); //!!! наверное надо освобождать каждый объект в массиае а не массив целиком

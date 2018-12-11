@@ -29,7 +29,7 @@ abstract class device implements iDevice {
     private $type = typeDevice::NONE;
     private $deviceID = 0;
     private $disabled = 0;
-    private $alarm    = '';
+    protected $alarm    = '';
 
     public function __construct($deviceID, $net, $adr, $type, $disabled, $alarm = '') {
         $this->net = $net;
@@ -141,6 +141,8 @@ class keyInSensor extends sensor  {
     {
         // TODO: Implement getValue() method.
     }
+
+    public function getAlarm() { return $this->alarm; }
 
 }
 
