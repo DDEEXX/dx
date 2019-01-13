@@ -108,6 +108,10 @@ class listDevices extends ArrayIterator {
 
 }
 
+class listUnits extends ArrayIterator {
+
+}
+
 class selectOption extends listArray {
 
     /**

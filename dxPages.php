@@ -1,12 +1,7 @@
 <?php
 $p = isset($_REQUEST['p'])?$_REQUEST['p']:"home";
 
-if (!isset($d)) {
-	require_once("class/class.php");
-	$d = new DX();
-}
-$alarm = $d->getAlarm();
-unset($d);
+$alarm = 'off'; //Это затычка
 
 if ($alarm!='off') {
 	$p="alarm";

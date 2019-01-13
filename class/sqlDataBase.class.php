@@ -182,23 +182,49 @@ class DB {
 
     /**
      * Получить список физ. устройств в виде ассоциативного массива в соответствии с отбором
-     * @param Iterator|null $sel
+     * @param Iterator|null $sel - отбор
      * @return array
      * @throws connectDBException
      * @throws querySelectDBException
      */
     static public function getListDevices(Iterator $sel = null){
 
-        /**
-        $query = "SELECT a.DeviceID, a.Adress, a.set_alarm, b.Title NetTitle, c.Title SensorType
-				FROM tdevice a
-				LEFT JOIN tnettype b ON a.NetTypeID = b.NetTypeID
-				LEFT JOIN tsensortype c ON a.SensorTypeID = c.SensorTypeID";
-        */
-
         $query = "SELECT * FROM tdevice";
+        $listDevices = self::getListBD($query, $sel);
+        return $listDevices;
+
+    }
+
+    /**
+     * Получить список модулей (лигических устройств) в виде ассоциативного массива в соответствии с отбором
+     * @param Iterator|null $sel - отбор
+     * @return array
+     * @throws connectDBException
+     * @throws querySelectDBException
+     */
+    static public function getListUnits(Iterator $sel = null){
+
+        //$query = "SELECT a.*, b.* FROM tunits a LEFT JOIN tdevice b ON a.DeviceID = b.DeviceID ";
+        $query = "SELECT * FROM tunits a LEFT JOIN tdevice b ON a.DeviceID = b.DeviceID ";
+        $listUnits = self::getListBD($query, $sel);
+        return $listUnits;
+
+    }
+
+    /**
+     * Получить список полей в виде ассоциативного массива
+     * в соответствии с шапкой запроса и отбором
+     * @param string $titleQuery - шапка запроса
+     * @param Iterator|null $sel - отбор в виде объекта итератора
+     * @return array
+     * @throws connectDBException
+     * @throws querySelectDBException
+     */
+    static function getListBD($titleQuery = '', Iterator $sel = null){
 
         $con = sqlDataBase::Connect();
+
+        $query = $con->getConnect()->real_escape_string($titleQuery);
 
         if (!is_null($sel)) {
             if ($sel instanceof selectOption) {
@@ -213,10 +239,10 @@ class DB {
 
                     $realValue = $con->getConnect()->real_escape_string($value);
                     if (is_int($value)) {
-                        $w = $w . " a.$key = $realValue";
+                        $w = $w . " $key = $realValue";
                     }
                     else {
-                        $w = $w . " a.$key = '$realValue'";
+                        $w = $w . " $key = '$realValue'";
                     }
 
                 }

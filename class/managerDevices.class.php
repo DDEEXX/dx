@@ -1,5 +1,5 @@
 <?php
-/**
+/** Менеджер физ. устройств
  * Created by PhpStorm.
  * User: root
  * Date: 23.11.18
