@@ -101,6 +101,7 @@ class temperatureSensor extends sensor {
     public function getValue()
     {
         // TODO: Implement getValue() method.
+        return 77;
     }
 
 }

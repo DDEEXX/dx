@@ -7,33 +7,18 @@
  */
 
 require_once(dirname(__FILE__)."/sqlDataBase.class.php");
+require_once(dirname(__FILE__)."/unit.class.php");
 require_once(dirname(__FILE__)."/lists.class.php");
 
 class unitFactory {
 
     public static function build (array $value) {
 
-        switch ($value['SensorTypeID']) {
-            case typeDevice::TEMPERATURE :
-                $className = 'temperatureSensor';
-                break;
-            case typeDevice::VOLTAGE :
-                $className = 'voltageSensor';
-                break;
-            case typeDevice::LABEL :
-                $className = 'labelSensor';
-                break;
-            case typeDevice::KEY_IN :
-                $className = 'keyInSensor';
-                break;
-            case typeDevice::POWER_KEY :
-                $className = 'powerKeyMaker';
-                break;
-            case typeDevice::KEY_OUT :
-                $className = 'keyOutMaker';
+        switch ($value['UniteTypeID']) {
+            case typeUnit::TEMPERATURE :
+                $className = 'temperatureUnit';
                 break;
             default : $className = '';
-
         }
 
         if (class_exists($className)) {
@@ -58,13 +43,20 @@ class managerUnits
 
     }
 
+    /**
+     * Получить модули как объекты в виде массива
+     * @param Iterator|null $sel
+     * @return listUnits
+     * @throws connectDBException
+     * @throws querySelectDBException
+     */
     public static function getListUnits(Iterator $sel = null){
 
         $arr = DB::getListUnits($sel);
         $list = new listUnits();
         foreach ($arr as $value) {
-           $Devices = self::createDevice($value);
-           $list->append($Devices);
+           $Unit = self::createDevice($value);
+           $list->append($Unit);
         }
         return $list;
 

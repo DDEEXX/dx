@@ -23,3 +23,13 @@ interface typeDevice{
     const KEY_OUT           = 5; //Выходной ключ - коммутирует маленькие токи
     const VOLTAGE           = 6; //Датчик наличия напряжения
 }
+
+interface typeUnit{
+    const NONE              = 0;
+    const TEMPERATURE       = 1; //Температура
+    const LABEL             = 2; //Метка
+    const POWER_KEY         = 3; //Силовой ключ (коммутирует высокое наряжение)
+    const KEY_IN            = 4; //Входящий ключ (сухой контакт и т.д.)
+    const KEY_OUT           = 5; //Выходной ключ - коммутирует маленькие токи
+    const VOLTAGE           = 6; //Датчик наличия напряжения
+}

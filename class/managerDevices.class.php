@@ -7,9 +7,9 @@
  */
 
 require_once(dirname(__FILE__)."/sqlDataBase.class.php");
-require_once(dirname(__FILE__)."/managerDevice.interface.php");
-require_once(dirname(__FILE__)."/managerTemperatureSensor.class.php");
-require_once(dirname(__FILE__)."/managerVoltageSensor.class.php");
+require_once(dirname(__FILE__) . "/managerDevice.interface.php");
+require_once(dirname(__FILE__) . "/managerTemperatureSensor.class.php");
+require_once(dirname(__FILE__) . "/managerVoltageSensor.class.php");
 require_once(dirname(__FILE__)."/lists.class.php");
 require_once(dirname(__FILE__)."/device.class.php");
 
@@ -135,7 +135,7 @@ class managerDevices
     }
 
     /**
-     * Получить все физ. устройства как объекты в виде массива
+     * Получить физ. устройства как объекты в виде массива
      * @param Iterator|null $sel
      * @return listDevices
      * @throws connectDBException
@@ -146,8 +146,8 @@ class managerDevices
         $arr = DB::getListDevices($sel);
         $list = new listDevices();
         foreach ($arr as $value) {
-            $Devices = self::createDevice($value);
-            $list->append($Devices);
+            $Device = self::createDevice($value);
+            $list->append($Device);
         }
         return $list;
     }

@@ -4,6 +4,7 @@ require_once("class/device.class.php");
 require_once("class/logger.class.php");
 require_once("class/managerDevices.class.php");
 require_once("class/lists.class.php");
+require_once("class/managerUnits.class.php");
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -26,11 +27,15 @@ catch(connectDBException $e) {
 }
 
 $sel = new selectOption();
-$sel->set('SensorTypeID',1);
+$sel->set('SensorTypeID', typeDevice::TEMPERATURE);
 
-$arr = DB::getListUnits($sel);
+$temperatureUnits = managerUnits::getListUnits($sel);
 
-var_dump($arr);
+foreach ($temperatureUnits as $tekUnit) {
+    $val = $tekUnit->getValue();
+}
+
+unset($temperatureUnits);
 
 
 ?>
