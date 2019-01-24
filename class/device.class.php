@@ -1,6 +1,18 @@
 <?php
 
 require_once(dirname(__FILE__)."/globalConst.interface.php");
+require_once(dirname(__FILE__)."/sqlDataBase.class.php");
+require_once(dirname(__FILE__)."/logger.class.php");
+
+if (file_exists("/opt/owfs/share/php/OWNet/ownet.php"))
+    require "/opt/owfs/share/php/OWNet/ownet.php";
+elseif (file_exists("/usr/share/php/OWNet/ownet.php"))
+    require "/usr/share/php/OWNet/ownet.php";
+elseif (file_exists(dirname(__FILE__).'/ownet.php'))
+    require dirname(__FILE__).'/ownet.php';
+else
+    die("File 'ownet.php' is not found.");
+
 
 /**
  * Interface iSensor
@@ -98,10 +110,50 @@ class temperatureSensor extends sensor {
         parent::__construct($options, typeDevice::TEMPERATURE);
     }
 
+    private function getValueOWNet()
+    {
+        $result = null;
+        $OWNetAdress = DB::getConst('OWNetAdress');
+        $adress = $this->getAdress();
+        if ( preg_match("/^28\./", $adress) ) { //это датчик DS18B20
+
+            $ow = new OWNet($OWNetAdress);
+
+            $tekValue = $ow->get('/uncached/'.$adress.'/temperature12');
+            if ( is_null($tekValue) || $tekValue == "0") { //если датчик не сработал попробуем еще один раз
+                sleep(1); //ждем 1 секунду
+                $tekValue = $ow->get('/uncached/'.$adress.'/temperature12');
+            }
+            if ( !is_null($tekValue) ) { //если получили температуру, то возвращаем результат
+                $result = $tekValue;
+            }
+            else { //запишем в лог об ошибке
+                $log = logger::getLogger();
+                $log->log('Ошибка получения температуры с датчика :: '.$adress, logger::ERROR);
+                unset($log);
+            }
+
+        }
+        else {
+            $log = logger::getLogger();
+            $log->log('Попытка получить температуру с датчика :: '.$adress, logger::ERROR);
+            unset($log);
+        }
+
+        return $result;
+    }
+
     public function getValue()
     {
         // TODO: Implement getValue() method.
-        return 77;
+        $result = null;
+        $disabled = $this->getDisabled();
+        if ($disabled==0) { // датчик включен
+            switch ($this->getNet()) {
+                case netDevice::ONE_WIRE : $result = $this->getValueOWNet(); break;
+            }
+        }
+        return $result;
     }
 
 }

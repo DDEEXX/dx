@@ -259,5 +259,33 @@ class DB {
 
     }
 
+    /**
+     * Получить значение константы по имени
+     * @param $name
+     * @return array|mixed|null
+     * @throws connectDBException
+     * @throws querySelectDBException
+     */
+    static public function getConst($name) {
+
+        $con = sqlDataBase::Connect();
+
+        $name = $con->getConnect()->real_escape_string($name);
+        $query = "SELECT Type, ValueInt, ValueDec, ValueTxt FROM tConst WHERE Name='$name' LIMIT 1";
+        $result = queryDataBase::getOne($con, $query);
+
+        if (!empty($result['Type'])) {
+            switch ($result['Type']) {
+                case 1 : $result = $result['ValueInt']; break;
+                case 2 : $result = $result['ValueDec']; break;
+                case 3 : $result = $result['ValueTxt']; break;
+            }
+        }
+        else {
+            $result = Null;
+        }
+        return $result;
+    }
+
 }
 ?>

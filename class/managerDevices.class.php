@@ -7,9 +7,9 @@
  */
 
 require_once(dirname(__FILE__)."/sqlDataBase.class.php");
-require_once(dirname(__FILE__) . "/managerDevice.interface.php");
-require_once(dirname(__FILE__) . "/managerTemperatureSensor.class.php");
-require_once(dirname(__FILE__) . "/managerVoltageSensor.class.php");
+//require_once(dirname(__FILE__) . "/managerDevice.interface.php");
+//require_once(dirname(__FILE__) . "/managerTemperatureSensor.class.php");
+//require_once(dirname(__FILE__) . "/managerVoltageSensor.class.php");
 require_once(dirname(__FILE__)."/lists.class.php");
 require_once(dirname(__FILE__)."/device.class.php");
 

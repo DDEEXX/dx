@@ -6,15 +6,23 @@
  * Time: 12:23
  */
 
-if (file_exists("/opt/owfs/share/php/OWNet/ownet.php"))
-    require "/opt/owfs/share/php/OWNet/ownet.php";
-elseif (file_exists("/usr/share/php/OWNet/ownet.php"))
-    require "/usr/share/php/OWNet/ownet.php";
-elseif (file_exists("class/ownet.php"))
-    require "class/ownet.php";
-else
-    die("File 'ownet.php' is not found.");
+require_once(dirname(__FILE__).'/class/lists.class.php');
+require_once(dirname(__FILE__).'/class/managerUnits.class.php');
+require_once(dirname(__FILE__).'/class/globalConst.interface.php');
 
+$sel = new selectOption();
+$sel->set('SensorTypeID', typeDevice::TEMPERATURE);
+$sel->set('Disabled', 0);
 
+$temperatureUnits = managerUnits::getListUnits($sel);
+
+foreach ($temperatureUnits as $tekUnit) {
+    $val = $tekUnit->getValue();
+    if (!is_null($val)) {
+        $tekUnit->writeValue($val);
+    }
+}
+
+unset($temperatureUnits);
 
 ?>

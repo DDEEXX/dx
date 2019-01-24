@@ -18,25 +18,20 @@ require_once("class/managerUnits.class.php");
 <body>
 <?php
 
-try {
-    $con = sqlDataBase::Connect();
-}
-catch(connectDBException $e) {
-	echo $e->getErrorInfoHTML();
-	die();
-}
-
 $sel = new selectOption();
 $sel->set('SensorTypeID', typeDevice::TEMPERATURE);
+$sel->set('Disabled', 0);
 
 $temperatureUnits = managerUnits::getListUnits($sel);
 
 foreach ($temperatureUnits as $tekUnit) {
     $val = $tekUnit->getValue();
+    if (!is_null($val)) {
+        $tekUnit->writeValue($val);
+    }
 }
 
 unset($temperatureUnits);
-
 
 ?>
 
