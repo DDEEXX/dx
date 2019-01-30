@@ -136,7 +136,7 @@ if ($p=="alarm") {
 if ( $p == "home" || empty($p) ) {
 ?>
 
-<script src="/js2/home.js"></script>
+<script src="js2/home.js"></script>
 
 <div id="page_home", class="grid_11">
 	<!--
@@ -148,7 +148,7 @@ if ( $p == "home" || empty($p) ) {
 	<div class = "grid_9 alpha homeweather">
 	</div>
 	<div class = "grid_2 omega">
-		<div id="TekDate" class="TekDate" style="font-size:120%"></div><br>			
+		<div id="TekDate" class="TekDate" style="font-size:120%"></div><br>
 		<div id="TekTime" class="TekTime" style="font-size:160%"></div>						
 	</div>
 	
