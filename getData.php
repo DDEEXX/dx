@@ -14,18 +14,18 @@ if ( $_REQUEST['dev'] == "temp" ) { //получаем температру
         $temperature = (double)$value['Value'];
         // время с последнего имерения в течение которого температура считается еще актуальной
         $actualTimeTemperature = DB::getConst('ActualTimeTemperature');
-        $actualTemp = ( (time() - $value['Date']) < $actualTimeTemperature );
+        $actualTemp = ( (time() - strtotime($value['Date'])) < $actualTimeTemperature );
         $temperature = round($temperature, $temperaterePrecision);
         echo "$temperature"."&deg";
 
         if ($actualTemp) {
             echo '<style>
-                #temp_hall {color: #8B4513}
+                #'.$label.' {color: #8B4513}
               </style>';
         }
         else {
             echo '<style>
-                #temp_hall {color: #8a8a8a}
+                #'.$label.' {color: #8a8a8a}
               </style>';
         }
 

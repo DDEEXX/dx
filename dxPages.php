@@ -180,13 +180,16 @@ if ( $p == "temp" ) {
 		/* dev=temp - событие = температура */
 		/* label=temp_out_1 - имя датчика в базе = temp_out_1*/
 		/* type=last - тип события = последнее показание */
-		// $.get("getData.php?dev=temp&label=temp_out_1&type=last", function(data)	{
-		// 	$(".temp_out").html(data);
-		// });
+		$.get("getData.php?dev=temp&label=temp_out_1&type=last", function(data)	{
+			$("#temp_out").html(data);
+		});
 		$.get("getData.php?dev=temp&label=temp_hall&type=last", function(data) {
 			$("#temp_hall").html(data);
 		});
-		
+        $.get("getData.php?dev=temp&label=temp_bedroom&type=last", function(data) {
+            $("#temp_bedroom").html(data);
+        });
+
 		$("#accordion").accordion();
 		
 		$(".rg_g_temp").buttonset();
@@ -197,10 +200,10 @@ if ( $p == "temp" ) {
 		
 	});
 
-	$(document).everyTime("60s", function(i) {
-		// $.get("getData.php?dev=temp&label=temp_out_1&type=last", function(data) {
-		// 	$(".temp_out").html(data);
-		// });
+	$(document).everyTime("300s", function(i) {
+		$.get("getData.php?dev=temp&label=temp_out_1&type=last", function(data) {
+			$("#temp_out").html(data);
+		});
         $.get("getData.php?dev=temp&label=temp_hall&type=last", function(data) {
             $("#temp_hall").html(data);
         });
@@ -243,8 +246,9 @@ if ( $p == "temp" ) {
 			<div class = "clear"></div>
 			<div class = "grid_11 alpha">
 				<div class = "ui-corner-all ui-state-default ui-widget-content" style="height: 500px;margin-top:5px;position:relative">
-				<div id="floor1"><img src="img2/home_.png"></div>
-				<div id="temp_hall" class="temp_hall ui-corner-all ui-state-default ui-widget-content" style="position:absolute;left:120px;top:220px"></div>
+				    <div id="floor1"><img src="img2/home_.png"></div>
+				    <div id="temp_hall" class="ui-corner-all ui-state-default ui-widget-content" style="position:absolute;left:120px;top:220px"></div>
+                    <div id="temp_bedroom" class="ui-corner-all ui-state-default ui-widget-content" style="position:absolute;left:560px;top:310px"></div>
 				</div>
 			</div>
 			<div class = "clear"></div>	
