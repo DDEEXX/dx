@@ -72,6 +72,12 @@ class deviceFactory {
 class managerDevices
 {
 
+    /**
+     * Возвращает объект ассоциированный с определенным физ. устройсвом
+     * @param array $value
+     * @return mixed
+     * @throws Exception
+     */
     public static function createDevice(array $value) {
 
         // Здесь создаём продукт с помощью Фабричного метода

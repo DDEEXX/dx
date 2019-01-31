@@ -9,6 +9,7 @@
 require_once(dirname(__FILE__)."/sqlDataBase.class.php");
 require_once(dirname(__FILE__)."/unit.class.php");
 require_once(dirname(__FILE__)."/lists.class.php");
+require_once(dirname(__FILE__).'/globalConst.interface.php');
 
 class unitFactory {
 
@@ -59,6 +60,32 @@ class managerUnits
            $list->append($Unit);
         }
         return $list;
+
+    }
+
+    /**
+     * Ищет модуль по имени. Если модуля с таким именем нет, то возвращает null
+     * @param $label
+     * @return mixed|null
+     * @throws connectDBException
+     * @throws querySelectDBException
+     */
+    public static function getUnitLabel($label) {
+
+        $sel = new selectOption();
+        $sel->set('UnitLabel', $label);
+
+        $temperatureUnits = self::getListUnits($sel);
+
+        $resUnit = null;
+
+        foreach ($temperatureUnits as $tekUnit) {
+            $resUnit = $tekUnit;
+        }
+
+        unset($temperatureUnits);
+
+        return $resUnit;
 
     }
 

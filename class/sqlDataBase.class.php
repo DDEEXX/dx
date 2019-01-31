@@ -148,7 +148,7 @@ class queryDataBase {
      * @throws querySelectDBException
      */
     public static function getOne(iSqlDataBase $conn, $query) {
-        $row = array();
+        $row = null;
         if ($resQ = self::getRaw($conn, $query)) {
             $row = $resQ->fetch_assoc();
             /**
@@ -287,5 +287,17 @@ class DB {
         return $result;
     }
 
+    static public function getLastValueUnit($unit) {
+
+        $uniteID = $unit->getId();
+        $nameTabValue = 'tvalue_'.$unit->getValueTable();
+        $query = 'SELECT Date, Value FROM '.$nameTabValue.' WHERE UnitID="'.$uniteID.'" ORDER BY ValueID DESC LIMIT 1';
+
+        $con = sqlDataBase::Connect();
+        $result = queryDataBase::getOne($con, $query);
+
+        return $result;
+
+    }
 }
 ?>

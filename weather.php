@@ -1,5 +1,7 @@
 <?php
 
+require_once(dirname(__FILE__)."/class/sqlDataBase.class.php");
+
 class widgetWeather {
 
     const cache_lifetime = 7200; //время кэша файла в секундах, 3600=1 час
@@ -9,7 +11,10 @@ class widgetWeather {
     private static $url = null; // путь до файла xml в интернете
 
     static private function init() {
-        if (is_null(self::$city_id)) self::$city_id = 28925;
+        if (is_null(self::$city_id)) {
+            $cityId = DB::getConst('WeatherCityId');
+            self::$city_id = $cityId;
+        }
         if (is_null(self::$cache_file)) self::$cache_file = 'cache/weather_'.self::$city_id.'.xml';
         if (is_null(self::$url)) self::$url = 'http://informer.gismeteo.ru/xml/'.self::$city_id.'.xml';
     }
@@ -208,7 +213,7 @@ class widgetWeather {
         for ($i=1 ; $i<=3 ; $i++) {
             $temp_class = $w[$i]['temp_class'];
             $temp = $w[$i]["temp"];
-            $img = widgetWeather::get_img($w[0]["tod"],
+            $img = widgetWeather::get_img($w[$i]["tod"],
                 $w[$i]["precipitation"],
                 $w[$i]["cloudiness"],
                 $w[$i]["rpower"],

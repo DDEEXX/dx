@@ -33,12 +33,28 @@ abstract class unit implements iUnit {
         unset($this->device);
     }
 
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
 }
 
 class sensorUnit extends unit
 {
 
     protected $valueTable = 0;
+
+    /**
+     * @return int|mixed
+     */
+    public function getValueTable()
+    {
+        return $this->valueTable;
+    }
 
     /**
      * sensorUnit constructor.
@@ -128,7 +144,8 @@ class temperatureUnit extends sensorUnit {
      */
     public function readValue()
     {
-
+        $value = DB::getLastValueUnit($this);
+        return $value;
     }
 
 }

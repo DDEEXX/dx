@@ -180,35 +180,35 @@ if ( $p == "temp" ) {
 		/* dev=temp - событие = температура */
 		/* label=temp_out_1 - имя датчика в базе = temp_out_1*/
 		/* type=last - тип события = последнее показание */
-		$.get("getData.php?dev=temp&label=temp_out_1&type=last", function(data)	{
-			$(".temp_out").html(data);
-		});
+		// $.get("getData.php?dev=temp&label=temp_out_1&type=last", function(data)	{
+		// 	$(".temp_out").html(data);
+		// });
 		$.get("getData.php?dev=temp&label=temp_hall&type=last", function(data) {
-			$(".temp_hall").html(data);
+			$("#temp_hall").html(data);
 		});
 		
 		$("#accordion").accordion();
 		
 		$(".rg_g_temp").buttonset();
 		
-		$(".set_period").click(function () {
-			$("#g_" + $(this).attr("dev_type")).attr("src", "graph.php?label="+$(this).attr("dev_type")+"&date_from="+$(this).attr("dev_period")+"&rnd="+Math.random());
-		});
+		// $(".set_period").click(function () {
+		// 	$("#g_" + $(this).attr("dev_type")).attr("src", "graph.php?label="+$(this).attr("dev_type")+"&date_from="+$(this).attr("dev_period")+"&rnd="+Math.random());
+		// });
 		
 	});
 
 	$(document).everyTime("60s", function(i) {
-		$.get("getData.php?dev=temp&label=temp_out_1&type=last", function(data) {
-			$(".temp_out").html(data);
-		});
-		$.get("getData.php?dev=temp&label=temp_hall&type=last", function(data) {
-			$(".temp_hall").html(data);
-		});
+		// $.get("getData.php?dev=temp&label=temp_out_1&type=last", function(data) {
+		// 	$(".temp_out").html(data);
+		// });
+        $.get("getData.php?dev=temp&label=temp_hall&type=last", function(data) {
+            $("#temp_hall").html(data);
+        });
 	});
 	
-	$(document).everyTime("60s", function(i) {
-		$('#g_temp_out_1').attr('src', 'graph.php?label=temp_out_1&t=line&date_from=day&'+Math.random());
-	});
+	// $(document).everyTime("60s", function(i) {
+	// 	$('#g_temp_out_1').attr('src', 'graph.php?label=temp_out_1&t=line&date_from=day&'+Math.random());
+	// });
 	
 
 </script>
@@ -256,7 +256,7 @@ if ( $p == "temp" ) {
 				<div class="temp_out g_temp"></div>
 				<div style="text-align: center">
 					<?php
-						echo '<img id="g_temp_out_1" src="graph.php?label=temp_out_1&t=line&date_from=day&'.rand().'" height="160">';
+//						echo '<img id="g_temp_out_1" src="graph.php?label=temp_out_1&t=line&date_from=day&'.rand().'" height="160">';
 					?>
 				</div>
 				<div class="rg_g_temp" style="margin-left:5px;float:left">
@@ -270,7 +270,7 @@ if ( $p == "temp" ) {
 				<div class="temp_hall g_temp"></div>
 				<div style="text-align: center">
 					<?php
-						echo '<img id="g_temp_hall" src="graph.php?label=temp_hall&t=line&date_from=day&'.rand().'" height="160">';
+//						echo '<img id="g_temp_hall" src="graph.php?label=temp_hall&t=line&date_from=day&'.rand().'" height="160">';
 					?>
 				</div>
 				<div class="rg_g_temp" style="margin-left:5px;float:left">
