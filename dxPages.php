@@ -260,12 +260,13 @@ if ( $p == "temp" ) {
 				<div class="temp_out g_temp"></div>
 				<div style="text-align: center">
 					<?php
-//						echo '<img id="g_temp_out_1" src="graph.php?label=temp_out_1&t=line&date_from=day&'.rand().'" height="160">';
+						echo '<img id="g_temp_out_1" src="graph.php?label=temp_out_1&t=line&date_from=day&'.rand().'" height="160">';
 					?>
 				</div>
 				<div class="rg_g_temp" style="margin-left:5px;float:left">
-					<input type="radio" name="period" class="set_period" dev_type="temp_out_1" dev_period="day" checked id="day"><label for="day">за сутки</label>
-					<input type="radio" name="period" class="set_period" dev_type="temp_out_1" dev_period="month" id="month"><label for="month">за месяц</label>
+					<input type="radio" name="period" class="set_period" dev_type="temp_out_1" dev_period="day" checked id="day_out1"><label for="day_out1">за сутки</label>
+                    <input type="radio" name="period" class="set_period" dev_type="temp_out_1" dev_period="week" id="week_out1"><label for="week_out1">за неделю</label>
+					<input type="radio" name="period" class="set_period" dev_type="temp_out_1" dev_period="month" id="month_out1"><label for="month_out1">за месяц</label>
 				</div>
 			</div>
 			
@@ -278,8 +279,9 @@ if ( $p == "temp" ) {
 					?>
 				</div>
 				<div class="rg_g_temp" style="margin-left:5px;float:left">
-					<input type="radio" name="period2" class="set_period" dev_type="temp_hall" dev_period="day" checked id="day2"><label for="day2">за сутки</label>
-					<input type="radio" name="period2" class="set_period" dev_type="temp_hall" dev_period="month" id="month2"><label for="month2">за месяц</label>
+					<input type="radio" name="period2" class="set_period" dev_type="temp_hall" dev_period="day" checked id="day_hall"><label for="day_hall">за сутки</label>
+                    <input type="radio" name="period2" class="set_period" dev_type="temp_hall" dev_period="week" id="week_hall"><label for="week_hall">за неделю</label>
+					<input type="radio" name="period2" class="set_period" dev_type="temp_hall" dev_period="month" id="month_hall"><label for="month_hall">за месяц</label>
 				</div>
 			</div>
 			
