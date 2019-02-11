@@ -195,7 +195,9 @@ class keyInSensor extends sensor  {
         // TODO: Implement getValue() method.
     }
 
-    public function getAlarm() { return $this->alarm; }
+    public function getAlarm() {
+        return $this->alarm;
+    }
 
 }
 

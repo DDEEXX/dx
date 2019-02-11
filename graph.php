@@ -2,56 +2,33 @@
 // $_GET['']:
 // - label - название датчика температуры
 // - t = line|bar - тип графика - линейный или столбчатая
-// - date_from - day|week|month|[дата] - дата начала начала, если day|week|month - за день или месяц
+// - date_from - day|week|month|[дата] - дата начала начала, если day|week|month - за день, неделю или месяц
 // - date_to - дата окончания
 
 require_once(dirname(__FILE__).'/lib2/jpgraph/jpgraph.php');
 require_once(dirname(__FILE__).'/lib2/jpgraph/jpgraph_bar.php');
-require_once(dirname(__FILE__).'/lib2/jpgraph/jpgraph.php');
+require_once(dirname(__FILE__).'/lib2/jpgraph/jpgraph_line.php');
+require_once(dirname(__FILE__).'/class/managerUnits.class.php');
+require_once(dirname(__FILE__).'/class/logger.class.php');
+require_once(dirname(__FILE__).'/class/globalConst.interface.php');
 
 //Вид графика линейный или столбчатый
+if (!isset($_GET['t'])) { $_GET['t'] = graphType::line; }
 $grType = $_GET['t'];
-if ( !isset($grType) || empty($grType) ) {
-    $grType = 'line';
+
+if (!isset($_GET['date_from'])) { $_GET['date_from'] = null; }
+if (!isset($_GET['date_to'])) { $_GET['date_to'] = null; }
+
+
+$unit = managerUnits::getUnitLabel($_GET['label']);
+if (is_null($unit)) {
+    $log = logger::getLogger();
+    $log->log('Молуль с именем :: '.$label.' :: не найден (graph.php)', logger::ERROR);
+    unset($log);
+    exit("#label");
 }
 
-//Если конечная дата не задана, используем настоящее время
-if ( !isset($_GET['date_to']) || empty($_GET['date_to']) ) {
-	$date_to = "NOW()";
-}
-else {
-	$date_to = "'".$_GET['date_to']."'";
-}
-
-//Обрабатываем начальную дату
-if ( !isset($_GET['date_from']) || empty($_GET['date_from']) || $_GET['date_from'] == 'day') {
-	$date_from = "($date_to - INTERVAL 1 DAY)";
-	$date_format = "DATE_FORMAT(Date, '%H:%i')";
-}
-elseif ( $_GET['date_from'] == "month" ) {
-	$date_from = "($date_to - INTERVAL 1 MONTH)";
-	$date_format = "DATE_FORMAT(Date, '%d.%m')";
-}
-else {
-	$date_from = $_GET['date_from'];
-	$date_format = "DATE_FORMAT(Date, '%d.%m')";
-}
-
-$id = $d->getId($_GET['label']);
-if (!$id) {	// такой записи нет в таблице tunits, надо что-то записать в лог, сделаю позже
-	$d->writeLog("В таблице tunits нет записи с UnitLabel = ".$_GET['label']);
-	exit("#id");
-}
-
-$nameTabValue = $d->getTabValue($id);
-if (!$d->chekTab($nameTabValue)) { // в БД нет таблицы и именем $nameTabValue, надо что-то записать в лог, сделаю позже
-	$d->writeLog("B БД нет таблицы и именем ".$nameTabValue);
-	exit("#tab");
-}
-
-$quely = "SELECT Value, $date_format Date_f FROM ".$nameTabValue." WHERE UnitID=".$id." AND Date>=$date_from AND Date<=$date_to ORDER BY Date";
-
-$result = $d->get_array($quely);
+$result = $unit->getTemperatureForInterval($_GET['date_from'], $_GET['date_to'], $grType);
 
 $count_r = count($result);
 
@@ -88,13 +65,13 @@ if ($count_r > 1) {
 	$graph->yaxis->HideFirstLastLabel(); 
 	$graph->yaxis->SetColor('lightblue');
 
-	if ($_GET['t'] == 'line') {
+	if ($grType == graphType::line) {
 		$l1=new LinePlot($ydata);
 		$graph->Add($l1);
 		$l1->SetColor('#99ffff');
 		$l1->SetWeight(1);
 	}
-	elseif ($_GET['t'] = 'bar') {
+	elseif ($grType == graphType::bar) {
 		$b1 = new BarPlot($ydata);
 		$graph->Add($b1);
 		$b1->SetWidth(0.1);

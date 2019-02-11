@@ -33,3 +33,8 @@ interface typeUnit{
     const KEY_OUT           = 5; //Выходной ключ - коммутирует маленькие токи
     const VOLTAGE           = 6; //Датчик наличия напряжения
 }
+
+interface graphType {
+    const line = 0; //линейный график
+    const bar  = 1; //столбчатый график
+}
