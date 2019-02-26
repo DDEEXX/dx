@@ -19,6 +19,9 @@ class unitFactory {
             case typeUnit::TEMPERATURE :
                 $className = 'temperatureUnit';
                 break;
+            case typeUnit::KEY_IN :
+                $className = 'keyInUnit';
+                break;
             default : $className = '';
         }
 
@@ -75,15 +78,15 @@ class managerUnits
         $sel = new selectOption();
         $sel->set('UnitLabel', $label);
 
-        $temperatureUnits = self::getListUnits($sel);
+        $listUnits = self::getListUnits($sel);
 
         $resUnit = null;
 
-        foreach ($temperatureUnits as $tekUnit) {
+        foreach ($listUnits as $tekUnit) {
             $resUnit = $tekUnit;
         }
 
-        unset($temperatureUnits);
+        unset($listUnits);
 
         return $resUnit;
 

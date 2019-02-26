@@ -55,8 +55,8 @@ class deviceFactory {
             case typeDevice::KEY_OUT :
                 $className = 'keyOutMaker';
                 break;
-            default : $className = '';
-
+            default :
+                return null;
         }
 
         if (class_exists($className)) {

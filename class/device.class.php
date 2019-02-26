@@ -190,9 +190,51 @@ class keyInSensor extends sensor  {
         parent::__construct($options, typeDevice::KEY_IN);
     }
 
+    private function getValueOWNet()
+    {
+        $result = false;
+        $adress = $this->getAdress();
+        if ( preg_match("/^12\./", $adress) ) { //это датчик DS2406
+            //такие датчики срабатывают по флагу set_alarm
+            //когда сбывается условие записанное в этом флаге, в каталоге появляется файл с
+            //именем равным адресу датчика
+
+            $owfsDir = DB::getConst('OWNetFS');
+            $alarmDir = $owfsDir.'/alarm/';
+
+            if (is_dir($alarmDir)) {
+                if ($dh = opendir($alarmDir)) {
+                    // ищем все сработавшие датчики на 1-wire
+                    while ( ($file = readdir($dh)) !== false ) {
+                        if ($file == $adress) {
+                            $result = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+        }
+        else {
+            $log = logger::getLogger();
+            $log->log('Попытка получить значение с датчика :: '.$adress, logger::ERROR);
+            unset($log);
+        }
+
+        return $result;
+    }
+
     public function getValue()
     {
         // TODO: Implement getValue() method.
+        $result = null;
+        $disabled = $this->getDisabled();
+        if ($disabled==0) { // датчик включен
+            switch ($this->getNet()) {
+                case netDevice::ONE_WIRE : $result = $this->getValueOWNet(); break;
+            }
+        }
+        return $result;
     }
 
     public function getAlarm() {
