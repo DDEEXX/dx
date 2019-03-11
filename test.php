@@ -16,18 +16,71 @@
  * Time: 22:49
  */
 
-require_once(dirname(__FILE__).'/class/globalConst.interface.php');
-require_once(dirname(__FILE__).'/class/lists.class.php');
 require_once(dirname(__FILE__).'/class/managerUnits.class.php');
+require_once(dirname(__FILE__).'/class/sunInfo.class.php');
+
+$NAME_MOVE = 'move_1';
+$NAME_LIGHT_N = 'light_hol_2_n';
+$MOVE_TIME_N = 12; //через сколько секунд вык. подсветка после отсутствия движения
+
+$unitMove = managerUnits::getUnitLabel($NAME_MOVE);
+$unitNightLight = managerUnits::getUnitLabel($NAME_LIGHT_N);
+
+if (is_null($unitMove) || is_null($unitNightLight)) return;
+
+$i = 0;
+
+while ($i<10) {
+    sleep(1);
+
+    //Есть движение
+    $isMove = $unitMove->getValue();
+
+    //Свет горит
+    $isLigth = $unitNightLight->getValue(); //
+
+    //Время когда последний раз отключился датчик движения
+    $timeNoMove = $unitMove->readJournalLastTime(0);
+
+    //Часть дня ночь/утро/день/вечер
+    $sunInfo = sunInfo::getSunInfo(mktime());
+
+    $lastTime = strtotime($d->getLastTime($NAME_MOVE, 0));
+    if ($lastTime===false || $lastTime==-1) {
+        $moveTime = 99999;
+    }
+    else {
+        $moveTime = time()-$lastTime;
+    }
+
+    if ($isMove) {
+        if ($isLigth) {
+            if ($sunInfo<>dayPart::NIGHT) {
+
+            }
+        }
+        else {
+
+        }
+    }
+    else {
+        if ($isLigth) {
+
+        }
+        else {
+
+        }
+    }
 
 
-$unitMove = managerUnits::getUnitLabel('move_1');
 
-if (is_null($unitMove)) return;
 
-$isMove = $unitMove->getValue();
+    $i++;
+}
 
 unset($unitMove);
+unset($unitNightLight);
+
 ?>
 
 </body>

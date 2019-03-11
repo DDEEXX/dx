@@ -1,12 +1,12 @@
-#temp_out {
+#temp_out_1 {
   font-size:200%;
   font-weight:600;
   color: #5272BF;
 }
 
-/*#temp_hall {*/
-  /*color: #8B4513;*/
-/*}*/
+#temp_hall, #temp_bedroom {
+  color: #8B4513;
+}
 
 .g_temp {
   font-size:100%;

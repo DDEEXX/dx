@@ -22,6 +22,9 @@ class unitFactory {
             case typeUnit::KEY_IN :
                 $className = 'keyInUnit';
                 break;
+            case typeUnit::POWER_KEY :
+                $className = 'powerKeyUnit';
+                break;
             default : $className = '';
         }
 

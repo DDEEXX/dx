@@ -4,12 +4,12 @@ require_once(dirname(__FILE__)."/globalConst.interface.php");
 require_once(dirname(__FILE__)."/sqlDataBase.class.php");
 require_once(dirname(__FILE__)."/logger.class.php");
 
-if (file_exists("/opt/owfs/share/php/OWNet/ownet.php"))
-    require "/opt/owfs/share/php/OWNet/ownet.php";
-elseif (file_exists("/usr/share/php/OWNet/ownet.php"))
-    require "/usr/share/php/OWNet/ownet.php";
+if (file_exists("/opt/owfs/share/php/OWNet/ownet.php_"))
+    require_once "/opt/owfs/share/php/OWNet/ownet.php";
+elseif (file_exists("/usr/share/php/OWNet/ownet.php_"))
+    require_once "/usr/share/php/OWNet/ownet.php";
 elseif (file_exists(dirname(__FILE__).'/ownet.php'))
-    require dirname(__FILE__).'/ownet.php';
+    require_once dirname(__FILE__).'/ownet.php';
 else
     die("File 'ownet.php' is not found.");
 
@@ -133,6 +133,16 @@ class temperatureSensor extends sensor {
                 unset($log);
             }
 
+            if (!is_null($tekValue)) { //иногда кодга датчик не срабатывает, возвращает 0
+                if ($tekValue == 0) {
+                    //т.е. 0 датчик никогда не вернет, но это очень редкая ситуация
+                    //поэтому лучше без 0, чем провалы (т.е 15.0, 15.1, 15.2, 0 , 15.2, 15,3)
+                    $result = null;
+                }
+            }
+
+            unset($ow);
+
         }
         else {
             $log = logger::getLogger();
@@ -188,6 +198,23 @@ class keyInSensor extends sensor  {
 
     public function __construct(array $options) {
         parent::__construct($options, typeDevice::KEY_IN);
+        //т.к при подключении таких датчиков через 1wire состояние читается в "папке" alarm
+        //поэтому при создании объекта если это датчик на 1wire запишем в физ устройство
+        //значение срабатывания
+        if ($this->getNet() == netDevice::ONE_WIRE) {
+            $adress = $this->getAdress();
+            if ( preg_match("/^12\./", $adress) ) { //это датчик DS2406
+                $OWNetAdress = DB::getConst('OWNetAdress');
+                $ow = new OWNet($OWNetAdress);
+                $ow->set('/uncached/'.$adress.'/set_alarm', $this->getAlarm());
+                unset($ow);
+            }
+            else {
+                $log = logger::getLogger();
+                $log->log('Попытка установка alarm в датчик :: '.$adress, logger::ERROR);
+                unset($log);
+            }
+        }
     }
 
     private function getValueOWNet()
@@ -248,6 +275,84 @@ class powerKeyMaker extends maker {
     public function __construct(array $options) {
         parent::__construct($options, typeDevice::POWER_KEY);
     }
+
+    private function getValueOWNet($chanel = null)
+    {
+        $result = null;
+        $OWNetAdress = DB::getConst('OWNetAdress');
+        $adress = $this->getAdress();
+        if ( preg_match("/^3A\./", $adress) ) {
+
+            $ow = new OWNet($OWNetAdress);
+
+            $tekValue = $ow->get('/uncached/'.$adress.'/PIO.'.$chanel);
+
+            if ( empty($tekValue) ) {
+                $result = 0;
+            }
+
+            unset($ow);
+
+        }
+        else {
+            $log = logger::getLogger();
+            $log->log('Попытка получить значение с датчика :: '.$adress, logger::ERROR);
+            unset($log);
+        }
+
+        return $result;
+    }
+
+    private function setValueOWNet($value = null, $chanel = null)
+    {
+        $result = null;
+        $OWNetAdress = DB::getConst('OWNetAdress');
+        $adress = $this->getAdress();
+        if ( preg_match("/^3A\./", $adress) ) {
+            $ow = new OWNet($OWNetAdress);
+            $ow->set('/uncached/'.$adress.'/PIO.'.$chanel, $value);
+            unset($ow);
+            $result = true;
+        }
+        else {
+            $log = logger::getLogger();
+            $log->log('Попытка записать значение в датчик :: '.$adress, logger::ERROR);
+            unset($log);
+        }
+
+        return $result;
+    }
+
+
+    public function getValue($chanel = null)
+    {
+        // TODO: Implement getValue() method.
+        $result = null;
+        $disabled = $this->getDisabled();
+        if ($disabled==0) { // датчик включен
+            switch ($this->getNet()) {
+                case netDevice::ONE_WIRE : $result = $this->getValueOWNet($chanel); break;
+            }
+        }
+        return $result;
+    }
+
+    public function setValue($value = null, $chanel = null)
+    {
+        $result = null;
+        $disabled = $this->getDisabled();
+        if ($disabled==0) { // датчик включен
+            switch ($this->getNet()) {
+                case netDevice::ONE_WIRE : $result = $this->setValueOWNet($value, $chanel); break;
+            }
+        }
+        return $result;
+    }
+
+    public function getAlarm() {
+        return $this->alarm;
+    }
+
 
 }
 

@@ -19,9 +19,9 @@ if ( $_REQUEST['dev'] == "temp" ) { //получаем температру
         echo "$temperature"."&deg";
 
         if ($actualTemp) {
-            echo '<style>
-                #'.$label.' {color: #8B4513}
-              </style>';
+//            echo '<style>
+//                #'.$label.' {color: #8B4513}
+//              </style>';
         }
         else {
             echo '<style>

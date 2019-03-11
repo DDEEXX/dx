@@ -269,10 +269,12 @@ class OWNet{
 		$t2=($this->timeout*1000000)%1000000;
 		while ($num_changed_sockets<=0){	// can loop forever? owserver must send something! or disconnect!
 			$read=array($this->link);
+            $write = NULL;
+            $except = NULL;
 			if ($this->link_type==OWNET_LINK_TYPE_SOCKET)
-				$num_changed_sockets = socket_select($read, $write = NULL, $except = NULL, $t1,$t2);	// use socket_select
+				$num_changed_sockets = socket_select($read, $write, $except, $t1,$t2);	// use socket_select
 			else
-				$num_changed_sockets = stream_select($read, $write = NULL, $except = NULL, $t1,$t2);	// use stream_select
+				$num_changed_sockets = stream_select($read, $write, $except, $t1,$t2);	// use stream_select
 			if ($num_changed_sockets===false){	// error handling select
 				$this->disconnect();
 				trigger_error("Error handling get_msg#1",E_USER_NOTICE);
@@ -311,10 +313,12 @@ class OWNet{
 		$num_changed_sockets=0;
 		while ($num_changed_sockets<=0){
 			$write=array($this->link);
+            $read = NULL;
+            $except = NULL;
 			if ($this->link_type==OWNET_LINK_TYPE_SOCKET)
-				$num_changed_sockets = socket_select($read = NULL, $write , $except = NULL, 0,1000);	// use socket_select
+                $num_changed_sockets = socket_select($read, $write, $except, 0, 1000);    // use socket_select
 			else
-				$num_changed_sockets = stream_select($read = NULL, $write , $except = NULL, 0,1000);	// use stream_select
+				$num_changed_sockets = stream_select($read, $write , $except, 0,1000);	// use stream_select
 			if ($num_changed_sockets===false){		// error handling
 				$this->disconnect();
 				trigger_error("Error handling send_msg#1",E_USER_NOTICE);
@@ -755,7 +759,7 @@ array(9) {
     [3]=>    int(258)
     [4]=>    int(5)
     [5]=>    int(0)
-    ["data"]=>    string(42) "bus.0athaðãaPÜa»a0"
+    ["data"]=>    string(42) "bus.0athaï¿½ï¿½aPï¿½aï¿½ï¿½a0"
     ["data_len"]=>    int(42)
     ["data_php"]=>    string(5) "bus.0"
   }
@@ -801,7 +805,7 @@ array(9) {
     [3]=>    int(258)
     [4]=>    int(16)
     [5]=>    int(0)
-    ["data"]=>    string(42) "/10.E8C1C9000800P×aàÑa »a0"
+    ["data"]=>    string(42) "/10.E8C1C9000800Pï¿½aï¿½ï¿½aï¿½ï¿½a0"
     ["data_len"]=>    int(42)
     ["data_php"]=>    string(16) "/10.E8C1C9000800"
   }
@@ -813,7 +817,7 @@ array(9) {
     [3]=>    int(258)
     [4]=>    int(16)
     [5]=>    int(0)
-    ["data"]=>    string(42) "/10.54FDED000800P×aàÑa »a0"
+    ["data"]=>    string(42) "/10.54FDED000800Pï¿½aï¿½ï¿½aï¿½ï¿½a0"
     ["data_len"]=>    int(42)
     ["data_php"]=>    string(16) "/10.54FDED000800"
   }
@@ -825,7 +829,7 @@ array(9) {
     [3]=>    int(258)
     [4]=>    int(16)
     [5]=>    int(0)
-    ["data"]=>    string(42) "/10.6F7EC9000800P×aàÑa »a0"
+    ["data"]=>    string(42) "/10.6F7EC9000800Pï¿½aï¿½ï¿½aï¿½ï¿½a0"
     ["data_len"]=>    int(42)
     ["data_php"]=>    string(16) "/10.6F7EC9000800"
   }
@@ -837,7 +841,7 @@ array(9) {
     [3]=>    int(258)
     [4]=>    int(16)
     [5]=>    int(0)
-    ["data"]=>    string(42) "/28.924FE0000000P×aàÑa »a0"
+    ["data"]=>    string(42) "/28.924FE0000000Pï¿½aï¿½ï¿½aï¿½ï¿½a0"
     ["data_len"]=>    int(42)
     ["data_php"]=>    string(16) "/28.924FE0000000"
   }
@@ -849,7 +853,7 @@ array(9) {
     [3]=>    int(258)
     [4]=>    int(16)
     [5]=>    int(0)
-    ["data"]=>    string(42) "/28.5D59E0000000P×aàÑa »a0"
+    ["data"]=>    string(42) "/28.5D59E0000000Pï¿½aï¿½ï¿½aï¿½ï¿½a0"
     ["data_len"]=>    int(42)
     ["data_php"]=>    string(16) "/28.5D59E0000000"
   }

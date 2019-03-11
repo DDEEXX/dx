@@ -181,7 +181,7 @@ if ( $p == "temp" ) {
 		/* label=temp_out_1 - имя датчика в базе = temp_out_1*/
 		/* type=last - тип события = последнее показание */
 		$.get("getData.php?dev=temp&label=temp_out_1&type=last", function(data)	{
-			$("#temp_out").html(data);
+			$("#temp_out_1").html(data);
 		});
 		$.get("getData.php?dev=temp&label=temp_hall&type=last", function(data) {
 			$("#temp_hall").html(data);
@@ -232,7 +232,7 @@ if ( $p == "temp" ) {
 				<div class = "ui-corner-all ui-state-default" style="margin-top:5px;height:80px">
 					<h2 style="margin-left:5px">Температура на улице</h2>
 					<img style="margin-top:5px;float:left" src="img2/temp.png">
-					<div id="temp_out" class="temp_out" style="margin-top:10px;"></div>
+					<div id="temp_out_1" class="temp_out_1" style="margin-top:10px;"></div>
 				</div>
 			</div>
 			<div class = "grid_3 ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:218px">
