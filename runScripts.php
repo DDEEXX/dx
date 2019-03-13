@@ -8,23 +8,18 @@
 
 sleep(15);
 
-$arr_s = array('move_holl.php');
+$arr_s = array('scripts/move_holl.php');
 
 $loop = true;
 
-//$j=0;
-
 while ($loop) {
 
-	for ($i=0; $i<count($arr_s); $i++) {
-		require (dirname(__FILE__).'scripts/'.$arr_s[$i]);
-    }
+//	for ($i=0; $i<count($arr_s); $i++) {
+//		include(dirname(__FILE__).'/'.$arr_s[$i]);
+//    }
 
-	//$j++;
-
-//	if ($j>150) {
-//		$loop = false;
-//	}
+//    include(dirname(__FILE__).'/'.$arr_s[$i]);
+    include('scripts/move_holl.php');
 
 }
 

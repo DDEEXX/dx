@@ -212,8 +212,11 @@ class temperatureUnit extends sensorUnit {
 
 class keyInUnit extends sensorUnit {
 
+    private $lastValue;
+
     public function __construct(array $options) {
         parent::__construct($options, typeUnit::KEY_IN);
+        $this->lastValue = null;
     }
 
     public function __destruct()
@@ -240,17 +243,60 @@ class keyInUnit extends sensorUnit {
 
     }
 
-    public function updateStatus($status) //проверить статус если он изменился с последнего времени, то добавить новый
+    public function checkLastStatus() //посмотреть в журнале последннее значение value
     {
+        $lastValue = DB::getLastValueUnit($this);
 
-
-
-        $this->writeJournal($status);
+        if (is_null($lastValue)) {
+            return null;
+        }
+        else {
+            return $lastValue['Value']==0?false:true;
+        }
     }
 
-    private function writeJournal($status) //записать в журнал значение
+    public function updateStatus($status) //проверить статус если он изменился с последнего времени, то добавить новый
     {
+        if (is_null($status)) return;
 
+        if (is_null($this->lastValue)) {  // если последнне значение не известно
+            $lastStatus = $this->checkLastStatus(); // то читаем его из базы
+            if (is_null($lastStatus)) { //если в базе его тоже нет, то условимся на 0
+                $lastStatus = false;
+                $this->writeValue($lastStatus); // и запишем его в базе
+            }
+            $this->lastValue = $lastStatus;
+        }
+        else {
+            $lastStatus = $this->lastValue; // если последнее значение есть в буфере берем его
+        }
+
+        if ($status!=$lastStatus) {
+            $this->writeValue($status);
+            $this->lastValue = $status;
+        }
+    }
+
+    private function writeValue($value) //записать в журнал значение
+    {
+        if (!is_bool($value)) {
+            //Пишем лог
+            return;
+        }
+
+        $uniteID = $this->getId();
+        $nameTabValue = 'tvalue_'.$this->valueTable;
+
+        $query = 'INSERT INTO '.$nameTabValue.' VALUES (NULL, '."$uniteID, SYSDATE(), ".(int)$value.')';
+
+        $con = sqlDataBase::Connect();
+        $result = queryDataBase::execute($con, $query);
+        unset($con);
+
+        if (!$result) {
+            //Пишем лог
+
+        }
     }
 
 }

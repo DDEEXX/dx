@@ -35,9 +35,12 @@ while ($i<10) {
 
     //Есть движение
     $isMove = $unitMove->getValue();
+    $unitMove->updateStatus($isMove);
+    $unitMove->updateStatus(true);
+
 
     //Свет горит
-    $isLigth = $unitNightLight->getValue(); //
+    $isLight = $unitNightLight->getValue(); //
 
     //Время когда последний раз отключился датчик движения
     $timeNoMove = $unitMove->readJournalLastTime(0);
@@ -54,7 +57,7 @@ while ($i<10) {
     }
 
     if ($isMove) {
-        if ($isLigth) {
+        if ($isLight) {
             if ($sunInfo<>dayPart::NIGHT) {
 
             }
@@ -64,7 +67,7 @@ while ($i<10) {
         }
     }
     else {
-        if ($isLigth) {
+        if ($isLight) {
 
         }
         else {
