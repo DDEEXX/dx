@@ -136,7 +136,7 @@ class widgetWeather {
         if ($precipitation == 6 || $precipitation == 7) { //снег
             $spower = !$spower?1:$spower;
             $spower = $spower>3?3:$spower;
-            $myrow = $myrow."_s".$rpower;
+            $myrow = $myrow."_s".$spower;
         }
 
         if ($precipitation == 8) { //гроза
@@ -197,6 +197,15 @@ class widgetWeather {
         $wind = $w[0]["wind"];
         $wind_dir = widgetWeather::get_wind($w[0]["wind_dir"]);
         $relwet = $w[0]["relwet"];
+
+        $pd = '';
+        switch ($w[0]["tod"]) {
+            case 0 : $pd = "ночь"; break;
+            case 1 : $pd = "утро"; break;
+            case 2 : $pd = "день"; break;
+            case 3 : $pd = "вечер"; break;
+        }
+
     ?>
 
     <div class='temp_now' style='width:260px;float:left'>
@@ -206,7 +215,8 @@ class widgetWeather {
             <p>давление: <?php echo "$pressure" ?> мм</p>
             <p>ветер: <?php echo "$wind" ?> м/с <?php echo "$wind_dir" ?></p>
             <p>влажность: <?php echo "$relwet" ?> %</p>
-        </div>"
+            <p>прогноз на: <?php echo "$pd" ?> </p>
+        </div>
     </div>
 
     <?php
