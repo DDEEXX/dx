@@ -201,64 +201,76 @@ class keyInSensor extends sensor  {
         //т.к при подключении таких датчиков через 1wire состояние читается в "папке" alarm
         //поэтому при создании объекта если это датчик на 1wire запишем в физ устройство
         //значение срабатывания
-        if ($this->getNet() == netDevice::ONE_WIRE) {
-            $adress = $this->getAdress();
-            if ( preg_match("/^12\./", $adress) ) { //это датчик DS2406
-                $OWNetAdress = DB::getConst('OWNetAdress');
-                $ow = new OWNet($OWNetAdress);
-                $ow->set('/uncached/'.$adress.'/set_alarm', $this->getAlarm());
-                unset($ow);
-            }
-            else {
-                $log = logger::getLogger();
-                $log->log('Попытка установка alarm в датчик :: '.$adress, logger::ERROR);
-                unset($log);
-            }
-        }
+//        if ($this->getNet() == netDevice::ONE_WIRE) {
+//            $adress = $this->getAdress();
+//            if ( preg_match("/^12\./", $adress) ) { //это датчик DS2406
+//                $OWNetAdress = DB::getConst('OWNetAdress');
+//                $ow = new OWNet($OWNetAdress);
+//                $ow->set('/uncached/'.$adress.'/set_alarm', $this->getAlarm());
+//                unset($ow);
+//            }
+//            else {
+//                $log = logger::getLogger();
+//                $log->log('Попытка установка alarm в датчик :: '.$adress, logger::ERROR);
+//                unset($log);
+//            }
+//        }
     }
 
-    private function getValueOWNet()
+    private function getValueOWNet($chanel = null)
     {
-        $result = false;
-        $adress = $this->getAdress();
-        if ( preg_match("/^12\./", $adress) ) { //это датчик DS2406
+        $result = 1; // 1 - это логическое "нет", из-за подключения датчика
+        $address = $this->getAdress();
+        $OWNetAdress = DB::getConst('OWNetAdress');
+        if ( preg_match("/^12\./", $address) ) { //это датчик DS2406
             //такие датчики срабатывают по флагу set_alarm
             //когда сбывается условие записанное в этом флаге, в каталоге появляется файл с
             //именем равным адресу датчика
 
-            $owfsDir = DB::getConst('OWNetFS');
-            $alarmDir = $owfsDir.'/alarm/';
+//            $owfsDir = DB::getConst('OWNetFS');
+//            $alarmDir = $owfsDir.'/alarm/';
+//
+//            if (is_dir($alarmDir)) {
+//                if ($dh = opendir($alarmDir)) {
+//                    // ищем все сработавшие датчики на 1-wire
+//                    while ( ($file = readdir($dh)) !== false ) {
+//                        if ($file == $address) {
+//                            $result = true;
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
 
-            if (is_dir($alarmDir)) {
-                if ($dh = opendir($alarmDir)) {
-                    // ищем все сработавшие датчики на 1-wire
-                    while ( ($file = readdir($dh)) !== false ) {
-                        if ($file == $adress) {
-                            $result = true;
-                            break;
-                        }
-                    }
-                }
+            $ow = new OWNet($OWNetAdress);
+
+            $tekValue = $ow->get('/uncached/'.$address.'/sensed.'.$chanel);
+            if (is_null($tekValue)) {
+                $tekValue = 1; //1 это нет
             }
+
+            $result = $tekValue?0:1;
+
+            unset($ow);
 
         }
         else {
             $log = logger::getLogger();
-            $log->log('Попытка получить значение с датчика :: '.$adress, logger::ERROR);
+            $log->log('Попытка получить значение с датчика :: '.$address, logger::ERROR);
             unset($log);
         }
 
         return $result;
     }
 
-    public function getValue()
+    public function getValue($chanel = null)
     {
         // TODO: Implement getValue() method.
         $result = null;
         $disabled = $this->getDisabled();
         if ($disabled==0) { // датчик включен
             switch ($this->getNet()) {
-                case netDevice::ONE_WIRE : $result = $this->getValueOWNet(); break;
+                case netDevice::ONE_WIRE : $result = $this->getValueOWNet($chanel); break;
             }
         }
         return $result;
@@ -285,9 +297,9 @@ class powerKeyMaker extends maker {
 
             $ow = new OWNet($OWNetAdress);
 
-            $tekValue = $ow->get('/uncached/'.$adress.'/PIO.'.$chanel);
+            $result = $ow->get('/uncached/'.$adress.'/PIO.'.$chanel);
 
-            if ( empty($tekValue) ) {
+            if ( empty($result) ) {
                 $result = 0;
             }
 

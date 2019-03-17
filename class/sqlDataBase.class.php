@@ -287,11 +287,16 @@ class DB {
         return $result;
     }
 
-    static public function getLastValueUnit($unit) {
+    static public function getLastValueUnit($unit, $value = null) {
 
         $uniteID = $unit->getId();
         $nameTabValue = 'tvalue_'.$unit->getValueTable();
-        $query = 'SELECT Date, Value FROM '.$nameTabValue.' WHERE UnitID="'.$uniteID.'" ORDER BY ValueID DESC LIMIT 1';
+        if (is_null($value)) {
+            $query = 'SELECT Date, Value FROM '.$nameTabValue.' WHERE UnitID="'.$uniteID.'" ORDER BY ValueID DESC LIMIT 1';
+        }
+        else {
+            $query = 'SELECT Date, Value FROM '.$nameTabValue.' WHERE UnitID="'.$uniteID.'" AND Value ="'.$value.'" ORDER BY ValueID DESC LIMIT 1';
+        }
 
         $con = sqlDataBase::Connect();
         $result = queryDataBase::getOne($con, $query);

@@ -213,8 +213,10 @@ class temperatureUnit extends sensorUnit {
 class keyInUnit extends sensorUnit {
 
     private $lastValue;
+    private $chanel = '';
 
     public function __construct(array $options) {
+        $this->chanel = $options['Chanel'];
         parent::__construct($options, typeUnit::KEY_IN);
         $this->lastValue = null;
     }
@@ -231,16 +233,27 @@ class keyInUnit extends sensorUnit {
     public function getValue()
     {
         if (!is_null($this->device)) {
-            return $this->device->getValue();
+            return $this->device->getValue($this->chanel);
         }
         else {
             return null;
         }
     }
 
-    public function readLastStatus($status) //посмотреть в журнале когда было последннее значение равное value
+    public function readWhereLastStatus($status) //посмотреть в журнале когда было последннее значение равное value
     {
+        if (is_null($status)) {
+            return null;
+        }
 
+        $lastValue = DB::getLastValueUnit($this, $status);
+
+        if (is_null($lastValue)) {
+            return null;
+        }
+        else {
+            return $lastValue['Date'];
+        }
     }
 
     public function checkLastStatus() //посмотреть в журнале последннее значение value
@@ -251,7 +264,7 @@ class keyInUnit extends sensorUnit {
             return null;
         }
         else {
-            return $lastValue['Value']==0?false:true;
+            return $lastValue['Value'];
         }
     }
 
@@ -262,7 +275,7 @@ class keyInUnit extends sensorUnit {
         if (is_null($this->lastValue)) {  // если последнне значение не известно
             $lastStatus = $this->checkLastStatus(); // то читаем его из базы
             if (is_null($lastStatus)) { //если в базе его тоже нет, то условимся на 0
-                $lastStatus = false;
+                $lastStatus = 0;
                 $this->writeValue($lastStatus); // и запишем его в базе
             }
             $this->lastValue = $lastStatus;
@@ -279,7 +292,7 @@ class keyInUnit extends sensorUnit {
 
     private function writeValue($value) //записать в журнал значение
     {
-        if (!is_bool($value)) {
+        if (!is_int($value)) {
             //Пишем лог
             return;
         }
