@@ -10,7 +10,6 @@ require_once(dirname(__FILE__).'/../class/globalConst.interface.php');
 require_once(dirname(__FILE__).'/../class/lists.class.php');
 require_once(dirname(__FILE__).'/../class/managerUnits.class.php');
 require_once(dirname(__FILE__).'/../class/sunInfo.class.php');
-require_once(dirname(__FILE__)."/../class/logger.class.php");
 
 $NAME_MOVE = 'move_1';
 $NAME_LIGHT_N = 'light_hol_2_n';
@@ -23,6 +22,7 @@ if (is_null($unitMove) || is_null($unitNightLight)) return;
 
     //Есть движение
     $isMove = $unitMove->getValue();
+
     //Обновляем в БД значение датчика движения
     $unitMove->updateStatus($isMove);
 
@@ -42,48 +42,39 @@ if (is_null($unitMove) || is_null($unitNightLight)) return;
         $moveTime = time()-strtotime($timeNoMove);
     }
 
-    $info = 'Move - '.$isMove.' Light - '.$isLight.', Time - '.$moveTime.', Sum - '.$sunInfo;
-
     if ($isMove) {
         if ($isLight) {
-            if ($sunInfo<>dayPart::NIGHT) {
+            if ($sunInfo!=dayPart::NIGHT) {
                 if ($moveTime>$MOVE_TIME_N) {
-                    $unitNightLight->setValue(0);
-                    $log = logger::getLogger();
-                    $log->log('1 - '.$info, logger::DEFAULTLOGGER);
-                    unset($log);
+                    $unitNightLight->setValue(0, statusKey::OFF);
                 }
             }
         }
         else {
-            if ($sunInfo=dayPart::NIGHT) {
-                $unitNightLight->setValue(1);
-                $log = logger::getLogger();
-                $log->log('2 - '.$info, logger::DEFAULTLOGGER);
-                unset($log);
+            if ($sunInfo==dayPart::NIGHT) {
+                $unitNightLight->setValue(1, statusKey::MOVE);
             }
         }
     }
     else {
         if ($isLight) {
-            if (true) { //включился от датчика движения
-                if ($sunInfo=dayPart::NIGHT) {
+
+            $StatusKey = $unitNightLight->readLastStatusKeyJournal();
+
+            if ($StatusKey == statusKey::MOVE) { //включился от датчика движения
+                if ($sunInfo==dayPart::NIGHT) {
                     if ($moveTime>$MOVE_TIME_N) {
-                        $unitNightLight->setValue(0);
-                        $log = logger::getLogger();
-                        $log->log('3 - '.$info, logger::DEFAULTLOGGER);
-                        unset($log);
+                        $unitNightLight->setValue(0, statusKey::OFF);
                     }
                 }
                 else {
-                    $unitNightLight->setValue(0);
-                    $log = logger::getLogger();
-                    $log->log('4 - '.$info, logger::DEFAULTLOGGER);
-                    unset($log);
+                    $unitNightLight->setValue(0, statusKey::OFF);
                 }
             }
             else {
-
+                if ($moveTime>$MOVE_TIME_N) {
+                    $unitNightLight->setValue(0, statusKey::OFF);
+                }
             }
         }
     };

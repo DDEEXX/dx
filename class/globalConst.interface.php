@@ -38,3 +38,9 @@ interface graphType {
     const line = 0; //линейный график
     const bar  = 1; //столбчатый график
 }
+
+interface statusKey {
+    const MOVE = 'move';
+    const HEAD = 'head';
+    const OFF = 'off';
+}

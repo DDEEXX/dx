@@ -341,21 +341,51 @@ class powerKeyUnit extends moduleUnit {
         }
     }
 
-    public function setValue($value = null)
+    public function setValue($value, $status = null)
     {
         if (is_null($value)) {
-            //Пишем лог
-            return;
+            return;  //Пишем лог
         }
-        if (!is_null($this->device)) {
-            return $this->device->setValue($value, $this->chanel);
+
+        if (is_null($this->device)) {
+            return;  //Пишем лог
         }
-        else {
-            return null;
-        }
+
+        $this->device->setValue($value, $this->chanel);
+        $this->writeStatusKeyJournal($status); //записываем в журнал каким образом изменилось значение
 
     }
 
+    private function writeStatusKeyJournal($status)
+    {
+        if (!is_string($status)) {
+            return;
+        }
+
+        $uniteID = $this->getId();
+
+        $query = 'INSERT INTO tjournalkey VALUES (NULL, '."$uniteID".', SYSDATE(), "'.$status.'")';
+
+        $con = sqlDataBase::Connect();
+        $result = queryDataBase::execute($con, $query);
+        unset($con);
+
+        if (!$result) {
+            //Пишем лог
+        }
+    }
+
+    public function readLastStatusKeyJournal() //посмотреть в журнале когда было последннее значение равное value
+    {
+        $lastStatus = DB::getLastStatusKeyJournal($this);
+
+        if (is_null($lastStatus)) {
+            return null;
+        }
+        else {
+            return $lastStatus['Status'];
+        }
+    }
 
 
 }

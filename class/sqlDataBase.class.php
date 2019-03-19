@@ -304,5 +304,17 @@ class DB {
         return $result;
 
     }
+
+    static public function getLastStatusKeyJournal($unit)
+    {
+        $uniteID = $unit->getId();
+
+        $query = 'SELECT Date, Status FROM tjournalkey WHERE UnitID="'.$uniteID.'" ORDER BY JournalKeyID DESC LIMIT 1';
+
+        $con = sqlDataBase::Connect();
+        $result = queryDataBase::getOne($con, $query);
+
+        return $result;
+    }
 }
 ?>
