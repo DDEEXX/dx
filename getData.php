@@ -70,56 +70,39 @@ if ( $_REQUEST['dev'] == "temp" ) { //получаем температру
 //
 //}
 //
-//if ( $_REQUEST['dev'] == "light" ) { //получаем значение освещения
-//
-//	$label = $_GET['label'];
-//
-//	$idUnit = $d->getId($label);
-//
-//	$keyStatus = 'off';
-//
-//	if (!empty($idUnit)) {
-//
-//		$unitInfo = $d->getUnitInfo($idUnit);
-//
-//		$net = $unitInfo['NetTitle'];
-//
-//		if ($net == '1-wire') {
-//			$UnitModule = $unitInfo['UnitModule'];
-//
-//			if ($UnitModule == 'Key') { //напрямую через симистерный ключ
-//				$ow=new OWNet("tcp://localhost:3000");
-//				$keyStatus = $d->getKeyOut($_GET['label'], $ow);
-//				unset($ow);
-//			}
-//			elseif ($UnitModule == 'RIO') { //через реле РИО
-//				$keyStatus = $d->getValueKeyInLast($_GET['is_light']);
-//			}
-//			$keyStatus = $keyStatus?'on':'off';
-//		}
-//	}
-//	else {
-//		$d->writeLog('Не найден модуль с именем :: '.$label);
-//		$keyStatus = 'empty';
-//	}
-//
-//	$place = explode(";", $_GET['place']);
-//
-//	$nameImgFile = "";
-//
-//	if ($keyStatus == 'on') {
-//		$nameImgFile = "light_on.png";
-//	}
-//	elseif ($keyStatus == 'off') {
-//		$nameImgFile = "light_off.png";
-//	}
-//
-//	echo "<div class='lamp ".$keyStatus."' label='".$label."' style='top:".$place[0]."px;left:".$place[1]."px'>";
-//	echo "<div class='lamp_img' style='top:5px;left:10px'>";
-//	echo "<img class='".$keyStatus."_l' src='img2/".$nameImgFile."'>";
-//	echo "</div>";
-//	echo "</div>";
-//
-//}
+if ( $_REQUEST['dev'] == "light" ) { //получаем значение освещения
+
+	$label = $_GET['label'];
+
+    $unit = managerUnits::getUnitLabel($label);
+
+	$keyStatus = 'off';
+
+	if (!is_null($unit)) {
+        $isLight = $unit->getValue();
+        $keyStatus = $isLight?'on':'off';
+	}
+	else {
+		$keyStatus = 'empty';
+	}
+
+	$place = explode(";", $_GET['place']);
+
+	$nameImgFile = "";
+
+	if ($keyStatus == 'on') {
+		$nameImgFile = "img2/light_on.png";
+	}
+	elseif ($keyStatus == 'off') {
+		$nameImgFile = "img2/light_off.png";
+	}
+
+	echo "<div class='lamp ".$keyStatus."' label='".$label."' style='top:".$place[0]."px;left:".$place[1]."px'>";
+	echo "<div class='lamp_img' style='top:5px;left:10px'>";
+	echo "<img class='".$keyStatus."_l' src='".$nameImgFile."'>";
+	echo "</div>";
+	echo "</div>";
+
+}
 
 ?>

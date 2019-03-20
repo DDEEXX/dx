@@ -327,19 +327,19 @@ if ( $p == "light" ) {
 
 	$(document).ready(function() {
 
-		$('.lampkey').click(function () {
-				var lamp = $(this);
-				var label = lamp.attr("label");
-				$.get("key.php?label="+label, function(data){});
-		});
+		// $('.lampkey').click(function () {
+		// 		var lamp = $(this);
+		// 		var label = lamp.attr("label");
+		// 		$.get("key.php?label="+label, function(data){});
+		// });
 		
 	});
 
 	$(document).everyTime("1s", function(i) {
 		
-		$.get("getData.php?dev=light&label=light_hol_2&type=last&is_light=is_light_hol_2&place=220;685", function(data)	{
-			$("#light_lamp1").html(data);
-		});
+		// $.get("getData.php?dev=light&label=light_hol_2&type=last&is_light=is_light_hol_2&place=220;685", function(data)	{
+		// 	$("#light_lamp1").html(data);
+		// });
 	
 		$.get("getData.php?dev=light&label=light_hol_2_n&type=last&place=250;635", function(data)	{
 			$("#light_lamp2").html(data);

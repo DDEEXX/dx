@@ -35,8 +35,8 @@ interface typeUnit{
 }
 
 interface graphType {
-    const line = 0; //линейный график
-    const bar  = 1; //столбчатый график
+    const LINE = 0; //линейный график
+    const BAR  = 1; //столбчатый график
 }
 
 interface statusKey {

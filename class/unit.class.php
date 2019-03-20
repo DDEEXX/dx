@@ -11,6 +11,7 @@ require_once(dirname(__FILE__)."/managerDevices.class.php");
 require_once(dirname(__FILE__).'/globalConst.interface.php');
 
 interface iUnit{
+    public function getValue();
 }
 
 abstract class unit implements iUnit {
@@ -40,6 +41,14 @@ abstract class unit implements iUnit {
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Получить/считать значение датчика
+     * @return null
+     */
+    public function getValue() {
+        return null;
     }
 
 }
@@ -101,6 +110,10 @@ class iButtonUnit extends unit
 
 }
 
+/**
+ * Датчик температуры
+ * Class temperatureUnit
+ */
 class temperatureUnit extends sensorUnit {
 
     private $delta = 0;

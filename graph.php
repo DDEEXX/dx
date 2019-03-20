@@ -13,7 +13,7 @@ require_once(dirname(__FILE__).'/class/logger.class.php');
 require_once(dirname(__FILE__).'/class/globalConst.interface.php');
 
 //Вид графика линейный или столбчатый
-if (!isset($_GET['t'])) { $_GET['t'] = graphType::line; }
+if (!isset($_GET['t'])) { $_GET['t'] = graphType::LINE; }
 $grType = $_GET['t'];
 
 if (!isset($_GET['date_from'])) { $_GET['date_from'] = null; }
@@ -65,13 +65,13 @@ if ($count_r > 1) {
 	$graph->yaxis->HideFirstLastLabel(); 
 	$graph->yaxis->SetColor('lightblue');
 
-	if ($grType == graphType::line) {
+	if ($grType == graphType::LINE) {
 		$l1=new LinePlot($ydata);
 		$graph->Add($l1);
 		$l1->SetColor('#99ffff');
 		$l1->SetWeight(1);
 	}
-	elseif ($grType == graphType::bar) {
+	elseif ($grType == graphType::BAR) {
 		$b1 = new BarPlot($ydata);
 		$graph->Add($b1);
 		$b1->SetWidth(0.1);
