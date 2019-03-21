@@ -6,7 +6,7 @@
  * Time: 22:49
  */
 
-//Если день и ключить через сайт, то при движениитут же гаснет.
+// проверить!!! Если день и ключить через сайт, то при движениитут же гаснет.
 // Если ночью включить через сайт, никогда не гаснет
 
 require_once(dirname(__FILE__).'/../class/globalConst.interface.php');
@@ -33,7 +33,7 @@ if (is_null($unitMove) || is_null($unitNightLight)) return;
     $isLight = $unitNightLight->getValue(); //
 
     //Каким образом включилася подсветка или выключена
-    $StatusKey = $unitNightLight->readLastStatusKeyJournal();
+    $statusKey = $unitNightLight->readLastStatusKeyJournal();
 
     //Часть дня ночь/утро/день/вечер
     $sunInfo = sunInfo::getSunInfo(mktime());
@@ -52,7 +52,9 @@ if (is_null($unitMove) || is_null($unitNightLight)) return;
         if ($isLight) {
             if ($sunInfo!=dayPart::NIGHT) {
                 if ($moveTime>$MOVE_TIME_N) {
-                    $unitNightLight->setValue(0, statusKey::OFF);
+                    if ($statusKey==statusKey::MOVE) {
+                        $unitNightLight->setValue(0, statusKey::OFF);
+                    }
                 }
             }
         }
@@ -64,7 +66,7 @@ if (is_null($unitMove) || is_null($unitNightLight)) return;
     }
     else {
         if ($isLight) {
-            if ($StatusKey == statusKey::MOVE) { //включился от датчика движения
+            if ($statusKey == statusKey::MOVE) { //включился от датчика движения
                 if ($sunInfo==dayPart::NIGHT) {
                     if ($moveTime>$MOVE_TIME_N) {
                         $unitNightLight->setValue(0, statusKey::OFF);
