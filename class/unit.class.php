@@ -364,11 +364,18 @@ class powerKeyUnit extends moduleUnit {
             return;  //Пишем лог
         }
 
-        $this->device->setValue($value, $this->chanel);
-        $this->writeStatusKeyJournal($status); //записываем в журнал каким образом изменилось значение
+        $result = $this->device->setValue($value, $this->chanel);
+        if ($result) {
+            $this->writeStatusKeyJournal($status); //записываем в журнал каким образом изменилось значение
+        }
 
     }
 
+    /**
+     * @param $status
+     * @throws connectDBException
+     * @throws querySelectDBException
+     */
     private function writeStatusKeyJournal($status)
     {
         if (!is_string($status)) {
@@ -388,15 +395,19 @@ class powerKeyUnit extends moduleUnit {
         }
     }
 
-    public function readLastStatusKeyJournal() //посмотреть в журнале когда было последннее значение равное value
+    /**
+     * посмотреть в журнале последнюю запись
+     * @return null
+     */
+    public function readLastRecordKeyJournal()
     {
-        $lastStatus = DB::getLastStatusKeyJournal($this);
+        $lastRecord = DB::getLastStatusKeyJournal($this);
 
-        if (is_null($lastStatus)) {
+        if (is_null($lastRecord)) {
             return null;
         }
         else {
-            return $lastStatus['Status'];
+            return $lastRecord;
         }
     }
 

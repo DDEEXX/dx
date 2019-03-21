@@ -322,9 +322,8 @@ class powerKeyMaker extends maker {
         $adress = $this->getAdress();
         if ( preg_match("/^3A\./", $adress) ) {
             $ow = new OWNet($OWNetAdress);
-            $ow->set('/uncached/'.$adress.'/PIO.'.$chanel, $value);
+            $result = $ow->set('/uncached/'.$adress.'/PIO.'.$chanel, $value);
             unset($ow);
-            $result = true;
         }
         else {
             $log = logger::getLogger();

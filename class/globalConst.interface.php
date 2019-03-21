@@ -40,7 +40,8 @@ interface graphType {
 }
 
 interface statusKey {
-    const MOVE = 'move';
-    const HEAD = 'head';
-    const OFF = 'off';
+    const MOVE      = 'move';
+    const HEAD      = 'head';
+    const OUTSIDE   = 'outside';
+    const OFF       = 'off';
 }

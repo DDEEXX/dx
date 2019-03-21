@@ -1,38 +1,33 @@
 <?php
 
-require_once(dirname(__FILE__).'/class/managerUnits.class.php');
+require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
 
-if ( $_REQUEST['dev'] == "temp" ) { //получаем температру
+if ($_REQUEST['dev'] == "temp") { //получаем температру
 
-	$label = $_GET['label']; //значение поля "UnitLabel" в таблице "tunits";
+    $label = $_GET['label']; //значение поля "UnitLabel" в таблице "tunits";
 
-	$unit = managerUnits::getUnitLabel($label);
+    $unit = managerUnits::getUnitLabel($label);
 
-	if (!is_null($unit)) {
+    if (!is_null($unit)) {
         $value = $unit->readValue();
-        $temperaterePrecision = DB::getConst('TemperaterePrecision');
+        $temperaturePrecision = DB::getConst('TemperaturePrecision');
         $temperature = (double)$value['Value'];
         // время с последнего имерения в течение которого температура считается еще актуальной
         $actualTimeTemperature = DB::getConst('ActualTimeTemperature');
-        $actualTemp = ( (time() - strtotime($value['Date'])) < $actualTimeTemperature );
-        $temperature = round($temperature, $temperaterePrecision);
-        echo "$temperature"."&deg";
+        $actualTemp = ((time() - strtotime($value['Date'])) < $actualTimeTemperature);
+        $temperature = round($temperature, $temperaturePrecision);
+        echo "$temperature" . "&deg";
 
-        if ($actualTemp) {
-//            echo '<style>
-//                #'.$label.' {color: #8B4513}
-//              </style>';
-        }
-        else {
+        if (!$actualTemp) {
             echo '<style>
-                #'.$label.' {color: #8a8a8a}
+                #' . $label . ' {color: #8a8a8a}
               </style>';
         }
 
     }
     else {
         $log = logger::getLogger();
-        $log->log('Молуль с именем :: '.$label.' :: не найден', logger::ERROR);
+        $log->log('Молуль с именем :: ' . $label . ' :: не найден', logger::ERROR);
         unset($log);
         exit(); //тут надо подумать что возвращать
     }
@@ -51,7 +46,7 @@ if ( $_REQUEST['dev'] == "temp" ) { //получаем температру
 //	}
 //
 //	$nameTabValue = $d->getTabValue($id);
-//	if (!$d->chekTab($nameTabValue)) {
+//	if (!$d->checkTab($nameTabValue)) {
 //		// в БД нет таблицы и именем $nameTabValue, надо что-то записать в лог, сделаю позже
 //		echo "<img src='img2/icon/garage_err.png'>";
 //	}
@@ -70,39 +65,37 @@ if ( $_REQUEST['dev'] == "temp" ) { //получаем температру
 //
 //}
 //
-if ( $_REQUEST['dev'] == "light" ) { //получаем значение освещения
+if ($_REQUEST['dev'] == "light") { //получаем значение освещения
 
-	$label = $_GET['label'];
+    $label = $_GET['label'];
 
     $unit = managerUnits::getUnitLabel($label);
 
-	$keyStatus = 'off';
+    $keyStatus = 'off';
 
-	if (!is_null($unit)) {
+    if (!is_null($unit)) {
         $isLight = $unit->getValue();
-        $keyStatus = $isLight?'on':'off';
-	}
-	else {
-		$keyStatus = 'empty';
-	}
+        $keyStatus = $isLight ? 'on' : 'off';
+    }
+    else {
+        $keyStatus = 'empty';
+    }
 
-	$place = explode(";", $_GET['place']);
+    $place = explode(";", $_GET['place']);
 
-	$nameImgFile = "";
+    $nameImgFile = isset($_GET['img']) ? $_GET['img'] : 'light';
 
-	if ($keyStatus == 'on') {
-		$nameImgFile = "img2/light_on.png";
-	}
-	elseif ($keyStatus == 'off') {
-		$nameImgFile = "img2/light_off.png";
-	}
+    if ($keyStatus == 'on') {
+        $nameImgFile = 'img2/' . $nameImgFile . '_on.png';
+    }
+    else {
+        $nameImgFile = 'img2/' . $nameImgFile . '_off.png';
+    }
 
-	echo "<div class='lamp ".$keyStatus."' label='".$label."' style='top:".$place[0]."px;left:".$place[1]."px'>";
-	echo "<div class='lamp_img' style='top:5px;left:10px'>";
-	echo "<img class='".$keyStatus."_l' src='".$nameImgFile."'>";
-	echo "</div>";
-	echo "</div>";
+    echo "<div class='lamp " . $keyStatus . "' label='" . $label . "' style='top:" . $place[0] . "px;left:" . $place[1] . "px'>";
+    echo "<div class='lamp_img' style='top:5px;left:10px'>";
+    echo "<img class='" . $keyStatus . "_l' src='" . $nameImgFile . "'>";
+    echo "</div>";
+    echo "</div>";
 
 }
-
-?>
