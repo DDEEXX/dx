@@ -104,35 +104,40 @@ abstract class listArray implements Iterator
 
 }
 
-class listDevices extends ArrayIterator {
+class listDevices extends ArrayIterator
+{
 
     public function __destruct()
     {
         // TODO: Implement __destruct() method.
-        foreach($this as $key => $device) {
+        foreach ($this as $key => $device) {
             unset($device);
         }
     }
 
 }
 
-class listUnits extends ArrayIterator {
+class listUnits extends ArrayIterator
+{
 
     public function __destruct()
     {
         // TODO: Implement __destruct() method.
-        foreach($this as $key => $unite) {
+        foreach ($this as $key => $unite) {
             unset($unite);
         }
     }
 
 }
 
-class selectOption extends listArray {
+class selectOption extends listArray
+{
 
     /**
      * Для того чтобы не передавать в конструктор массив, как в родителе
      * selectOption constructor.
      */
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 }

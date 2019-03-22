@@ -12,6 +12,7 @@ require_once(dirname(__FILE__).'/globalConst.interface.php');
 
 interface iUnit{
     public function getValue();
+    public function getId();
 }
 
 abstract class unit implements iUnit {

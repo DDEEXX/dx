@@ -1,29 +1,36 @@
 <?php
 
-require_once(dirname(__FILE__)."/config.class.php");
-require_once(dirname(__FILE__)."/lists.class.php");
+require_once(dirname(__FILE__) . "/config.class.php");
+require_once(dirname(__FILE__) . "/lists.class.php");
 
-interface iSqlDataBase {
+interface iSqlDataBase
+{
     public function getConnect();
 }
-interface iDBException {
+
+interface iDBException
+{
     public function getErrorInfoHTML();
 }
 
-class DBException extends Exception {
-    public function __construct($mess) {
+class DBException extends Exception
+{
+    public function __construct($mess)
+    {
         parent::__construct($mess);
         error_log($this->__toString(), 0);
     }
 }
 
-class connectDBException extends DBException implements iDBException {
+class connectDBException extends DBException implements iDBException
+{
 
     /**
      * Возвращает описание ошибки подключения к базе в виде html для вывода на странице
      * @return string
      */
-    public function getErrorInfoHTML() {
+    public function getErrorInfoHTML()
+    {
         $txt = "<h1>Сайт " . $_SERVER['SERVER_NAME'] . "</h1>";
         $txt .= "<h2>Не могу подключиться к базе даных.</h2>";
         $txt .= "<h3>" . $this->GetMessage() . "</h3>";
@@ -31,56 +38,63 @@ class connectDBException extends DBException implements iDBException {
     }
 }
 
-class querySelectDBException extends DBException implements iDBException {
+class querySelectDBException extends DBException implements iDBException
+{
     /**
      * Возвращает описание ошибки выполнения SELECT запроса в виде html для вывода на странице
      * @return string
      */
-    public function getErrorInfoHTML() {
+    public function getErrorInfoHTML()
+    {
         $txt = "<h1>Не могу получить данные из таблиц базы данных.</h1>";
-        $txt .= "<h2>".$this->GetMessage()."</h2>";
+        $txt .= "<h2>" . $this->GetMessage() . "</h2>";
         return $txt;
     }
 }
 
-class otherDBException extends DBException implements iDBException {
+class otherDBException extends DBException implements iDBException
+{
     /**
      * Возвращает описание прочих ошибок виде html для вывода на странице
      * @return string
      */
-    public function getErrorInfoHTML() {
+    public function getErrorInfoHTML()
+    {
         $txt = "<h1>Ошибка при работе с базой данных</h1>";
-        $txt .= "<h2>".$this->GetMessage()."</h2>";
+        $txt .= "<h2>" . $this->GetMessage() . "</h2>";
         return $txt;
     }
 }
 
-class sqlDataBase implements iSqlDataBase {
-	
-	private static $db = null;
-	private $dbConnect;
+class sqlDataBase implements iSqlDataBase
+{
+
+    private static $db = null;
+    private $dbConnect;
 
     /**
      * sqlDataBase constructor.
      * @param iConfigDB $configDB
      * @throws connectDBException
      */
-    private function __construct(iConfigDB $configDB) {
-		//error_reporting(sqlConfig::err_rep);
-		$this->dbConnect=new mysqli($configDB->getHost(),
-                                    $configDB->getUser(),
-                                    $configDB->getPassword(),
-                                    $configDB->getNameDB(),
-                                    $configDB->getPort());
-		if($this->dbConnect->connect_errno)
+    private function __construct(iConfigDB $configDB)
+    {
+        //error_reporting(sqlConfig::err_rep);
+        $this->dbConnect = new mysqli($configDB->getHost(),
+            $configDB->getUser(),
+            $configDB->getPassword(),
+            $configDB->getNameDB(),
+            $configDB->getPort());
+        if ($this->dbConnect->connect_errno)
             throw new connectDBException($this->dbConnect->connect_error);
-	}
+    }
 
     /**
      * Получить соединение mysqli
      * @return mixed|mysqli
      */
-    public function getConnect() {
+    public function getConnect()
+    {
         return $this->dbConnect;
     }
 
@@ -89,22 +103,25 @@ class sqlDataBase implements iSqlDataBase {
      * @return null|sqlDataBase
      * @throws connectDBException
      */
-    public static function Connect() {
-		if (self::$db == null) {
-		    $config = new sqlConfig();
-		    self::$db = new sqlDataBase($config);
+    public static function Connect()
+    {
+        if (self::$db == null) {
+            $config = new sqlConfig();
+            self::$db = new sqlDataBase($config);
             unset($config);
         }
-		return self::$db;
-	}
+        return self::$db;
+    }
 
-    public function __destruct() {
+    public function __destruct()
+    {
         if ($this->dbConnect) $this->dbConnect->close();
     }
 
 }
 
-class queryDataBase {
+class queryDataBase
+{
 
     /**
      * Запросы типа INSERT и UPDATE
@@ -129,7 +146,8 @@ class queryDataBase {
      * @return array
      * @throws querySelectDBException
      */
-    public static function getAll(iSqlDataBase $conn, $query) {
+    public static function getAll(iSqlDataBase $conn, $query)
+    {
         $res = array();
         if ($resQ = self::getRaw($conn, $query)) {
             while ($row = $resQ->fetch_assoc()) {
@@ -147,15 +165,16 @@ class queryDataBase {
      * @return array|null
      * @throws querySelectDBException
      */
-    public static function getOne(iSqlDataBase $conn, $query) {
+    public static function getOne(iSqlDataBase $conn, $query)
+    {
         $row = null;
         if ($resQ = self::getRaw($conn, $query)) {
             $row = $resQ->fetch_assoc();
             /**
-            if (!is_array($row)) {
-                throw new otherDBException("Не могу результат запроса преобразовать в массив");
-            }
-            */
+             * if (!is_array($row)) {
+             * throw new otherDBException("Не могу результат запроса преобразовать в массив");
+             * }
+             */
             $resQ->free();
         }
         return $row;
@@ -168,7 +187,8 @@ class queryDataBase {
      * @return mixed
      * @throws querySelectDBException
      */
-    private static function getRaw(iSqlDataBase $conn, $query) {
+    private static function getRaw(iSqlDataBase $conn, $query)
+    {
         $res = $conn->getConnect()->query($query, MYSQLI_USE_RESULT);
         if (!$res) {
             throw new querySelectDBException($conn->getConnect()->error);
@@ -178,16 +198,16 @@ class queryDataBase {
 
 }
 
-class DB {
+class DB
+{
 
     /**
      * Получить список физ. устройств в виде ассоциативного массива в соответствии с отбором
      * @param Iterator|null $sel - отбор
      * @return array
-     * @throws connectDBException
-     * @throws querySelectDBException
      */
-    static public function getListDevices(Iterator $sel = null){
+    static public function getListDevices(Iterator $sel = null)
+    {
 
         $query = "SELECT * FROM tdevice";
         $listDevices = self::getListBD($query, $sel);
@@ -199,16 +219,12 @@ class DB {
      * Получить список модулей (лигических устройств) в виде ассоциативного массива в соответствии с отбором
      * @param Iterator|null $sel - отбор
      * @return array
-     * @throws connectDBException
-     * @throws querySelectDBException
      */
-    static public function getListUnits(Iterator $sel = null){
-
-        //$query = "SELECT a.*, b.* FROM tunits a LEFT JOIN tdevice b ON a.DeviceID = b.DeviceID ";
+    static public function getListUnits(Iterator $sel = null)
+    {
         $query = 'SELECT *, a.Note NoteU, b.Note NoteD FROM tunits a LEFT JOIN tdevice b ON a.DeviceID = b.DeviceID';
         $listUnits = self::getListBD($query, $sel);
         return $listUnits;
-
     }
 
     /**
@@ -217,12 +233,17 @@ class DB {
      * @param string $titleQuery - шапка запроса
      * @param Iterator|null $sel - отбор в виде объекта итератора
      * @return array
-     * @throws connectDBException
-     * @throws querySelectDBException
      */
-    static function getListBD($titleQuery = '', Iterator $sel = null){
+    static function getListBD($titleQuery = '', Iterator $sel = null)
+    {
 
-        $con = sqlDataBase::Connect();
+        try {
+            $con = sqlDataBase::Connect();
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка подключения к базе данных в DB::getListBD. '.$e->getMessage(),
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+            return array();
+        }
 
         $query = $con->getConnect()->real_escape_string($titleQuery);
 
@@ -234,7 +255,7 @@ class DB {
                 foreach ($sel as $key => $value) {
 
                     if (!empty($w)) {
-                        $w = $w." AND";
+                        $w = $w . " AND";
                     }
 
                     $realValue = $con->getConnect()->real_escape_string($value);
@@ -253,7 +274,13 @@ class DB {
             }
         }
 
-        $aDevices = queryDataBase::getAll($con, $query);
+        try {
+            $aDevices = queryDataBase::getAll($con, $query);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка при выполнии запроса в DB::getListBD. '.$query.'. '.$e->getMessage(),
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+            return array();
+        }
 
         return $aDevices;
 
@@ -263,39 +290,57 @@ class DB {
      * Получить значение константы по имени
      * @param $name
      * @return array|mixed|null
-     * @throws connectDBException
-     * @throws querySelectDBException
      */
-    static public function getConst($name) {
+    static public function getConst($name)
+    {
 
-        $con = sqlDataBase::Connect();
+        try {
+            $con = sqlDataBase::Connect();
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции DB::getConst. '.$e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return null;
+        }
 
         $name = $con->getConnect()->real_escape_string($name);
         $query = "SELECT Type, ValueInt, ValueDec, ValueTxt FROM tConst WHERE Name='$name' LIMIT 1";
-        $result = queryDataBase::getOne($con, $query);
+        try {
+            $result = queryDataBase::getOne($con, $query);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка в функции DB::getConst. При выполнении запроса '.$query.'. '.$e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return null;
+        }
 
         if (!empty($result['Type'])) {
             switch ($result['Type']) {
-                case 1 : $result = $result['ValueInt']; break;
-                case 2 : $result = $result['ValueDec']; break;
-                case 3 : $result = $result['ValueTxt']; break;
+                case 1 :
+                    $result = $result['ValueInt'];
+                    break;
+                case 2 :
+                    $result = $result['ValueDec'];
+                    break;
+                case 3 :
+                    $result = $result['ValueTxt'];
+                    break;
             }
         }
         else {
-            $result = Null;
+            $result = null;
         }
         return $result;
     }
 
-    static public function getLastValueUnit($unit, $value = null) {
+    static public function getLastValueUnit(iUnit $unit, $value = null)
+    {
 
         $uniteID = $unit->getId();
-        $nameTabValue = 'tvalue_'.$unit->getValueTable();
+        $nameTabValue = 'tvalue_' . $unit->getValueTable();
         if (is_null($value)) {
-            $query = 'SELECT Date, Value FROM '.$nameTabValue.' WHERE UnitID="'.$uniteID.'" ORDER BY ValueID DESC LIMIT 1';
+            $query = 'SELECT Date, Value FROM ' . $nameTabValue . ' WHERE UnitID="' . $uniteID . '" ORDER BY ValueID DESC LIMIT 1';
         }
         else {
-            $query = 'SELECT Date, Value FROM '.$nameTabValue.' WHERE UnitID="'.$uniteID.'" AND Value ="'.$value.'" ORDER BY ValueID DESC LIMIT 1';
+            $query = 'SELECT Date, Value FROM ' . $nameTabValue . ' WHERE UnitID="' . $uniteID . '" AND Value ="' . $value . '" ORDER BY ValueID DESC LIMIT 1';
         }
 
         $con = sqlDataBase::Connect();
@@ -309,7 +354,7 @@ class DB {
     {
         $uniteID = $unit->getId();
 
-        $query = 'SELECT Date, Status FROM tjournalkey WHERE UnitID="'.$uniteID.'" ORDER BY JournalKeyID DESC LIMIT 1';
+        $query = 'SELECT Date, Status FROM tjournalkey WHERE UnitID="' . $uniteID . '" ORDER BY JournalKeyID DESC LIMIT 1';
 
         $con = sqlDataBase::Connect();
         $result = queryDataBase::getOne($con, $query);
@@ -317,4 +362,5 @@ class DB {
         return $result;
     }
 }
+
 ?>

@@ -19,24 +19,8 @@ $NAME_LIGHT_N = 'light_hol_2_n';
 $MOVE_TIME_N = 8; //через сколько секунд вык. подсветка после отсутствия движения при включении от датчика движения
 $MOVE_TIME_GLOBAL = 1200; //через сколько секунд вык. подсветка после отсутствия движения
 
-try {
-    $unitMove = managerUnits::getUnitLabel($NAME_MOVE);
-} catch (connectDBException $e) {
-    logger::writeLog('Ошибка в модуле move_hall.php при подключении в базе данных. Создание объекта ::'.$NAME_MOVE, logger::FATAL);
-    return;
-} catch (querySelectDBException $e) {
-    logger::writeLog('Ошибка в модуле move_hall.php при выполнее запроса в базе данных. Создание объекта ::'.$NAME_MOVE, logger::FATAL);
-    return;
-}
-try {
-    $unitNightLight = managerUnits::getUnitLabel($NAME_LIGHT_N);
-} catch (connectDBException $e) {
-    logger::writeLog('Ошибка в модуле move_hall.php при подключении в базе данных. Создание объекта ::'.$NAME_LIGHT_N, logger::FATAL);
-    return;
-} catch (querySelectDBException $e) {
-    logger::writeLog('Ошибка в модуле move_hall.php при выполнее запроса в базе данных. Создание объекта ::'.$NAME_LIGHT_N, logger::FATAL);
-    return;
-}
+$unitMove = managerUnits::getUnitLabel($NAME_MOVE);
+$unitNightLight = managerUnits::getUnitLabel($NAME_LIGHT_N);
 
 if (is_null($unitMove) || is_null($unitNightLight)) return;
 

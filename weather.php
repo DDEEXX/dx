@@ -4,7 +4,6 @@ require_once(dirname(__FILE__) . "/class/sqlDataBase.class.php");
 
 class widgetWeather
 {
-
     const cache_lifetime = 7200; //время кэша файла в секундах, 3600=1 час
 
     private static $city_id = null; //id города, вписать свой, можно узнать тут https://pogoda.yandex.ru/static/cities.xml - параметр city id=
@@ -21,7 +20,7 @@ class widgetWeather
         if (is_null(self::$url)) self::$url = 'http://informer.gismeteo.ru/xml/' . self::$city_id . '.xml';
     }
 
-    static private function loadxmlyansex()
+    static private function loadxmlyandex()
     {
         $userAgent = 'Googlebot/2.1 (+http://www.google.com/bot.html)';
         $ch = curl_init(self::$url);
@@ -42,24 +41,22 @@ class widgetWeather
             if ($cache_modified > self::cache_lifetime) //обновляем файл погоды, если время файла кэша устарело
             {
                 $check_url = get_headers(self::$url);
-                $ok = 'application/xml';
                 $ok = 'Connection: close';
                 if (!(strpos($check_url[3], $ok) === false)) {
-                    self::loadxmlyansex();
+                    self::loadxmlyandex();
                 }
             }
         }
         else {
-            self::loadxmlyansex();
+            self::loadxmlyandex();
         }
     }
 
     /**
      * Возвращает массив с данными погоды
      */
-    static public function getWether()
+    static public function getWeather()
     {
-
         self::init();
         self::checkFile();
 
@@ -70,23 +67,36 @@ class widgetWeather
 
         $aResult = array();
 
+        /** @noinspection PhpUndefinedFieldInspection */
         foreach ($data->REPORT->TOWN->FORECAST as $forecast) {
 
             $tod = intval($forecast['tod']);
+            /** @noinspection PhpUndefinedFieldInspection */
             $temp_min = intval($forecast->TEMPERATURE['min']);
+            /** @noinspection PhpUndefinedFieldInspection */
             $temp_max = intval($forecast->TEMPERATURE['max']);
+            /** @noinspection PhpUndefinedFieldInspection */
             $precipitation = intval($forecast->PHENOMENA['precipitation']);
+            /** @noinspection PhpUndefinedFieldInspection */
             $rpower = intval($forecast->PHENOMENA['rpower']);
+            /** @noinspection PhpUndefinedFieldInspection */
             $spower = intval($forecast->PHENOMENA['spower']);
+            /** @noinspection PhpUndefinedFieldInspection */
             $cloudiness = intval($forecast->PHENOMENA['cloudiness']);
+            /** @noinspection PhpUndefinedFieldInspection */
             $pressure_min = intval($forecast->PRESSURE['min']);
+            /** @noinspection PhpUndefinedFieldInspection */
             $pressure_max = intval($forecast->PRESSURE['max']);
+            /** @noinspection PhpUndefinedFieldInspection */
             $wind_min = intval($forecast->WIND['min']);
+            /** @noinspection PhpUndefinedFieldInspection */
             $wind_max = intval($forecast->WIND['max']);
+            /** @noinspection PhpUndefinedFieldInspection */
             $wind_dir = intval($forecast->WIND['direction']);
+            /** @noinspection PhpUndefinedFieldInspection */
             $relwet_min = intval($forecast->RELWET['min']);
+            /** @noinspection PhpUndefinedFieldInspection */
             $relwet_max = intval($forecast->RELWET['max']);
-
 
             $temp = round(($temp_min + $temp_max) / 2);
             $temp_class = $temp > 0 ? 'temp_plus' : 'temp_minus';
@@ -115,7 +125,6 @@ class widgetWeather
 
     static public function get_img($tod, $precipitation, $cloudiness, $rpower, $spower)
     {
-
         //$tod: 0 - Ночь, 1 - Утро, 2 - День, 3 - Вечер
         //$cloudiness: 0 - ясно, 1 - малооблачно, 2 - облачно, 3 - пасмурно
         //$precipitation: 4 5 - дождь, 6 7 - снег, 8 - гроза, 9 10 - ясно
@@ -152,12 +161,10 @@ class widgetWeather
         $bk = "background:url(img2/weather/$myrow.png) no-repeat scroll 0 0 transparent";
 
         return "<div class='$myrow' style='$bk;height:55px;width:55px'></div>";
-
     }
 
     static public function get_wind($wind_dir)
     {
-
         switch ($wind_dir) {
             case 1 :
                 $w = "С";
@@ -186,19 +193,19 @@ class widgetWeather
             default :
                 $w = "";
         }
-
         return $w;
-
     }
 }
 
 ?>
 
 <style>
+    /*noinspection CssUnusedSymbol*/
     .temp_plus {
         color: #ffb687;
     }
 
+    /*noinspection CssUnusedSymbol*/
     .temp_minus {
         color: #caffff;
     }
@@ -210,7 +217,7 @@ class widgetWeather
 
 <div class="weather_home" style="width:680px">
     <?php
-    $w = widgetWeather::getWether();
+    $w = widgetWeather::getWeather();
 
     $temp_class = $w[0]['temp_class'];
     $temp = $w[0]["temp"];
@@ -239,7 +246,6 @@ class widgetWeather
             $pd = "вечер";
             break;
     }
-
     ?>
 
     <div class='temp_now' style='width:260px;float:left'>

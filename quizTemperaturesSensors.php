@@ -6,9 +6,9 @@
  * Time: 12:23
  */
 
-require_once(dirname(__FILE__).'/class/globalConst.interface.php');
-require_once(dirname(__FILE__).'/class/lists.class.php');
-require_once(dirname(__FILE__).'/class/managerUnits.class.php');
+require_once(dirname(__FILE__) . '/class/globalConst.interface.php');
+require_once(dirname(__FILE__) . '/class/lists.class.php');
+require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
 
 $sel = new selectOption();
 $sel->set('SensorTypeID', typeDevice::TEMPERATURE);
@@ -25,4 +25,3 @@ foreach ($temperatureUnits as $tekUnit) {
 
 unset($temperatureUnits);
 
-?>

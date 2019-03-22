@@ -1,15 +1,16 @@
 <?php
 
-require_once(dirname(__FILE__)."/globalConst.interface.php");
-require_once(dirname(__FILE__)."/sqlDataBase.class.php");
-require_once(dirname(__FILE__)."/logger.class.php");
+require_once(dirname(__FILE__) . "/globalConst.interface.php");
+require_once(dirname(__FILE__) . "/sqlDataBase.class.php");
+require_once(dirname(__FILE__) . "/logger.class.php");
 
 if (file_exists("/opt/owfs/share/php/OWNet/ownet.php_"))
+    /** @noinspection PhpIncludeInspection */
     require_once "/opt/owfs/share/php/OWNet/ownet.php";
 elseif (file_exists("/usr/share/php/OWNet/ownet.php_"))
     require_once "/usr/share/php/OWNet/ownet.php";
-elseif (file_exists(dirname(__FILE__).'/ownet.php'))
-    require_once dirname(__FILE__).'/ownet.php';
+elseif (file_exists(dirname(__FILE__) . '/ownet.php'))
+    require_once dirname(__FILE__) . '/ownet.php';
 else
     die("File 'ownet.php' is not found.");
 
@@ -17,33 +18,43 @@ else
 /**
  * Interface iSensor
  */
-interface iTemperatureSensor{
+interface iTemperatureSensor
+{
     public function getValue();
 }
 
-interface iDevice{
+interface iDevice
+{
     public function getDeviceID();
+
     public function getNet();
+
     public function getAdress();
+
     public function getType();
+
     public function getDisabled();
+
     public function getAlarm();
+
     public function addInBD();
 }
 
 /**
  * Class device - абстрактный класс описывающий физическое устройство
  */
-abstract class device implements iDevice {
+abstract class device implements iDevice
+{
 
     private $net = netDevice::NONE;
     private $adress = '';
     private $type = typeDevice::NONE;
     private $deviceID = 0;
     private $disabled = 0;
-    protected $alarm    = '';
+    protected $alarm = '';
 
-    public function __construct($deviceID, $net, $adr, $type, $disabled, $alarm = '') {
+    public function __construct($deviceID, $net, $adr, $type, $disabled, $alarm = '')
+    {
         $this->net = $net;
         $this->adress = $adr;
         $this->type = $type;
@@ -52,30 +63,68 @@ abstract class device implements iDevice {
         $this->alarm = $alarm;
     }
 
-    public function getDeviceID() { return $this->deviceID; }
-    public function getNet() { return $this->net; }
-    public function getAdress() { return $this->adress; }
-    public function getType() { return $this->type; }
-    public function getDisabled() {return $this->disabled;}
-    public function getAlarm() { return ""; }
+    public function getDeviceID()
+    {
+        return $this->deviceID;
+    }
+
+    public function getNet()
+    {
+        return $this->net;
+    }
+
+    public function getAdress()
+    {
+        return $this->adress;
+    }
+
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function getDisabled()
+    {
+        return $this->disabled;
+    }
+
+    public function getAlarm()
+    {
+        return "";
+    }
 
     public function addInBD()
     {
-        $conn = sqlDataBase::Connect();
+        try {
+            $conn = sqlDataBase::Connect();
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе (device.class.php) функция addInBD.'.$e->getMessage(),
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+            return false;
+        }
         $adr = $conn->getConnect()->real_escape_string($this->adress);
         $alarm = $conn->getConnect()->real_escape_string($this->alarm);
 
         $query = "INSERT tdevice (Adress, NetTypeID, SensorTypeID, Disabled, set_alarm) VALUES ('$adr', '$this->net', '$this->type', '$this->disabled', '$alarm')";
 
-        return queryDataBase::execute($conn, $query);
+        try {
+            return queryDataBase::execute($conn, $query);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка при выполнении sql запроса (device.class.php) функция addInBD.'.$e->getMessage(),
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+            return false;
+        }
     }
 
 }
 
-class sensor extends device {
+class sensor extends device
+{
 
     /**
      * sensor constructor.
+     * @param array $options
+     * @param $typeDevice
      */
     public function __construct(array $options, $typeDevice)
     {
@@ -89,10 +138,13 @@ class sensor extends device {
 
 }
 
-class maker extends device {
+class maker extends device
+{
 
     /**
      * maker constructor.
+     * @param array $options
+     * @param $typeDevice
      */
     public function __construct(array $options, $typeDevice)
     {
@@ -104,9 +156,11 @@ class maker extends device {
     }
 }
 
-class temperatureSensor extends sensor {
+class temperatureSensor extends sensor
+{
 
-    public function __construct(array $options) {
+    public function __construct(array $options)
+    {
         parent::__construct($options, typeDevice::TEMPERATURE);
     }
 
@@ -115,22 +169,20 @@ class temperatureSensor extends sensor {
         $result = null;
         $OWNetAdress = DB::getConst('OWNetAdress');
         $adress = $this->getAdress();
-        if ( preg_match("/^28\./", $adress) ) { //это датчик DS18B20
+        if (preg_match("/^28\./", $adress)) { //это датчик DS18B20
 
             $ow = new OWNet($OWNetAdress);
 
-            $tekValue = $ow->get('/uncached/'.$adress.'/temperature12');
-            if ( is_null($tekValue) || $tekValue == "0") { //если датчик не сработал попробуем еще один раз
+            $tekValue = $ow->get('/uncached/' . $adress . '/temperature12');
+            if (is_null($tekValue) || $tekValue == "0") { //если датчик не сработал попробуем еще один раз
                 sleep(1); //ждем 1 секунду
-                $tekValue = $ow->get('/uncached/'.$adress.'/temperature12');
+                $tekValue = $ow->get('/uncached/' . $adress . '/temperature12');
             }
-            if ( !is_null($tekValue) ) { //если получили температуру, то возвращаем результат
+            if (!is_null($tekValue)) { //если получили температуру, то возвращаем результат
                 $result = $tekValue;
             }
             else { //запишем в лог об ошибке
-                $log = logger::getLogger();
-                $log->log('Ошибка получения температуры с датчика :: '.$adress, logger::ERROR);
-                unset($log);
+                logger::writeLog('Ошибка получения температуры с датчика :: ' . $adress, loggerTypeMessage::ERROR);
             }
 
             if (!is_null($tekValue)) { //иногда кодга датчик не срабатывает, возвращает 0
@@ -145,9 +197,7 @@ class temperatureSensor extends sensor {
 
         }
         else {
-            $log = logger::getLogger();
-            $log->log('Попытка получить температуру с датчика :: '.$adress, logger::ERROR);
-            unset($log);
+            logger::writeLog('Попытка получить температуру с датчика :: ' . $adress, loggerTypeMessage::ERROR);
         }
 
         return $result;
@@ -158,9 +208,11 @@ class temperatureSensor extends sensor {
         // TODO: Implement getValue() method.
         $result = null;
         $disabled = $this->getDisabled();
-        if ($disabled==0) { // датчик включен
+        if ($disabled == 0) { // датчик включен
             switch ($this->getNet()) {
-                case netDevice::ONE_WIRE : $result = $this->getValueOWNet(); break;
+                case netDevice::ONE_WIRE :
+                    $result = $this->getValueOWNet();
+                    break;
             }
         }
         return $result;
@@ -168,9 +220,11 @@ class temperatureSensor extends sensor {
 
 }
 
-class voltageSensor extends sensor  {
+class voltageSensor extends sensor
+{
 
-    public function __construct(array $options) {
+    public function __construct(array $options)
+    {
         parent::__construct($options, typeDevice::VOLTAGE);
     }
 
@@ -181,9 +235,11 @@ class voltageSensor extends sensor  {
 
 }
 
-class labelSensor extends sensor  {
+class labelSensor extends sensor
+{
 
-    public function __construct(array $options) {
+    public function __construct(array $options)
+    {
         parent::__construct($options, typeDevice::LABEL);
     }
 
@@ -194,9 +250,11 @@ class labelSensor extends sensor  {
 
 }
 
-class keyInSensor extends sensor  {
+class keyInSensor extends sensor
+{
 
-    public function __construct(array $options) {
+    public function __construct(array $options)
+    {
         parent::__construct($options, typeDevice::KEY_IN);
         //т.к при подключении таких датчиков через 1wire состояние читается в "папке" alarm
         //поэтому при создании объекта если это датчик на 1wire запишем в физ устройство
@@ -220,9 +278,9 @@ class keyInSensor extends sensor  {
     private function getValueOWNet($chanel = null)
     {
         $result = 1; // 1 - это логическое "нет", из-за подключения датчика
-        $address = $this->getAdress();
+        $adress = $this->getAdress();
         $OWNetAdress = DB::getConst('OWNetAdress');
-        if ( preg_match("/^12\./", $address) ) { //это датчик DS2406
+        if (preg_match("/^12\./", $adress)) { //это датчик DS2406
             //такие датчики срабатывают по флагу set_alarm
             //когда сбывается условие записанное в этом флаге, в каталоге появляется файл с
             //именем равным адресу датчика
@@ -244,20 +302,18 @@ class keyInSensor extends sensor  {
 
             $ow = new OWNet($OWNetAdress);
 
-            $tekValue = $ow->get('/uncached/'.$address.'/sensed.'.$chanel);
+            $tekValue = $ow->get('/uncached/' . $adress . '/sensed.' . $chanel);
             if (is_null($tekValue)) {
                 $tekValue = 1; //1 это нет
             }
 
-            $result = $tekValue?0:1;
+            $result = $tekValue ? 0 : 1;
 
             unset($ow);
 
         }
         else {
-            $log = logger::getLogger();
-            $log->log('Попытка получить значение с датчика :: '.$address, logger::ERROR);
-            unset($log);
+            logger::writeLog('Попытка получить значение с датчика :: ' . $adress, loggerTypeMessage::ERROR);
         }
 
         return $result;
@@ -268,23 +324,28 @@ class keyInSensor extends sensor  {
         // TODO: Implement getValue() method.
         $result = null;
         $disabled = $this->getDisabled();
-        if ($disabled==0) { // датчик включен
+        if ($disabled == 0) { // датчик включен
             switch ($this->getNet()) {
-                case netDevice::ONE_WIRE : $result = $this->getValueOWNet($chanel); break;
+                case netDevice::ONE_WIRE :
+                    $result = $this->getValueOWNet($chanel);
+                    break;
             }
         }
         return $result;
     }
 
-    public function getAlarm() {
+    public function getAlarm()
+    {
         return $this->alarm;
     }
 
 }
 
-class powerKeyMaker extends maker {
+class powerKeyMaker extends maker
+{
 
-    public function __construct(array $options) {
+    public function __construct(array $options)
+    {
         parent::__construct($options, typeDevice::POWER_KEY);
     }
 
@@ -293,13 +354,13 @@ class powerKeyMaker extends maker {
         $result = null;
         $OWNetAdress = DB::getConst('OWNetAdress');
         $adress = $this->getAdress();
-        if ( preg_match("/^3A\./", $adress) ) {
+        if (preg_match("/^3A\./", $adress)) {
 
             $ow = new OWNet($OWNetAdress);
 
-            $result = $ow->get('/uncached/'.$adress.'/PIO.'.$chanel);
+            $result = $ow->get('/uncached/' . $adress . '/PIO.' . $chanel);
 
-            if ( empty($result) ) {
+            if (empty($result)) {
                 $result = 0;
             }
 
@@ -307,9 +368,7 @@ class powerKeyMaker extends maker {
 
         }
         else {
-            $log = logger::getLogger();
-            $log->log('Попытка получить значение с датчика :: '.$adress, logger::ERROR);
-            unset($log);
+            logger::writeLog('Попытка получить значение с датчика :: ' . $adress, loggerTypeMessage::ERROR);
         }
 
         return $result;
@@ -320,15 +379,13 @@ class powerKeyMaker extends maker {
         $result = null;
         $OWNetAdress = DB::getConst('OWNetAdress');
         $adress = $this->getAdress();
-        if ( preg_match("/^3A\./", $adress) ) {
+        if (preg_match("/^3A\./", $adress)) {
             $ow = new OWNet($OWNetAdress);
-            $result = $ow->set('/uncached/'.$adress.'/PIO.'.$chanel, $value);
+            $result = $ow->set('/uncached/' . $adress . '/PIO.' . $chanel, $value);
             unset($ow);
         }
         else {
-            $log = logger::getLogger();
-            $log->log('Попытка записать значение в датчик :: '.$adress, logger::ERROR);
-            unset($log);
+            logger::writeLog('Попытка записать значение в датчик :: ' . $adress, loggerTypeMessage::ERROR);
         }
 
         return $result;
@@ -340,9 +397,11 @@ class powerKeyMaker extends maker {
         // TODO: Implement getValue() method.
         $result = null;
         $disabled = $this->getDisabled();
-        if ($disabled==0) { // датчик включен
+        if ($disabled == 0) { // датчик включен
             switch ($this->getNet()) {
-                case netDevice::ONE_WIRE : $result = $this->getValueOWNet($chanel); break;
+                case netDevice::ONE_WIRE :
+                    $result = $this->getValueOWNet($chanel);
+                    break;
             }
         }
         return $result;
@@ -352,24 +411,29 @@ class powerKeyMaker extends maker {
     {
         $result = null;
         $disabled = $this->getDisabled();
-        if ($disabled==0) { // датчик включен
+        if ($disabled == 0) { // датчик включен
             switch ($this->getNet()) {
-                case netDevice::ONE_WIRE : $result = $this->setValueOWNet($value, $chanel); break;
+                case netDevice::ONE_WIRE :
+                    $result = $this->setValueOWNet($value, $chanel);
+                    break;
             }
         }
         return $result;
     }
 
-    public function getAlarm() {
+    public function getAlarm()
+    {
         return $this->alarm;
     }
 
 
 }
 
-class keyOutMaker extends maker {
+class keyOutMaker extends maker
+{
 
-    public function __construct(array $options) {
+    public function __construct(array $options)
+    {
         parent::__construct($options, typeDevice::KEY_OUT);
     }
 

@@ -4,39 +4,31 @@ require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
 require_once(dirname(__FILE__) . '/class/globalConst.interface.php');
 require_once(dirname(__FILE__) . '/class/logger.class.php');
 
+/**
+ * Событие на "нажатие" на модуль с именем $label
+ * @param $label
+ */
 function key_d($label)
 {
-    try {
-        $unit = managerUnits::getUnitLabel($label);
-    } catch (connectDBException $e) {
-        logger::writeLog('Ошибка в модуле powerKey.php при подключении в базе данных.', logger::FATAL);
-        return;
-    } catch (querySelectDBException $e) {
-        logger::writeLog('Ошибка в модуле powerKey.php при выполнее запроса в базе данных.', logger::FATAL);
+    $unit = managerUnits::getUnitLabel($label);
+
+    if (is_null($unit)) {
+        logger::writeLog('Не могу создать объект по метке :: ' . $label,
+            loggerTypeMessage::ERROR, loggerName::ERROR);
         return;
     }
 
-    if (!empty($unit)) {
+    $isLight = $unit->getValue();
 
-        $isLight = $unit->getValue();
-
-        if ($isLight) {
-            $unit->setValue(0, statusKey::OFF);
-        }
-        else {
-            $unit->setValue(1, statusKey::OUTSIDE);
-        }
-
-        unset($ow);
-
+    if ($isLight) {
+        $unit->setValue(0, statusKey::OFF);
     }
     else {
-        logger::writeLog('Не могу создать объект по метке :: ' . $label, logger::FATAL);
+        $unit->setValue(1, statusKey::OUTSIDE);
     }
 
     unset($unit);
 }
-
 
 if (!empty($_REQUEST['label'])) {
     key_d($_REQUEST['label']);

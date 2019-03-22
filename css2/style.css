@@ -1,64 +1,95 @@
 #temp_out_1 {
-  font-size:200%;
-  font-weight:600;
-  color: #5272BF;
+    font-size: 200%;
+    font-weight: 600;
+    color: #5272BF;
 }
 
 #temp_hall, #temp_bedroom {
-  color: #8B4513;
+    color: #8B4513;
 }
 
 .g_temp {
-  font-size:100%;
-  font-weight:600;
-  color: #DDDDDD;
-  float:right
+    font-size: 100%;
+    font-weight: 600;
+    color: #DDDDDD;
+    float: right
 }
 
 .TekTime {
-  color: #DDDDDD;
-  float:right
+    color: #DDDDDD;
+    float: right
 }
 
 .TekDate {
-  color: #DDDDDD;
-  float:right
+    color: #DDDDDD;
+    float: right
 }
 
+.lamp {
+    position: absolute;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+}
+
+.lampkey {
+    position: absolute;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+}
+
+.lamp_img {
+    position: absolute
+}
+
+.on_light {
+    box-shadow: 0px 0px 60px 60px rgba(255, 191, 0, 0.3);
+    border-radius: 100%;
+}
+
+div.lamp.light_status_on {
+    border: 1px solid #ffbf00
+}
+
+div.lamp.light_status_off {
+    border: 1px solid #86aeff
+}
 
 body {
-  background-image: url(temes/dx/images/background.jpg);
+    background-image: url(temes/dx/images/background.jpg);
 }
 
 .ui-button-text-only .ui-button-text {
-	padding: .1em 1em;
+    padding: .1em 1em;
 }
 
 .ui-accordion .dx.ui-accordion-header {
-	padding-top: 0em;
-	padding-bottom: 0em;
+    padding-top: 0em;
+    padding-bottom: 0em;
 }
 
 .ui-state-default,
 .ui-widget-content .ui-state-default {
-  background: transparent;
+    background: transparent;
 }
 
 .ui-widget-content, .ui-state-default {
-  background: transparent;
+    background: transparent;
 }
 
 .ui-button.ui-button-icon-only {
-  background: transparent;
+    background: transparent;
 }
 
 .ui-button.ui-button-icon-only.ui-state-active {
-  background: #036;
+    background: #036;
 }
+
 .ui-button.ui-button-icon-only.ui-state-focus {
-  border: 1px solid #369;
+    border: 1px solid #369;
 }
 
 .ui-button.ui-button-icon-only.ui-state-hover {
-  border: 1px solid #6CF;
+    border: 1px solid #6CF;
 }

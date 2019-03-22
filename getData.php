@@ -8,32 +8,28 @@ if ($_REQUEST['dev'] == "temp") { //получаем температру
 
     $unit = managerUnits::getUnitLabel($label);
 
-    if (!is_null($unit)) {
-        $value = $unit->readValue();
-        $temperaturePrecision = DB::getConst('TemperaturePrecision');
-        $temperature = (double)$value['Value'];
-        // время с последнего имерения в течение которого температура считается еще актуальной
-        $actualTimeTemperature = DB::getConst('ActualTimeTemperature');
-        $actualTemp = ((time() - strtotime($value['Date'])) < $actualTimeTemperature);
-        $temperature = round($temperature, $temperaturePrecision);
-        echo "$temperature" . "&deg";
-
-        if (!$actualTemp) {
-            echo '<style>
-                #' . $label . ' {color: #8a8a8a}
-              </style>';
-        }
-
-    }
-    else {
-        $log = logger::getLogger();
-        $log->log('Молуль с именем :: ' . $label . ' :: не найден', logger::ERROR);
-        unset($log);
+    if (is_null($unit)) {
+        logger::writeLog('Молуль с именем :: ' . $label . ' :: не найден',
+            loggerTypeMessage::ERROR, loggerName::ERROR);
         exit(); //тут надо подумать что возвращать
     }
 
-    unset($unit);
+    $value = $unit->readValue();
+    $temperaturePrecision = DB::getConst('TemperaturePrecision');
+    $temperature = (double)$value['Value'];
+    // время с последнего имерения в течение которого температура считается еще актуальной
+    $actualTimeTemperature = DB::getConst('ActualTimeTemperature');
+    $actualTemp = ((time() - strtotime($value['Date'])) < $actualTimeTemperature);
+    $temperature = round($temperature, $temperaturePrecision);
+    echo "$temperature" . "&deg";
 
+    if (!$actualTemp) {
+        echo '<style>
+                #' . $label . ' {color: #8a8a8a}
+              </style>';
+    }
+
+    unset($unit);
 }
 
 //if ( $_REQUEST['dev'] == "label" ) { //получаем значение цифрового датчика типа "сухой контакт"
@@ -92,10 +88,9 @@ if ($_REQUEST['dev'] == "light") { //получаем значение осве�
         $nameImgFile = 'img2/' . $nameImgFile . '_off.png';
     }
 
-    echo "<div class='lamp " . $keyStatus . "' label='" . $label . "' style='top:" . $place[0] . "px;left:" . $place[1] . "px'>";
-    echo "<div class='lamp_img' style='top:5px;left:10px'>";
-    echo "<img class='" . $keyStatus . "_l' src='" . $nameImgFile . "'>";
-    echo "</div>";
-    echo "</div>";
-
+    echo '<div class="lamp light_status_' . $keyStatus . '" label="' . $label . '" style="top:' . $place[0] . 'px;left:' . $place[1] . 'px">';
+    echo '<div class="lamp_img" style="top:5px;left:10px">';
+    echo '<img class="' . $keyStatus . '_light" src="' . $nameImgFile . '">';
+    echo '</div>';
+    echo '</div>';
 }

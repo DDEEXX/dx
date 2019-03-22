@@ -54,27 +54,23 @@ class managerUnits
      * Получить модули как объекты в виде массива
      * @param Iterator|null $sel
      * @return listUnits
-     * @throws connectDBException
-     * @throws querySelectDBException
      */
     public static function getListUnits(Iterator $sel = null){
+        $list = new listUnits();
 
         $arr = DB::getListUnits($sel);
-        $list = new listUnits();
+
         foreach ($arr as $value) {
            $Unit = self::createDevice($value);
            $list->append($Unit);
         }
         return $list;
-
     }
 
     /**
      * Ищет модуль по имени. Если модуля с таким именем нет, то возвращает null
      * @param $label
      * @return mixed|null
-     * @throws connectDBException
-     * @throws querySelectDBException
      */
     public static function getUnitLabel($label) {
 
