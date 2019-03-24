@@ -35,7 +35,7 @@ if (is_null($unit)) {
     exit("#label");
 }
 
-$result = $unit->getTemperatureForInterval($_GET['date_from'], $_GET['date_to'], $grType);
+$result = $unit->getTemperatureForInterval($_GET['date_from'], $_GET['date_to']);
 
 $count_r = count($result);
 

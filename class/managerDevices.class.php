@@ -6,16 +6,18 @@
  * Time: 15:01
  */
 
-require_once(dirname(__FILE__)."/sqlDataBase.class.php");
+require_once(dirname(__FILE__) . "/sqlDataBase.class.php");
 //require_once(dirname(__FILE__) . "/managerDevice.interface.php");
 //require_once(dirname(__FILE__) . "/managerTemperatureSensor.class.php");
 //require_once(dirname(__FILE__) . "/managerVoltageSensor.class.php");
-require_once(dirname(__FILE__)."/lists.class.php");
-require_once(dirname(__FILE__)."/device.class.php");
+require_once(dirname(__FILE__) . "/lists.class.php");
+require_once(dirname(__FILE__) . "/device.class.php");
 
-class managerException extends Exception {
+class managerException extends Exception
+{
 
-    public function __construct($mess) {
+    public function __construct($mess)
+    {
         parent::__construct($mess);
         error_log($this->__toString(), 0);
     }
@@ -24,18 +26,25 @@ class managerException extends Exception {
      * Возвращает описание ошибки выполнения SELECT запроса в виде html для вывода на странице
      * @return string
      */
-    public function getErrorInfoHTML() {
+    public function getErrorInfoHTML()
+    {
         $txt = "<h1>ошибка при работе с физическими устройствами.</h1>";
-        $txt .= "<h2>".$this->GetMessage()."</h2>";
+        $txt .= "<h2>" . $this->GetMessage() . "</h2>";
         return $txt;
     }
 
 }
 
-class deviceFactory {
+class deviceFactory
+{
 
-    public static function build (array $value) {
-
+    /**
+     * @param array $value
+     * @return null
+     * @throws Exception
+     */
+    public static function build(array $value)
+    {
         switch ($value['SensorTypeID']) {
             case typeDevice::TEMPERATURE :
                 $className = 'temperatureSensor';
@@ -61,8 +70,9 @@ class deviceFactory {
 
         if (class_exists($className)) {
             return new $className($value);
-        } else {
-            throw new \Exception("Неверный тип продукта");
+        }
+        else {
+            throw new Exception("Неверный тип продукта");
         }
 
     }
@@ -78,7 +88,8 @@ class managerDevices
      * @return mixed
      * @throws Exception
      */
-    public static function createDevice(array $value) {
+    public static function createDevice(array $value)
+    {
 
         // Здесь создаём продукт с помощью Фабричного метода
         $device = deviceFactory::build($value);
@@ -92,7 +103,8 @@ class managerDevices
      * @param iDevice $device
      * @return bool
      */
-    public static function addDevice(iDevice $device) {
+    public static function addDevice(iDevice $device)
+    {
 
         return $device->addInBD();
 
@@ -102,13 +114,15 @@ class managerDevices
      * возвращает объект физ. устройства по его ID либо вызывает исключение
      * @param $idDevice
      * @return mixed
+     * @throws Exception
      * @throws connectDBException
-     * @throws querySelectDBException
      * @throws managerException
+     * @throws querySelectDBException
      */
-    public static function getDevice($idDevice) {
+    public static function getDevice($idDevice)
+    {
         $conn = sqlDataBase::Connect();
-        $query = 'SELECT * FROM `tdevice` WHERE DeviceID = '.$idDevice;
+        $query = 'SELECT * FROM `tdevice` WHERE DeviceID = ' . $idDevice;
         $arDevice = queryDataBase::getOne($conn, $query);
         if (is_null($arDevice)) {
             throw new managerException('не могу создать объект физ. устройства по его ID');
@@ -121,7 +135,8 @@ class managerDevices
      * Возвращает массив с именами менеджеров устройств (имена классов)
      * @return array
      */
-    public static function arrayManagersDevices(){
+    public static function arrayManagersDevices()
+    {
         $aManagersDevices = ['managerTemperatureSensor', 'managerVoltageSensor'];
         return $aManagersDevices;
     }
@@ -132,10 +147,12 @@ class managerDevices
      * @return mixed
      * @throws Exception
      */
-    public static function getDeviceManager($nameManager) {
+    public static function getDeviceManager($nameManager)
+    {
         if (class_exists($nameManager)) {
             return $nameManager;
-        } else {
+        }
+        else {
             throw new \Exception("Unknown manager");
         }
     }
@@ -144,10 +161,10 @@ class managerDevices
      * Получить физ. устройства как объекты в виде массива
      * @param Iterator|null $sel
      * @return listDevices
-     * @throws connectDBException
-     * @throws querySelectDBException
+     * @throws Exception
      */
-    public static function getListDevices(Iterator $sel = null){
+    public static function getListDevices(Iterator $sel = null)
+    {
 
         $arr = DB::getListDevices($sel);
         $list = new listDevices();

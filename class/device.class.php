@@ -4,15 +4,15 @@ require_once(dirname(__FILE__) . "/globalConst.interface.php");
 require_once(dirname(__FILE__) . "/sqlDataBase.class.php");
 require_once(dirname(__FILE__) . "/logger.class.php");
 
-if (file_exists("/opt/owfs/share/php/OWNet/ownet.php_"))
-    /** @noinspection PhpIncludeInspection */
-    require_once "/opt/owfs/share/php/OWNet/ownet.php";
-elseif (file_exists("/usr/share/php/OWNet/ownet.php_"))
-    require_once "/usr/share/php/OWNet/ownet.php";
-elseif (file_exists(dirname(__FILE__) . '/ownet.php'))
+//if (file_exists("/opt/owfs/share/php/OWNet/ownet.php_"))
+//    /** @noinspection PhpIncludeInspection */
+//    require_once "/opt/owfs/share/php/OWNet/ownet.php";
+//elseif (file_exists("/usr/share/php/OWNet/ownet.php_"))
+//    require_once "/usr/share/php/OWNet/ownet.php";
+//elseif (file_exists(dirname(__FILE__) . '/ownet.php'))
     require_once dirname(__FILE__) . '/ownet.php';
-else
-    die("File 'ownet.php' is not found.");
+//else
+//    die("File 'ownet.php' is not found.");
 
 
 /**
@@ -171,6 +171,7 @@ class temperatureSensor extends sensor
         $adress = $this->getAdress();
         if (preg_match("/^28\./", $adress)) { //это датчик DS18B20
 
+            /** @noinspection PhpUndefinedClassInspection */
             $ow = new OWNet($OWNetAdress);
 
             $tekValue = $ow->get('/uncached/' . $adress . '/temperature12');
@@ -300,6 +301,7 @@ class keyInSensor extends sensor
 //                }
 //            }
 
+            /** @noinspection PhpUndefinedClassInspection */
             $ow = new OWNet($OWNetAdress);
 
             $tekValue = $ow->get('/uncached/' . $adress . '/sensed.' . $chanel);
@@ -356,6 +358,7 @@ class powerKeyMaker extends maker
         $adress = $this->getAdress();
         if (preg_match("/^3A\./", $adress)) {
 
+            /** @noinspection PhpUndefinedClassInspection */
             $ow = new OWNet($OWNetAdress);
 
             $result = $ow->get('/uncached/' . $adress . '/PIO.' . $chanel);
@@ -380,6 +383,7 @@ class powerKeyMaker extends maker
         $OWNetAdress = DB::getConst('OWNetAdress');
         $adress = $this->getAdress();
         if (preg_match("/^3A\./", $adress)) {
+            /** @noinspection PhpUndefinedClassInspection */
             $ow = new OWNet($OWNetAdress);
             $result = $ow->set('/uncached/' . $adress . '/PIO.' . $chanel, $value);
             unset($ow);

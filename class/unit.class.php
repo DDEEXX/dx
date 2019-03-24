@@ -6,16 +6,19 @@
  * Time: 12:13
  */
 
-require_once(dirname(__FILE__)."/sqlDataBase.class.php");
-require_once(dirname(__FILE__)."/managerDevices.class.php");
-require_once(dirname(__FILE__).'/globalConst.interface.php');
+require_once(dirname(__FILE__) . "/sqlDataBase.class.php");
+require_once(dirname(__FILE__) . "/managerDevices.class.php");
+require_once(dirname(__FILE__) . '/globalConst.interface.php');
 
-interface iUnit{
+interface iUnit
+{
     public function getValue();
+
     public function getId();
 }
 
-abstract class unit implements iUnit {
+abstract class unit implements iUnit
+{
 
     protected $device = null;
     protected $id = 0;
@@ -23,6 +26,10 @@ abstract class unit implements iUnit {
 
     /**
      * unit constructor.
+     * @param $type
+     * @param $id
+     * @param array $device
+     * @throws Exception
      */
     public function __construct($type, $id, array $device)
     {
@@ -48,7 +55,8 @@ abstract class unit implements iUnit {
      * Получить/считать значение датчика
      * @return null
      */
-    public function getValue() {
+    public function getValue()
+    {
         return null;
     }
 
@@ -69,6 +77,9 @@ class sensorUnit extends unit
 
     /**
      * sensorUnit constructor.
+     * @param array $options
+     * @param $type
+     * @throws Exception
      */
     public function __construct(array $options, $type)
     {
@@ -90,6 +101,9 @@ class moduleUnit extends unit
 
     /**
      * moduleUnit constructor.
+     * @param array $options
+     * @param $type
+     * @throws Exception
      */
     public function __construct(array $options, $type)
     {
@@ -115,11 +129,18 @@ class iButtonUnit extends unit
  * Датчик температуры
  * Class temperatureUnit
  */
-class temperatureUnit extends sensorUnit {
+class temperatureUnit extends sensorUnit
+{
 
     private $delta = 0;
 
-    public function __construct(array $options) {
+    /**
+     * temperatureUnit constructor.
+     * @param array $options
+     * @throws Exception
+     */
+    public function __construct(array $options)
+    {
         parent::__construct($options, typeUnit::TEMPERATURE);
         $this->delta = $options['Delta'];
     }
@@ -142,6 +163,8 @@ class temperatureUnit extends sensorUnit {
      * Записать значение температуры в базу данных
      * время записи берется текущее серверное
      * @param $value
+     * @throws connectDBException
+     * @throws querySelectDBException
      */
     public function writeValue($value)
     {
@@ -154,9 +177,9 @@ class temperatureUnit extends sensorUnit {
         $delta = $this->delta;
         $temperature = $value + $delta;
         $uniteID = $this->id;
-        $nameTabValue = 'tvalue_'.$this->valueTable;
+        $nameTabValue = 'tvalue_' . $this->valueTable;
 
-        $query = 'INSERT INTO '.$nameTabValue.' VALUES (NULL, '."$uniteID, SYSDATE(), ".$temperature.')';
+        $query = 'INSERT INTO ' . $nameTabValue . ' VALUES (NULL, ' . "$uniteID, SYSDATE(), " . $temperature . ')';
 
         $con = sqlDataBase::Connect();
 
@@ -165,8 +188,8 @@ class temperatureUnit extends sensorUnit {
         unset($con);
 
         if (!$result) {
-            //Пишем лог
-
+            logger::writeLog('Ошибка при записи в базу данных (writeValue)',
+                loggerTypeMessage::ERROR, loggerName::ERROR);
         }
 
     }
@@ -181,12 +204,18 @@ class temperatureUnit extends sensorUnit {
         return $value;
     }
 
-    public function getTemperatureForInterval($dateFrom = null, $dateTo = null, $grType = graphType::line) {
+    /**
+     * @param null $dateFrom
+     * @param null $dateTo
+     * @return array|null
+     */
+    public function getTemperatureForInterval($dateFrom = null, $dateTo = null)
+    {
 
         //Конечная дата
-        $date_to = "'".$dateTo."'";
+        $date_to = "'" . $dateTo . "'";
         //Если конечная дата не задана, используем настоящее время
-        if ( empty($dateTo) ) {
+        if (empty($dateTo)) {
             $date_to = "NOW()";
         }
 
@@ -194,27 +223,36 @@ class temperatureUnit extends sensorUnit {
         $date_from = $dateFrom;
         $date_format = "DATE_FORMAT(Date, '%d.%m')";
 
-        if ( empty($dateFrom) || $dateFrom == 'day') {
+        if (empty($dateFrom) || $dateFrom == 'day') {
             $date_from = "($date_to - INTERVAL 1 DAY)";
             $date_format = "DATE_FORMAT(Date, '%H:%i')";
         }
-        elseif ( $dateFrom == "week" ) {
+        elseif ($dateFrom == "week") {
             $date_from = "($date_to - INTERVAL 7 DAY)";
             $date_format = "DATE_FORMAT(Date, '%d.%m')";
         }
-        elseif ( $dateFrom == "month" ) {
+        elseif ($dateFrom == "month") {
             $date_from = "($date_to - INTERVAL 1 MONTH)";
             $date_format = "DATE_FORMAT(Date, '%d.%m')";
         }
 
         $id = $this->getId();
-        $nameTabValue = 'tvalue_'.$this->valueTable;
+        $nameTabValue = 'tvalue_' . $this->valueTable;
 
-        $query = "SELECT Value, $date_format Date_f FROM ".$nameTabValue." WHERE UnitID=".$id." AND Date>=$date_from AND Date<=$date_to ORDER BY Date";
+        $query = "SELECT Value, $date_format Date_f FROM " . $nameTabValue . " WHERE UnitID=" . $id . " AND Date>=$date_from AND Date<=$date_to ORDER BY Date";
 
-        $con = sqlDataBase::Connect();
-
-        $result = queryDataBase::getAll($con, $query);
+        try {
+            $con = sqlDataBase::Connect();
+            $result = queryDataBase::getAll($con, $query);
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции getTemperatureForIntervall. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            $result = null;
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка в функции getTemperatureForInterval. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            $result = null;
+        }
 
         unset($con);
 
@@ -224,12 +262,19 @@ class temperatureUnit extends sensorUnit {
 
 }
 
-class keyInUnit extends sensorUnit {
+class keyInUnit extends sensorUnit
+{
 
     private $lastValue;
     private $chanel = '';
 
-    public function __construct(array $options) {
+    /**
+     * keyInUnit constructor.
+     * @param array $options
+     * @throws Exception
+     */
+    public function __construct(array $options)
+    {
         $this->chanel = $options['Chanel'];
         parent::__construct($options, typeUnit::KEY_IN);
         $this->lastValue = null;
@@ -298,12 +343,15 @@ class keyInUnit extends sensorUnit {
             $lastStatus = $this->lastValue; // если последнее значение есть в буфере берем его
         }
 
-        if ($status!=$lastStatus) {
+        if ($status != $lastStatus) {
             $this->writeValue($status);
             $this->lastValue = $status;
         }
     }
 
+    /**
+     * @param $value
+     */
     private function writeValue($value) //записать в журнал значение
     {
         if (!is_int($value)) {
@@ -312,28 +360,41 @@ class keyInUnit extends sensorUnit {
         }
 
         $uniteID = $this->getId();
-        $nameTabValue = 'tvalue_'.$this->valueTable;
+        $nameTabValue = 'tvalue_' . $this->valueTable;
 
-        $query = 'INSERT INTO '.$nameTabValue.' VALUES (NULL, '."$uniteID, SYSDATE(), ".(int)$value.')';
+        $query = 'INSERT INTO ' . $nameTabValue . ' VALUES (NULL, ' . "$uniteID, SYSDATE(), " . (int)$value . ')';
 
-        $con = sqlDataBase::Connect();
-        $result = queryDataBase::execute($con, $query);
+        try {
+            $con = sqlDataBase::Connect();
+            $result = queryDataBase::execute($con, $query);
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции writeValue. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            $result = null;
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка в функции writeValue. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            $result = null;
+        }
         unset($con);
 
         if (!$result) {
-            //Пишем лог
-
+            logger::writeLog('Ошибка при записи в базу данных (writeValue)',
+                loggerTypeMessage::ERROR, loggerName::ERROR);
         }
     }
 
 }
 
-class powerKeyUnit extends moduleUnit {
+class powerKeyUnit extends moduleUnit
+{
 
     private $chanel = '';
 
     /**
      * powerKeyUnit constructor.
+     * @param array $options
+     * @throws Exception
      */
     public function __construct(array $options)
     {
@@ -374,8 +435,6 @@ class powerKeyUnit extends moduleUnit {
 
     /**
      * @param $status
-     * @throws connectDBException
-     * @throws querySelectDBException
      */
     private function writeStatusKeyJournal($status)
     {
@@ -385,14 +444,25 @@ class powerKeyUnit extends moduleUnit {
 
         $uniteID = $this->getId();
 
-        $query = 'INSERT INTO tjournalkey VALUES (NULL, '."$uniteID".', SYSDATE(), "'.$status.'")';
+        $query = 'INSERT INTO tjournalkey VALUES (NULL, ' . "$uniteID" . ', SYSDATE(), "' . $status . '")';
 
-        $con = sqlDataBase::Connect();
-        $result = queryDataBase::execute($con, $query);
+        try {
+            $con = sqlDataBase::Connect();
+            $result = queryDataBase::execute($con, $query);
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции writeStatusKeyJournal. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            $result = null;
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка в функции writeStatusKeyJournal. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            $result = null;
+        }
         unset($con);
 
         if (!$result) {
-            //Пишем лог
+            logger::writeLog('Ошибка при записи в базу данных (writeStatusKeyJournal)',
+                loggerTypeMessage::ERROR, loggerName::ERROR);
         }
     }
 

@@ -34,8 +34,6 @@ class sunInfo {
      * N - если ночь, D - если день, M - если утро, E - если вечер
      * @param $time
      * @return int
-     * @throws connectDBException
-     * @throws querySelectDBException
      */
     public static function getSunInfo($time) {
 
@@ -72,4 +70,3 @@ class sunInfo {
 
 }
 
-?>

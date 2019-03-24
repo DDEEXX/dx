@@ -15,7 +15,7 @@ abstract class listArray implements Iterator
      * lists constructor.
      * @param array $list
      */
-    public function __construct(array $list)
+    public function __construct(array $list = null)
     {
         if (is_array($list)) {
             $this->list = $list;
@@ -137,7 +137,7 @@ class selectOption extends listArray
      * Для того чтобы не передавать в конструктор массив, как в родителе
      * selectOption constructor.
      */
-    public function __construct()
-    {
-    }
+//    public function __construct()
+//    {
+//    }
 }

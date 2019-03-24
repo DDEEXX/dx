@@ -132,6 +132,7 @@ class queryDataBase
      */
     public static function execute(iSqlDataBase $conn, $query)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $res = $conn->getConnect()->query($query, MYSQLI_USE_RESULT);
         if (!$res) {
             throw new querySelectDBException($conn->getConnect()->error);
@@ -189,6 +190,7 @@ class queryDataBase
      */
     private static function getRaw(iSqlDataBase $conn, $query)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $res = $conn->getConnect()->query($query, MYSQLI_USE_RESULT);
         if (!$res) {
             throw new querySelectDBException($conn->getConnect()->error);
@@ -240,7 +242,7 @@ class DB
         try {
             $con = sqlDataBase::Connect();
         } catch (connectDBException $e) {
-            logger::writeLog('Ошибка подключения к базе данных в DB::getListBD. '.$e->getMessage(),
+            logger::writeLog('Ошибка подключения к базе данных в DB::getListBD. ' . $e->getMessage(),
                 loggerTypeMessage::ERROR, loggerName::ERROR);
             return array();
         }
@@ -277,7 +279,7 @@ class DB
         try {
             $aDevices = queryDataBase::getAll($con, $query);
         } catch (querySelectDBException $e) {
-            logger::writeLog('Ошибка при выполнии запроса в DB::getListBD. '.$query.'. '.$e->getMessage(),
+            logger::writeLog('Ошибка при выполнии запроса в DB::getListBD. ' . $query . '. ' . $e->getMessage(),
                 loggerTypeMessage::ERROR, loggerName::ERROR);
             return array();
         }
@@ -297,7 +299,7 @@ class DB
         try {
             $con = sqlDataBase::Connect();
         } catch (connectDBException $e) {
-            logger::writeLog('Ошибка при подключении к базе данных в функции DB::getConst. '.$e->getMessage(),
+            logger::writeLog('Ошибка при подключении к базе данных в функции DB::getConst. ' . $e->getMessage(),
                 loggerTypeMessage::FATAL, loggerName::ERROR);
             return null;
         }
@@ -307,7 +309,7 @@ class DB
         try {
             $result = queryDataBase::getOne($con, $query);
         } catch (querySelectDBException $e) {
-            logger::writeLog('Ошибка в функции DB::getConst. При выполнении запроса '.$query.'. '.$e->getMessage(),
+            logger::writeLog('Ошибка в функции DB::getConst. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
                 loggerTypeMessage::FATAL, loggerName::ERROR);
             return null;
         }
@@ -331,10 +333,17 @@ class DB
         return $result;
     }
 
+    /**
+     * Получить последнне записсаное в базе значение $value
+     * @param iUnit $unit
+     * @param null $value
+     * @return array|null
+     */
     static public function getLastValueUnit(iUnit $unit, $value = null)
     {
 
         $uniteID = $unit->getId();
+        /** @noinspection PhpUndefinedMethodInspection */
         $nameTabValue = 'tvalue_' . $unit->getValueTable();
         if (is_null($value)) {
             $query = 'SELECT Date, Value FROM ' . $nameTabValue . ' WHERE UnitID="' . $uniteID . '" ORDER BY ValueID DESC LIMIT 1';
@@ -343,24 +352,49 @@ class DB
             $query = 'SELECT Date, Value FROM ' . $nameTabValue . ' WHERE UnitID="' . $uniteID . '" AND Value ="' . $value . '" ORDER BY ValueID DESC LIMIT 1';
         }
 
-        $con = sqlDataBase::Connect();
-        $result = queryDataBase::getOne($con, $query);
+        try {
+            $con = sqlDataBase::Connect();
+            $result = queryDataBase::getOne($con, $query);
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции DB::getLastValueUnit. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            $result = null;
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка в функции DB::getLastValueUnit. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            $result = null;
+        }
 
         return $result;
 
     }
 
+    /**
+     * @param $unit
+     * @return array|null
+     */
     static public function getLastStatusKeyJournal($unit)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $uniteID = $unit->getId();
 
         $query = 'SELECT Date, Status FROM tjournalkey WHERE UnitID="' . $uniteID . '" ORDER BY JournalKeyID DESC LIMIT 1';
 
-        $con = sqlDataBase::Connect();
-        $result = queryDataBase::getOne($con, $query);
+        try {
+            $con = sqlDataBase::Connect();
+            $result = queryDataBase::getOne($con, $query);
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции DB::getLastStatusKeyJournal. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            $result = null;
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка в функции DB::getLastStatusKeyJournal. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            $result = null;
+        }
 
         return $result;
     }
 }
 
-?>
+
