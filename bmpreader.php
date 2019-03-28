@@ -17,8 +17,7 @@ and other parameters of the sensor.
 include(dirname(__FILE__) . '/class/phpi2c.php');
 
 // connection info (used in IIC library finctions)
-//$block = "i2c-gpio0";	// block name on the system
-$block = "1";	// block name on the system
+$block = "i2c-gpio0";	// block name on the system
 $i2c_address = "0x77";	// i2c slave address for bmp085
 //
 // i2c device operation modes
@@ -50,49 +49,21 @@ $ut	= 0; // uncompensated temperature
 $t	= 0; // true temperature
 $up	= 0; // uncompensated pressure
 $p	= 0; // true pressure
-//$a	= 0; // altitude (calculated using true pressure)
-
+$a	= 0; // altitude (calculated using true pressure)
 // reading uncompensated temperature
 write_register( 0xF4, 0x2E );
 usleep( 4600 ); // Should be not less then 4500
-$msb = read_byte(0xF6);
-$lsb = read_byte(0xF7);
-$ut = $msb<<8 | $lsb;
-
+$ut = read_short( 0xF6 );
 // reading uncompensated pressure
 write_register( 0xF4, 0x34 + ($oss << 6) );
 usleep( $sleep_time[$oss] );
 $up = read_ulong( 0xF6 );
-$msb_p = read_byte(0xF6);
-$lsb_p = read_byte(0xF7);
-$xlsb_p = read_byte(0xF8);
-$up = ($msb_p<<16 | $lsb_p<<8 | $xlsb_p) >> (8 - $oss);
-
+$up = $up >> (8 - $oss);
 // calculating true temperature
-$x1 = (($ut - $ac6) * $ac5) / 32768;
-$x2 = ($mc * 2048) / ($x1 + $md);
+$x1 = (($ut - $ac6) * $ac5) >> 15;
+$x2 = ($mc << 11) / ($x1 + $md);
 $b5 = $x1 + $x2;
-$t = ($b5 + 8) / 160;
-
-echo '$ac1: ' . $ac1 ."<br>";
-echo '$ac2: ' . $ac2 ."<br>";
-echo '$ac3: ' . $ac3 ."<br>";
-echo '$ac4: ' . $ac4 ."<br>";
-echo '$ac5: ' . $ac5 ."<br>";
-echo '$ac6: ' . $ac6 ."<br>";
-echo '$b1: ' . $b1 ."<br>";
-echo '$b2: ' . $b2 ."<br>";
-echo '$mb: ' . $mb ."<br>";
-echo '$mc: ' . $mc ."<br>";
-echo '$md: ' . $md ."<br>";
-echo '$msb: ' . $msb ."<br>";
-echo '$lsb: ' . $lsb ."<br>";
-echo '$ut: ' . $ut ."<br>";
-echo '$msb_p: ' . $msb_p ."<br>";
-echo '$lsb_p: ' . $lsb_p ."<br>";
-echo '$xlsb_p: ' . $xlsb_p ."<br>";
-echo '$up: ' . $up ."<br>";
-
+$t = (($b5 + 8) >> 4 ) / 10;
 // calculating true pressure
 $b6 = $b5 - 4000;
 $x1 = ($b2 * (($b6 ^ 2) >> 12)) >> 11;
@@ -113,18 +84,15 @@ $x1 = ($p >> 8) * ($p >> 8);
 $x1 = ($x1 * 3038) >> 16;
 $x2 = (-7357 * $p) >> 16;
 $p = $p + (($x1 + $x2 + 3791) >> 4);
-
-echo "Temperature: " . $t . " C.\nPressure: " . $p ."\n";
-
-//// calculating absolute altitude
-//$a = 44330 * ( 1 - pow( ( $p / 101625 ), 0.1903 ) );
-//// calculating pressure at sea level
-//$p0 = $p / pow( (1 - $a / 44330), 5.255 );
-//// Making it prettier
-//$a = intval( $a );
-//// converting Pressure from hPa to mm Hg
-//$p = intval( $p / 1.3332239);
-//$p = $p / 100;
-//$p0 = intval( $p0 / 1.3332239);
-//$p0 = $p0 / 100;
-//echo "Temperature: " . $t . " C.\nPressure: " . $p . " mm Hg.\nAbsolute altitude: " . $a . "m.\nCalculated pressure at sea level: " . $p0 ."\n";
+// calculating absolute altitude
+$a = 44330 * ( 1 - pow( ( $p / 101625 ), 0.1903 ) );
+// calculating pressure at sea level
+$p0 = $p / pow( (1 - $a / 44330), 5.255 );
+// Making it prettier
+$a = intval( $a );
+// converting Pressure from hPa to mm Hg
+$p = intval( $p / 1.3332239);
+$p = $p / 100;
+$p0 = intval( $p0 / 1.3332239);
+$p0 = $p0 / 100;
+echo "Temperature: " . $t . " C.\nPressure: " . $p . " mm Hg.\nAbsolute altitude: " . $a . "m.\nCalculated pressure at sea level: " . $p0 ."\n";
