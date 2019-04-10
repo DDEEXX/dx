@@ -33,6 +33,9 @@ class unitFactory
             case typeUnit::POWER_KEY :
                 $className = 'powerKeyUnit';
                 break;
+            case typeUnit::PRESSURE :
+                $className = 'pressureUnit';
+                break;
             default :
                 $className = '';
         }

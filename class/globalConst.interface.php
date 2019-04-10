@@ -22,6 +22,7 @@ interface typeDevice{
     const KEY_IN            = 4; //Входящий ключ (сухой контакт и т.д.)
     const KEY_OUT           = 5; //Выходной ключ - коммутирует маленькие токи
     const VOLTAGE           = 6; //Датчик наличия напряжения
+    const PRESSURE          = 7; //Датчик атмосферного давления
 }
 
 interface typeUnit{
@@ -32,6 +33,7 @@ interface typeUnit{
     const KEY_IN            = 4; //Входящий ключ (сухой контакт и т.д.)
     const KEY_OUT           = 5; //Выходной ключ - коммутирует маленькие токи
     const VOLTAGE           = 6; //Датчик наличия напряжения
+    const PRESSURE          = 7; //Датчик атмосферного давления
 }
 
 interface graphType {

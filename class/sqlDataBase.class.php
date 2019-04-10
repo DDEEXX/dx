@@ -211,7 +211,8 @@ class DB
     static public function getListDevices(Iterator $sel = null)
     {
 
-        $query = "SELECT * FROM tdevice";
+        //$query = "SELECT * FROM tdevice";
+        $query = "SELECT * FROM tdevice left join tdevicemodel ON tdevice.modelID = tdevicemodel.modelID";
         $listDevices = self::getListBD($query, $sel);
         return $listDevices;
 

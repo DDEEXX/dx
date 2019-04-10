@@ -25,3 +25,18 @@ foreach ($temperatureUnits as $tekUnit) {
 
 unset($temperatureUnits);
 
+$sel = new selectOption();
+$sel->set('SensorTypeID', typeDevice::PRESSURE);
+$sel->set('Disabled', 0);
+
+$pressureUnits = managerUnits::getListUnits($sel);
+
+foreach ($pressureUnits as $tekUnit) {
+    $val = $tekUnit->getValue();
+    if (!is_null($val)) {
+        $tekUnit->writeValue($val);
+    }
+}
+
+unset($pressureUnitsUnits);
+

@@ -203,6 +203,9 @@ if ($p == "temp") {
             $.get("getData.php?dev=temp&label=temp_bedroom&type=last", function (data) {
                 $("#temp_bedroom").html(data);
             });
+            $.get("getData.php?dev=temp&label=temp_cubie&type=last", function (data) {
+                $("#temp_cubie").html(data);
+            });
 
             $("#accordion").accordion();
 
@@ -266,6 +269,8 @@ if ($p == "temp") {
                              style="position:absolute;left:120px;top:220px"></div>
                         <div id="temp_bedroom" class="ui-corner-all ui-state-default ui-widget-content"
                              style="position:absolute;left:560px;top:310px"></div>
+                        <div id="temp_cubie" class="ui-corner-all ui-state-default ui-widget-content"
+                             style="position:absolute;left:220px;top:160px"></div>
                     </div>
                 </div>
                 <div class="clear"></div>

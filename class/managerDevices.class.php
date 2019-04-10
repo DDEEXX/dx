@@ -64,6 +64,9 @@ class deviceFactory
             case typeDevice::KEY_OUT :
                 $className = 'keyOutMaker';
                 break;
+            case typeDevice::PRESSURE :
+                $className = 'pressureSensor';
+                break;
             default :
                 return null;
         }
@@ -122,7 +125,8 @@ class managerDevices
     public static function getDevice($idDevice)
     {
         $conn = sqlDataBase::Connect();
-        $query = 'SELECT * FROM `tdevice` WHERE DeviceID = ' . $idDevice;
+        //$query = 'SELECT * FROM `tdevice` WHERE DeviceID = ' . $idDevice;
+        $query = 'SELECT * FROM tdevice left join tdevicemodel ON tdevice.modelID = tdevicemodel.modelID WHERE DeviceID = ' . $idDevice;
         $arDevice = queryDataBase::getOne($conn, $query);
         if (is_null($arDevice)) {
             throw new managerException('не могу создать объект физ. устройства по его ID');
