@@ -40,20 +40,10 @@ $(document).ready( function() {
 	
 	$(".TekDate").html(date());		
 	$(".TekTime").html(clock());		
-	$.get("weather.php", function(data) {
-			$(".homeweather").html(data)
-	});	
-	
+
 });
 
 $(document).everyTime("1s", function() {
 	$(".TekDate").html(date());		
 	$(".TekTime").html(clock());		
 });
-
-$(document).everyTime("3600s", function() {
-	$.get("weather.php", function(data) {
-			$(".homeweather").html(data)
-	});		
-});
-

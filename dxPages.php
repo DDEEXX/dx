@@ -150,13 +150,7 @@ if ($p == "home" || empty($p)) {
     <script src="js2/home.js"></script>
 
     <div id="page_home" class="grid_11">
-        <!--
-        <div class = "grid_11 alpha ui-corner-all ui-widget-header" style="margin-top: 5px">
-            <h2 style="margin-left:5px;font-size:150%;">Общая информация</h2>
-        </div>
-        <div class = "clear"></div>
-        -->
-        <div class="grid_9 alpha homeweather">
+        <div class="grid_9 alpha">1
         </div>
         <div class="grid_2 omega">
             <div id="TekDate" class="TekDate" style="font-size:120%"></div>
@@ -166,179 +160,36 @@ if ($p == "home" || empty($p)) {
 
         <div class="clear"></div>
 
-        <div id="alarm_key" class="grid_2 alpha ui-corner-all ui-state-default"
-             style="margin-top:5px;height:100px;width:138px">
-            <h2 style="margin-left:5px">Охрана</h2>
-            <div style="text-align:center;margin-top:5px">
-                <img src="img2/icon/lock a.png">
-            </div>
-        </div>
+        <!--        <div id="alarm_key" class="grid_2 alpha ui-corner-all ui-state-default"-->
+        <!--             style="margin-top:5px;height:100px;width:138px">-->
+        <!--            <h2 style="margin-left:5px">Охрана</h2>-->
+        <!--            <div style="text-align:center;margin-top:5px">-->
+        <!--                <img src="img2/icon/lock a.png">-->
+        <!--            </div>-->
+        <!--        </div>-->
 
     </div>
 
     <?php
 }
-if ($p == "temp") {
 
+if ($p == "weather") {
     ?>
 
-    <script type="text/javascript">
+    <script src="js2/weather.js"></script>
 
-        $(document).ready(function () {
-
-            $('#tempgraph').click(function () {
-                $.get("dxMainPage.php?p=power1", function () {
-                });
-            });
-
-            /* dev=temp - событие = температура */
-            /* label=temp_out_1 - имя датчика в базе = temp_out_1*/
-            /* type=last - тип события = последнее показание */
-            $.get("getData.php?dev=temp&label=temp_out_1&type=last", function (data) {
-                $("#temp_out_1").html(data);
-            });
-            $.get("getData.php?dev=temp&label=temp_hall&type=last", function (data) {
-                $("#temp_hall").html(data);
-            });
-            $.get("getData.php?dev=temp&label=temp_bedroom&type=last", function (data) {
-                $("#temp_bedroom").html(data);
-            });
-            $.get("getData.php?dev=temp&label=temp_cubie&type=last", function (data) {
-                $("#temp_cubie").html(data);
-            });
-
-            $("#accordion").accordion();
-
-            $(".rg_g_temp").buttonset();
-
-            $(".set_period").click(function () {
-                $("#g_" + $(this).attr("dev_type")).attr("src", "graph.php?label=" + $(this).attr("dev_type") + "&date_from=" + $(this).attr("dev_period") + "&rnd=" + Math.random());
-            });
-
-        });
-
-        // $(document).everyTime("300s", function(i) {
-        // 	$.get("getData.php?dev=temp&label=temp_out_1&type=last", function(data) {
-        // 		$("#temp_out_1").html(data);
-        // 	});
-        //    $.get("getData.php?dev=temp&label=temp_hall&type=last", function(data) {
-        //        $("#temp_hall").html(data);
-        //    });
-        // });
-
-        // $(document).everyTime("60s", function(i) {
-        // 	$('#g_temp_out_1').attr('src', 'graph.php?label=temp_out_1&t=line&date_from=day&'+Math.random());
-        // });
-
-
-    </script>
-
-    <div id="page_temp" class="grid_11">
+    <div id="page_weather" class="grid_11">
         <div class="grid_11 alpha">
             <div class="ui-corner-all ui-widget-header" style="margin-top: 5px">
-                <h2 style="margin-left:5px;font-size:150%;">Температура</h2>
+                <h2 style="margin-left:5px;font-size:150%;">Погода</h2>
             </div>
         </div>
         <div class="clear"></div>
-
-        <div id="accordion">
-
-            <h3 class='dx'>План</h3>
-            <div style="padding:0;border:0;overflow:visible">
-                <div class="grid_3 alpha">
-                    <div class="ui-corner-all ui-state-default" style="margin-top:5px;height:80px">
-                        <h2 style="margin-left:5px">Температура на улице</h2>
-                        <img style="margin-top:5px;float:left" src="img2/temp.png">
-                        <div id="temp_out_1" class="temp_out_1" style="margin-top:10px;"></div>
-                    </div>
-                </div>
-                <div class="grid_3 ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:218px">
-                </div>
-                <div class="grid_3 ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:218px">
-                </div>
-                <div class="grid_1 ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:58px">
-                </div>
-                <div class="grid_1 omega ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:58px">
-                </div>
-                <div class="clear"></div>
-                <div class="grid_11 alpha">
-                    <div class="ui-corner-all ui-state-default ui-widget-content"
-                         style="height: 500px;margin-top:5px;position:relative">
-                        <div id="floor1"><img src="img2/home_.png"></div>
-                        <div id="temp_hall" class="ui-corner-all ui-state-default ui-widget-content"
-                             style="position:absolute;left:120px;top:220px"></div>
-                        <div id="temp_bedroom" class="ui-corner-all ui-state-default ui-widget-content"
-                             style="position:absolute;left:560px;top:310px"></div>
-                        <div id="temp_cubie" class="ui-corner-all ui-state-default ui-widget-content"
-                             style="position:absolute;left:220px;top:160px"></div>
-                    </div>
-                </div>
-                <div class="clear"></div>
-            </div>
-            <h3 class='dx'>Графики</h3>
-            <div style="padding:0;border:0;overflow:visible">
-                <div class="grid_5 alpha ui-corner-all ui-state-default"
-                     style="margin-top:5px;height:215px;width:418px">
-                    <h2 style="margin-left:5px;float:left">Температура на улице</h2>
-                    <div class="temp_out_1 g_temp"></div>
-                    <div style="text-align: center">
-                        <?php
-                        echo '<img id="g_temp_out_1" src="graph.php?label=temp_out_1&t=line&date_from=day&' . rand() . '" height="160">';
-                        ?>
-                    </div>
-                    <div class="rg_g_temp" style="margin-left:5px;float:left">
-                        <input type="radio" name="period1" class="set_period" dev_type="temp_out_1" dev_period="day"
-                               checked id="day_out1"><label for="day_out1">сут.</label>
-                        <input type="radio" name="period1" class="set_period" dev_type="temp_out_1" dev_period="week"
-                               id="week_out1"><label for="week_out1">нед.</label>
-                        <input type="radio" name="period1" class="set_period" dev_type="temp_out_1" dev_period="month"
-                               id="month_out1"><label for="month_out1">мес.</label>
-                    </div>
-                </div>
-
-                <div class="grid_5 omega ui-corner-all ui-state-default"
-                     style="margin-top:5px;height:215px;width:418px">
-                    <h2 style="margin-left:5px;float:left">Температура 1 этаж</h2>
-                    <div class="temp_hall g_temp"></div>
-                    <div style="text-align: center">
-                        <?php
-                        echo '<img id="g_temp_hall" src="graph.php?label=temp_hall&t=line&date_from=day&' . rand() . '" height="160">';
-                        ?>
-                    </div>
-                    <div class="rg_g_temp" style="margin-left:5px;float:left">
-                        <input type="radio" name="period2" class="set_period" dev_type="temp_hall" dev_period="day"
-                               checked id="day_hall"><label for="day_hall">сут.</label>
-                        <input type="radio" name="period2" class="set_period" dev_type="temp_hall" dev_period="week"
-                               id="week_hall"><label for="week_hall">нед.</label>
-                        <input type="radio" name="period2" class="set_period" dev_type="temp_hall" dev_period="month"
-                               id="month_hall"><label for="month_hall">мес.</label>
-                    </div>
-                </div>
-
-                <div class="clear"></div>
-
-                <div class="grid_5 alpha ui-corner-all ui-state-default"
-                     style="margin-top:5px;height:215px;width:418px">
-                    <h2 style="margin-left:5px;float:left">Температура спальня</h2>
-                    <div class="temp_bedroom g_temp"></div>
-                    <div style="text-align: center">
-                        <?php
-                        echo '<img id="g_temp_bedroom" src="graph.php?label=temp_bedroom&t=line&date_from=day&' . rand() . '" height="160">';
-                        ?>
-                    </div>
-                    <div class="rg_g_temp" style="margin-left:5px;float:left">
-                        <input type="radio" name="period3" class="set_period" dev_type="temp_bedroom" dev_period="day"
-                               checked id="day_temp_bedroom"><label for="day_temp_bedroom">сут.</label>
-                        <input type="radio" name="period3" class="set_period" dev_type="temp_bedroom" dev_period="week"
-                               id="week_temp_bedroom"><label for="week_temp_bedroom">нед.</label>
-                        <input type="radio" name="period3" class="set_period" dev_type="temp_bedroom" dev_period="month"
-                               id="month_temp_bedroom"><label for="month_temp_bedroom">мес.</label>
-                    </div>
-                </div>
-
-            </div>
-
+        <div class="grid_11">
+            <h3 class="Title1">Прогноз погоды</h3>
+            <div id="weather_forecast"></div>
         </div>
+        <div class="clear"></div>
     </div>
 
     <?php
@@ -458,6 +309,170 @@ if ($p == "power") {
             </div>
         </div>
     </div>
+    <?php
+}
+
+if ($p == "heater") {
+    ?>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $('#tempgraph').click(function () {
+                $.get("dxMainPage.php?p=power1", function () {
+                });
+            });
+
+            /* dev=temp - событие = температура */
+            /* label=temp_out_1 - имя датчика в базе = temp_out_1*/
+            /* type=last - тип события = последнее показание */
+            $.get("getData.php?dev=temp&label=temp_out_1&type=last", function (data) {
+                $("#temp_out_1").html(data);
+            });
+            $.get("getData.php?dev=temp&label=temp_hall&type=last", function (data) {
+                $("#temp_hall").html(data);
+            });
+            $.get("getData.php?dev=temp&label=temp_bedroom&type=last", function (data) {
+                $("#temp_bedroom").html(data);
+            });
+            $.get("getData.php?dev=temp&label=temp_cubie&type=last", function (data) {
+                $("#temp_cubie").html(data);
+            });
+
+            $("#accordion").accordion();
+
+            $(".rg_g_temp").buttonset();
+
+            $(".set_period").click(function () {
+                $("#g_" + $(this).attr("dev_type")).attr("src", "graph.php?label=" + $(this).attr("dev_type") + "&date_from=" + $(this).attr("dev_period") + "&rnd=" + Math.random());
+            });
+
+        });
+
+        // $(document).everyTime("300s", function(i) {
+        // 	$.get("getData.php?dev=temp&label=temp_out_1&type=last", function(data) {
+        // 		$("#temp_out_1").html(data);
+        // 	});
+        //    $.get("getData.php?dev=temp&label=temp_hall&type=last", function(data) {
+        //        $("#temp_hall").html(data);
+        //    });
+        // });
+
+        // $(document).everyTime("60s", function(i) {
+        // 	$('#g_temp_out_1').attr('src', 'graph.php?label=temp_out_1&t=line&date_from=day&'+Math.random());
+        // });
+
+
+    </script>
+
+    <div id="page_temp" class="grid_11">
+        <div class="grid_11 alpha">
+            <div class="ui-corner-all ui-widget-header" style="margin-top: 5px">
+                <h2 style="margin-left:5px;font-size:150%;">Отопление и климат</h2>
+            </div>
+        </div>
+        <div class="clear"></div>
+
+        <div id="accordion">
+
+            <h3 class='dx'>План</h3>
+            <div style="padding:0;border:0;overflow:visible">
+                <div class="grid_3 alpha">
+                    <div class="ui-corner-all ui-state-default" style="margin-top:5px;height:80px">
+                        <h2 style="margin-left:5px">Температура на улице</h2>
+                        <img style="margin-top:5px;float:left" src="img2/temp.png">
+                        <div id="temp_out_1" class="temp_out_1" style="margin-top:10px;"></div>
+                    </div>
+                </div>
+                <div class="grid_3 ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:218px">
+                </div>
+                <div class="grid_3 ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:218px">
+                </div>
+                <div class="grid_1 ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:58px">
+                </div>
+                <div class="grid_1 omega ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:58px">
+                </div>
+                <div class="clear"></div>
+                <div class="grid_11 alpha">
+                    <div class="ui-corner-all ui-state-default ui-widget-content"
+                         style="height: 500px;margin-top:5px;position:relative">
+                        <div id="floor1"><img src="img2/home_.png"></div>
+                        <div id="temp_hall" class="ui-corner-all ui-state-default ui-widget-content"
+                             style="position:absolute;left:120px;top:220px"></div>
+                        <div id="temp_bedroom" class="ui-corner-all ui-state-default ui-widget-content"
+                             style="position:absolute;left:560px;top:310px"></div>
+                        <div id="temp_cubie" class="ui-corner-all ui-state-default ui-widget-content"
+                             style="position:absolute;left:220px;top:160px"></div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <h3 class='dx'>Графики</h3>
+            <div style="padding:0;border:0;overflow:visible">
+                <div class="grid_5 alpha ui-corner-all ui-state-default"
+                     style="margin-top:5px;height:215px;width:418px">
+                    <h2 style="margin-left:5px;float:left">Температура на улице</h2>
+                    <div class="temp_out_1 g_temp"></div>
+                    <div style="text-align: center">
+                        <?php
+                        echo '<img id="g_temp_out_1" src="graph.php?label=temp_out_1&t=line&date_from=day&' . rand() . '" height="160">';
+                        ?>
+                    </div>
+                    <div class="rg_g_temp" style="margin-left:5px;float:left">
+                        <input type="radio" name="period1" class="set_period" dev_type="temp_out_1" dev_period="day"
+                               checked id="day_out1"><label for="day_out1">сут.</label>
+                        <input type="radio" name="period1" class="set_period" dev_type="temp_out_1" dev_period="week"
+                               id="week_out1"><label for="week_out1">нед.</label>
+                        <input type="radio" name="period1" class="set_period" dev_type="temp_out_1" dev_period="month"
+                               id="month_out1"><label for="month_out1">мес.</label>
+                    </div>
+                </div>
+
+                <div class="grid_5 omega ui-corner-all ui-state-default"
+                     style="margin-top:5px;height:215px;width:418px">
+                    <h2 style="margin-left:5px;float:left">Температура 1 этаж</h2>
+                    <div class="temp_hall g_temp"></div>
+                    <div style="text-align: center">
+                        <?php
+                        echo '<img id="g_temp_hall" src="graph.php?label=temp_hall&t=line&date_from=day&' . rand() . '" height="160">';
+                        ?>
+                    </div>
+                    <div class="rg_g_temp" style="margin-left:5px;float:left">
+                        <input type="radio" name="period2" class="set_period" dev_type="temp_hall" dev_period="day"
+                               checked id="day_hall"><label for="day_hall">сут.</label>
+                        <input type="radio" name="period2" class="set_period" dev_type="temp_hall" dev_period="week"
+                               id="week_hall"><label for="week_hall">нед.</label>
+                        <input type="radio" name="period2" class="set_period" dev_type="temp_hall" dev_period="month"
+                               id="month_hall"><label for="month_hall">мес.</label>
+                    </div>
+                </div>
+
+                <div class="clear"></div>
+
+                <div class="grid_5 alpha ui-corner-all ui-state-default"
+                     style="margin-top:5px;height:215px;width:418px">
+                    <h2 style="margin-left:5px;float:left">Температура спальня</h2>
+                    <div class="temp_bedroom g_temp"></div>
+                    <div style="text-align: center">
+                        <?php
+                        echo '<img id="g_temp_bedroom" src="graph.php?label=temp_bedroom&t=line&date_from=day&' . rand() . '" height="160">';
+                        ?>
+                    </div>
+                    <div class="rg_g_temp" style="margin-left:5px;float:left">
+                        <input type="radio" name="period3" class="set_period" dev_type="temp_bedroom" dev_period="day"
+                               checked id="day_temp_bedroom"><label for="day_temp_bedroom">сут.</label>
+                        <input type="radio" name="period3" class="set_period" dev_type="temp_bedroom" dev_period="week"
+                               id="week_temp_bedroom"><label for="week_temp_bedroom">нед.</label>
+                        <input type="radio" name="period3" class="set_period" dev_type="temp_bedroom" dev_period="month"
+                               id="month_temp_bedroom"><label for="month_temp_bedroom">мес.</label>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
     <?php
 }
 

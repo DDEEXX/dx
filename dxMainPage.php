@@ -61,13 +61,16 @@
         <ul id="mmenu" class="ui-corner-all">
             <li class="ui-corner-all"><a href="dxMainPage.php?p=home"><span class="ui-icon ui-icon-mmhome"
                                                                             title="Основная">1</span></a></li>
-            <li class="ui-corner-all"><a href="dxMainPage.php?p=temp"><span class="ui-icon ui-icon-mmtemp"
-                                                                            title="Температура">2</span></a></li>
+            <li class="ui-corner-all"><a href="dxMainPage.php?p=weather"><span class="ui-icon ui-icon-mmtemp"
+                                                                            title="Погода">2</span></a></li>
             <li class="ui-corner-all"><a href="dxMainPage.php?p=light"><span class="ui-icon ui-icon-mmbulb"
                                                                              title="Освещение">3</span></a></li>
-            <li class="ui-corner-all"><a href="dxMainPage.php?p=power"><span
-                            class="ui-icon ui-icon-mmpower">4</span></a></li>
-            <li class="ui-corner-all"><a href="dxMainPage.php?p=n5"><span class="ui-icon ui-icon-mmheater">5</span></a>
+            <li class="ui-corner-all"><a href="dxMainPage.php?p=power">
+                        <span class="ui-icon ui-icon-mmpower" title="Управление">4</span></a>
+            </li>
+            <li class="ui-corner-all"><a href="dxMainPage.php?p=heater"><span
+                            class="ui-icon ui-icon-mmheater"
+                            title="Климат и отопление">5</span></a>
             </li>
             <li class="ui-corner-all"><a href="dxMainPage.php?p=cam"><span class="ui-icon ui-icon-mmip_camera">6</span></a>
             </li>

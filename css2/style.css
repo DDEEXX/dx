@@ -8,6 +8,13 @@
     color: #8B4513;
 }
 
+.Title1 {
+    font-size: 100%;
+    font-weight: 600;
+    color: #DDDDDD;
+    float: left;
+}
+
 .g_temp {
     font-size: 100%;
     font-weight: 600;
