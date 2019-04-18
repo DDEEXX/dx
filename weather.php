@@ -251,7 +251,7 @@ class widgetWeather
     <div class='temp_now' style='width:260px;float:left'>
         <div class='<?php echo "$temp_class" ?>' style='float:right;font-size:160%'> <?php echo "$temp" ?> &deg</div>
         <div style='float:right'><?php echo "$img" ?></div>
-        <div class='w_line' style='color:#DDDDDD;float:right;font-size:70%'>
+        <div class='w_line' style='color:#DDDDDD;float:left;font-size:70%'>
             <p>давление: <?php echo "$pressure" ?> мм</p>
             <p>ветер: <?php echo "$wind" ?> м/с <?php echo "$wind_dir" ?></p>
             <p>влажность: <?php echo "$relwet" ?> %</p>
@@ -270,7 +270,7 @@ class widgetWeather
             $w[$i]["spower"]);
         ?>
 
-        <div class='temp_other' style='width:130px;float:left'>
+        <div class='temp_other' style='width:140px;float:left'>
             <div class='<?php echo "$temp_class" ?>' style='float:right;font-size:160%'> <?php echo "$temp" ?>&deg
             </div>
             <div style='float:right'><?php echo "$img" ?></div>

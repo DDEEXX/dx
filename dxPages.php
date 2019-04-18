@@ -187,6 +187,7 @@ if ($p == "weather") {
         <div class="clear"></div>
         <div class="grid_11">
             <h3 class="Title1">Прогноз погоды</h3>
+            <div class="clear"></div>
             <div id="weather_forecast"></div>
         </div>
         <div class="clear"></div>

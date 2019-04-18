@@ -21,13 +21,14 @@ if ($_REQUEST['dev'] == "temp") { //получаем температру
     $actualTimeTemperature = DB::getConst('ActualTimeTemperature');
     $actualTemp = ((time() - strtotime($value['Date'])) < $actualTimeTemperature);
     $temperature = round($temperature, $temperaturePrecision);
-    echo "$temperature" . "&deg";
 
     if (!$actualTemp) {
         echo '<style>
                 #' . $label . ' {color: #8a8a8a}
               </style>';
     }
+
+    echo "$temperature" . "&deg";
 
     unset($unit);
 }

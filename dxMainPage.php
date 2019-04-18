@@ -8,14 +8,13 @@
     <script src="js2/jquery-ui.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css2/temes/dx/jquery-ui.css">
-
     <link rel="stylesheet" type="text/css" href="css2/reset.css">
     <!-- <link rel="stylesheet" type="text/css" href="/css2/text.css">  -->
     <link rel="stylesheet" type="text/css" href="css2/960_12_col.css">
     <link rel="stylesheet" type="text/css" href="css2/style_mmenu.css">
     <!-- <link rel="stylesheet" type="text/css" href="/css2/style_960_b.css">  -->
-    <link rel="stylesheet" type="text/css" href="css2/style.css">
     <link rel="stylesheet" type="text/css" href="css2/icon.css">
+    <link rel="stylesheet" type="text/css" href="css2/style.css">
 
     <!--suppress JSJQueryEfficiency -->
     <script>
