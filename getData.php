@@ -23,12 +23,13 @@ if ($_REQUEST['dev'] == "temp") { //получаем температру
     $temperature = round($temperature, $temperaturePrecision);
 
     if (!$actualTemp) {
-        echo '<style>
-                #' . $label . ' {color: #8a8a8a}
-              </style>';
+        echo '<div class="unActualTemperature">
+                ' . $temperature . ' &deg
+              </div>';
     }
-
-    echo "$temperature" . "&deg";
+    else {
+        echo "$temperature" . "&deg";
+    }
 
     unset($unit);
 }

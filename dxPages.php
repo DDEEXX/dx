@@ -191,6 +191,21 @@ if ($p == "weather") {
             <div id="weather_forecast"></div>
         </div>
         <div class="clear"></div>
+        <div class="grid_7 alpha">
+            <p>1</p>
+        </div>
+        <div class="grid_4 omega">
+            <div class="ui-corner-all ui-state-default" style="margin-top:5px;height:160px">
+                <div>
+                    <h2 style="margin-left:5px">Температура на улице</h2>
+                    <img style="margin-top:5px;float:left" src="img2/temp.png">
+                    <div id="temp_out_weather" style="margin-top:10px;margin-right:10px;float:right"></div>
+                </div>
+                <div>
+                    <h2 style="margin-left:5px">Атмосферное давление</h2>
+                </div>
+            </div>
+        </div>
     </div>
 
     <?php
@@ -317,28 +332,36 @@ if ($p == "heater") {
     ?>
     <script type="text/javascript">
 
-        $(document).ready(function () {
-
-            $('#tempgraph').click(function () {
-                $.get("dxMainPage.php?p=power1", function () {
-                });
-            });
+        function updateTemperature() {
 
             /* dev=temp - событие = температура */
             /* label=temp_out_1 - имя датчика в базе = temp_out_1*/
             /* type=last - тип события = последнее показание */
+
+
             $.get("getData.php?dev=temp&label=temp_out_1&type=last", function (data) {
-                $("#temp_out_1").html(data);
+                $("#temp_out_1, #temp_out_1_g").html(data);
             });
             $.get("getData.php?dev=temp&label=temp_hall&type=last", function (data) {
-                $("#temp_hall").html(data);
+                $("#temp_hall, #temp_hall_g").html(data);
             });
             $.get("getData.php?dev=temp&label=temp_bedroom&type=last", function (data) {
-                $("#temp_bedroom").html(data);
+                $("#temp_bedroom, #temp_bedroom_g").html(data);
             });
             $.get("getData.php?dev=temp&label=temp_cubie&type=last", function (data) {
                 $("#temp_cubie").html(data);
             });
+
+        }
+
+        $(document).ready(function () {
+
+            // $('#tempgraph').click(function () {
+            //     $.get("dxMainPage.php?p=power1", function () {
+            //     });
+            // });
+
+            updateTemperature();
 
             $("#accordion").accordion();
 
@@ -350,16 +373,12 @@ if ($p == "heater") {
 
         });
 
-        // $(document).everyTime("300s", function(i) {
-        // 	$.get("getData.php?dev=temp&label=temp_out_1&type=last", function(data) {
-        // 		$("#temp_out_1").html(data);
-        // 	});
-        //    $.get("getData.php?dev=temp&label=temp_hall&type=last", function(data) {
-        //        $("#temp_hall").html(data);
-        //    });
-        // });
+        //Обновление показания температуры кажные 5 минут
+        $(document).everyTime("300s", function () {
+            updateTemperature();
+        });
 
-        // $(document).everyTime("60s", function(i) {
+        // $(document).everyTime("120s", function() {
         // 	$('#g_temp_out_1').attr('src', 'graph.php?label=temp_out_1&t=line&date_from=day&'+Math.random());
         // });
 
@@ -382,7 +401,7 @@ if ($p == "heater") {
                     <div class="ui-corner-all ui-state-default" style="margin-top:5px;height:80px">
                         <h2 style="margin-left:5px">Температура на улице</h2>
                         <img style="margin-top:5px;float:left" src="img2/temp.png">
-                        <div id="temp_out_1" class="temp_out_1" style="margin-top:10px;"></div>
+                        <div id="temp_out_1" style="margin-top:10px;"></div>
                     </div>
                 </div>
                 <div class="grid_3 ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:218px">
@@ -413,7 +432,7 @@ if ($p == "heater") {
                 <div class="grid_5 alpha ui-corner-all ui-state-default"
                      style="margin-top:5px;height:215px;width:418px">
                     <h2 style="margin-left:5px;float:left">Температура на улице</h2>
-                    <div class="temp_out_1 g_temp"></div>
+                    <div id="temp_out_1_g" style="margin-right:5px;float:right"></div>
                     <div style="text-align: center">
                         <?php
                         echo '<img id="g_temp_out_1" src="graph.php?label=temp_out_1&t=line&date_from=day&' . rand() . '" height="160">';
@@ -432,7 +451,7 @@ if ($p == "heater") {
                 <div class="grid_5 omega ui-corner-all ui-state-default"
                      style="margin-top:5px;height:215px;width:418px">
                     <h2 style="margin-left:5px;float:left">Температура 1 этаж</h2>
-                    <div class="temp_hall g_temp"></div>
+                    <div id="temp_hall_g" style="margin-right:5px;float:right"></div>
                     <div style="text-align: center">
                         <?php
                         echo '<img id="g_temp_hall" src="graph.php?label=temp_hall&t=line&date_from=day&' . rand() . '" height="160">';
@@ -453,7 +472,7 @@ if ($p == "heater") {
                 <div class="grid_5 alpha ui-corner-all ui-state-default"
                      style="margin-top:5px;height:215px;width:418px">
                     <h2 style="margin-left:5px;float:left">Температура спальня</h2>
-                    <div class="temp_bedroom g_temp"></div>
+                    <div id="temp_bedroom_g" style="margin-right:5px;float:right"></div>
                     <div style="text-align: center">
                         <?php
                         echo '<img id="g_temp_bedroom" src="graph.php?label=temp_bedroom&t=line&date_from=day&' . rand() . '" height="160">';

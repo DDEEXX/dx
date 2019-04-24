@@ -1,4 +1,4 @@
-#temp_out_1 {
+#temp_out_1, #temp_out_weather {
     font-size: 200%;
     font-weight: 600;
     color: #5272BF;
@@ -8,6 +8,15 @@
     color: #8B4513;
 }
 
+#temp_out_1_g, #temp_hall_g, #temp_bedroom_g {
+    color: #5272BF;
+}
+
+
+.unActualTemperature{
+    color: #8A8A8A;
+}
+
 .Title1 {
     font-size: 100%;
     font-weight: 600;
@@ -15,12 +24,14 @@
     float: left;
 }
 
+/*
 .g_temp {
     font-size: 100%;
     font-weight: 600;
     color: #DDDDDD;
     float: right
 }
+*/
 
 .TekTime {
     color: #DDDDDD;
