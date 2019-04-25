@@ -12,11 +12,14 @@ require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
 require_once(dirname(__FILE__) . '/class/logger.class.php');
 require_once(dirname(__FILE__) . '/class/globalConst.interface.php');
 
+const DEFAULT_GR_WIDTH = 410;
+const DEFAULT_GR_HEIGHT = 160;
+const DEFAULT_GR_TYPE = graphType::LINE;
+
 //Вид графика линейный или столбчатый
 if (!isset($_GET['t'])) {
-    $_GET['t'] = graphType::LINE;
+    $_GET['t'] = DEFAULT_GR_TYPE;
 }
-$grType = $_GET['t'];
 
 if (!isset($_GET['date_from'])) {
     $_GET['date_from'] = null;
@@ -24,6 +27,18 @@ if (!isset($_GET['date_from'])) {
 if (!isset($_GET['date_to'])) {
     $_GET['date_to'] = null;
 }
+
+if (!isset($_GET['width'])) {
+    $_GET['width'] = DEFAULT_GR_WIDTH;
+}
+
+if (!isset($_GET['height'])) {
+    $_GET['height'] = DEFAULT_GR_HEIGHT;
+}
+
+$grType = $_GET['t'];
+$width = $_GET['width'];
+$height = $_GET['height'];
 
 $label = $_GET['label'];
 
@@ -48,7 +63,7 @@ if ($count_r > 1) {
 
     $interval = ceil($count_r / 30);
 
-    $graph = new Graph(410, 160, 'auto');
+    $graph = new Graph($width, $height, 'auto');
     $graph->SetScale("textlin");
     $graph->SetBox(false);
     $graph->SetTickDensity(TICKD_DENSE);
@@ -113,7 +128,7 @@ else {
     $Title = "За этот период нет данных!";
     $Title = "NO DATA";
 
-    $im = imagecreatetruecolor(370, 160);
+    $im = imagecreatetruecolor($width, $height);
     $blue = imagecolorallocate($im, 0, 0, 255);
     $trcolor = ImageColorAllocate($im, 0, 0, 0);
     ImageColorTransparent($im, $trcolor);
