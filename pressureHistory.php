@@ -1,9 +1,4 @@
 <?php
-// $_GET['']:
-// - label - название датчика температуры
-// - t = line|bar - тип графика - линейный или столбчатая
-// - date_from - day|week|month|[дата] - дата начала начала, если day|week|month - за день, неделю или месяц
-// - date_to - дата окончания
 
 require_once(dirname(__FILE__) . '/lib2/jpgraph/jpgraph.php');
 require_once(dirname(__FILE__) . '/lib2/jpgraph/jpgraph_bar.php');
@@ -12,42 +7,35 @@ require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
 require_once(dirname(__FILE__) . '/class/logger.class.php');
 require_once(dirname(__FILE__) . '/class/globalConst.interface.php');
 
-const DEFAULT_GR_WIDTH = 410;
-const DEFAULT_GR_HEIGHT = 160;
-const DEFAULT_GR_TYPE = graphType::LINE;
+const DEFAULT_GR_WIDTH = 210;
+const DEFAULT_GR_HEIGHT = 60;
+const DEFAULT_GR_TYPE = graphType::BAR;
+const LABEL = 'bar1';
 
-//Вид графика линейный или столбчатый
-if (!isset($_GET['t'])) {
-    $_GET['t'] = DEFAULT_GR_TYPE;
+function noData() {
+    $Title = "NO DATA";
+
+    $im = imagecreatetruecolor(DEFAULT_GR_WIDTH, DEFAULT_GR_HEIGHT);
+    $blue = imagecolorallocate($im, 82, 114, 191);
+    $trcolor = ImageColorAllocate($im, 0, 0, 0);
+    ImageColorTransparent($im, $trcolor);
+    $font = 'lib2/jpgraph/fonts/DejaVuSans.ttf';
+    $bbox = imagettfbbox(12, 25, $font, $Title);
+    $x = $bbox[0] + (imagesx($im) / 2) - ($bbox[4] / 2) - 25;
+    $y = $bbox[1] + (imagesy($im) / 2) - ($bbox[5] / 2) - 5;
+    imagettftext($im, 12, 25, $x, $y, $blue, $font, $Title);
+    header('Content-Type: image/png');
+    imagepng($im);
+    imagedestroy($im);
 }
 
-if (!isset($_GET['date_from'])) {
-    $_GET['date_from'] = null;
-}
-if (!isset($_GET['date_to'])) {
-    $_GET['date_to'] = null;
-}
-
-if (!isset($_GET['width'])) {
-    $_GET['width'] = DEFAULT_GR_WIDTH;
-}
-
-if (!isset($_GET['height'])) {
-    $_GET['height'] = DEFAULT_GR_HEIGHT;
-}
-
-$grType = $_GET['t'];
-$width = $_GET['width'];
-$height = $_GET['height'];
-
-$label = $_GET['label'];
-
-$unit = managerUnits::getUnitLabel($label);
+$unit = managerUnits::getUnitLabel(LABEL);
 
 if (is_null($unit)) {
-    logger::writeLog('Молуль с именем :: ' . $label . ' :: не найден (graph.php)',
+    logger::writeLog('Молуль с именем :: ' . LABEL . ' :: не найден (pressureHistory.php)',
         loggerTypeMessage::ERROR, loggerName::ERROR);
-    exit("#label");
+    noData();
+    exit();
 }
 
 $result = $unit->getTemperatureForInterval($_GET['date_from'], $_GET['date_to']);
@@ -63,7 +51,7 @@ if ($count_r > 1) {
 
     $interval = ceil($count_r / 30);
 
-    $graph = new Graph($width, $height, 'auto');
+    $graph = new Graph(DEFAULT_GR_WIDTH, DEFAULT_GR_HEIGHT, 'auto');
     $graph->SetScale("textlin");
     $graph->SetBox(false);
     $graph->SetTickDensity(TICKD_DENSE);
@@ -124,21 +112,6 @@ if ($count_r > 1) {
 
 }
 else {
-
-    $Title = "За этот период нет данных!";
-    $Title = "NO DATA";
-
-    $im = imagecreatetruecolor($width, $height);
-    $blue = imagecolorallocate($im, 0, 0, 255);
-    $trcolor = ImageColorAllocate($im, 0, 0, 0);
-    ImageColorTransparent($im, $trcolor);
-    $font = 'lib2/jpgraph/fonts/DejaVuSans.ttf';
-    $bbox = imagettfbbox(14, 45, $font, $Title);
-    $x = $bbox[0] + (imagesx($im) / 2) - ($bbox[4] / 2) - 25;
-    $y = $bbox[1] + (imagesy($im) / 2) - ($bbox[5] / 2) - 5;
-    imagettftext($im, 14, 45, $x, $y, $blue, $font, $Title);
-    header('Content-Type: image/png');
-    imagepng($im);
-    imagedestroy($im);
-
+    noData();
 }
+

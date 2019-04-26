@@ -185,32 +185,49 @@ if ($p == "weather") {
             </div>
         </div>
         <div class="clear"></div>
-        <div class="grid_11">
-            <h3 class="Title1">Прогноз погоды</h3>
-            <div class="clear"></div>
-            <div id="weather_forecast"></div>
+        <div class="grid_11 alpha">
+            <div class="ui-corner-all ui-state-default" style="overflow:hidden;margin-top:5px">
+                <div style="margin-left:5px">
+                    <h3 class="Title1">Прогноз погоды</h3>
+                    <div class="clear"></div>
+                    <div id="weather_forecast"></div>
+                </div>
+            </div>
         </div>
         <div class="clear"></div>
-        <div class="grid_8 alpha">
+        <div class="grid_5 alpha">
             <p>1</p>
         </div>
-        <div class="grid_3 omega">
+        <div class="grid_6 omega">
             <div class="ui-corner-all ui-state-default" style="margin-top:5px;height:180px">
                 <h2 style="margin-left:5px">Погода на улице</h2>
-                <div style="overflow: hidden">
-                    <img style="margin-top:5px;margin-left:10px;float:left" src="img2/thermometer.png">
-                    <div id="temp_out_weather" style="margin-top:10px;margin-left:15px;float:left">--</div>
+                <div class="grid_3 alpha">
+                    <div style="overflow: hidden">
+                        <img style="margin-top:5px;margin-left:5px" src="img2/thermometer.png">
+                        <div id="temp_out_weather" style="margin-top:10px;margin-left:15px;float:right">--</div>
+                    </div>
                 </div>
-                <div style="overflow: hidden">
-                    <img style="margin-top:5px;margin-left:10px;float:left" src="img2/barometer.png">
-                    <div id="pressure_weather" style="float:left;margin-left:15px;margin-top:10px;">--</div>
-                    <div style="float:right;margin-right:2px;margin-top:27px;font-size: 80%"> мм рт.ст.</div>
+                <div class="grid_3 omega" style="margin-left: 5px">
+                    <div style="overflow: hidden">
+                        <img style="margin-top:5px;margin-left:10px;float:left" src="img2/barometer.png">
+                        <div id="pressure_weather" style="float:left;margin-left:15px;margin-top:10px;">--</div>
+                        <div style="float:right;margin-right:2px;margin-top:27px;font-size: 80%"> мм рт.ст.</div>
+                    </div>
                 </div>
-                <div style="overflow: hidden">
-                    <img style="margin-top:5px;margin-left:10px;float:left" src="img2/windsock.png">
-                    <div id="wind_weather" style="float:left;margin-left:15px;margin-top:10px;">--</div>
-                    <div style="float:left;margin-left:2px;margin-top:27px;font-size: 80%">м/с</div>
-                    <div id="wind_dir_weather" style="float:left;margin-left:15px;margin-top:10px;">сз</div>
+                <div class="clear"></div>
+                <div class="grid_3 alpha">
+                    <div style="overflow: hidden;margin-top: 10px">
+                        <img style="margin-top:5px;margin-left:12px;float:left" src="img2/windsock.png">
+                        <div id="wind_weather" style="float:left;margin-left:15px;margin-top:10px;">--</div>
+                        <div style="float:left;margin-left:2px;margin-top:27px;font-size: 80%">м/с</div>
+                        <div id="wind_dir_weather" style="float:left;margin-left:15px;margin-top:10px;">сз</div>
+                    </div>
+                </div>
+                <div class="grid_3 omega" style="margin-left: 5px">
+                    <div style="overflow: hidden;margin-top: 10px">
+                        <p style="float: right;font-size: 80%">изменение давления</p>
+                        <img src="pressureHistory.php" height=60>
+                    </div>
                 </div>
             </div>
         </div>
