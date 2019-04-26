@@ -1,7 +1,11 @@
 #temp_out_1, #temp_out_weather {
     font-size: 200%;
     font-weight: 600;
-    color: #5272BF;
+}
+
+#pressure_weather, #wind_weather, #wind_dir_weather {
+    font-size: 200%;
+    font-weight: 600;
 }
 
 #temp_hall, #temp_bedroom, #temp_cubie {
@@ -12,8 +16,19 @@
     color: #5272BF;
 }
 
+.temperature_weather_plus {
+    color: #ffddbc;
+}
 
-.unActualTemperature{
+.temperature_weather_minus {
+    color: #caffff;
+}
+
+.actualPressure {
+    color: #DDDDDD;
+}
+
+.unActualTemperature, .unActualPressure {
     color: #8A8A8A;
 }
 
@@ -33,12 +48,7 @@
 }
 */
 
-.TekTime {
-    color: #DDDDDD;
-    float: right
-}
-
-.TekDate {
+.TekTime, .TekDate {
     color: #DDDDDD;
     float: right
 }

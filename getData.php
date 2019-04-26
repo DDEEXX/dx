@@ -14,25 +14,64 @@ if ($_REQUEST['dev'] == "temp") { //получаем температру
         exit(); //тут надо подумать что возвращать
     }
 
+    $temperatureClass = 'unActualPressure';
     $value = $unit->readValue();
-    $temperaturePrecision = DB::getConst('TemperaturePrecision');
-    $temperature = (double)$value['Value'];
-    // время с последнего имерения в течение которого температура считается еще актуальной
-    $actualTimeTemperature = DB::getConst('ActualTimeTemperature');
-    $actualTemp = ((time() - strtotime($value['Date'])) < $actualTimeTemperature);
-    $temperature = round($temperature, $temperaturePrecision);
-
-    if (!$actualTemp) {
-        echo '<div class="unActualTemperature">
-                ' . $temperature . ' &deg
-              </div>';
+    if (is_null($value)) {
+        $temperature = '--';
     }
     else {
-        echo "$temperature" . "&deg";
+        $temperaturePrecision = DB::getConst('TemperaturePrecision');
+        $temperature = (double)$value['Value'];
+        $temperature = round($temperature, $temperaturePrecision);
+        // время с последнего имерения в течение которого температура считается еще актуальной
+        $actualTimeTemperature = DB::getConst('ActualTimeTemperature');
+        $actualTemp = ((time() - strtotime($value['Date'])) < $actualTimeTemperature);
+        if ($actualTemp) {
+            $temperatureClass = $temperature<0?'temperature_weather_minus':'temperature_weather_plus';
+        }
     }
+
+    echo '<div class="' . $temperatureClass . '">
+            ' . $temperature . ' &deg
+          </div>';
 
     unset($unit);
 }
+
+if ($_REQUEST['dev'] == "pressure") { //получаем атмосферное давление
+
+    $label = $_GET['label']; //значение поля "UnitLabel" в таблице "tunits";
+
+    $unit = managerUnits::getUnitLabel($label);
+
+    if (is_null($unit)) {
+        logger::writeLog('Молуль с именем :: ' . $label . ' :: не найден',
+            loggerTypeMessage::ERROR, loggerName::ERROR);
+        echo '--'; //пока так
+        exit(); //тут надо подумать что возвращать
+    }
+
+    $actualPressureClass = 'unActualPressure';
+    $value = $unit->readValue();
+    if (is_null($value)) {
+        $pressure = '--';
+    }
+    else {
+        $pressure = (double)$value['Value'];
+        // время с последнего имерения в течение которого температура считается еще актуальной
+        $actualTimePressure = DB::getConst('ActualTimePressure');
+        $actualPressure = ((time() - strtotime($value['Date'])) < $actualTimePressure);
+        $actualPressureClass = $actualPressure ? 'actualPressure' : 'unActualPressure';
+        $pressure = round($pressure);
+    }
+
+    echo '<div class="' . $actualPressureClass . '">
+            ' . $pressure . '
+          </div>';
+
+    unset($unit);
+}
+
 
 //if ( $_REQUEST['dev'] == "label" ) { //получаем значение цифрового датчика типа "сухой контакт"
 //
