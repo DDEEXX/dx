@@ -225,8 +225,8 @@ if ($p == "weather") {
                 </div>
                 <div class="grid_3 omega" style="margin-left: 5px">
                     <div style="overflow: hidden;margin-top: 10px">
-                        <p style="float: right;font-size: 80%">изменение давления</p>
-                        <img src="pressureHistory.php" height=60>
+                        <p style="float:right;font-size: 80%">изменение давления</p>
+                        <img src="pressureHistory.php" height=80 style="float:right">
                     </div>
                 </div>
             </div>

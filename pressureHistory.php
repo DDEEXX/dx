@@ -7,10 +7,12 @@ require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
 require_once(dirname(__FILE__) . '/class/logger.class.php');
 require_once(dirname(__FILE__) . '/class/globalConst.interface.php');
 
-const DEFAULT_GR_WIDTH = 210;
-const DEFAULT_GR_HEIGHT = 60;
+const DEFAULT_GR_WIDTH = 180;
+const DEFAULT_GR_HEIGHT = 80;
 const DEFAULT_GR_TYPE = graphType::BAR;
 const LABEL = 'bar1';
+
+$grType = DEFAULT_GR_TYPE;
 
 function noData() {
     $Title = "NO DATA";
@@ -29,83 +31,66 @@ function noData() {
     imagedestroy($im);
 }
 
-$unit = managerUnits::getUnitLabel(LABEL);
+//$unit = managerUnits::getUnitLabel(LABEL);
+//
+//if (is_null($unit)) {
+//    logger::writeLog('Молуль с именем :: ' . LABEL . ' :: не найден (pressureHistory.php)',
+//        loggerTypeMessage::ERROR, loggerName::ERROR);
+//    noData();
+//    exit();
+//}
+//
+//$result = $unit->getTemperatureForInterval($_GET['date_from'], $_GET['date_to']);
+//
 
-if (is_null($unit)) {
-    logger::writeLog('Молуль с именем :: ' . LABEL . ' :: не найден (pressureHistory.php)',
-        loggerTypeMessage::ERROR, loggerName::ERROR);
-    noData();
-    exit();
-}
+$pressure = array(734, 734,735,736,738,738);
+$hour = array('-2','-4','-6','-8','-10','-12');
 
-$result = $unit->getTemperatureForInterval($_GET['date_from'], $_GET['date_to']);
+if (count($pressure)>0) {
 
-$count_r = count($result);
-
-for ($i = 0; $i < $count_r; $i++) {
-    $ydata[$i] = round($result[$i]['Value'], 1);
-    $xdata[$i] = $result[$i]['Date_f'];
-}
-
-if ($count_r > 1) {
-
-    $interval = ceil($count_r / 30);
+    //$interval = ceil($count_r / 30);
+    $interval = 1;
 
     $graph = new Graph(DEFAULT_GR_WIDTH, DEFAULT_GR_HEIGHT, 'auto');
     $graph->SetScale("textlin");
     $graph->SetBox(false);
-    $graph->SetTickDensity(TICKD_DENSE);
-    $graph->SetAxisStyle(AXSTYLE_BOXOUT);
+//    $graph->SetTickDensity(TICKD_DENSE);
+//    $graph->SetAxisStyle(AXSTYLE_BOXOUT);
 
-    /** @noinspection PhpUndefinedVariableInspection */
-    /** @noinspection PhpUndefinedMethodInspection */
-    $graph->xaxis->SetTickLabels($xdata);
-    /** @noinspection PhpUndefinedMethodInspection */
-    $graph->xaxis->SetTextLabelInterval(2);
-    /** @noinspection PhpUndefinedMethodInspection */
-    $graph->xaxis->HideTicks();
-    /** @noinspection PhpUndefinedMethodInspection */
+    $graph->xaxis->SetTickLabels($hour);
     $graph->xaxis->SetFont(FF_FONT1, FS_BOLD);
-    /** @noinspection PhpUndefinedMethodInspection */
     $graph->xaxis->SetColor('lightblue');
-    /** @noinspection PhpUndefinedMethodInspection */
-    $graph->xaxis->SetLabelAngle(90);
-    /** @noinspection PhpUndefinedMethodInspection */
+    $graph->xaxis->SetLabelMargin(2);
     $graph->xaxis->HideLine();
-    /** @noinspection PhpUndefinedMethodInspection */
-    $graph->xaxis->SetTextTickInterval($interval);
 
-    /** @noinspection PhpUndefinedMethodInspection */
+    $graph->xaxis->HideTicks(true, true);
+    $graph->xaxis->HideLine();
+    $graph->xaxis->HideZeroLabel();
+
+    $graph->xaxis->SetLabelSide(SIDE_DOWN);
+//    $graph->xaxis->HideTicks();
+
+    $graph->yaxis->SetFont(FF_FONT1, FS_BOLD);
+    $graph->yaxis->SetColor('lightblue');
+    //$graph->yaxis->HideLabels();
+    $graph->yaxis->HideTicks(true, true);
+    $graph->yaxis->HideLine();
+    $graph->yaxis->HideZeroLabel();
+    //$graph->yaxis->Hide();
+    //$graph->yaxis->SetTextTickInterval(1,2)
+    $graph->yaxis->SetTickLabels(array('-8>','','','','','','>','','','','','','8 >'));
+
+
     $graph->ygrid->Show(true);
-    /** @noinspection PhpUndefinedMethodInspection */
     $graph->ygrid->SetFill(false);
-    /** @noinspection PhpUndefinedMethodInspection */
     $graph->ygrid->SetColor('#4d6893');
 
-    /** @noinspection PhpUndefinedMethodInspection */
-    $graph->yaxis->SetFont(FF_FONT1, FS_BOLD);
-    /** @noinspection PhpUndefinedMethodInspection */
-    $graph->yaxis->HideLine();
-    /** @noinspection PhpUndefinedMethodInspection */
-    $graph->yaxis->HideFirstLastLabel();
-    /** @noinspection PhpUndefinedMethodInspection */
-    $graph->yaxis->SetColor('lightblue');
+    $b1 = new BarPlot($pressure);
+    $b1->SetYBase(728);
+    $b1->SetWidth(15);
+    $graph->Add($b1);
 
-    if ($grType == graphType::LINE) {
-        /** @noinspection PhpUndefinedVariableInspection */
-        $l1 = new LinePlot($ydata);
-        $graph->Add($l1);
-        $l1->SetColor('#99ffff');
-        $l1->SetWeight(1);
-    }
-    elseif ($grType == graphType::BAR) {
-        /** @noinspection PhpUndefinedVariableInspection */
-        $b1 = new BarPlot($ydata);
-        $graph->Add($b1);
-        $b1->SetWidth(0.1);
-    }
-
-    $graph->img->SetMargin(45, 5, 5, 60);
+    //$graph->img->SetMargin(45, 2, 2, 20);
     $graph->img->SetTransparent("white");
 
     $graph->Stroke();
