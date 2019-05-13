@@ -8,14 +8,21 @@ function updateTemperature() {
     $.get("getData.php?dev=temp&label=temp_out_1&type=last", function (data) {
         $("#temp_out_1, #temp_out_1_g").html(data);
     });
+    $.get("getData.php?dev=temp&label=temp_hall&type=last&color=plan", function (data) {
+        $("#temp_hall").html(data);
+    });
+    $.get("getData.php?dev=temp&label=temp_bedroom&type=last&color=plan", function (data) {
+        $("#temp_bedroom").html(data);
+    });
+    $.get("getData.php?dev=temp&label=temp_cubie&type=last&color=plan", function (data) {
+        $("#temp_cubie").html(data);
+    });
+
     $.get("getData.php?dev=temp&label=temp_hall&type=last", function (data) {
-        $("#temp_hall, #temp_hall_g").html(data);
+        $("#temp_hall_g").html(data);
     });
     $.get("getData.php?dev=temp&label=temp_bedroom&type=last", function (data) {
-        $("#temp_bedroom, #temp_bedroom_g").html(data);
-    });
-    $.get("getData.php?dev=temp&label=temp_cubie&type=last", function (data) {
-        $("#temp_cubie").html(data);
+        $("#temp_bedroom_g").html(data);
     });
 
 }

@@ -10,7 +10,7 @@ require_once(dirname(__FILE__) . '/class/globalConst.interface.php');
 const DEFAULT_GR_WIDTH = 180;
 const DEFAULT_GR_HEIGHT = 80;
 const DEFAULT_GR_TYPE = graphType::BAR;
-const LABEL = 'bar1';
+const LABEL = 'pressure_cube';
 
 $grType = DEFAULT_GR_TYPE;
 

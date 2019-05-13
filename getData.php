@@ -11,7 +11,18 @@ if ($_REQUEST['dev'] == "temp") { //получаем температру
     if (is_null($unit)) {
         logger::writeLog('Молуль с именем :: ' . $label . ' :: не найден',
             loggerTypeMessage::ERROR, loggerName::ERROR);
+        echo '--'; //пока так
         exit(); //тут надо подумать что возвращать
+    }
+
+    $classPlus  = 'temperature_weather_plus';
+    $classMinus = 'temperature_weather_minus';
+
+    if (isset($_GET['color'])) {
+        if ($_GET['color'] == 'plan') {
+            $classPlus  = 'temperature_weather_plus_plan';
+            $classMinus = 'temperature_weather_minus_plan';
+        }
     }
 
     $temperatureClass = 'unActualPressure';
@@ -27,7 +38,7 @@ if ($_REQUEST['dev'] == "temp") { //получаем температру
         $actualTimeTemperature = DB::getConst('ActualTimeTemperature');
         $actualTemp = ((time() - strtotime($value['Date'])) < $actualTimeTemperature);
         if ($actualTemp) {
-            $temperatureClass = $temperature<0?'temperature_weather_minus':'temperature_weather_plus';
+            $temperatureClass = $temperature<0?$classMinus:$classPlus;
         }
     }
 

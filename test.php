@@ -1,18 +1,26 @@
 <?php
 
-$f_json = 'http://192.168.0.201/temp';
+require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
+require_once(dirname(__FILE__) . '/class/globalConst.interface.php');
+require_once(dirname(__FILE__) . '/class/lists.class.php');
 
-$json = file_get_contents("$f_json");
+$sel = new selectOption();
+$sel->set('SensorTypeID', typeDevice::HUMIDITY);
+$sel->set('Disabled', 0);
 
-var_dump(json_decode($json));
+$humidityUnits = managerUnits::getListUnits($sel);
 
-$f_json = 'http://192.168.0.201/hum';
+foreach ($humidityUnits as $tekUnit) {
+    $val = $tekUnit->getValue();
+    if (!is_null($val)) {
+        $tekUnit->writeValue($val);
+    }
+}
 
-$json = file_get_contents("$f_json");
-
-$hum = json_decode($json);
-
-var_dump(json_decode($json));
+unset($humidityUnits);
 
 
-echo $hum->return_value/100;
+$unit = managerUnits::getUnitLabel('humidity_vault');
+$value = $unit->readValue();
+
+var_dump($value);

@@ -8,20 +8,24 @@
     font-weight: 600;
 }
 
-#temp_hall, #temp_bedroom, #temp_cubie {
-    color: #8B4513;
-}
-
 #temp_out_1_g, #temp_hall_g, #temp_bedroom_g {
     color: #5272BF;
 }
 
 .temperature_weather_plus {
-    color: #ffddbc;
+    color: #ffb687;
 }
 
 .temperature_weather_minus {
     color: #caffff;
+}
+
+.temperature_weather_plus_plan {
+    color: #8B4513;
+}
+
+.temperature_weather_minus_plan {
+    color: #38b7ff;
 }
 
 .actualPressure {

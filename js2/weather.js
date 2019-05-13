@@ -8,7 +8,7 @@ function updateWeather() {
         $("#temp_out_weather").html(data);
     });
 
-    $.get("getData.php?dev=pressure&label=bar&type=last", function (data) {
+    $.get("getData.php?dev=pressure&label=pressure_cube&type=last", function (data) {
         $("#pressure_weather").html(data);
     });
 

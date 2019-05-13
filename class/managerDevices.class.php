@@ -67,6 +67,9 @@ class deviceFactory
             case typeDevice::PRESSURE :
                 $className = 'pressureSensor';
                 break;
+            case typeDevice::HUMIDITY :
+                $className = 'humiditySensor';
+                break;
             default :
                 return null;
         }

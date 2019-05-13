@@ -36,6 +36,9 @@ class unitFactory
             case typeUnit::PRESSURE :
                 $className = 'pressureUnit';
                 break;
+            case typeUnit::HUMIDITY :
+                $className = 'humidityUnit';
+                break;
             default :
                 $className = '';
         }

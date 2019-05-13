@@ -23,6 +23,7 @@ interface typeDevice{
     const KEY_OUT           = 5; //Выходной ключ - коммутирует маленькие токи
     const VOLTAGE           = 6; //Датчик наличия напряжения
     const PRESSURE          = 7; //Датчик атмосферного давления
+    const HUMIDITY          = 8; //Датчик влажности
 }
 
 interface typeUnit{
@@ -34,6 +35,7 @@ interface typeUnit{
     const KEY_OUT           = 5; //Выходной ключ - коммутирует маленькие токи
     const VOLTAGE           = 6; //Датчик наличия напряжения
     const PRESSURE          = 7; //Датчик атмосферного давления
+    const HUMIDITY          = 8; //Датчик влажности
 }
 
 interface graphType {
