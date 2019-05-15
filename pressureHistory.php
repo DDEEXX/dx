@@ -14,10 +14,9 @@ const LABEL = 'pressure_cube';
 
 $grType = DEFAULT_GR_TYPE;
 
-function noData() {
+function noData($width = DEFAULT_GR_WIDTH, $height = DEFAULT_GR_HEIGHT) {
     $Title = "NO DATA";
-
-    $im = imagecreatetruecolor(DEFAULT_GR_WIDTH, DEFAULT_GR_HEIGHT);
+    $im = imagecreatetruecolor($width, $height);
     $blue = imagecolorallocate($im, 82, 114, 191);
     $trcolor = ImageColorAllocate($im, 0, 0, 0);
     ImageColorTransparent($im, $trcolor);
@@ -72,13 +71,13 @@ if (count($pressure)>0) {
 
     $graph->yaxis->SetFont(FF_FONT1, FS_BOLD);
     $graph->yaxis->SetColor('lightblue');
-    //$graph->yaxis->HideLabels();
+    $graph->yaxis->HideLabels();
     $graph->yaxis->HideTicks(true, true);
     $graph->yaxis->HideLine();
     $graph->yaxis->HideZeroLabel();
     //$graph->yaxis->Hide();
     //$graph->yaxis->SetTextTickInterval(1,2)
-    $graph->yaxis->SetTickLabels(array('-8>','','','','','','>','','','','','','8 >'));
+    //$graph->yaxis->SetTickLabels(array('-8>','','','','','','>','','','','','','8 >'));
 
 
     $graph->ygrid->Show(true);
@@ -97,6 +96,6 @@ if (count($pressure)>0) {
 
 }
 else {
-    noData();
+    noData($width, $height);
 }
 

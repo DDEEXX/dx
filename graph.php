@@ -6,6 +6,7 @@
 // - date_to - дата окончания
 
 require_once(dirname(__FILE__) . '/lib2/jpgraph/jpgraph.php');
+require_once(dirname(__FILE__) . '/lib2/jpgraph/jpgraph_regstat.php');
 require_once(dirname(__FILE__) . '/lib2/jpgraph/jpgraph_bar.php');
 require_once(dirname(__FILE__) . '/lib2/jpgraph/jpgraph_line.php');
 require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
@@ -15,6 +16,22 @@ require_once(dirname(__FILE__) . '/class/globalConst.interface.php');
 const DEFAULT_GR_WIDTH = 410;
 const DEFAULT_GR_HEIGHT = 160;
 const DEFAULT_GR_TYPE = graphType::LINE;
+
+function noData($width = DEFAULT_GR_WIDTH, $height = DEFAULT_GR_HEIGHT) {
+    $Title = "NO DATA";
+    $im = imagecreatetruecolor($width, $height);
+    $blue = imagecolorallocate($im, 0, 0, 255);
+    $trcolor = ImageColorAllocate($im, 0, 0, 0);
+    ImageColorTransparent($im, $trcolor);
+    $font = 'lib2/jpgraph/fonts/DejaVuSans.ttf';
+    $bbox = imagettfbbox(14, 45, $font, $Title);
+    $x = $bbox[0] + (imagesx($im) / 2) - ($bbox[4] / 2) - 25;
+    $y = $bbox[1] + (imagesy($im) / 2) - ($bbox[5] / 2) - 5;
+    imagettftext($im, 14, 45, $x, $y, $blue, $font, $Title);
+    header('Content-Type: image/png');
+    imagepng($im);
+    imagedestroy($im);
+}
 
 //Вид графика линейный или столбчатый
 if (!isset($_GET['t'])) {
@@ -47,12 +64,16 @@ $unit = managerUnits::getUnitLabel($label);
 if (is_null($unit)) {
     logger::writeLog('Молуль с именем :: ' . $label . ' :: не найден (graph.php)',
         loggerTypeMessage::ERROR, loggerName::ERROR);
-    exit("#label");
+    noData($width, $height);
+    //exit("#label");
+    exit();
 }
 
 $result = $unit->getTemperatureForInterval($_GET['date_from'], $_GET['date_to']);
 
 $count_r = count($result);
+$xdata = array();
+$ydata = array();
 
 for ($i = 0; $i < $count_r; $i++) {
     $ydata[$i] = round($result[$i]['Value'], 1);
@@ -124,21 +145,5 @@ if ($count_r > 1) {
 
 }
 else {
-
-    $Title = "За этот период нет данных!";
-    $Title = "NO DATA";
-
-    $im = imagecreatetruecolor($width, $height);
-    $blue = imagecolorallocate($im, 0, 0, 255);
-    $trcolor = ImageColorAllocate($im, 0, 0, 0);
-    ImageColorTransparent($im, $trcolor);
-    $font = 'lib2/jpgraph/fonts/DejaVuSans.ttf';
-    $bbox = imagettfbbox(14, 45, $font, $Title);
-    $x = $bbox[0] + (imagesx($im) / 2) - ($bbox[4] / 2) - 25;
-    $y = $bbox[1] + (imagesy($im) / 2) - ($bbox[5] / 2) - 5;
-    imagettftext($im, 14, 45, $x, $y, $blue, $font, $Title);
-    header('Content-Type: image/png');
-    imagepng($im);
-    imagedestroy($im);
-
+    noData($width, $height);
 }
