@@ -6,7 +6,6 @@
 // - date_to - дата окончания
 
 require_once(dirname(__FILE__) . '/lib2/jpgraph/jpgraph.php');
-require_once(dirname(__FILE__) . '/lib2/jpgraph/jpgraph_regstat.php');
 require_once(dirname(__FILE__) . '/lib2/jpgraph/jpgraph_bar.php');
 require_once(dirname(__FILE__) . '/lib2/jpgraph/jpgraph_line.php');
 require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
