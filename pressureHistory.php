@@ -11,6 +11,7 @@ const DEFAULT_GR_WIDTH = 180;
 const DEFAULT_GR_HEIGHT = 80;
 const DEFAULT_GR_TYPE = graphType::BAR;
 const LABEL = 'pressure_cube';
+const DELTA_SETYBASE = 6;
 
 $grType = DEFAULT_GR_TYPE;
 
@@ -30,19 +31,33 @@ function noData($width = DEFAULT_GR_WIDTH, $height = DEFAULT_GR_HEIGHT) {
     imagedestroy($im);
 }
 
-//$unit = managerUnits::getUnitLabel(LABEL);
-//
-//if (is_null($unit)) {
-//    logger::writeLog('Молуль с именем :: ' . LABEL . ' :: не найден (pressureHistory.php)',
-//        loggerTypeMessage::ERROR, loggerName::ERROR);
-//    noData();
-//    exit();
-//}
-//
-//$result = $unit->getTemperatureForInterval($_GET['date_from'], $_GET['date_to']);
-//
+$unit = managerUnits::getUnitLabel(LABEL);
 
-$pressure = array(734, 734,735,736,738,738);
+if (is_null($unit)) {
+    logger::writeLog('Молуль с именем :: ' . LABEL . ' :: не найден (pressureHistory.php)',
+        loggerTypeMessage::ERROR, loggerName::ERROR);
+    noData();
+    exit();
+}
+
+$currentPressure = 0;
+$value = $unit->readValue();
+if (!is_null($value)) {
+    $currentPressure = (double)$value['Value'];
+}
+
+$maxPressure = $currentPressure;
+$minPressure = $currentPressure;
+$pressure = array();
+//Получаем среднее значение давления по интервалам в 2 часа
+for ($i=0;$i<=10;$i=$i+2) {
+    $p = $unit->getAverageForInterval(2, date('Y-m-d H:i:s', strtotime('-'.$i.' hour')) );
+    $pressure[] = $p;
+    $maxPressure = max($p, $maxPressure);
+    $minPressure = max($p, $minPressure);
+}
+
+//$pressure = array(734, 734,735,736,738,738);
 $hour = array('-2','-4','-6','-8','-10','-12');
 
 if (count($pressure)>0) {
@@ -85,7 +100,7 @@ if (count($pressure)>0) {
     $graph->ygrid->SetColor('#4d6893');
 
     $b1 = new BarPlot($pressure);
-    $b1->SetYBase(728);
+    $b1->SetYBase($currentPressure - DELTA_SETYBASE);
     $b1->SetWidth(15);
     $graph->Add($b1);
 

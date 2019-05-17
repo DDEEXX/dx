@@ -1,26 +1,23 @@
 <?php
+/** Опрос всех температурных датчиков и запись показаний в базу данных
+ * Created by PhpStorm.
+ * User: root
+ * Date: 07.01.19
+ * Time: 12:23
+ */
 
-require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
 require_once(dirname(__FILE__) . '/class/globalConst.interface.php');
 require_once(dirname(__FILE__) . '/class/lists.class.php');
+require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
 
 $sel = new selectOption();
-$sel->set('SensorTypeID', typeDevice::HUMIDITY);
+$sel->set('SensorTypeID', typeDevice::PRESSURE);
 $sel->set('Disabled', 0);
 
-$humidityUnits = managerUnits::getListUnits($sel);
+$pressureUnits = managerUnits::getListUnits($sel);
 
-foreach ($humidityUnits as $tekUnit) {
-    $val = $tekUnit->getValue();
-    if (!is_null($val)) {
-        $tekUnit->writeValue($val);
-    }
+foreach ($pressureUnits as $tekUnit) {
+    $tekUnit->getAverageForInterval(10);
 }
 
-unset($humidityUnits);
-
-
-$unit = managerUnits::getUnitLabel('humidity_vault');
-$value = $unit->readValue();
-
-var_dump($value);
+unset($pressureUnits);
