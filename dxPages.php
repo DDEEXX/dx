@@ -304,24 +304,8 @@ if ($p == "light") {
 if ($p == "power") {
     ?>
 
-    <script type="text/javascript">
+    <script src="js2/power.js"></script>
 
-        $(document).ready(function () {
-            /* dev=label - событие = считать показания цифрового датчика */
-            /* label=label_garage_door - имя датчика в базе = label_garage_door*/
-            /* type=last - тип события = последнее показание */
-            $.get("getData.php?dev=label&label=label_garage_door&type=last", function (data) {
-                $("#label_garage_door").html(data);
-            });
-        });
-
-        $(document).everyTime("5s", function () {
-            $.get("getData.php?dev=label&label=label_garage_door&type=last", function (data) {
-                $("#label_garage_door").html(data);
-            });
-        });
-
-    </script>
     <div id="page_power" class="grid_11">
         <div class="grid_11 alpha">
             <div class="ui-corner-all ui-widget-header" style="margin-top: 5px">
@@ -329,7 +313,7 @@ if ($p == "power") {
             </div>
         </div>
         <div class="clear"></div>
-        <div class="grid_3 alpha">
+        <div class="grid_4 alpha">
             <div class="ui-corner-all ui-state-default ui-widget-content"
                  style="margin-top:5px;height:90px;position:relative">
                 <h2 style="margin-left:5px">Гаражные ворота</h2>
@@ -337,16 +321,37 @@ if ($p == "power") {
                 <button style="margin-left:20px;margin-top:10px;" class="upDown"></button>
             </div>
         </div>
-        <div class="grid_3 alpha">
+        <div class="grid_4">
             <div class="ui-corner-all ui-state-default ui-widget-content"
                  style="margin-top:5px;height:90px;position:relative">
                 <h2 style="margin-left:5px">Ворота</h2>
             </div>
         </div>
-        <div class="grid_3 alpha">
+        <div class="grid_3 omega">
             <div class="ui-corner-all ui-state-default ui-widget-content"
                  style="margin-top:5px;height:90px;position:relative">
                 <h2 style="margin-left:5px">Калитка</h2>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div class="grid_4 alpha">
+            <div class="ui-corner-all ui-state-default ui-widget-content"
+                 style="margin-top:5px;height:120px;position:relative">
+                <div>
+                    <h2 style="margin-left:5px">Погреб</h2>
+                    <div class="rg_g_vault" style="margin-left:5px;float:left">
+                        <input type="radio" name="1" dev_type="temp_out_1"
+                               checked id="vault_off"><label for="vault_off">выкл</label>
+                        <input type="radio" name="1" dev_type="temp_out_1"
+                               id="vault_on"><label for="vault_on">вкл</label>
+                        <input type="radio" name="1" dev_type="temp_out_1"
+                               id="vault_auto"><label for="vault_auto">авто</label>
+                    </div>
+                </div>
+                <p>температура: &deg </p>
+                <p>влажность:  %</p>
+                <p>вентиляция: </p>
+                <p>свет: </p>
             </div>
         </div>
     </div>
