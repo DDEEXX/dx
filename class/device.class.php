@@ -380,7 +380,7 @@ class sensors extends sensor
 class humiditySensor extends sensors
 {
 
-    public function __construct(array $options, $typeDevice)
+    public function __construct(array $options)
     {
         parent::__construct($options, typeDevice::HUMIDITY);
     }

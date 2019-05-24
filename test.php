@@ -20,7 +20,7 @@ $temperatureUnits = managerUnits::getListUnits($sel);
 foreach ($temperatureUnits as $tekUnit) {
     logger::writeLog('опрос датчика температуры ID='.$tekUnit->getId());
     $val = $tekUnit->getValue();
-    logger::writeLog('значение val='.var_dump($val));
+    logger::writeLog('значение val='.$val);
     if (!is_null($val)) {
         logger::writeLog('запись в базу');
         $tekUnit->writeValue($val);
@@ -38,7 +38,7 @@ $pressureUnits = managerUnits::getListUnits($sel);
 foreach ($pressureUnits as $tekUnit) {
     logger::writeLog('опрос датчика давления ID='.$tekUnit->getId());
     $val = $tekUnit->getValue();
-    logger::writeLog('значение val='.var_dump($val));
+    logger::writeLog('значение val='.$val);
     if (!is_null($val)) {
         logger::writeLog('запись в базу');
         $tekUnit->writeValue($val);
@@ -56,7 +56,7 @@ $humidityUnits = managerUnits::getListUnits($sel);
 foreach ($humidityUnits as $tekUnit) {
     logger::writeLog('опрос датчика влажности ID='.$tekUnit->getId());
     $val = $tekUnit->getValue();
-    logger::writeLog('значение val='.var_dump($val));
+    logger::writeLog('значение val='.$val);
     if (!is_null($val)) {
         logger::writeLog('запись в базу');
         $tekUnit->writeValue($val);
