@@ -69,7 +69,7 @@ if ($_REQUEST['dev'] == "pressure") { //получаем атмосферное 
     }
     else {
         $pressure = (double)$value['Value'];
-        // время с последнего имерения в течение которого температура считается еще актуальной
+        // время с последнего имерения в течение которого давление считается еще актуальной
         $actualTimePressure = DB::getConst('ActualTimePressure');
         $actualPressure = ((time() - strtotime($value['Date'])) < $actualTimePressure);
         $actualPressureClass = $actualPressure ? 'actualPressure' : 'unActualPressure';

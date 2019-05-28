@@ -339,14 +339,15 @@ if ($p == "power") {
                  style="margin-top:5px;height:120px;position:relative">
                 <div>
                     <h2 style="margin-left:5px">Погреб</h2>
-                    <div class="rg_g_vault" style="margin-left:5px;float:left">
-                        <input type="radio" name="1" dev_type="temp_out_1"
-                               checked id="vault_off"><label for="vault_off">выкл</label>
-                        <input type="radio" name="1" dev_type="temp_out_1"
-                               id="vault_on"><label for="vault_on">вкл</label>
-                        <input type="radio" name="1" dev_type="temp_out_1"
-                               id="vault_auto"><label for="vault_auto">авто</label>
-                    </div>
+                    <?php echoRadioGroup('rg_g_vault', 'vault_vent', 'vault_off', 'vault_on', 'vault_auto') ?>
+<!--                    <div class="rg_g_vault" style="margin-left:5px;float:left">-->
+<!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
+<!--                               id="vault_off"><label for="vault_off">выкл</label>-->
+<!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
+<!--                               id="vault_on"><label for="vault_on">вкл</label>-->
+<!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
+<!--                               id="vault_auto"><label for="vault_auto">авто</label>-->
+<!--                    </div>-->
                 </div>
                 <p>температура: &deg </p>
                 <p>влажность:  %</p>

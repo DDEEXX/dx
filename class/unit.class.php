@@ -130,6 +130,20 @@ class moduleUnit extends unit
 
     public function getValue() {}
 
+
+    public function setMode($mode) {
+    }
+
+    /**
+     * Получить режим работы модуля из БД
+     * @return mixed
+     */
+    public function getMode()
+    {
+        $value = DB::getModeUnit($this);
+        return $value;
+    }
+
 }
 
 /**
@@ -643,6 +657,12 @@ class powerKeyUnit extends moduleUnit
         parent::__construct($options, typeUnit::POWER_KEY);
     }
 
+    /**
+     * Отправляем на физический датчик значение и
+     * записываем в журнал когда и каким образом изменилось состояние ключа
+     * @param $value
+     * @param null $status - каким образом поменялось состояние (вручную, от датчика и т.д.)
+     */
     public function setValue($value, $status = null)
     {
         if (is_null($value)) {
@@ -675,6 +695,7 @@ class powerKeyUnit extends moduleUnit
     }
 
     /**
+     * Записать в журнал когда и каким образом изменилось состояние ключа
      * @param $status
      */
     private function writeStatusKeyJournal($status)
