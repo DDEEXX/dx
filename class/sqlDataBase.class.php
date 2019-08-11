@@ -396,6 +396,37 @@ class DB
 
         return $result;
     }
+
+    /**
+     * Получить режим работы модуля OFF|ON|AUTO
+     * @param iUnit $unit
+     * @return mixed
+     */
+    static public function getModeUnit(iUnit $unit)
+    {
+
+        $uniteID = $unit->getId();
+
+        $query = 'SELECT Mode FROM tunits WHERE UnitID="' . $uniteID . '"';
+
+        try {
+            $con = sqlDataBase::Connect();
+            $result = queryDataBase::getOne($con, $query);
+            $result = $result['Mode'];
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции DB::getLastValueUnit. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            $result = 0;
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка в функции DB::getLastValueUnit. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            $result = 0;
+        }
+
+        return $result;
+
+    }
+
 }
 
 

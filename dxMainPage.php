@@ -81,6 +81,7 @@
     </div>
 
     <?php
+    include_once 'rgMode.php';
     include_once 'dxPages.php';
     ?>
 

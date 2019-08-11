@@ -49,3 +49,9 @@ interface statusKey {
     const OUTSIDE   = 'outside';
     const OFF       = 'off';
 }
+
+interface modeUnit {
+    const OFF  = 0;
+    const ON   = 1;
+    const AUTO = 2;
+}

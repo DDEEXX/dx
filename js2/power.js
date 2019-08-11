@@ -8,6 +8,7 @@ $(document).ready(function () {
     $.get("getData.php?dev=label&label=label_garage_door&type=last", function (data) {
         $("#label_garage_door").html(data);
     });
+
 });
 
 $(document).everyTime("5s", function () {
