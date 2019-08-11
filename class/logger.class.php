@@ -62,6 +62,7 @@ class logger
                 self::$loggers[$name] = new logger($name);
             } catch (Exception $e) {
                 error_log('Ошибка при создании логгера', 0);
+                return null;
             }
         }
         return self::$loggers[$name];
@@ -99,7 +100,9 @@ class logger
                                     $name = loggerName::DEFAULTLOGGER)
     {
         $l = self::getLogger($name);
-        $l->log($message, $messageType);
+        if (!is_null($l)) {
+            $l->log($message, $messageType);
+        }
         unset($l);
     }
 

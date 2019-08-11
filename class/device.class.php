@@ -227,7 +227,7 @@ class sensors extends sensor
 
         }
         else {
-            logger::writeLog('Попытка получить данные с датчика :: ' . $adress, loggerTypeMessage::ERROR);
+            logger::writeLog('Неудачаная попытка получить данные с датчика :: ' . $adress, loggerTypeMessage::ERROR);
         }
 
         return $result;
@@ -321,7 +321,7 @@ class sensors extends sensor
                 $result = $p * 0.0075;
             }
             else {
-                logger::writeLog('Попытка получить значение с I2C датчика с адресом:: ' . $i2c_address, loggerTypeMessage::ERROR);
+                logger::writeLog('Неудачаная попытка получить значение с I2C датчика с адресом:: ' . $i2c_address, loggerTypeMessage::ERROR);
             }
         }
         elseif ($model == 'LM75') {
@@ -330,7 +330,7 @@ class sensors extends sensor
             $result = $ut * 0.125;
         }
         else {
-            logger::writeLog('Попытка получить температуру с I2C датчика с адресом:: ' . $i2c_address, loggerTypeMessage::ERROR);
+            logger::writeLog('Неудачаная попытка получить температуру с I2C датчика с адресом:: ' . $i2c_address, loggerTypeMessage::ERROR);
         }
 
         return $result;
@@ -348,7 +348,7 @@ class sensors extends sensor
             $result = $data->return_value / 100;
         }
         else {
-            logger::writeLog('Попытка получить значение с Ethernet датчика с адресом:: ' . $address, loggerTypeMessage::ERROR);
+            logger::writeLog('Неудачаная попытка получить значение с Ethernet датчика с адресом:: ' . $address, loggerTypeMessage::ERROR);
         }
 
         return $result;
@@ -470,7 +470,7 @@ class powerKeyMaker extends maker
 
         }
         else {
-            logger::writeLog('Попытка получить значение с датчика :: ' . $adress, loggerTypeMessage::ERROR);
+            logger::writeLog('Неудачаная попытка получить значение с датчика :: ' . $adress, loggerTypeMessage::ERROR);
         }
 
         return $result;
@@ -488,7 +488,7 @@ class powerKeyMaker extends maker
             unset($ow);
         }
         else {
-            logger::writeLog('Попытка записать значение в датчик :: ' . $adress, loggerTypeMessage::ERROR);
+            logger::writeLog('Неудачаная попытка записать значение в датчик :: ' . $adress, loggerTypeMessage::ERROR);
         }
 
         return $result;

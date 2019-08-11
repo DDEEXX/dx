@@ -6,6 +6,8 @@
  * Time: 12:23
  */
 
+chdir('/var/www/html/dxhome');
+
 require_once(dirname(__FILE__) . '/class/globalConst.interface.php');
 require_once(dirname(__FILE__) . '/class/lists.class.php');
 require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
@@ -34,6 +36,7 @@ $pressureUnits = managerUnits::getListUnits($sel);
 foreach ($pressureUnits as $tekUnit) {
     $val = $tekUnit->getValue();
     if (!is_null($val)) {
+        logger::writeLog('запись в базу');
         $tekUnit->writeValue($val);
     }
 }
