@@ -36,7 +36,6 @@ $pressureUnits = managerUnits::getListUnits($sel);
 foreach ($pressureUnits as $tekUnit) {
     $val = $tekUnit->getValue();
     if (!is_null($val)) {
-        logger::writeLog('запись в базу');
         $tekUnit->writeValue($val);
     }
 }
