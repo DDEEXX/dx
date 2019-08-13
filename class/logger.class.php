@@ -106,4 +106,41 @@ class logger
         unset($l);
     }
 
+    public static function readLog($name = loggerName::DEFAULTLOGGER)
+
+    {
+
+        $file_path = 'array.txt'; // путь к лог файлу
+        if (is_writable($file_path)) {
+            $file = file($file_path, FILE_IGNORE_NEW_LINES);
+            $result = array();
+            for ($i = count($file) - 1; $i >= 0; $i--) {
+                $current = explode(';', $file[$i]);
+                if (strpos($current[0], 'say') !== FALSE) {
+                    $temp = explode(' ', $current[0]);
+                    $result[$i]['date'] = $temp[0];
+                    $result[$i]['name'] = $current[3];
+                    $result[$i]['message'] = $current[4];
+                    if (count($result) === 20)
+                        break;
+                }
+            }
+            $result = array_reverse($result);
+        }
+        else {
+            $error = 'Файл не может быть прочитан';
+        }
+
+
+        if (isset($error)) {
+            echo "<p><?=$error ?></p>";
+        }
+        else {
+            foreach ($result as $item) {
+                echo "<p><?=".$item['date']." ".$item['name'].": ".$item['message']."</p>";
+            }
+        }
+
+    }
+
 }

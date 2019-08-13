@@ -340,17 +340,17 @@ if ($p == "power") {
                 <div>
                     <h2 style="margin-left:5px">Погреб</h2>
                     <?php echoRadioGroup('rg_g_vault', 'vault_vent', 'vault_off', 'vault_on', 'vault_auto') ?>
-<!--                    <div class="rg_g_vault" style="margin-left:5px;float:left">-->
-<!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
-<!--                               id="vault_off"><label for="vault_off">выкл</label>-->
-<!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
-<!--                               id="vault_on"><label for="vault_on">вкл</label>-->
-<!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
-<!--                               id="vault_auto"><label for="vault_auto">авто</label>-->
-<!--                    </div>-->
+                    <!--                    <div class="rg_g_vault" style="margin-left:5px;float:left">-->
+                    <!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
+                    <!--                               id="vault_off"><label for="vault_off">выкл</label>-->
+                    <!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
+                    <!--                               id="vault_on"><label for="vault_on">вкл</label>-->
+                    <!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
+                    <!--                               id="vault_auto"><label for="vault_auto">авто</label>-->
+                    <!--                    </div>-->
                 </div>
                 <p>температура: &deg </p>
-                <p>влажность:  %</p>
+                <p>влажность: %</p>
                 <p>вентиляция: </p>
                 <p>свет: </p>
             </div>
@@ -508,6 +508,29 @@ if ($p == "cam") {
         </div>
     </div>
 
+    <?php
+}
+
+if ($p == 'properties') {
+    ?>
+
+    <script src="js2/properties.js"></script>
+
+<div id="page_properties" class="grid_11">
+
+    <div class="grid_11 alpha omega ui-corner-all ui-state-default">
+            <div class="logger" style="margin-left:5px;margin-top:5px">
+                <input type="radio" name="logger" id="logDefault"">
+                <label for="logDefault">Default</label>
+                <input type="radio" name="logger" id="logError" checked>
+                <label for="logError">Error</label>
+            </div>
+    </div>
+    <div class="clear"></div>
+
+    </div>
+
+</div>
     <?php
 }
 ?>
