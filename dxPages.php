@@ -516,21 +516,22 @@ if ($p == 'properties') {
 
     <script src="js2/properties.js"></script>
 
-<div id="page_properties" class="grid_11">
+    <div id="page_properties" class="grid_11">
 
-    <div class="grid_11 alpha omega ui-corner-all ui-state-default">
-            <div class="logger" style="margin-left:5px;margin-top:5px">
-                <input type="radio" name="logger" id="logDefault"">
+        <div class="grid_11 alpha omega ui-corner-all ui-state-default" style="margin-top: 5px">
+            <div style="margin-left: 5px; margin-top: 5px; float: left">Лог:</div>
+            <div class="logger" style="margin-left:5px;margin-top:5px;float: left">
+                <input type="radio" class="set_type_log" name="logger" id="logDefault">
                 <label for="logDefault">Default</label>
-                <input type="radio" name="logger" id="logError" checked>
+                <input type="radio" class="set_type_log" name="logger" id="logError" checked>
                 <label for="logError">Error</label>
             </div>
+            <div id="logFile" style="clear: both; height: 200px">
+            </div>
+        </div>
+        <div class="clear"></div>
     </div>
-    <div class="clear"></div>
 
-    </div>
-
-</div>
     <?php
 }
 ?>

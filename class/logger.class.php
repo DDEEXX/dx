@@ -23,11 +23,13 @@ interface loggerName
 
 class logger
 {
+    const COUNTLOGFILE = 200;
     protected $timeFormat = 'd.m.Y - H:i:s';
 
     protected static $PATH = 'logs';
     protected static $loggers = array();
     protected $fp;
+    protected $nameFile;
 
     /**
      * logger constructor.
@@ -39,6 +41,7 @@ class logger
         if (!$this->fp = fopen(self::$PATH . '/' . $name . '.log', 'a+')) {
             throw new Exception('Could not open file ' . self::$PATH . '/' . $name . '.log');
         };
+        $this->nameFile = $name;
     }
 
     /**
@@ -79,7 +82,7 @@ class logger
             $messageType != loggerTypeMessage::FATAL) {
             $messageType = loggerTypeMessage::ERRSTATUS;
         }
-        $this->writeToLogFile('[' . date($this->timeFormat) . '] ' . $messageType . ' - ' . $message);
+        $this->writeToLogFile('' . date($this->timeFormat) . ';' . $messageType . ';' . $message);
     }
 
     private function writeToLogFile($message)
@@ -106,41 +109,42 @@ class logger
         unset($l);
     }
 
+    /**
+     * Читает лог файл и возвращает результат в виде массива, последние события
+     * @param string $name
+     * @return array
+     */
     public static function readLog($name = loggerName::DEFAULTLOGGER)
-
     {
+        $result = array();
+        $l = self::getLogger($name);
+        if (!is_null($l)) {
+            $result = $l->readLogFile();
+        }
+        unset($l);
+        return $result;
+    }
 
-        $file_path = 'array.txt'; // путь к лог файлу
+    private function readLogFile()
+    {
+        $result = array();
+        $file_path = self::$PATH . '/' . $this->nameFile . '.log'; // путь к лог файлу
         if (is_writable($file_path)) {
             $file = file($file_path, FILE_IGNORE_NEW_LINES);
-            $result = array();
             for ($i = count($file) - 1; $i >= 0; $i--) {
                 $current = explode(';', $file[$i]);
-                if (strpos($current[0], 'say') !== FALSE) {
-                    $temp = explode(' ', $current[0]);
-                    $result[$i]['date'] = $temp[0];
-                    $result[$i]['name'] = $current[3];
-                    $result[$i]['message'] = $current[4];
-                    if (count($result) === 20)
-                        break;
-                }
+                $result[$i]['date'] = $current[0];
+                $result[$i]['type'] = $current[1];
+                $result[$i]['message'] = $current[2];
+                if (count($result) === self::COUNTLOGFILE)
+                    break;
             }
             $result = array_reverse($result);
         }
         else {
-            $error = 'Файл не может быть прочитан';
+            $result[] = 'ошибка при чтении файла лога';
         }
-
-
-        if (isset($error)) {
-            echo "<p><?=$error ?></p>";
-        }
-        else {
-            foreach ($result as $item) {
-                echo "<p><?=".$item['date']." ".$item['name'].": ".$item['message']."</p>";
-            }
-        }
-
+        return $result;
     }
 
 }
