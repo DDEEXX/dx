@@ -526,7 +526,7 @@ if ($p == 'properties') {
                 <input type="radio" class="set_type_log" name="logger" id="logError" checked>
                 <label for="logError">Error</label>
             </div>
-            <div id="logFile" style="clear: both; height: 200px">
+            <div id="logFile" style="margin: 5px; clear: both; height: 200px; overflow-x: auto; overflow-y: auto">
             </div>
         </div>
         <div class="clear"></div>

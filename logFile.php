@@ -9,6 +9,6 @@ if ($_REQUEST['type'] == "logError") { //получаем температру
     $arrLog = logger::readLog(loggerName::ERROR);
 }
 
-for ($i=0; $i<count($arrLog); $i++) {
+for ($i=count($arrLog)-1; $i>=0; $i--) {
     echo '<p>'.$arrLog[$i]['date'].' '.$arrLog[$i]['type'].' '.$arrLog[$i]['message'].'</p>';
 }
