@@ -1,3 +1,19 @@
+function updateTemperature() {
+
+    /* dev=temp - событие = температура */
+    /* label=temp_out_1 - имя датчика в базе = temp_out_1*/
+    /* type=last - тип события = последнее показание */
+
+    $.get("getData.php?dev=temp&label=temp_out_1&type=last", function (data) {
+        $("#temp_out_weather_home").html(data);
+    });
+
+    $.get("getData.php?dev=pressure&label=pressure_cube&type=last", function (data) {
+        $("#pressure_weather_home").html(data);
+    });
+
+}
+
 Date.prototype.getMonthName = function() {
 	//var month = ['январь','февраль','март','апрель','май','июнь',
 	//'июль','август','сентябрь','октябрь','ноябрь','декабрь'];
@@ -30,7 +46,9 @@ function clock() {
 }	
 
 $(document).ready( function() {
-	
+
+    updateTemperature();
+
 	$("#alarm_key").button();		
 	$("#alarm_key").click(function () {
 		$.get("alarm.php?p=on", function(data){});
@@ -46,4 +64,9 @@ $(document).ready( function() {
 $(document).everyTime("1s", function() {
 	$(".TekDate").html(date());		
 	$(".TekTime").html(clock());		
+});
+
+//Обновление показания температуры кажные 5 минут
+$(document).everyTime("300s", function () {
+    updateTemperature();
 });

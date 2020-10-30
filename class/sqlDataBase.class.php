@@ -2,6 +2,7 @@
 
 require_once(dirname(__FILE__) . "/config.class.php");
 require_once(dirname(__FILE__) . "/lists.class.php");
+require_once(dirname(__FILE__) . '/logger.class.php');
 
 interface iSqlDataBase
 {
@@ -426,6 +427,83 @@ class DB
         return $result;
 
     }
+
+    static public function getUserId($id) {
+
+        try {
+            $con = sqlDataBase::Connect();
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции DB::getUserId. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return null;
+        }
+
+        $id = $con->getConnect()->real_escape_string($id);
+        $query = "SELECT * FROM users WHERE id='$id'  LIMIT 1";
+        try {
+            $result = queryDataBase::getOne($con, $query);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка в функции DB::getUserId. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return null;
+        }
+
+        return $result;
+
+    }
+
+    static public function getUserPassword($password) {
+
+        try {
+            $con = sqlDataBase::Connect();
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции DB::getUserHash. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return null;
+        }
+        $query = "SELECT * FROM users";
+        try {
+            $result = queryDataBase::getAll($con, $query);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка в функции DB::getUserHash. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return null;
+        }
+
+        foreach ($result as $value) {
+            $hash = $value['Password'];
+            if ( password_verify($password, $hash) ) {
+                return $value;
+            }
+        }
+
+        return null;
+
+    }
+
+    static public function userLastActive($user, $time, $onlyOnline = false) {
+        try {
+            $con = sqlDataBase::Connect();
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции DB::userLastActive. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return null;
+        }
+        $time = $con->getConnect()->real_escape_string($time);
+        $userID = $user['ID'];
+        $query = "UPDATE users SET online='$time', lastAcvive='$time' WHERE id='$userID'";
+        if ($onlyOnline) {
+            $query = "UPDATE users SET online='$time' WHERE id='$userID'";
+        }
+        try {
+            queryDataBase::execute($con, $query);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка при обновлении последней активности пользователя. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+        }
+
+    }
+
 
 }
 

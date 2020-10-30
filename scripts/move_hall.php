@@ -19,6 +19,9 @@ $NAME_LIGHT_N = 'light_hol_2_n';
 $MOVE_TIME_N = 8; //через сколько секунд вык. подсветка после отсутствия движения при включении от датчика движения
 $MOVE_TIME_GLOBAL = 1200; //через сколько секунд вык. подсветка после отсутствия движения
 
+$NAME_LIGHT_3 = 'light_stairs_3';
+$unitLightStairs3 = managerUnits::getUnitLabel($NAME_LIGHT_3);
+
 $unitMove = managerUnits::getUnitLabel($NAME_MOVE);
 $unitNightLight = managerUnits::getUnitLabel($NAME_LIGHT_N);
 
@@ -66,6 +69,7 @@ if ($sunInfo == dayPart::NIGHT) { // ночь
     if ($isMove) { // есть движение
         if (!$isLight) { // свет не горит
             $unitNightLight->setValue(1, statusKey::MOVE); // включает, записываем что от датчика
+            $unitLightStairs3->setValue(1, statusKey::MOVE); // включает, записываем что от датчика
         }
     }
     else { // нет движения
@@ -73,11 +77,13 @@ if ($sunInfo == dayPart::NIGHT) { // ночь
             if ($statusKey == statusKey::MOVE) { // включился датчиком движения
                 if ($moveTime > $MOVE_TIME_N) { // время вышло с последнего отсутствия движения
                     $unitNightLight->setValue(0, statusKey::OFF); //гасим
+                    $unitLightStairs3->setValue(0, statusKey::OFF); //гасим
                 }
             }
             else { // свет включили вручную (через сайт) ???
                 if ($outTime > $MOVE_TIME_GLOBAL) { // время вышло с последней активности подсветки
                     $unitNightLight->setValue(0, statusKey::OFF); //гасим
+                    $unitLightStairs3->setValue(0, statusKey::OFF); //гасим
                 }
             }
         }
@@ -87,14 +93,17 @@ else { // светло
     if ($isLight) { // горит свет
         if ($statusKey == statusKey::MOVE) { // включился датчиком движения
             $unitNightLight->setValue(0, statusKey::OFF); //гасим
+            $unitLightStairs3->setValue(0, statusKey::OFF); //гасим
         }
     }
     else { // свет включили вручную (через сайт) ???
         if ($outTime > $MOVE_TIME_GLOBAL) { // время вышло с последней активности подсветки
             $unitNightLight->setValue(0, statusKey::OFF); //гасим
+            $unitLightStairs3->setValue(0, statusKey::OFF); //гасим
         }
     }
 }
 
 unset($unitMove);
 unset($unitNightLight);
+unset($unitLightStairs3);

@@ -1,7 +1,14 @@
+<?php
+include_once ('class/auth.class.php');
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <?php header('Content-type: text/html; charset=utf-8') ?>
+    <?php
+        header('Content-type: text/html; charset=utf-8')
+    ?>
     <title>DX HOME</title>
     <script src="js2/jquery.js"></script>
     <script src="js2/jquery.timers.js"></script>
@@ -55,36 +62,53 @@
 </head>
 
 <body>
-<div class="container_12">
-    <div class="grid_1">
-        <ul id="mmenu" class="ui-corner-all">
-            <li class="ui-corner-all"><a href="dxMainPage.php?p=home"><span class="ui-icon ui-icon-mmhome"
-                                                                            title="Основная">1</span></a></li>
-            <li class="ui-corner-all"><a href="dxMainPage.php?p=weather"><span class="ui-icon ui-icon-mmtemp"
-                                                                            title="Погода">2</span></a></li>
-            <li class="ui-corner-all"><a href="dxMainPage.php?p=light"><span class="ui-icon ui-icon-mmbulb"
-                                                                             title="Освещение">3</span></a></li>
-            <li class="ui-corner-all"><a href="dxMainPage.php?p=power">
+
+<?php
+
+$UID = $_SESSION['idUser'];
+
+if (!$UID) {
+    include_once "login.php";
+}
+else {
+    ?>
+
+    <div class="container_12">
+        <div class="grid_1">
+            <ul id="mmenu" class="ui-corner-all">
+                <li class="ui-corner-all"><a href="dxMainPage.php?p=home"><span class="ui-icon ui-icon-mmhome"
+                                                                                title="Основная">1</span></a></li>
+                <li class="ui-corner-all"><a href="dxMainPage.php?p=weather"><span class="ui-icon ui-icon-mmtemp"
+                                                                                   title="Погода">2</span></a></li>
+                <li class="ui-corner-all"><a href="dxMainPage.php?p=light"><span class="ui-icon ui-icon-mmbulb"
+                                                                                 title="Освещение">3</span></a></li>
+                <li class="ui-corner-all"><a href="dxMainPage.php?p=power">
                         <span class="ui-icon ui-icon-mmpower" title="Управление">4</span></a>
-            </li>
-            <li class="ui-corner-all"><a href="dxMainPage.php?p=heater"><span
-                            class="ui-icon ui-icon-mmheater"
-                            title="Климат и отопление">5</span></a>
-            </li>
-            <li class="ui-corner-all"><a href="dxMainPage.php?p=cam"><span class="ui-icon ui-icon-mmip_camera">6</span></a>
-            </li>
-            <li class="ui-corner-all"><a href="dxMainPage.php?p=n7"><span class="ui-icon ui-icon-mmkey">7</span></a>
-            </li>
-            <li class="ui-corner-all"><a href="dxMainPage.php?p=properties"><span class="ui-icon ui-icon-mmpref">8</span></a>
-            </li>
-        </ul>
+                </li>
+                <li class="ui-corner-all"><a href="dxMainPage.php?p=heater"><span
+                                class="ui-icon ui-icon-mmheater"
+                                title="Климат и отопление">5</span></a>
+                </li>
+                <li class="ui-corner-all"><a href="dxMainPage.php?p=cam"><span
+                                class="ui-icon ui-icon-mmip_camera">6</span></a>
+                </li>
+                <li class="ui-corner-all"><a href="dxMainPage.php?p=n7"><span class="ui-icon ui-icon-mmkey">7</span></a>
+                </li>
+                <li class="ui-corner-all"><a href="dxMainPage.php?p=properties"><span
+                                class="ui-icon ui-icon-mmpref">8</span></a>
+                </li>
+            </ul>
+        </div>
+
+        <?php
+        include_once 'rgMode.php';
+        include_once 'dxPages.php';
+        ?>
+
     </div>
 
     <?php
-    include_once 'rgMode.php';
-    include_once 'dxPages.php';
-    ?>
-
-</div>
+}
+?>
 </body>
 </html>

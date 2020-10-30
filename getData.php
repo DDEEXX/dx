@@ -25,7 +25,7 @@ if ($_REQUEST['dev'] == "temp") { //получаем температру
         }
     }
 
-    $temperatureClass = 'unActualPressure';
+    $temperatureClass = 'unActualTemperature';
     $value = $unit->readValue();
     if (is_null($value)) {
         $temperature = '--';

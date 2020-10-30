@@ -150,15 +150,42 @@ if ($p == "home" || empty($p)) {
     <script src="js2/home.js"></script>
 
     <div id="page_home" class="grid_11">
-        <div class="grid_9 alpha">1
+        <div class="grid_8 alpha">1
         </div>
         <div class="grid_2 omega">
-            <div id="TekDate" class="TekDate" style="font-size:120%"></div>
+            <div id="TekDate" class="TekDate" style="font-size:110%"></div>
             <br>
             <div id="TekTime" class="TekTime" style="font-size:160%"></div>
         </div>
+        <div class="grid_1 alpha">1
+            <a href="index.php?action=out">Выход</a>
+        </div>
+        <div class="clear"></div>
+
+        <div class="grid_8 alpha">1
+        </div>
+        <div class="grid_3 omega">
+            <div class="ui-corner-all ui-state-default" style="margin-top:5px">
+                <p style="margin-left:3px; font-size:100%">Погода на улице</p>
+                <div style="overflow: hidden">
+                    <div style="margin-left:5px;float:left">t</div>
+                    <div id="temp_out_weather_home" style="margin-left:30px;float:left">--</div>
+                </div>
+                <div style="overflow: hidden;position:relative">
+                    <div style="margin-left:5px;float:left">p</div>
+                    <div id="pressure_weather_home" style="margin-left:30px;float:left">--</div>
+                    <div style="margin-left:85px;font-size:60%;position:absolute;bottom:2px"> мм рт.ст.</div>
+                </div>
+                <div style="overflow: hidden;position:relative">
+                    <div style="margin-left:5px;float:left">w</div>
+                    <div id="wind_weather_home" style="margin-left:30px;float:left">--</div>
+                    <div style="margin-left:85px;font-size:60%;position:absolute;bottom:2px"> м/c</div>
+                </div>
+            </div>
+        </div>
 
         <div class="clear"></div>
+
 
         <!--        <div id="alarm_key" class="grid_2 alpha ui-corner-all ui-state-default"-->
         <!--             style="margin-top:5px;height:100px;width:138px">-->
@@ -255,6 +282,10 @@ if ($p == "light") {
                 $("#light_lamp2").html(data);
             });
 
+            $.get("getData.php?dev=light&label=light_stairs_3&type=last&place=220;685&img=backlight", function (data) {
+                $("#light_lamp3").html(data);
+            });
+
         });
 
         $(document).everyTime("1s", function () {
@@ -265,6 +296,10 @@ if ($p == "light") {
 
             $.get("getData.php?dev=light&label=light_hol_2_n&type=last&place=250;635&img=backlight", function (data) {
                 $("#light_lamp2").html(data);
+            });
+
+            $.get("getData.php?dev=light&label=light_stairs_3&type=last&place=220;685&img=backlight", function (data) {
+                $("#light_lamp3").html(data);
             });
 
         });
@@ -288,10 +323,10 @@ if ($p == "light") {
             <div class="ui-corner-all ui-state-default ui-widget-content"
                  style="height: 500px;margin-top:5px;position:relative;">
                 <div id="home_light"><img src="img2/home_.png">
-                    <div id="light_lamp1"></div>
-                    <div class='lampkey' label='light_hol_2' style='top:220px;left:685px'></div>
                     <div id="light_lamp2"></div>
                     <div class='lampkey' label='light_hol_2_n' style='top:250px;left:635px'></div>
+                    <div id="light_lamp3"></div>
+                    <div class='lampkey' label='light_stairs_3' style='top:220px;left:685px'></div>
                 </div>
             </div>
         </div>
@@ -516,22 +551,19 @@ if ($p == 'properties') {
 
     <script src="js2/properties.js"></script>
 
-    <div id="page_properties" class="grid_11">
+<div id="page_properties" class="grid_11">
 
-        <div class="grid_11 alpha omega ui-corner-all ui-state-default" style="margin-top: 5px">
-            <div style="margin-left: 5px; margin-top: 5px; float: left">Лог:</div>
-            <div class="logger" style="margin-left:5px;margin-top:5px;float: left">
-                <input type="radio" class="set_type_log" name="logger" id="logDefault">
+    <div class="grid_11 alpha omega ui-corner-all ui-state-default">
+            <div class="logger" style="margin-left:5px;margin-top:5px">
+                <input type="radio" name="logger" id="logDefault"">
                 <label for="logDefault">Default</label>
-                <input type="radio" class="set_type_log" name="logger" id="logError" checked>
+                <input type="radio" name="logger" id="logError" checked>
                 <label for="logError">Error</label>
             </div>
-            <div id="logFile" style="margin: 5px; clear: both; height: 200px; overflow-x: auto; overflow-y: auto">
-            </div>
-        </div>
-        <div class="clear"></div>
     </div>
+    <div class="clear"></div>
 
+</div>
     <?php
 }
 ?>

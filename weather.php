@@ -217,6 +217,7 @@ class widgetWeather
 
 <div class="weather_home" style="width:680px">
     <?php
+
     $w = widgetWeather::getWeather();
 
     $temp_class = $w[0]['temp_class'];
