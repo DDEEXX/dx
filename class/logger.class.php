@@ -38,7 +38,7 @@ class logger
      */
     private function __construct($name)
     {
-        if (!$this->fp = fopen(self::$PATH . '/' . $name . '.log', 'a+')) {
+        if (!$this->fp = fopen(dirname(__FILE__).'/../'.self::$PATH . '/' . $name . '.log', 'a+')) {
             throw new Exception('Could not open file ' . self::$PATH . '/' . $name . '.log');
         };
         $this->nameFile = $name;

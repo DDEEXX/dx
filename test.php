@@ -1,68 +1,68 @@
 <?php
-/** Опрос всех температурных датчиков и запись показаний в базу данных
- * Created by PhpStorm.
- * User: root
- * Date: 07.01.19
- * Time: 12:23
- */
 
-//require_once(dirname(__FILE__) . '/class/globalConst.interface.php');
-//require_once(dirname(__FILE__) . '/class/lists.class.php');
-//require_once(dirname(__FILE__) . '/class/logger.class.php');
-//require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
-
-//$sel = new selectOption();
-//$sel->set('SensorTypeID', typeDevice::TEMPERATURE);
-//$sel->set('Disabled', 0);
+//$client = new Mosquitto\Client();
+//$client->onConnect('connect');
+//$client->onDisconnect('disconnect');
+//$client->onPublish('publish');
+//$client->setCredentials("dxhome", "16384");
+//$client->connect("192.168.1.4", 1883, 5);
 //
-//$temperatureUnits = managerUnits::getListUnits($sel);
-//
-//foreach ($temperatureUnits as $tekUnit) {
-//    logger::writeLog('опрос датчика температуры ID='.$tekUnit->getId());
-//    $val = $tekUnit->getValue();
-//    logger::writeLog('значение val='.$val);
-//    if (!is_null($val)) {
-//        logger::writeLog('запись в базу');
-//        $tekUnit->writeValue($val);
+//while (true) {
+//    try{
+//        $client->loop();
+//        $mid = $client->publish('bath/store/cellar/humidity', "DEX");
+//        //$client->loop();
+//        $client->disconnect();
+//    }catch(Mosquitto\Exception $e){
+//        echo "ERROR\n";
+//        echo $e->getMessage();
+//        echo "\n";
+//        return;
 //    }
+//    sleep(2);
 //}
 //
-//unset($temperatureUnits);
-
-//$sel = new selectOption();
-//$sel->set('SensorTypeID', typeDevice::PRESSURE);
-//$sel->set('Disabled', 0);
+//$client->disconnect();
+//unset($client);
 //
-//$pressureUnits = managerUnits::getListUnits($sel);
-//
-//foreach ($pressureUnits as $tekUnit) {
-//    logger::writeLog('опрос датчика давления ID='.$tekUnit->getId());
-//    $val = $tekUnit->getValue();
-//    logger::writeLog('значение val='.$val);
-//    if (!is_null($val)) {
-//        logger::writeLog('запись в базу');
-//        $tekUnit->writeValue($val);
-//    }
+//function connect($r) {
+//    echo "I got code {$r}\n";
 //}
 //
-//unset($pressureUnits);
-
-//$sel = new selectOption();
-//$sel->set('SensorTypeID', typeDevice::HUMIDITY);
-//$sel->set('Disabled', 0);
-//
-//$humidityUnits = managerUnits::getListUnits($sel);
-//
-//foreach ($humidityUnits as $tekUnit) {
-//    logger::writeLog('опрос датчика влажности ID='.$tekUnit->getId());
-//    $val = $tekUnit->getValue();
-//    logger::writeLog('значение val='.$val);
-//    if (!is_null($val)) {
-//        logger::writeLog('запись в базу');
-//        $tekUnit->writeValue($val);
-//    }
+//function publish() {
+//    global $client;
+//    echo "Mesage published\n";
+//    $client->disconnect();
 //}
 //
-//unset($humidityUnits);
+//function disconnect() {
+//    echo "Disconnected cleanly\n";
+//}
 
-echo "".password_hash('21', PASSWORD_DEFAULT);
+$fileDir = dirname(__FILE__);
+
+include_once ($fileDir.'/class/daemonScripts.class.php');
+
+ //Создаем дочерний процесс весь код после pcntl_fork() будет выполняться двумя процессами: родительским и дочерним
+//$child_pid = pcntl_fork();
+//if ($child_pid) { // Выходим из родительского, привязанного к консоли, процесса
+//    exit();
+//}
+//// Делаем основным процессом дочерний.
+//posix_setsid();
+//// Дальнейший код выполнится только дочерним процессом, который уже отвязан от консоли
+//
+//ini_set('error_log',$fileDir.'/logs/error.log');
+//fclose(STDIN);
+//fclose(STDOUT);
+//fclose(STDERR);
+//$STDIN = fopen('/dev/null', 'r');
+//$STDOUT = fopen($fileDir.'/logs/application.log', 'ab');
+//$STDERR = fopen($fileDir.'/logs/daemonRunScript.log', 'ab');
+
+$daemon = new daemonScripts($fileDir.'/scripts', $fileDir.'/tmp');
+if ($daemon->isDaemonActive()) {
+    exit();
+}
+$daemon->putPitFile(getmypid());
+$daemon->run();

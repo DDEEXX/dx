@@ -439,7 +439,7 @@ class DB
         }
 
         $id = $con->getConnect()->real_escape_string($id);
-        $query = "SELECT * FROM users WHERE id='$id'  LIMIT 1";
+        $query = "SELECT * FROM tusers WHERE id='$id'  LIMIT 1";
         try {
             $result = queryDataBase::getOne($con, $query);
         } catch (querySelectDBException $e) {
@@ -461,7 +461,7 @@ class DB
                 loggerTypeMessage::FATAL, loggerName::ERROR);
             return null;
         }
-        $query = "SELECT * FROM users";
+        $query = "SELECT * FROM tusers";
         try {
             $result = queryDataBase::getAll($con, $query);
         } catch (querySelectDBException $e) {
@@ -491,9 +491,9 @@ class DB
         }
         $time = $con->getConnect()->real_escape_string($time);
         $userID = $user['ID'];
-        $query = "UPDATE users SET online='$time', lastAcvive='$time' WHERE id='$userID'";
+        $query = "UPDATE tusers SET online='$time', lastActive='$time' WHERE id='$userID'";
         if ($onlyOnline) {
-            $query = "UPDATE users SET online='$time' WHERE id='$userID'";
+            $query = "UPDATE tusers SET online='$time' WHERE id='$userID'";
         }
         try {
             queryDataBase::execute($con, $query);
@@ -502,6 +502,18 @@ class DB
                 loggerTypeMessage::FATAL, loggerName::ERROR);
         }
 
+    }
+
+    /**
+     * Получить список модулей (лигических устройств) в виде ассоциативного массива в соответствии с отбором
+     * @param Iterator|null $sel - отбор
+     * @return array
+     */
+    static public function getListCameras(Iterator $sel = null)
+    {
+        $query = 'SELECT * FROM tcameras';
+        $listUnits = self::getListBD($query, $sel);
+        return $listUnits;
     }
 
 

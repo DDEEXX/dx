@@ -13,6 +13,7 @@ require_once(dirname(__FILE__) . '/../class/globalConst.interface.php');
 require_once(dirname(__FILE__) . '/../class/lists.class.php');
 require_once(dirname(__FILE__) . '/../class/managerUnits.class.php');
 require_once(dirname(__FILE__) . '/../class/sunInfo.class.php');
+require_once(dirname(__FILE__) . '/../class/logger.class.php');
 
 $NAME_MOVE = 'move_1';
 $NAME_LIGHT_N = 'light_hol_2_n';
@@ -107,3 +108,5 @@ else { // светло
 unset($unitMove);
 unset($unitNightLight);
 unset($unitLightStairs3);
+
+exit();

@@ -130,6 +130,20 @@ class listUnits extends ArrayIterator
 
 }
 
+class listCameras extends ArrayIterator
+{
+
+    public function __destruct()
+    {
+        // TODO: Implement __destruct() method.
+        foreach ($this as $key => $unite) {
+            unset($unite);
+        }
+    }
+
+}
+
+
 class selectOption extends listArray
 {
 

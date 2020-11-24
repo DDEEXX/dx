@@ -59,7 +59,6 @@ class managerUnits
 
     public static function createDevice(array $value)
     {
-
         // Здесь создаём продукт с помощью Фабричного метода
         try {
             $unit = unitFactory::build($value);
@@ -70,7 +69,6 @@ class managerUnits
         }
 
         return null;
-
     }
 
     /**

@@ -158,7 +158,7 @@ if ($p == "home" || empty($p)) {
             <div id="TekTime" class="TekTime" style="font-size:160%"></div>
         </div>
         <div class="grid_1 alpha">1
-            <a href="index.php?action=out">Выход</a>
+            <a href="/?action=out">Выход</a>
         </div>
         <div class="clear"></div>
 
