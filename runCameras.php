@@ -8,7 +8,7 @@
 
 $fileDir = dirname(__FILE__);
 
-include_once ($fileDir.'/class/cameras.class.php');
+include_once ($fileDir.'/class/daemonCameras.class.php');
 require_once($fileDir.'/class/sqlDataBase.class.php');
 
  //Создаем дочерний процесс весь код после pcntl_fork() будет выполняться двумя процессами: родительским и дочерним
@@ -27,11 +27,6 @@ fclose(STDERR);
 $STDIN = fopen('/dev/null', 'r');
 $STDOUT = fopen($fileDir.'/logs/application.log', 'ab');
 $STDERR = fopen($fileDir.'/logs/daemonCameras.log', 'ab');
-
-$cameraImagePath = DB::getConst('CamerasImagePath');
-if (isset($cameraImagePath) && $cameraImagePath !== '') { //если пустая строка, выход
-    exit();
-}
 
 $daemon = new daemonCameras($fileDir.'/tmp', $cameraImagePath);
 if ($daemon->isDaemonActive()) {

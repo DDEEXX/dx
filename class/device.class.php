@@ -131,27 +131,6 @@ abstract class device implements iDevice
 
 }
 
-class sensor extends device
-{
-
-    /**
-     * sensor constructor.
-     * @param array $options
-     * @param $typeDevice
-     */
-    public function __construct(array $options, $typeDevice)
-    {
-        $deviceID = $options['DeviceID'];
-        $net = $options['NetTypeID'];
-        $adress = $options['Adress'];
-        $disabled = $options['Disabled'];
-        $alarm = $options['set_alarm'];
-        $model = $options['model'];
-        parent::__construct($deviceID, $net, $adress, $typeDevice, $disabled, $alarm, $model);
-    }
-
-}
-
 class maker extends device
 {
 
@@ -170,12 +149,24 @@ class maker extends device
     }
 }
 
-class sensors extends sensor
+class sensor extends device
 {
 
+    /**
+     * sensor constructor.
+     * @param array $options
+     * @param $typeDevice
+     */
     public function __construct(array $options, $typeDevice)
     {
-        parent::__construct($options, $typeDevice);
+        $deviceID = $options['DeviceID'];
+        $net = $options['NetTypeID'];
+        $adress = $options['Adress'];
+        $disabled = $options['Disabled'];
+        $alarm = $options['set_alarm'];
+        $model = $options['model'];
+        parent::__construct($deviceID, $net, $adress, $typeDevice, $disabled, $alarm, $model);
+        //parent::__construct($options, $typeDevice);
     }
 
     private function getValueOWNet($chanel = null)
@@ -367,7 +358,7 @@ class sensors extends sensor
                 case netDevice::I2C :
                     $result = $this->getValueI2C();
                     break;
-                case netDevice::ETHERNET :
+                case netDevice::ETHERNET_JSON :
                     $result = $this->getValueEthernet();
                     break;
             }
@@ -377,7 +368,7 @@ class sensors extends sensor
 
 }
 
-class humiditySensor extends sensors
+class humiditySensor extends sensor
 {
 
     public function __construct(array $options)
@@ -387,7 +378,7 @@ class humiditySensor extends sensors
 
 }
 
-class temperatureSensor extends sensors
+class temperatureSensor extends sensor
 {
 
     public function __construct(array $options)
@@ -397,7 +388,7 @@ class temperatureSensor extends sensors
 
 }
 
-class pressureSensor extends sensors
+class pressureSensor extends sensor
 {
 
     public function __construct(array $options)
@@ -407,7 +398,7 @@ class pressureSensor extends sensors
 
 }
 
-class keyInSensor extends sensors
+class keyInSensor extends sensor
 {
 
     public function __construct(array $options)
@@ -422,7 +413,7 @@ class keyInSensor extends sensors
 
 }
 
-class voltageSensor extends sensors
+class voltageSensor extends sensor
 {
 
     public function __construct(array $options)
@@ -432,7 +423,7 @@ class voltageSensor extends sensors
 
 }
 
-class labelSensor extends sensors
+class labelSensor extends sensor
 {
 
     public function __construct(array $options)

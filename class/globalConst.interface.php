@@ -9,9 +9,10 @@
 interface netDevice {
     const NONE          = 0;
     const ONE_WIRE      = 1;
-    const ETHERNET      = 2;
-    const CUBIEBOARD    = 3;
+    const ETHERNET_JSON = 2;
+    const PIO           = 3;
     const I2C           = 4;
+    const ETHERNET_MQTT = 5;
 }
 
 interface typeDevice{

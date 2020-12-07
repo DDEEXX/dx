@@ -83,36 +83,6 @@ if ($_REQUEST['dev'] == "pressure") { //получаем атмосферное 
     unset($unit);
 }
 
-
-//if ( $_REQUEST['dev'] == "label" ) { //получаем значение цифрового датчика типа "сухой контакт"
-//
-//
-//	$id = $d->getId($_GET['label']);
-//	if (!$id) {
-//		// такой записи нет в таблице tunits, надо что-то записать в лог, сделаю позже
-//		echo "<img src='img2/icon/garage_err.png'>";
-//	}
-//
-//	$nameTabValue = $d->getTabValue($id);
-//	if (!$d->checkTab($nameTabValue)) {
-//		// в БД нет таблицы и именем $nameTabValue, надо что-то записать в лог, сделаю позже
-//		echo "<img src='img2/icon/garage_err.png'>";
-//	}
-//
-//	if ($_GET['type']=='last'){
-//		//$d->writeLog("label_last_".$id."_".$nameTabValue);
-//		$Value = $d->getLastValue($id, $nameTabValue);
-//
-//		if ( $_GET['label'] == 'label_garage_door') {
-//			if ($Value == null) { echo "<img src='img2/icon/garage_err.png'>"; } // в БД нет данных
-//			elseif ($Value > 0) { echo "<img src='img2/icon/garage_close.png'>"; }
-//			else { echo "<img src='img2/icon/garage_open.png'>"; }
-//		}
-//
-//	}
-//
-//}
-//
 if ($_REQUEST['dev'] == "light") { //получаем значение освещения
 
     $label = $_GET['label'];
@@ -145,4 +115,12 @@ if ($_REQUEST['dev'] == "light") { //получаем значение осве�
     echo '<img class="' . $keyStatus . '_light" src="' . $nameImgFile . '">';
     echo '</div>';
     echo '</div>';
+}
+
+if ($_REQUEST['dev'] == "cam") { //получаем значение освещения
+
+    $Monitor = $_GET['monitor'];
+
+    echo '<img img id="monitor1" style="margin-top:5px;height:225px;width:400px" src="cam2\Monitor' . $Monitor . '.jpg">';
+
 }

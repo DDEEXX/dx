@@ -515,9 +515,21 @@ if ($p == "cam") {
 
     <script type="text/javascript">
 
+        $(document).everyTime("5s", function () {
+
+            $.get("getData.php?dev=cam&monitor=1", function (data) {
+                $("#cam1").html(data);
+            });
+
+        });
+
         $(document).ready(function () {
 
             $(".button").button();
+
+            $.get("getData.php?dev=cam&monitor=1", function (data) {
+                $("#cam1").html(data);
+            });
 
         });
 
@@ -532,11 +544,12 @@ if ($p == "cam") {
         <div class="clear"></div>
         <div class="grid_5 alpha ui-corner-all ui-state-default ui-widget-content"
              style="margin-top:5px;height:270px;position:relative;width:418px">
-            <!--		<div style="text-align: center">-->
-            <!--			<img id="monitor1" style="margin-top:5px;height:225px;width:400px" src="/zm/cgi-bin/nph-zms?mode=jpeg&scale=35&maxfps=0.5&buffer=1000&monitor=1&connkey=967224&rand=1483467515">-->
-            <!--		</div>-->
-            <!--		<a class="button" href="/zm/index.php?view=watch&mid=1" target="_blank" style="margin-left:5px;margin-top:5px">Просмотр в ZM</a>-->
-            <!--		<a class="button" href="cam_archive.php?m=1" target="_blank" style="margin-left:5px;margin-top:5px">Архив</a>-->
+            		<div style="text-align: center">
+                        <div id="cam1"></div>
+                        <!--             <img id="monitor1" style="margin-top:5px;height:225px;width:400px" src="/zm/cgi-bin/nph-zms?mode=jpeg&scale=35&maxfps=0.5&buffer=1000&monitor=1&connkey=967224&rand=1483467515">-->
+                    </div>
+            		<a class="button" href="/zm/index.php?view=watch&mid=1" target="_blank" style="margin-left:5px;margin-top:5px">Просмотр в ZM</a>
+            		<a class="button" href="cam_archive.php?m=1" target="_blank" style="margin-left:5px;margin-top:5px">Архив</a>
         </div>
         <div class="grid_5 omega ui-corner-all ui-state-default ui-widget-content"
              style="margin-top:5px;height:270px;position:relative;width:418px">

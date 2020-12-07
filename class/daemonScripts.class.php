@@ -12,7 +12,7 @@ require_once(dirname(__FILE__) . "/daemon.class.php");
 class  daemonScripts extends daemon {
     const NAME_PID_FILE = 'runScript.pid';
     const SCRIPT_PAUSE = 100000;
-    protected $scripts = array('move_hall.php','test_pause.php');
+    protected $scripts = array('move_hall.php');
     protected $stop_server = FALSE;
     protected $bg;              //Объект для запуска процессов в фоне
     protected $dirScript;       //Путь до каталога со скриптами сценариев
