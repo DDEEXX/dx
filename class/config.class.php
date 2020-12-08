@@ -104,7 +104,7 @@ class mqqtConfig implements iConfigMQTT
         $this->mqqt_host = $DatabaseAccess['mqttbroker']['host'];
         $this->mqqt_user = $DatabaseAccess['mqttbroker']['user'];
         $this->mqqt_pwd  = $DatabaseAccess['mqttbroker']['password'];
-        $this->mqqt_port = $DatabaseAccess['mqttbroker']['port'];
+        $this->mqqt_port = (int)$DatabaseAccess['mqttbroker']['port'];
     }
 
     public function getHost()

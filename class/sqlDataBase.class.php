@@ -71,6 +71,7 @@ class sqlDataBase implements iSqlDataBase
 {
 
     private static $db = null;
+
     private $dbConnect;
 
     /**
@@ -133,7 +134,6 @@ class queryDataBase
      */
     public static function execute(iSqlDataBase $conn, $query)
     {
-        /** @noinspection PhpUndefinedMethodInspection */
         $res = $conn->getConnect()->query($query, MYSQLI_USE_RESULT);
         if (!$res) {
             throw new querySelectDBException($conn->getConnect()->error);
@@ -169,17 +169,19 @@ class queryDataBase
      */
     public static function getOne(iSqlDataBase $conn, $query)
     {
-        $row = null;
-        if ($resQ = self::getRaw($conn, $query)) {
-            $row = $resQ->fetch_assoc();
-            /**
-             * if (!is_array($row)) {
-             * throw new otherDBException("Не могу результат запроса преобразовать в массив");
-             * }
-             */
-            $resQ->free();
-        }
-        return $row;
+//        $row = null;
+//        if ($resQ = self::getRaw($conn, $query)) {
+//            $row = $resQ->fetch_assoc();
+//            /**
+//             * if (!is_array($row)) {
+//             * throw new otherDBException("Не могу результат запроса преобразовать в массив");
+//             * }
+//             */
+//            $resQ->free();
+//        }
+//        return $row;
+        $resQ = self::getRaw($conn, $query);
+        return $resQ->fetch_assoc();
     }
 
     /**
@@ -191,7 +193,6 @@ class queryDataBase
      */
     private static function getRaw(iSqlDataBase $conn, $query)
     {
-        /** @noinspection PhpUndefinedMethodInspection */
         $res = $conn->getConnect()->query($query, MYSQLI_USE_RESULT);
         if (!$res) {
             throw new querySelectDBException($conn->getConnect()->error);
@@ -211,12 +212,9 @@ class DB
      */
     static public function getListDevices(Iterator $sel = null)
     {
-
         //$query = "SELECT * FROM tdevice";
         $query = "SELECT * FROM tdevice left join tdevicemodel ON tdevice.modelID = tdevicemodel.modelID";
-        $listDevices = self::getListBD($query, $sel);
-        return $listDevices;
-
+        return self::getListBD($query, $sel);
     }
 
     /**
@@ -227,8 +225,7 @@ class DB
     static public function getListUnits(Iterator $sel = null)
     {
         $query = 'SELECT *, a.Note NoteU, b.Note NoteD FROM tunits a LEFT JOIN tdevice b ON a.DeviceID = b.DeviceID';
-        $listUnits = self::getListBD($query, $sel);
-        return $listUnits;
+        return self::getListBD($query, $sel);
     }
 
     /**
@@ -240,7 +237,6 @@ class DB
      */
     static function getListBD($titleQuery = '', Iterator $sel = null)
     {
-
         try {
             $con = sqlDataBase::Connect();
         } catch (connectDBException $e) {
@@ -287,7 +283,6 @@ class DB
         }
 
         return $aDevices;
-
     }
 
     /**
@@ -297,7 +292,6 @@ class DB
      */
     static public function getConst($name)
     {
-
         try {
             $con = sqlDataBase::Connect();
         } catch (connectDBException $e) {
@@ -337,16 +331,16 @@ class DB
 
     /**
      * Получить последнне записсаное в базе значение $value
-     * @param iUnit $unit
+     * @param sensorUnit $unit
      * @param null $value
      * @return array|null
      */
-    static public function getLastValueUnit(iUnit $unit, $value = null)
+    static public function getLastValueUnit(sensorUnit $unit, $value = null)
     {
 
         $uniteID = $unit->getId();
-        /** @noinspection PhpUndefinedMethodInspection */
-        $nameTabValue = 'tvalue_' . $unit->getValueTable();
+        $valueTable = $unit->getValueTable();
+        $nameTabValue = 'tvalue_' . $valueTable;
         if (is_null($value)) {
             $query = 'SELECT Date, Value FROM ' . $nameTabValue . ' WHERE UnitID="' . $uniteID . '" ORDER BY ValueID DESC LIMIT 1';
         }
@@ -377,7 +371,6 @@ class DB
      */
     static public function getLastStatusKeyJournal($unit)
     {
-        /** @noinspection PhpUndefinedMethodInspection */
         $uniteID = $unit->getId();
 
         $query = 'SELECT Date, Status FROM tjournalkey WHERE UnitID="' . $uniteID . '" ORDER BY JournalKeyID DESC LIMIT 1';
@@ -403,9 +396,7 @@ class DB
      * @param iUnit $unit
      * @return mixed
      */
-    static public function getModeUnit(iUnit $unit)
-    {
-
+    static public function getModeUnit(iUnit $unit) {
         $uniteID = $unit->getId();
 
         $query = 'SELECT Mode FROM tunits WHERE UnitID="' . $uniteID . '"';
@@ -425,11 +416,9 @@ class DB
         }
 
         return $result;
-
     }
 
     static public function getUserId($id) {
-
         try {
             $con = sqlDataBase::Connect();
         } catch (connectDBException $e) {
@@ -449,11 +438,9 @@ class DB
         }
 
         return $result;
-
     }
 
     static public function getUserPassword($password) {
-
         try {
             $con = sqlDataBase::Connect();
         } catch (connectDBException $e) {
@@ -478,7 +465,6 @@ class DB
         }
 
         return null;
-
     }
 
     static public function userLastActive($user, $time, $onlyOnline = false) {
@@ -501,7 +487,6 @@ class DB
             logger::writeLog('Ошибка при обновлении последней активности пользователя. ' . $e->getMessage(),
                 loggerTypeMessage::FATAL, loggerName::ERROR);
         }
-
     }
 
     /**
@@ -512,8 +497,7 @@ class DB
     static public function getListCameras(Iterator $sel = null)
     {
         $query = 'SELECT * FROM tcameras';
-        $listUnits = self::getListBD($query, $sel);
-        return $listUnits;
+        return self::getListBD($query, $sel);
     }
 
 
