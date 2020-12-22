@@ -206,15 +206,38 @@ class DB
 {
 
     /**
-     * Получить список физ. устройств в виде ассоциативного массива в соответствии с отбором
+     * Получить список полей физ. устройств в виде ассоциативного массива в соответствии с отбором
      * @param Iterator|null $sel - отбор
      * @return array
      */
     static public function getListDevices(Iterator $sel = null)
     {
-        //$query = "SELECT * FROM tdevice";
         $query = "SELECT * FROM tdevice left join tdevicemodel ON tdevice.modelID = tdevicemodel.modelID";
         return self::getListBD($query, $sel);
+    }
+
+    /** Получить поля устройства
+     * @param $id
+     * @return array|null
+     */
+    static public function getDeviceID($id) {
+        try {
+            $con = sqlDataBase::Connect();
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции DB::getConst. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return null;
+        }
+        $deviceID = $con->getConnect()->real_escape_string($id);
+        $query = "SELECT * FROM tdevice left join tdevicemodel ON tdevice.modelID = tdevicemodel.modelID WHERE DeviceID=".$deviceID;
+        try {
+            $result = queryDataBase::getOne($con, $query);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка в функции DB::getDeviceID. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return null;
+        }
+        return $result;
     }
 
     /**
@@ -224,8 +247,18 @@ class DB
      */
     static public function getListUnits(Iterator $sel = null)
     {
-        $query = 'SELECT *, a.Note NoteU, b.Note NoteD FROM tunits a LEFT JOIN tdevice b ON a.DeviceID = b.DeviceID';
+        $query = 'SELECT *, a.Note NoteU, b.Note NoteD FROM tunits a LEFT JOIN tdevice b ON a.DeviceID = b.DeviceID LEFT JOIN tunitetype c ON a.UniteTypeID = c.UniteTypeID';
         return self::getListBD($query, $sel);
+    }
+
+    /**
+     * Получить список символов "ProjID" привязанных к типам модулей, символы не повторяются и не "пустые"
+     * @return array
+     */
+    static public function getProjectIDUnits()
+    {
+        $query = 'SELECT ProjID FROM tunitetype WHERE LENGTH(TRIM(ProjID)) > 0 GROUP BY ProjID';
+        return self::getListBD($query);
     }
 
     /**

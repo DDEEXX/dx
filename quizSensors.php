@@ -1,5 +1,9 @@
 <?php
-/** Опрос всех температурных датчиков и запись показаний в базу данных
+/**
+ * Опрос датчиков и запись показаний в базу данных
+ * Опрашиваются только те датчики, которые могут в любой момент времени вернуть свое состояние.
+ * Для датчикав, которые сами отправляют свое состояние, и которые надо постоянно "слушать",
+ * необходимо искользовать скрипт loopForever.php
  * Created by PhpStorm.
  * User: root
  * Date: 07.01.19
@@ -10,47 +14,54 @@ require_once(dirname(__FILE__) . '/class/globalConst.interface.php');
 require_once(dirname(__FILE__) . '/class/lists.class.php');
 require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
 
-$sel = new selectOption();
-$sel->set('SensorTypeID', typeDevice::TEMPERATURE);
-$sel->set('Disabled', 0);
+//$sel = new selectOption();
+//$sel->set('DeviceTypeID', typeDevice::TEMPERATURE);
+//$sel->set('Disabled', 0);
+//$temperatureUnits = managerUnits::getListUnitsDB($sel);
+//foreach ($temperatureUnits as $tekUnit) {
+//    $val = $tekUnit->getValue();
+//    if (!is_null($val)) {
+//        $tekUnit->writeValue($val);
+//    }
+//}
+//unset($temperatureUnits);
 
-$temperatureUnits = managerUnits::getListUnits($sel);
-
-foreach ($temperatureUnits as $tekUnit) {
-    $val = $tekUnit->getValue();
-    if (!is_null($val)) {
-        $tekUnit->writeValue($val);
+$temperatureUnits = managerUnits::getListUnits(typeUnit::TEMPERATURE, 0);
+foreach ($temperatureUnits as $unit) {
+    if (is_null($unit)) continue;
+    $result = $unit->updateValue();
+    if (!is_null($result)) {
+        $unit->writeValueDB($result);
     }
 }
-
 unset($temperatureUnits);
 
-$sel = new selectOption();
-$sel->set('SensorTypeID', typeDevice::PRESSURE);
-$sel->set('Disabled', 0);
-
-$pressureUnits = managerUnits::getListUnits($sel);
-
-foreach ($pressureUnits as $tekUnit) {
-    $val = $tekUnit->getValue();
-    if (!is_null($val)) {
-        $tekUnit->writeValue($val);
-    }
-}
-
-unset($pressureUnits);
-
-$sel = new selectOption();
-$sel->set('SensorTypeID', typeDevice::HUMIDITY);
-$sel->set('Disabled', 0);
-
-$humidityUnits = managerUnits::getListUnits($sel);
-
-foreach ($humidityUnits as $tekUnit) {
-    $val = $tekUnit->getValue();
-    if (!is_null($val)) {
-        $tekUnit->writeValue($val);
-    }
-}
-
-unset($humidityUnits);
+//$sel = new selectOption();
+//$sel->set('DeviceTypeID', typeDevice::PRESSURE);
+//$sel->set('Disabled', 0);
+//
+//$pressureUnits = managerUnits::getListUnitsDB($sel);
+//
+//foreach ($pressureUnits as $tekUnit) {
+//    $val = $tekUnit->getValue();
+//    if (!is_null($val)) {
+//        $tekUnit->writeValue($val);
+//    }
+//}
+//
+//unset($pressureUnits);
+//
+//$sel = new selectOption();
+//$sel->set('DeviceTypeID', typeDevice::HUMIDITY);
+//$sel->set('Disabled', 0);
+//
+//$humidityUnits = managerUnits::getListUnitsDB($sel);
+//
+//foreach ($humidityUnits as $tekUnit) {
+//    $val = $tekUnit->getValue();
+//    if (!is_null($val)) {
+//        $tekUnit->writeValue($val);
+//    }
+//}
+//
+//unset($humidityUnits);

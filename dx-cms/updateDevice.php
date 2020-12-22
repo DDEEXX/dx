@@ -33,7 +33,7 @@
             "DeviceID" =>  $_REQUEST['ID'],
             "Adress" =>  $_REQUEST['Adress'],
             "NetTypeID" =>  $_REQUEST['deviceNet'],
-            "SensorTypeID" =>  $_REQUEST['deviceType'],
+            "DeviceTypeID" =>  $_REQUEST['deviceType'],
             "Disabled" =>  ($_REQUEST['Disabled'] == 'on')?1:0,
             "set_alarm" =>  $_REQUEST['setAlarm'],
         );

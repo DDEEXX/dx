@@ -11,9 +11,9 @@ require_once(dirname(__FILE__) . '/class/lists.class.php');
 require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
 
 $sel = new selectOption();
-$sel->set('SensorTypeID', typeDevice::KEY_IN);
+$sel->set('DeviceTypeID', typeDevice::KEY_IN);
 $sel->set('Disabled', 0);
 
-$keyInUnits = managerUnits::getListUnits($sel);
+$keyInUnits = managerUnits::getListUnitsDB($sel);
 
 unset($keyInUnits);

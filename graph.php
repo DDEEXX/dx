@@ -58,7 +58,7 @@ $height = $_GET['height'];
 
 $label = $_GET['label'];
 
-$unit = managerUnits::getUnitLabel($label);
+$unit = managerUnits::getUnitLabelDB($label);
 
 if (is_null($unit)) {
     logger::writeLog('Молуль с именем :: ' . $label . ' :: не найден (graph.php)',

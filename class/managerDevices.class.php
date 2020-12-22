@@ -45,7 +45,7 @@ class deviceFactory
      */
     public static function build(array $value)
     {
-        switch ($value['SensorTypeID']) {
+        switch ($value['DeviceTypeID']) {
             case typeDevice::TEMPERATURE :
                 $className = 'temperatureSensor';
                 break;
@@ -96,12 +96,8 @@ class managerDevices
      */
     public static function createDevice(array $value)
     {
-
         // Здесь создаём продукт с помощью Фабричного метода
-        $device = deviceFactory::build($value);
-
-        return $device;
-
+        return deviceFactory::build($value);
     }
 
     /**
@@ -111,9 +107,7 @@ class managerDevices
      */
     public static function addDevice(iDevice $device)
     {
-
         return $device->addInBD();
-
     }
 
     /**

@@ -56,3 +56,14 @@ interface modeUnit {
     const ON   = 1;
     const AUTO = 2;
 }
+
+interface sharedMemory
+{
+    const SIZE_MEMORY_UNIT = 10000;
+    const PROJECT_LETTER_KEY = 'A';
+    const MEMORY_SIZE_KEY = 10000;
+    const KEY_UNIT_ID = 0;
+    const KEY_UNIT_TYPE = 0;
+    const KEY_ID_MODULE = 1;
+    const KEY_LABEL_MODULE = 2;
+}

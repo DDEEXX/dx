@@ -6,7 +6,7 @@ if ($_REQUEST['dev'] == "temp") { //получаем температру
 
     $label = $_GET['label']; //значение поля "UnitLabel" в таблице "tunits";
 
-    $unit = managerUnits::getUnitLabel($label);
+    $unit = managerUnits::getUnitLabelDB($label);
 
     if (is_null($unit)) {
         logger::writeLog('Молуль с именем :: ' . $label . ' :: не найден',
@@ -53,7 +53,7 @@ if ($_REQUEST['dev'] == "pressure") { //получаем атмосферное 
 
     $label = $_GET['label']; //значение поля "UnitLabel" в таблице "tunits";
 
-    $unit = managerUnits::getUnitLabel($label);
+    $unit = managerUnits::getUnitLabelDB($label);
 
     if (is_null($unit)) {
         logger::writeLog('Молуль с именем :: ' . $label . ' :: не найден',
@@ -87,7 +87,7 @@ if ($_REQUEST['dev'] == "light") { //получаем значение осве�
 
     $label = $_GET['label'];
 
-    $unit = managerUnits::getUnitLabel($label);
+    $unit = managerUnits::getUnitLabelDB($label);
 
     $keyStatus = 'off';
 

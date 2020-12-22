@@ -21,10 +21,10 @@ $MOVE_TIME_N = 8; //через сколько секунд вык. подсве�
 $MOVE_TIME_GLOBAL = 1200; //через сколько секунд вык. подсветка после отсутствия движения
 
 $NAME_LIGHT_3 = 'light_stairs_3';
-$unitLightStairs3 = managerUnits::getUnitLabel($NAME_LIGHT_3);
+$unitLightStairs3 = managerUnits::getUnitLabelDB($NAME_LIGHT_3);
 
-$unitMove = managerUnits::getUnitLabel($NAME_MOVE);
-$unitNightLight = managerUnits::getUnitLabel($NAME_LIGHT_N);
+$unitMove = managerUnits::getUnitLabelDB($NAME_MOVE);
+$unitNightLight = managerUnits::getUnitLabelDB($NAME_LIGHT_N);
 
 if (is_null($unitMove) || is_null($unitNightLight)) return;
 

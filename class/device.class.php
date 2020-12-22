@@ -118,7 +118,7 @@ abstract class device implements iDevice
         $adr = $conn->getConnect()->real_escape_string($this->adress);
         $alarm = $conn->getConnect()->real_escape_string($this->alarm);
 
-        $query = "INSERT tdevice (Adress, NetTypeID, SensorTypeID, Disabled, set_alarm) VALUES ('$adr', '$this->net', '$this->type', '$this->disabled', '$alarm')";
+        $query = "INSERT tdevice (Adress, NetTypeID, DeviceTypeID, Disabled, set_alarm) VALUES ('$adr', '$this->net', '$this->type', '$this->disabled', '$alarm')";
 
         try {
             return queryDataBase::execute($conn, $query);

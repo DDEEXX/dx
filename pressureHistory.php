@@ -31,7 +31,7 @@ function noData($width = DEFAULT_GR_WIDTH, $height = DEFAULT_GR_HEIGHT) {
     imagedestroy($im);
 }
 
-$unit = managerUnits::getUnitLabel(LABEL);
+$unit = managerUnits::getUnitLabelDB(LABEL);
 
 if (is_null($unit)) {
     logger::writeLog('Молуль с именем :: ' . LABEL . ' :: не найден (pressureHistory.php)',

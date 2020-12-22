@@ -10,7 +10,7 @@ require_once(dirname(__FILE__) . '/class/logger.class.php');
  */
 function key_d($label)
 {
-    $unit = managerUnits::getUnitLabel($label);
+    $unit = managerUnits::getUnitLabelDB($label);
 
     if (is_null($unit)) {
         logger::writeLog('Не могу создать объект по метке :: ' . $label,
