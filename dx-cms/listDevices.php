@@ -54,7 +54,7 @@ $listDevices = managerDevices::getListDevices();
 foreach($listDevices as $key => $device) {
 
     $deviceID = $device->getDeviceID();
-    $adress = $device->getAdress();
+    $address = $device->getAddress();
     $netTitle = $device->getNet();
     $deviceType = $device->getType();
 
@@ -62,7 +62,7 @@ foreach($listDevices as $key => $device) {
     echo '<td><a class="btEditDevice" href="index.php?pDevices=updateDevice&ID='.$deviceID.'#tabsDevices"></a></td>';
     echo '<td><a class="btDeleteDevice" href="index.php?pDevices=deleteDevice&ID='.$deviceID.'"></a></td>';
     echo '<td><img src="img2/netDevice_'.$netTitle.'.png"></td>';
-    echo '<td>'.$adress.'</td>';
+    echo '<td>'.$address.'</td>';
     echo '<td><img src="img2/deviceType_'.$deviceType.'.png"></td>';
     echo '</tr>';
 

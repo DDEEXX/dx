@@ -66,4 +66,12 @@ interface sharedMemory
     const KEY_UNIT_TYPE = 0;
     const KEY_ID_MODULE = 1;
     const KEY_LABEL_MODULE = 2;
+    const KEY_1WARE_PATH = 3;
+    const KEY_1WARE_ADDRESS = 4;
+}
+
+interface typeDeviceNet {
+    const IS_NULL = null;
+    const GET_VALUE = 0; //можно получить значение датчика в любое время
+    const LOOP_VALUE = 1; //надо постоянно слушать, данные датчик отправляет сам
 }

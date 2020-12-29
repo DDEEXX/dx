@@ -19,6 +19,13 @@ interface iUnit
 
 interface iSensorUnite extends iUnit {
 
+    /**
+     * Возвращает тип устройства привязанного к модулу, значение датчика можно получить в любое время или
+     * надо датчик постоянно "слушать"
+     * @return mixed
+     */
+    public function getTypeDeviceNet();
+
 }
 
 abstract class unit implements iUnit
@@ -66,8 +73,6 @@ abstract class unit implements iUnit
      */
     abstract public function getValue();
 
-    abstract public function updateValue();
-
     /** Добавляет модуль в распределяемую память, возращает id модуля, при ошибке добавления возвращает null
      * @param $key - числовой идентификатор сегмента разделяемой памяти
      * @return int|null
@@ -102,11 +107,46 @@ abstract class unit implements iUnit
     }
 
     /**
+     * Получить сеть на которой сидит устройство
+     * @return int|null
+     */
+    public function getDeviceAdress() {
+        if (is_null($this->device)) {
+            return null;
+        }
+        return $this->device->getAddress();
+    }
+
+    /**
+     * Проверяет относится ли устройство модуля к 1-wire для которого установлен условный поиск
+     * @return bool
+     */
+    public function check1WireLoop() {
+        if (is_null($this->device)) {
+            return false;
+        }
+        if ($this->device->getNet()!=netDevice::ONE_WIRE) {
+            return false;
+        }
+        if (is_null($this->device->getAlarm())) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * @return mixed
      */
     public function getSmKey()
     {
         return $this->smKey;
+    }
+
+    /**
+     *  Обновляет модуль в рапределяемой памяти
+     */
+    public function updateUnitSharedMemory() {
+        sharedMemoryUnit::set($this);
     }
 
 }
@@ -144,17 +184,11 @@ class sensorUnit extends unit implements iSensorUnite
     }
 
     /**
-     * Считать данные непосредственно с физического датчика
-     * @return mixed
+     * Получить/считать значение датчика
+     * @return null
      */
-    public function getValue()
-    {
-        if (!is_null($this->device)) {
-            return $this->device->getValue();
-        }
-        else {
-            return null;
-        }
+    public function getValue() {
+        return null;
     }
 
     /**
@@ -164,13 +198,30 @@ class sensorUnit extends unit implements iSensorUnite
     public function updateValue() {
         $this->value = $this->getValue();
         $this->dataValue = time();
-        if (is_null($this->device)) {
+        if (is_null($this->value)) {
             return null;
         }
         return json_encode([
             'value' => $this->value,
             'dateValue' => $this->dataValue,
         ]);
+    }
+
+    /**
+     * Возвращает тип устройства (device) привязанного к модулу, значение датчика можно получить в любое время или
+     * надо датчик постоянно "слушать", или неопределен = null
+     * @return int|mixed|null
+     */
+    public function getTypeDeviceNet()
+    {
+        if (is_null($this->device)) {
+            return typeDeviceNet::IS_NULL;
+        }
+        if ( ($this->device->getNet() == netDevice::ETHERNET_MQTT) ||
+            (($this->device->getNet() == netDevice::ONE_WIRE) && (!is_null($this->device->getAlarm()))) ) {
+            return typeDeviceNet::LOOP_VALUE;
+        }
+        return typeDeviceNet::GET_VALUE;
     }
 
     public function __destruct()
@@ -181,6 +232,10 @@ class sensorUnit extends unit implements iSensorUnite
 
 class moduleUnit extends unit
 {
+
+    protected $value = null; //значение
+    protected $status = null; //статус, как изменил свое состояние
+    protected $dataStatus = null; //время изменения состояния
 
     /**
      * moduleUnit constructor.
@@ -219,9 +274,8 @@ class moduleUnit extends unit
         return DB::getModeUnit($this);
     }
 
-    public function updateValue()
+    public function updateValue($value, $status = null)
     {
-        // TODO: Implement updateValue() method.
     }
 }
 
@@ -258,7 +312,11 @@ class temperatureUnit extends sensorUnit
      */
     public function updateValue() {
         $result = json_decode(parent::updateValue(), true);
-        sharedMemoryUnit::set($this);
+        $this->updateUnitSharedMemory();
+        //sharedMemoryUnit::set($this);
+        if (is_null($result)) {
+            return null;
+        }
         return json_encode([
             'unitID' => $this->getId(),
             'value' => $result['value'],
@@ -322,7 +380,7 @@ class temperatureUnit extends sensorUnit
         $temperature = $this->value + (int)$this->delta;
         $uniteID = $this->id;
         $nameTabValue = 'tvalue_' . $this->valueTable;
-        $dateValue = date("Y-m-d H:i:s",$this->dataValue); ;
+        $dateValue = date("Y-m-d H:i:s",$this->dataValue);
 
         $query = 'INSERT INTO ' . $nameTabValue . ' VALUES (NULL, ' . "$uniteID,"." '$dateValue',"  . $temperature . ')';
 
@@ -648,6 +706,7 @@ class keyInUnit extends sensorUnit
 {
 
     private $lastValue;
+    private $lastDataValue;
     private $chanel;
 
     /**
@@ -659,26 +718,16 @@ class keyInUnit extends sensorUnit
     {
         $this->chanel = $options['Chanel'];
         parent::__construct($options, typeUnit::KEY_IN);
-        $this->lastValue = null;
+        $this->value = 0;
+        $this->dataValue = time();
+        $this->lastValue = 0;
+        $this->lastDataValue = time();
+
     }
 
     public function __destruct()
     {
         parent::__destruct(); // TODO: Change the autogenerated stub
-    }
-
-    /**
-     * Считать данные непосредственно с физического датчика
-     * @return mixed
-     */
-    public function getValue()
-    {
-        if (!is_null($this->device)) {
-            return $this->device->getValue($this->chanel);
-        }
-        else {
-            return null;
-        }
     }
 
     public function readWhereLastStatus($status) //посмотреть в журнале когда было последннее значение равное value
@@ -732,9 +781,10 @@ class keyInUnit extends sensorUnit
     }
 
     /**
+     * Записать в журнал значение
      * @param $value
      */
-    private function writeValue($value) //записать в журнал значение
+    private function writeValue($value)
     {
         if (!is_int($value)) {
             //Пишем лог
@@ -764,6 +814,56 @@ class keyInUnit extends sensorUnit
             logger::writeLog('Ошибка при записи в базу данных (writeValue)',
                 loggerTypeMessage::ERROR, loggerName::ERROR);
         }
+    }
+
+    /**
+     * Значение датчика
+     * @param bool $fromSensor - считать данные непосредственно с физического датчика или
+     * иначе взять значение из свойста объекта
+     * @return mixed
+     */
+    public function getValue($fromSensor = false)
+    {
+        if ($fromSensor) {
+            if (!is_null($this->device)) {
+                return $this->device->getValue($this->chanel);
+            } else {
+                return null;
+            }
+        }
+        else {
+            return $this->value;
+        }
+    }
+
+    /**
+     * Получить из объекта датчикка его значение (состояние), статус и дату изменения статуса и последнее отличное
+     * от текущего состояние и дату изменения этого состояния
+     * @return false|string
+     */
+    public function getValues()
+    {
+        return json_encode([
+            'value' => $this->value,
+            'dataValue' => $this->dataValue,
+            'lastValue' => $this->lastValue,
+            'lastDataValue' => $this->lastDataValue,
+            ]);
+    }
+
+    /**
+     * Обновляет в объетке датчика его значение и время получения этого значения
+     * @param $value - значение датчика
+     * @return null|string
+     */
+    public function updateValueLoop($value) {
+        if ($this->value === $value) {
+            return;
+        }
+        $this->lastValue = $this->value;
+        $this->lastDataValue = $this->dataValue;
+        $this->value = $value;
+        $this->dataValue = time();
     }
 
 }
@@ -808,17 +908,63 @@ class powerKeyUnit extends moduleUnit
     }
 
     /**
-     * Считать данные непосредственно с физического датчика
+     * Отправляем на физический датчик значение, обновляем все свойства объекта модуля
+     * и обновляем модуль в разделяемой памяти
+     * @param $value
+     * @param null $status - каким образом поменялось состояние (вручную, от датчика и т.д.)
+     */
+    public function updateValue($value, $status = null)
+    {
+        if (is_null($value)) {
+            return;  //Пишем лог
+        }
+
+        if (is_null($this->device)) {
+            return;  //Пишем лог
+        }
+
+        if ($value!=$this->value) {
+            $result = $this->device->setValue($value, $this->chanel);
+            if ($result) {
+                $this->value = $value;
+                $this->status = $status;
+                $this->dataStatus = time();
+                $this->updateUniteSharedMemory();
+            }
+        }
+
+    }
+
+    /**
+     * Считать состояние модуля
+     * @param bool $fromSensor - считать непоссредственно с датчика или вязть состояние из объекта модуля
+     * @param null $chanel
      * @return mixed
      */
-    public function getValue()
+    public function getValue($fromSensor = false)
     {
-        if (!is_null($this->device)) {
-            return $this->device->getValue($this->chanel);
+        if ($fromSensor) {
+            if (!is_null($this->device)) {
+                return $this->device->getValue($this->chanel);
+            } else {
+                return null;
+            }
         }
         else {
-            return null;
+            return $this->value;
         }
+    }
+
+    /**
+     * Получить из объекта модуля его значение (состояние), статус и дату изменения статуса
+     * @return false|string
+     */
+    public function getValues() {
+        return json_encode([
+            'value' => $this->value,
+            'status' => $this->status,
+            'dataStatus' => $this->dataStatus
+        ]);
     }
 
     /**

@@ -13,7 +13,7 @@ if ($isUpdate) {
     try {
         $device = managerDevices::getDevice($_REQUEST['ID']);
         $deviceID   = $device->getDeviceID();
-        $adress     = $device->getAdress();
+        $address     = $device->getAddress();
         $deviceNet   = $device->getNet();
         $deviceType = $device->getType();
         $disabled   = $device->getDisabled();
@@ -121,10 +121,10 @@ if ($isUpdate) {
             <td>
                 <?php
                 if ($isUpdate) {
-                    echo '<input id="deviceAdress" type="text" name="Adress" value="'.$adress.'">';
+                    echo '<input id="deviceAdress" type="text" name="Address" value="'.$address.'">';
                 }
                 else {
-                    echo '<input id="deviceAdress" type="text" name="Adress">';
+                    echo '<input id="deviceAdress" type="text" name="Address">';
                 }
                 ?>
             </td>

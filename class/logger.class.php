@@ -20,6 +20,7 @@ interface loggerName
     const DEFAULTLOGGER = "default";
     const ERROR = "error";
     const ACCESS = "access";
+    const DEBUG = "debug";
 }
 
 class logger

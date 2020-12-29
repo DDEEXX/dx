@@ -120,6 +120,8 @@ class managerUnits
         if (!$sm->set(sharedMemory::KEY_UNIT_TYPE, $smTypeUniteID)) {return false;}
         if (!$sm->set(sharedMemory::KEY_ID_MODULE, $smIdModule)) {return false;}
         if (!$sm->set(sharedMemory::KEY_LABEL_MODULE, $smLabelModule)) {return false;}
+        if (!$sm->set(sharedMemory::KEY_1WARE_PATH, DB::getConst('OWNETDir'))) {return false;}
+        if (!$sm->set(sharedMemory::KEY_1WARE_ADDRESS, DB::getConst('OWNetAddress'))) {return false;}
         return true;
     }
 
@@ -135,6 +137,32 @@ class managerUnits
     }
 
     /**
+     * Получить список модулей на шине 1-Wire опрашиваемые по команде Read Conditional Search ROM (условный поиск)
+     * @param null $deviceDisables
+     * @return array одномерный массив ключ id модуля, значение адрес в 1-wire сети
+     */
+    public static function getListUnits1WireLoop($deviceDisables = null) {
+        //Получаем все устройства
+        $listUnits1WireLoop = array();
+        $listAllUnits = self::getListUnits(null , $deviceDisables);
+        foreach ($listAllUnits as $unit) {
+            if ($unit->check1WireLoop()) {
+                $disabled = $unit->checkDeviceDisabled();
+                if (is_null($disabled)) {
+                    continue;
+                }
+                elseif (!is_null($deviceDisables)){
+                    if ($disabled!=$deviceDisables) {
+                        continue;
+                    }
+                }
+                $listUnits1WireLoop[$unit->getId()] = $unit->getDeviceAdress();
+            }
+        }
+        return $listUnits1WireLoop;
+    }
+
+    /**
      * Ищет модуль по имени в распределенной памяти. Если модуля с таким именем нет, то возвращает null
      * @param $label
      * @return mixed|null
@@ -145,9 +173,20 @@ class managerUnits
     }
 
     /**
+     * Ищет модуль по ID в распределенной памяти. Если модуля с таким именем нет, то возвращает null
+     * @param $id
+     * @return mixed|null
+     */
+    public static function getUnitID($id)
+    {
+        return sharedMemoryUnits::getUnitID($id);
+    }
+
+    /**
      * Считывает данные с датчика, обновляет значение и дату считывания, помещает объект модуля в
      *распределяемую память
      * @param unit $unit
+     * @return null int
      */
     public static function updateValueUnit(unit $unit) {
         $unit->updateValue();

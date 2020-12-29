@@ -29,9 +29,12 @@ require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
 $temperatureUnits = managerUnits::getListUnits(typeUnit::TEMPERATURE, 0);
 foreach ($temperatureUnits as $unit) {
     if (is_null($unit)) continue;
-    $result = $unit->updateValue();
-    if (!is_null($result)) {
-        $unit->writeValueDB($result);
+    //опрашиваем датчики которые могут вернуть значение в любое время
+    if ($unit->getTypeDeviceNet() == typeDeviceNet::GET_VALUE) {
+        $result = $unit->updateValue(); //Считываем и обновляем данные в обекте модуля
+        if (!is_null($result)) {
+            $unit->writeValueDB($result); //Записываем данные в базу данных
+        }
     }
 }
 unset($temperatureUnits);

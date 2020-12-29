@@ -23,7 +23,7 @@
         if ( !isset($_REQUEST['Disabled']) ) {$_REQUEST['Disabled'] = "off";}
 
         if (!isset($_REQUEST['ID']) || !isset($_REQUEST['Disabled']) || !isset($_REQUEST['deviceType']) ||
-            !isset($_REQUEST['deviceNet']) || !isset($_REQUEST['Adress']) || !isset($_REQUEST['setAlarm'])) {
+            !isset($_REQUEST['deviceNet']) || !isset($_REQUEST['Address']) || !isset($_REQUEST['setAlarm'])) {
 
         }
 
@@ -31,7 +31,7 @@
 
         $arDevice = array(
             "DeviceID" =>  $_REQUEST['ID'],
-            "Adress" =>  $_REQUEST['Adress'],
+            "Address" =>  $_REQUEST['Address'],
             "NetTypeID" =>  $_REQUEST['deviceNet'],
             "DeviceTypeID" =>  $_REQUEST['deviceType'],
             "Disabled" =>  ($_REQUEST['Disabled'] == 'on')?1:0,

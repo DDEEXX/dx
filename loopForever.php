@@ -5,7 +5,7 @@
  * Created by PhpStorm.
  */
 
-sleep(5);
+sleep(4);
 
 $fileDir = dirname(__FILE__);
 

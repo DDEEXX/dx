@@ -194,9 +194,14 @@ class sharedMemoryUnits
             return null;
         }
 
-        $arrLabels = $sm->get(sharedMemory::KEY_LABEL_MODULE);
-        $idModule = $arrLabels[$label]['id_module'];
-        $projectID = $arrLabels[$label]['project_id'];
+        $unitsLabels = $sm->get(sharedMemory::KEY_LABEL_MODULE);
+        if (array_key_exists($label, $unitsLabels)) {
+            $idModule = $unitsLabels[$label]['id_module'];
+            $projectID = $unitsLabels[$label]['project_id'];
+        }
+        else {
+            return null;
+        }
 
         if (is_null($idModule) || is_null($projectID)) {
             return null;
@@ -209,6 +214,56 @@ class sharedMemoryUnits
         }
 
         return $sm->get($idModule);
+
+    }
+
+    static public function getUnitID($id) {
+
+        try {
+            $sm = self::getInstance(sharedMemory::PROJECT_LETTER_KEY);
+        } catch (shareMemoryInitUnitException $e) {
+            return null;
+        }
+
+        $unitsID = $sm->get(sharedMemory::KEY_ID_MODULE);
+        if (array_key_exists($id, $unitsID)) {
+            $idModule = $id;
+            $projectID = $unitsID[$id];
+        }
+        else {
+            return null;
+        }
+
+        if (is_null($idModule) || is_null($projectID)) {
+            return null;
+        }
+
+        try {
+            $sm = self::getInstance($projectID);
+        } catch (shareMemoryInitUnitException $e) {
+            return null;
+        }
+
+        return $sm->get($idModule);
+
+    }
+
+    /**
+     * Получить значение из разделяемой памяти по букве проекта и ключу
+     * @param $projectID
+     * @param $key
+     * @return mixed|null
+     */
+    static public function getValue($projectID, $key) {
+
+        try {
+            $sm = self::getInstance($projectID);
+        } catch (shareMemoryInitUnitException $e) {
+            return null;
+        }
+
+        //Получаем массив с указателями на сегменты распределяеммой памяти, ключ - тип модуля
+        return $sm->get($key);
 
     }
 
