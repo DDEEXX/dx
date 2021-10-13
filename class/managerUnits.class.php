@@ -59,7 +59,8 @@ class unitFactory
 */
 class managerUnits
 {
-    /**Иницилизация всех модулей.
+    /**
+     * Иницилизация всех модулей.
      * Метод должет выполнятся самым первым, перед работой всех остальных модулей
      * Помещает все объекты модулей в распределяемую память
      * @return bool
@@ -72,9 +73,10 @@ class managerUnits
         $listProjectID = DB::getProjectIDUnits();
         foreach ($listProjectID as $projectID) {
             $projID = $projectID['ProjID'];
-            if ($projID == sharedMemory::PROJECT_LETTER_KEY) { //зарезервированный символ
+            if ($projID == sharedMemory::PROJECT_LETTER_KEY) { //зарезервированный служебный символ, нельзя использовать для модулей
                 return false;
             }
+            //Получает все модули в UniteType которых указан соответствующий projID (модули могут быть нескольких типов)
             $sel = new selectOption();
             $sel->set('ProjID', $projID);
             $listUnit = self::getListUnitsDB($sel);
@@ -85,9 +87,9 @@ class managerUnits
                 return false;
             }
 
-            //в одном сегменту разделяемой памяти могут быть модули с разными типами
+            //в одном сегменте разделяемой памяти могут быть модули с разными типами
             $typeUnit = array();
-            //масив с id модулей
+            //массив с id модулей
             $keys = array();
             foreach ($listUnit as $tekUnit) {
                 $key = $tekUnit->initUnit($sm->getKey());
@@ -122,6 +124,10 @@ class managerUnits
         if (!$sm->set(sharedMemory::KEY_LABEL_MODULE, $smLabelModule)) {return false;}
         if (!$sm->set(sharedMemory::KEY_1WARE_PATH, DB::getConst('OWNETDir'))) {return false;}
         if (!$sm->set(sharedMemory::KEY_1WARE_ADDRESS, DB::getConst('OWNetAddress'))) {return false;}
+
+        //Для поиска модулей в sm по подписке MQQT, создадим массив
+        $listUnitsMQQTTopicStatus = self::getListUnitsMQQTTopicStatus(0);
+        if (!$sm->set(sharedMemory::KEY_MQQT_STATUS_TOPIC, $listUnitsMQQTTopicStatus)) {return false;}
         return true;
     }
 
@@ -163,6 +169,32 @@ class managerUnits
     }
 
     /**
+     * Получить список модулей устройства которых это MQQT клиенты, и у них есть подписки статуса
+     * @param int $deviceDisables
+     * @return array Одномерный массив ключ id модуля, значение тема сообщения
+     */
+    public static function getListUnitsMQQTTopicStatus($deviceDisables = 0)
+    {
+        $listUnitsMQQTLoop = array();
+        //Получаем все устройства
+        $listAllUnits = self::getListUnits(null , $deviceDisables);
+        foreach ($listAllUnits as $unit) {
+            $disabled = $unit->checkDeviceDisabled();
+            if (is_null($disabled)) {
+                continue;
+            }
+            if ($disabled!=$deviceDisables) {
+                continue;
+            }
+            $topicStatus = $unit->checkMQQTTopicStatus();
+            if (isset($topicStatus)) {
+                $listUnitsMQQTLoop[$unit->getId()] = $topicStatus;
+            }
+        }
+        return $listUnitsMQQTLoop;
+    }
+
+    /**
      * Ищет модуль по имени в распределенной памяти. Если модуля с таким именем нет, то возвращает null
      * @param $label
      * @return mixed|null
@@ -180,6 +212,16 @@ class managerUnits
     public static function getUnitID($id)
     {
         return sharedMemoryUnits::getUnitID($id);
+    }
+
+    /**
+     * Ищет модули по подписке в распределенной памяти.
+     * @param $topic
+     * @return array - массив с id модулей
+     */
+    public static function getUnitStatusTopic($topic)
+    {
+        return sharedMemoryUnits::getUnitStatusTopic($topic);
     }
 
     /**

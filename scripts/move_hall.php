@@ -37,8 +37,8 @@ $isMove = $moveData['value'];
 $timeNoMove = $moveData['dataValue'];
 
 //Получить данные с подсветки
-$nightLightData = json_decode($unitNightLight->getValues());
-$isLight   = $nightLightData['values'];     //Свет горит
+$nightLightData = json_decode($unitNightLight->getValues(), true);
+$isLight   = $nightLightData['value'];     //Свет горит
 $statusKey = $nightLightData['status'];     //Статус ключа - каким образом включилася подсветка или вообще выключена
 $timeKey   = $nightLightData['dataStatus']; //Когда это было
 
@@ -47,11 +47,12 @@ if (!is_null($timeKey)) {
     $outTime = time() - strtotime($timeKey);
 }
 
-//для отладки
-//echo 'Move '.$isMove.', Light '.$isLight.' Status '.$statusKey.' Sun '.$sunInfo.' Time '.$moveTime.chr(10).chr(13);
-
 //Часть дня - ночь/утро/день/вечер
 $sunInfo = sunInfo::getSunInfo(mktime());
+
+//для отладки
+//echo 'Move '.$isMove.', Light '.$isLight.' Status '.$statusKey.' Sun '.$sunInfo.' Time '.date("Y-m-d H:i:s", $timeNoMove).PHP_EOL;
+//$sunInfo = dayPart::NIGHT;
 
 if ($sunInfo == dayPart::NIGHT) { // ночь
     if ($isMove) { // есть движение
@@ -66,7 +67,7 @@ if ($sunInfo == dayPart::NIGHT) { // ночь
             //Определяем сколько секунд прошло после отключения датчика движения
             $moveTime = 99999; // если не известно когда изменилось состояние датчика движения
             if (!is_null($timeNoMove)) {
-                $moveTime = time() - strtotime($timeNoMove);
+                $moveTime = time() - $timeNoMove;
             }
 
             if ($statusKey == statusKey::MOVE) { // включился датчиком движения

@@ -68,6 +68,7 @@ interface sharedMemory
     const KEY_LABEL_MODULE = 2;
     const KEY_1WARE_PATH = 3;
     const KEY_1WARE_ADDRESS = 4;
+    const KEY_MQQT_STATUS_TOPIC = 5;
 }
 
 interface typeDeviceNet {

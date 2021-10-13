@@ -87,7 +87,7 @@ if ($_REQUEST['dev'] == "light") { //получаем значение осве�
 
     $label = $_GET['label'];
 
-    $unit = managerUnits::getUnitLabelDB($label);
+    $unit = managerUnits::getUnitLabel($label);
 
     $keyStatus = 'off';
 
@@ -117,7 +117,7 @@ if ($_REQUEST['dev'] == "light") { //получаем значение осве�
     echo '</div>';
 }
 
-if ($_REQUEST['dev'] == "cam") { //получаем значение освещения
+if ($_REQUEST['dev'] == "cam") { //камеры
 
     $Monitor = $_GET['monitor'];
 

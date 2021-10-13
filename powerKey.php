@@ -10,7 +10,7 @@ require_once(dirname(__FILE__) . '/class/logger.class.php');
  */
 function key_d($label)
 {
-    $unit = managerUnits::getUnitLabelDB($label);
+    $unit = managerUnits::getUnitLabel($label);
 
     if (is_null($unit)) {
         logger::writeLog('Не могу создать объект по метке :: ' . $label,
@@ -20,11 +20,14 @@ function key_d($label)
 
     $isLight = $unit->getValue();
 
-    if ($isLight) {
-        $unit->setValue(0, statusKey::OFF);
+    $value = $isLight ? 0 : 1;
+    $statusKey = $isLight ? statusKey::OFF : statusKey::OUTSIDE;
+
+    try {
+        $unit->updateValue($value, $statusKey);
     }
-    else {
-        $unit->setValue(1, statusKey::OUTSIDE);
+    catch (Exception $e) {
+        $unit->setValue($value, $statusKey);
     }
 
     unset($unit);

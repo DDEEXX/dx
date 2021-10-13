@@ -286,6 +286,11 @@ if ($p == "light") {
                 $("#light_lamp3").html(data);
             });
 
+            $.get("getData.php?dev=light&label=bathroom_mirror_light&type=last&place=295;735&img=backlight", function (data) {
+                $("#light_lamp10").html(data);
+            });
+
+
         });
 
         $(document).everyTime("1s", function () {
@@ -302,8 +307,11 @@ if ($p == "light") {
                 $("#light_lamp3").html(data);
             });
 
-        });
+            $.get("getData.php?dev=light&label=bathroom_mirror_light&type=last&place=295;735&img=backlight", function (data) {
+                $("#light_lamp10").html(data);
+            });
 
+        });
 
     </script>
 
@@ -327,6 +335,8 @@ if ($p == "light") {
                     <div class='lampkey' label='light_hol_2_n' style='top:250px;left:635px'></div>
                     <div id="light_lamp3"></div>
                     <div class='lampkey' label='light_stairs_3' style='top:220px;left:685px'></div>
+                    <div id="light_lamp10"></div>
+                    <div class='lampkey' label='bathroom_mirror_light' style='top:295px;left:735px'></div>
                 </div>
             </div>
         </div>

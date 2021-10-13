@@ -5,6 +5,7 @@ require_once(dirname(__FILE__) . "/sqlDataBase.class.php");
 require_once(dirname(__FILE__) . "/i2c.class.php");
 require_once(dirname(__FILE__) . "/logger.class.php");
 require_once(dirname(__FILE__) . "/sharedMemory.class.php");
+require_once(dirname(__FILE__) . '/mqqt.class.php');
 
 //if (file_exists("/opt/owfs/share/php/OWNet/ownet.php_"))
 //    /** @noinspection PhpIncludeInspection */
@@ -57,8 +58,11 @@ abstract class device implements iDevice
     private $disabled = 0;
     protected $alarm = null;
     protected $model = null;
+    protected $topicCmnd = null;
+    protected $topicStat = null;
 
-    public function __construct($deviceID, $net, $adr, $type, $disabled, $alarm = null, $model = null)
+    public function __construct($deviceID, $net, $adr, $type, $disabled, $alarm = null, $model = null,
+                                $topicCmnd = null, $topicStat = null)
     {
         $this->net = $net;
         $this->address = $adr;
@@ -68,6 +72,8 @@ abstract class device implements iDevice
         if(empty($alarm{0})) { $this->alarm = null; }
         else { $this->alarm = $alarm; }
         $this->model = $model;
+        $this->topicCmnd = $topicCmnd;
+        $this->topicStat = $topicStat;
     }
 
     /**
@@ -131,6 +137,32 @@ abstract class device implements iDevice
         }
     }
 
+    /**
+     * Получить подписку MQQT для отправки
+     * @return string|null
+     */
+    public function getTopicCmnd()
+    {
+        if (is_string($this->topicCmnd)) {
+            return trim($this->topicCmnd);
+        }
+        else
+            return null;
+    }
+
+    /**
+     * Получить подписку статуса MQQT
+     * @return string|null
+     */
+    public function getTopicStat()
+    {
+        if (is_string($this->topicStat)) {
+            return trim($this->topicStat);
+        }
+        else
+            return null;
+    }
+
 }
 
 class maker extends device
@@ -147,7 +179,9 @@ class maker extends device
         $net = $options['NetTypeID'];
         $address = $options['Address'];
         $disabled = $options['Disabled'];
-        parent::__construct($deviceID, $net, $address, $typeDevice, $disabled);
+        $topicCmnd = $options['topic_cmnd'];
+        $topicStat = $options['topic_stat'];
+        parent::__construct($deviceID, $net, $address, $typeDevice, $disabled,null,null,$topicCmnd,$topicStat);
     }
 
     /**
@@ -175,7 +209,10 @@ class sensor extends device
         $disabled = $options['Disabled'];
         $alarm = $options['set_alarm'];
         $model = $options['model'];
-        parent::__construct($deviceID, $net, $address, $typeDevice, $disabled, $alarm, $model);
+        $topicCmnd = $options['topic_cmnd'];
+        $topicStat = $options['topic_stat'];
+
+        parent::__construct($deviceID, $net, $address, $typeDevice, $disabled, $alarm, $model, $topicCmnd, $topicStat);
         //parent::__construct($options, $typeDevice);
     }
 
@@ -214,10 +251,10 @@ class sensor extends device
 
             unset($ow);*/
 
-            $f = file($OWNetDir . $address . "/temperature12");
+            $f = file($OWNetDir .'/'. $address . "/temperature12");
             if ($f === false) { //попробуем еще раз
                 usleep(500000); //ждем 0.5 сеунд
-                $f = file($OWNetDir . $address . "/temperature12");
+                $f = file($OWNetDir .'/'. $address . "/temperature12");
             }
 
             if ($f === false) {
@@ -510,6 +547,18 @@ class powerKeyMaker extends maker
         return $result;
     }
 
+    private function setValueMQQT($value = null) {
+        $result = true;
+        try {
+            $mqqt = mqqt::Connect();
+            $mqqt->publish($this->topicCmnd, $value);
+        }
+        catch (Exception $e) {
+            $result = false;
+        }
+        return $result;
+    }
+
     public function getValue($chanel = null)
     {
         $result = null;
@@ -532,6 +581,9 @@ class powerKeyMaker extends maker
             switch ($this->getNet()) {
                 case netDevice::ONE_WIRE :
                     $result = $this->setValueOWNet($value, $chanel);
+                    break;
+                case netDevice::ETHERNET_MQTT :
+                    $result = $this->setValueMQQT($value);
                     break;
             }
         }

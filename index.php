@@ -4,7 +4,7 @@ session_start();
 
 include_once ('class/auth.class.php');
 
-if($_GET['action'] == "out") { //если передана переменная action, «разавторизируем» пользователя
+if(isset($_GET['action']) && $_GET['action'] == "out") { //если передана переменная action, «разавторизируем» пользователя
     auth::logout();
 }
 else {
@@ -27,5 +27,6 @@ else {
         }
     }
 }
+
 include_once ("dxMainPage.php");
 

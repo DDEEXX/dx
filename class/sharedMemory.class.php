@@ -1,4 +1,18 @@
 <?php
+/* Структура данных хранимых в разделяемой памяти
+ * В сегменте с ключом, созданному по идентификатору проект ROJECT_LETTER_KEY = 'A' хранятся:
+ * - ключ переменной KEY_UNIT_TYPE = 0 : массив [uniteType=>projID]
+ * - ключ переменной KEY_ID_MODULE = 1 : массив [uniteID=>projID]
+ * - ключ переменной KEY_LABEL_MODULE = 2 : массив [uniteLabel=>['id_module'=>UniteID, 'project_id'=>projID]]
+ * - ключ переменной KEY_1WARE_PATH = 3 : константа OWNETDir
+ * - ключ переменной KEY_1WARE_ADDRESS = 4 : константа OWNetAddress
+ *
+ * В сегменте с ключом, созданному по идентификатору проект projID [B..Z] хранятся:
+ * - ключ переменной 0 : массив [uniteID1, uniteID2, ...]
+ * - ключ переменной uniteID1 - объект модуля
+ * - ключ переменной uniteID2 - объект модуля
+ *
+ */
 
 require_once(dirname(__FILE__) . '/globalConst.interface.php');
 require_once(dirname(__FILE__) . '/logger.class.php');
@@ -42,7 +56,7 @@ class sharedMemoryUnit
             logger::writeLog("ошибка записи модуля с id ".$idUnit." в распределяемую память", loggerTypeMessage::ERROR, loggerName::ERROR);
             return null;
         }
-        return $unit->getId();
+        return $idUnit;
     }
 }
 
@@ -53,7 +67,7 @@ class sharedMemoryUnits
     protected $shmID;       //идентификатор, для доступа к разделяемой памяти
     protected $semID;       //идентификатор, для доступа к семафору
 
-    protected static $instance = array();
+    private static $instance = array(); //массив объектов sharedMemoryUnits
 
     /** получить числовой идентификатор сегмента разделяемой памяти
      * @return int
@@ -71,8 +85,8 @@ class sharedMemoryUnits
      */
     protected function __construct($projectID, $size = 10000)
     {
-        $this->key = ftok(self::FILE_PATH, $projectID);
-        $this->shmID = shm_attach($this->key, $size);
+        $this->key = ftok(self::FILE_PATH, $projectID); //получаем ключ по пути и идентификатору
+        $this->shmID = shm_attach($this->key, $size); //первый вызов создает сегмент выделенной памяти, последующий возвращает только указатель
         $this->semID = sem_get($this->key);
         if (!$this->shmID) {
             $mess = 'Не определен идентификатор для доступа к разделяемой памяти';
@@ -94,7 +108,7 @@ class sharedMemoryUnits
      */
     public static function getInstance($projectID, $size = 10000)
     {
-        if (!array_key_exists($projectID, self::$instance)) {
+        if (!array_key_exists($projectID, self::$instance)) { //если еще не выделена память
             self::$instance[$projectID] = new sharedMemoryUnits($projectID, $size);
         }
         return self::$instance[$projectID];
@@ -127,7 +141,7 @@ class sharedMemoryUnits
     static public function getListUnits($unitType, $deviceDisables)
     {
 
-        //Определяем указатель на сегмент распределяемой памяти (точнее символ проекта) в котором храняться
+        //Определяем указатель на сегмент распределяемой памяти (точнее символ проекта) в котором хранятся
         //модуля с типом $sensorTypeID
         $arrProjectID = array();
         try {
@@ -136,7 +150,7 @@ class sharedMemoryUnits
             return new listUnits();
         }
 
-        //Получаем массив с указателями на сегменты распределяеммой памяти, ключ - тип модуля
+        //Получаем массив с указателями на сегменты распределяемой памяти, ключ - тип модуля
         $arrTypeUniteID = $sm->get(sharedMemory::KEY_UNIT_TYPE);
         foreach ($arrTypeUniteID as $key => $value) {
             if (is_null($unitType)) {   //Если нет отбора по типу модуля, то берем все сегменты
@@ -144,7 +158,7 @@ class sharedMemoryUnits
             }
             else {
                 if ($key == $unitType) {
-                    $arrProjectID[] = $value; //Указатель на распределяемую память где хранятся модули
+                    $arrProjectID[] = $value; //Указатель на распределяемую память, где хранятся модули
                     break;
                 }
             }
@@ -214,6 +228,29 @@ class sharedMemoryUnits
         }
 
         return $sm->get($idModule);
+
+    }
+
+    static public function getUnitStatusTopic($topic) {
+
+        $result = array();
+
+        try {
+            $sm = self::getInstance(sharedMemory::PROJECT_LETTER_KEY);
+        } catch (shareMemoryInitUnitException $e) {
+            return $result;
+        }
+
+        $topic = trim($topic);
+
+        $listUnitsMQQTTopicStatus = $sm->get(sharedMemory::KEY_MQQT_STATUS_TOPIC);
+        foreach ($listUnitsMQQTTopicStatus as $key => $value) {
+            if ($topic == $value) {
+                $result[] = $key;
+            }
+        }
+
+        return $result;
 
     }
 

@@ -74,12 +74,14 @@ class sqlConfig implements iConfigDB
  */
 interface iConfigMQTT
 {
+
+    public function getID();
+
     public function getHost();
 
     public function getUser();
 
     public function getPassword();
-
 
     public function getPort();
 }
@@ -89,6 +91,7 @@ interface iConfigMQTT
  */
 class mqqtConfig implements iConfigMQTT
 {
+    private $mqqt_id;
     private $mqqt_host;
     private $mqqt_user;
     private $mqqt_pwd;
@@ -101,10 +104,16 @@ class mqqtConfig implements iConfigMQTT
     public function __construct()
     {
         $DatabaseAccess = parse_ini_file(dirname(__FILE__) . '/../ini/access.ini', TRUE);
+        $this->mqqt_id   = $DatabaseAccess['mqttbroker']['id'];
         $this->mqqt_host = $DatabaseAccess['mqttbroker']['host'];
         $this->mqqt_user = $DatabaseAccess['mqttbroker']['user'];
         $this->mqqt_pwd  = $DatabaseAccess['mqttbroker']['password'];
         $this->mqqt_port = (int)$DatabaseAccess['mqttbroker']['port'];
+    }
+
+    public function getID()
+    {
+        return $this->mqqt_id;
     }
 
     public function getHost()

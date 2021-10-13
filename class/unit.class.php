@@ -107,7 +107,7 @@ abstract class unit implements iUnit
     }
 
     /**
-     * Получить сеть на которой сидит устройство
+     * Получить адрес устройства
      * @return int|null
      */
     public function getDeviceAdress() {
@@ -118,7 +118,7 @@ abstract class unit implements iUnit
     }
 
     /**
-     * Проверяет относится ли устройство модуля к 1-wire для которого установлен условный поиск
+     * Проверяет, относится ли устройство к сети 1-wire, и установлен ли у нет условный поиск
      * @return bool
      */
     public function check1WireLoop() {
@@ -132,6 +132,35 @@ abstract class unit implements iUnit
             return false;
         }
         return true;
+    }
+
+    /**
+     * Получить у устройства подписку статуса MQQT
+     * @return string|null
+     */
+    protected function getMQQTTopicStatus() {
+        if (is_null($this->device)) {
+            return null;
+        }
+        return $this->device->getTopicStat();
+    }
+
+    /**
+     * Проверяет, есть ли у устройства подписка статуса MQQT. Если подписка есть, возвращает подписку иначе null.
+     * @return string|null
+     */
+    public function checkMQQTTopicStatus() {
+        if (is_null($this->device)) {
+            return null;
+        }
+        if ($this->device->getNet()!=netDevice::ETHERNET_MQTT) {
+            return null;
+        }
+        $topicStat = $this->getMQQTTopicStatus();
+        if (is_null($topicStat) || $topicStat === "") {
+            return null;
+        }
+        return $topicStat;
     }
 
     /**
@@ -188,7 +217,12 @@ class sensorUnit extends unit implements iSensorUnite
      * @return null
      */
     public function getValue() {
-        return null;
+        if (!is_null($this->device)) {
+            return $this->device->getValue();
+        }
+        else {
+            return null;
+        }
     }
 
     /**
@@ -868,6 +902,7 @@ class keyInUnit extends sensorUnit
 
 }
 
+//Силовой ключ
 class powerKeyUnit extends moduleUnit
 {
 
@@ -929,7 +964,7 @@ class powerKeyUnit extends moduleUnit
                 $this->value = $value;
                 $this->status = $status;
                 $this->dataStatus = time();
-                $this->updateUniteSharedMemory();
+                $this->updateUnitSharedMemory();
             }
         }
 
