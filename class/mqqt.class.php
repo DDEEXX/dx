@@ -17,12 +17,16 @@ class mqqt
     private static $mqqtClient = null;
     private $client;
 
-    //если true, то не подключать подписки
+    //если false, то не подключать подписки
     private $subscibe;
 
-    private function __construct(iConfigMQTT $configMQQT, $subscibe)
+    //Если true - вести лог, критические события в лог попадают всегда
+    private $logger;
+
+    private function __construct(iConfigMQTT $configMQQT, $subscibe, $logger)
     {
         $this->subscibe = $subscibe;
+        $this->logger = $logger;
         $this->client = new Mosquitto\Client($configMQQT->getID());
 
         $this->client->onConnect([$this, 'onConnect']);
@@ -32,11 +36,11 @@ class mqqt
         $this->client->connect($configMQQT->getHost(), $configMQQT->getPort());
     }
 
-    public static function Connect($subscibe = false)
+    public static function Connect($subscibe = false, $logger = false)
     {
         if (self::$mqqtClient == null) {
             $config = new mqqtConfig();
-            self::$mqqtClient = new mqqt($config, $subscibe);
+            self::$mqqtClient = new mqqt($config, $subscibe, $logger);
             unset($config);
         }
         return self::$mqqtClient;
@@ -57,14 +61,14 @@ class mqqt
         foreach ($listUnitMQQTLoop as $unit) {
             $this->client->subscribe($unit, 0);
         }
-//        $this->client->subscribe('bath/store/cellar/humidity', 0);
-//        $this->client->subscribe('bath/store/cellar/fan/STATUS', 0);
     }
 
     function onMessage($message) {
-        logger::writeLog(sprintf("Пришло сообщение от mqqt: topic: %s, payload: %s", $message->topic, $message->payload),
-            loggerTypeMessage::NOTICE,
-            loggerName::MQQT);
+        if ($this->logger) {
+            logger::writeLog(sprintf("Пришло сообщение от mqqt: topic: %s, payload: %s", $message->topic, $message->payload),
+                loggerTypeMessage::NOTICE,
+                loggerName::MQQT);
+        }
         $topic = trim($message->topic);
         if (empty($topic)) {
             logger::writeLog("Пришло пустое сообщение от mqqt", loggerTypeMessage::WARNING,loggerName::MQQT);
@@ -75,11 +79,13 @@ class mqqt
             if (is_null($unit)) {
                 continue;
             }
+            if ($this->logger) {
+            logger::writeLog(sprintf("По топику: %s, найден модуль с ID: %s", $topic, $unit->getId()),
+                loggerTypeMessage::NOTICE,
+                loggerName::MQQT);
+            }
             $value = self::convertPayload($message->payload);
             $unit->updateValue($value, statusKey::OUTSIDE);
-//            logger::writeLog(sprintf("По топику: %s, найден модуль с ID: %s", $topic, $unite->getId()),
-//                loggerTypeMessage::NOTICE,
-//                loggerName::MQQT);
         }
     }
 

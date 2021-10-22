@@ -16,9 +16,10 @@ class daemonLoopMQQT extends daemon
     public function run()
     {
 
-        $mqqt = mqqt::Connect();
+        $mqqt = mqqt::Connect(true);
 
         while (true) {
+
             if ($this->stop_server) {
                 break;
             }
