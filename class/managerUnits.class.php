@@ -152,6 +152,9 @@ class managerUnits
         $listUnits1WireLoop = array();
         $listAllUnits = self::getListUnits(null , $deviceDisables);
         foreach ($listAllUnits as $unit) {
+            if (is_null($unit)) {
+                continue;
+            }
             if ($unit->check1WireLoop()) {
                 $disabled = $unit->checkDeviceDisabled();
                 if (is_null($disabled)) {

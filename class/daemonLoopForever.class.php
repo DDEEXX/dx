@@ -29,16 +29,18 @@ class daemonLoopForever extends daemon
                 break;
             }
 
+            $alarms = array();
             if (is_dir($alarmDir)) {
-                $alarms = array();
                 //Помещаем адреса всех сработавших модулей в массив
-                if ($handle = opendir($alarmDir)) {
-                    while (false !== ($file = readdir($handle))) {
-                        if ($file != "." && $file != "..") {
-                            $alarms[$file] = true;
+                if (is_dir($alarmDir)) {
+                    if ($handle = opendir($alarmDir)) {
+                        while (false !== ($file = readdir($handle))) {
+                            if ($file != "." && $file != "..") {
+                                $alarms[$file] = true;
+                            }
                         }
+                        rewinddir($handle);
                     }
-                    rewinddir($handle);
                 }
 
                 //Обходим все модули и обновляем их состояние. Если есть в массиве то значение 1, если нет - 0
