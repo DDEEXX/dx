@@ -1,39 +1,23 @@
 <?php
 /**
  * Опрос датчиков и запись показаний в базу данных
- * Опрашиваются только те датчики, которые могут в любой момент времени вернуть свое состояние.
- * Для датчикав, которые сами отправляют свое состояние, и которые надо постоянно "слушать",
- * необходимо искользовать скрипт loopForever.php
- * Created by PhpStorm.
- * User: root
- * Date: 07.01.19
- * Time: 12:23
+ * Опрос датчиков, которые могут вернуть свое состояние по запросу в любое время.
+ * Для датчиков, которые сами отправляют свое состояние, и которые надо постоянно "слушать",
+ * необходимо использовать скрипт loopForever.php
  */
 
 require_once(dirname(__FILE__) . '/class/globalConst.interface.php');
 require_once(dirname(__FILE__) . '/class/lists.class.php');
 require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
 
-//$sel = new selectOption();
-//$sel->set('DeviceTypeID', typeDevice::TEMPERATURE);
-//$sel->set('Disabled', 0);
-//$temperatureUnits = managerUnits::getListUnitsDB($sel);
-//foreach ($temperatureUnits as $tekUnit) {
-//    $val = $tekUnit->getValue();
-//    if (!is_null($val)) {
-//        $tekUnit->writeValue($val);
-//    }
-//}
-//unset($temperatureUnits);
-
 $temperatureUnits = managerUnits::getListUnits(typeUnit::TEMPERATURE, 0);
 foreach ($temperatureUnits as $unit) {
     if (is_null($unit)) continue;
-    //опрашиваем датчики которые могут вернуть значение в любое время
-    if ($unit->getTypeDeviceNet() == typeDeviceNet::GET_VALUE) {
-        $result = $unit->updateValue(); //Считываем и обновляем данные в обекте модуля
+    //опрашиваем датчики, которые могут вернуть значение в любое время
+    if ($unit->getModeDeviceValue() == modeDeviceValue::GET_VALUE) {
+        $result = $unit->updateValue(); //Считываем и обновляем данные в объекте модуля
         if (!is_null($result)) {
-            $unit->writeValueDB($result); //Записываем данные в базу данных
+            $unit->writeCurrentValueDB(); //Записываем данные в базу данных
         }
     }
 }

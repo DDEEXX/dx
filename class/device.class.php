@@ -448,6 +448,51 @@ class temperatureSensor extends sensor
         parent::__construct($options, typeDevice::TEMPERATURE);
     }
 
+    public function getValue()
+    {
+        $result = null;
+        $disabled = $this->getDisabled();
+        if ($disabled == 0) { // датчик включен
+            switch ($this->getNet()) {
+                case netDevice::ONE_WIRE :
+                    $result = $this->getValueOWNet();
+                    break;
+            }
+        }
+        return $result;
+    }
+
+    private function getValueOWNet()
+    {
+        $result = null;
+
+        $OWNetDir = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_PATH);
+
+        $address = $this->getAddress();
+        if (preg_match("/^28\./", $address)) { //это датчик DS18B20
+
+            $f = file($OWNetDir .'/'. $address . "/temperature12");
+            if ($f === false) { //попробуем еще раз
+                usleep(500000); //ждем 0.5 секунд
+                $f = file($OWNetDir .'/'. $address . "/temperature12");
+            }
+
+            if ($f === false) {
+                logger::writeLog('Ошибка получения температуры с датчика :: ' . $address, loggerTypeMessage::ERROR);
+                $result = null;
+            }
+            else {
+                $result = $f[0];
+            }
+
+        }
+        else {
+            logger::writeLog('Неудачная попытка получить данные с датчика :: ' . $address, loggerTypeMessage::ERROR);
+        }
+
+        return $result;
+    }
+
 }
 
 class pressureSensor extends sensor

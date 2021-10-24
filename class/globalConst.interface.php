@@ -71,7 +71,7 @@ interface sharedMemory
     const KEY_MQQT_STATUS_TOPIC = 5;
 }
 
-interface typeDeviceNet {
+interface modeDeviceValue {
     const IS_NULL = null;
     const GET_VALUE = 0; //можно получить значение датчика в любое время
     const LOOP_VALUE = 1; //надо постоянно слушать, данные датчик отправляет сам

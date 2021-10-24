@@ -20,11 +20,11 @@ interface iUnit
 interface iSensorUnite extends iUnit {
 
     /**
-     * Возвращает тип устройства привязанного к модулу, значение датчика можно получить в любое время или
+     * Возвращает тип устройства привязанного к модулю, значение датчика можно получить в любое время или
      * надо датчик постоянно "слушать"
      * @return mixed
      */
-    public function getTypeDeviceNet();
+    public function getModeDeviceValue();
 
 }
 
@@ -246,16 +246,9 @@ class sensorUnit extends unit implements iSensorUnite
      * надо датчик постоянно "слушать", или неопределен = null
      * @return int|mixed|null
      */
-    public function getTypeDeviceNet()
+    public function getModeDeviceValue()
     {
-        if (is_null($this->device)) {
-            return typeDeviceNet::IS_NULL;
-        }
-        if ( ($this->device->getNet() == netDevice::ETHERNET_MQTT) ||
-            (($this->device->getNet() == netDevice::ONE_WIRE) && (!is_null($this->device->getAlarm()))) ) {
-            return typeDeviceNet::LOOP_VALUE;
-        }
-        return typeDeviceNet::GET_VALUE;
+        return modeDeviceValue::IS_NULL;
     }
 
     public function __destruct()
@@ -347,15 +340,12 @@ class temperatureUnit extends sensorUnit
     public function updateValue() {
         $result = json_decode(parent::updateValue(), true);
         $this->updateUnitSharedMemory();
-        //sharedMemoryUnit::set($this);
         if (is_null($result)) {
             return null;
         }
         return json_encode([
-            'unitID' => $this->getId(),
             'value' => $result['value'],
             'dateValue' => $result['dateValue'],
-            'nTable' => $this->valueTable
         ]);
     }
 
@@ -396,12 +386,11 @@ class temperatureUnit extends sensorUnit
 
     /**
      * Записать значение температуры в базу данных
-     * время записи берется текущее серверное
      * @param $value
      * @throws connectDBException
      * @throws querySelectDBException
      */
-    public function writeValueDB()
+    public function writeCurrentValueDB()
     {
 
 //        $value = json_decode($result, true);
@@ -495,6 +484,18 @@ class temperatureUnit extends sensorUnit
         return $result;
 
     }
+
+    public function getModeDeviceValue() {
+        $result = modeDeviceValue::IS_NULL;
+        if (is_null($this->device)) {
+            return $result;
+        }
+        if ($this->device->getNet() == netDevice::ONE_WIRE) {
+            $result = modeDeviceValue::GET_VALUE;
+        }
+        return $result;
+    }
+
 }
 
 class humidityUnit extends sensorUnit
