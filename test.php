@@ -6,23 +6,26 @@
  * Time: 22:49
  */
 
-require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
-require_once(dirname(__FILE__) . '/class/logger.class.php');
+$alarmDir = '/mnt/1wire//uncached/alarm';
 
-managerUnits::initUnits();
-
-$temperatureUnits = managerUnits::getListUnits(typeUnit::TEMPERATURE, 0);
-foreach ($temperatureUnits as $unit) {
-    if (is_null($unit)) continue;
-    //опрашиваем датчики, которые могут вернуть значение в любое время
-    if ($unit->getModeDeviceValue() == modeDeviceValue::GET_VALUE) {
-        $result = $unit->updateValue(); //Считываем и обновляем данные в объекте модуля
-        if (!is_null($result)) {
-            $unit->writeCurrentValueDB(); //Записываем данные в базу данных
+$time_start = microtime(true);
+if (is_dir($alarmDir)) {
+    //Помещаем адреса всех сработавших модулей в массив
+    if ($handle = opendir($alarmDir)) {
+        while (false !== ($file = readdir($handle))) {
+            if ($file != "." && $file != "..") {
+                $alarms[$file] = true;
+                echo $file."\n";
+            }
         }
+        rewinddir($handle);
     }
 }
 
+$time_end = microtime(true);
+$time = $time_end - $time_start;
+
+echo "делал $time секунд\n";
 
 
 //require_once(dirname(__FILE__) . '/class/mqqt.class.php');

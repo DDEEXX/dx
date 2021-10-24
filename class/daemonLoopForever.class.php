@@ -32,7 +32,7 @@ class daemonLoopForever extends daemon
             $alarms = array();
             if (is_dir($alarmDir)) {
                 //Помещаем адреса всех сработавших модулей в массив
-                if (is_dir($alarmDir)) {
+                try {
                     if ($handle = opendir($alarmDir)) {
                         while (false !== ($file = readdir($handle))) {
                             if ($file != "." && $file != "..") {
@@ -41,6 +41,9 @@ class daemonLoopForever extends daemon
                         }
                         rewinddir($handle);
                     }
+                }
+                catch (Exception $e) {
+                    logger::writeLog($e->getMessage(), loggerTypeMessage::ERROR, loggerName::DEBUG);
                 }
 
                 //Обходим все модули и обновляем их состояние. Если есть в массиве то значение 1, если нет - 0
