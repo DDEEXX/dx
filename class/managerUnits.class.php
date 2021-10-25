@@ -176,7 +176,8 @@ class managerUnits
      */
     public static function setAlias1WireUnit() {
         $listUnit1WireLoop = managerUnits::getListUnits1WireLoop(0);
-        foreach ($listUnit1WireLoop as $unite) {
+        foreach ($listUnit1WireLoop as $uniteID => $address) {
+            $unite = self::getUnitID($uniteID);
             $unite->updateAlarm();
         }
     }
