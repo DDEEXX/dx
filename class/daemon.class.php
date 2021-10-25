@@ -8,6 +8,8 @@
 
 require_once(dirname(__FILE__) . "/logger.class.php");
 
+declare(ticks = 1);
+
 interface idaemon
 {
     public function run();

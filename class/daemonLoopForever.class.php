@@ -24,10 +24,7 @@ class daemonLoopForever extends daemon
 
         $listUnit1WireLoop = managerUnits::getListUnits1WireLoop(0);
         $i = 0;
-        while (true) {
-            if ($this->stop_server) {
-                break;
-            }
+        while (!$this->stop_server) {
 
             $alarms = array();
             if (is_dir($alarmDir)) {
