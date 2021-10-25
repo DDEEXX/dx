@@ -172,14 +172,42 @@ class managerUnits
     }
 
     /**
-     *  Обновляет set_alarm у устройства
+     *  Обновляет set_alarm у 1wire устройств
      */
     public static function setAlias1WireUnit() {
+
+        $MAX_CHECK_1WIRE_DIR = 10;  //количество попыток
+        $PAUSE_CHECK_1WIRE_DIR = 5; //пауза между попытками
+
+        //т.к. взаимодействие с 1wire идет через файловую систему сначала ждем пока будут доступен
+        //соответствующий каталог
+
+        $n = 1; //номер попытки обращения к каталогу
+        $is1wire = self::check1WireDir();
+        while ((!$is1wire) && $n<=$MAX_CHECK_1WIRE_DIR) {
+            sleep($PAUSE_CHECK_1WIRE_DIR);
+            $is1wire = self::check1WireDir();
+        }
+
+        if (!$is1wire) {
+            logger::writeLog("При попытки обновить set_alarm не найден путь до каталога 1wire", loggerTypeMessage::WARNING ,loggerName::ACCESS);
+            return;
+        }
+
         $listUnit1WireLoop = managerUnits::getListUnits1WireLoop(0);
         foreach ($listUnit1WireLoop as $uniteID => $address) {
             $unite = self::getUnitID($uniteID);
             $unite->updateDeviceAlarm();
         }
+    }
+
+    public static function check1WireDir() {
+        $OWNetDir = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_PATH);
+        if (is_null($OWNetDir)) {
+            return false;
+        }
+        $dir1WireAlarm = $OWNetDir.'/alarm';
+        return is_dir($dir1WireAlarm);
     }
 
     /**

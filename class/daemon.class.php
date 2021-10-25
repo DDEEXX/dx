@@ -27,10 +27,14 @@ class daemon implements idaemon
 
     public function __construct($dirPidFile, $namePidFile) {
         $this->namePidFile =  $dirPidFile.'/'.$namePidFile;
-        if (pcntl_signal(SIGTERM, array($this, "childSignalHandler")));
+        pcntl_signal(SIGTERM, array($this, "childSignalHandler"));
     }
 
+    /** @noinspection SpellCheckingInspection
+     * @noinspection PhpUnusedParameterInspection
+     */
     public function childSignalHandler($signo, $pid = null, $status = null) {
+        logger::writeLog('SIGNAL '.$signo, loggerTypeMessage::WARNING, loggerName::DEBUG);
         switch($signo) {
             case SIGTERM:
                 // При получении сигнала завершения работы устанавливаем флаг

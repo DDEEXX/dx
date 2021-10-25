@@ -27,34 +27,36 @@ class daemonLoopForever extends daemon
         $i = 0;
         while (!$this->stop_server) {
 
-            $alarms = array();
-            if (is_dir($alarmDir)) {
-                //Помещаем адреса всех сработавших модулей в массив
-                try {
-                    if ($handle = opendir($alarmDir)) {
-                        while (false !== ($file = readdir($handle))) {
-                            if ($file != "." && $file != "..") {
-                                $alarms[$file] = true;
+            $is1wire = managerUnits::check1WireDir();
+            if ($is1wire) {
+                $alarms = array();
+                if (is_dir($alarmDir)) {
+                    //Помещаем адреса всех сработавших модулей в массив
+                    try {
+                        if ($handle = opendir($alarmDir)) {
+                            while (false !== ($file = readdir($handle))) {
+                                if ($file != "." && $file != "..") {
+                                    $alarms[$file] = true;
+                                }
                             }
+                            rewinddir($handle);
                         }
-                        rewinddir($handle);
+                    } catch (Exception $e) {
+                        logger::writeLog($e->getMessage(), loggerTypeMessage::ERROR, loggerName::DEBUG);
                     }
-                }
-                catch (Exception $e) {
-                    logger::writeLog($e->getMessage(), loggerTypeMessage::ERROR, loggerName::DEBUG);
-                }
 
-                //Обходим все модули и обновляем их состояние. Если есть в массиве, то значение 1, если нет - 0
-                foreach ($listUnit1WireLoop as $uniteID => $address) {
-                    if (array_key_exists($address, $alarms)) {
-                        $value = 1;
+                    //Обходим все модули и обновляем их состояние. Если есть в массиве, то значение 1, если нет - 0
+                    foreach ($listUnit1WireLoop as $uniteID => $address) {
+                        if (array_key_exists($address, $alarms)) {
+                            $value = 1;
+                        } else {
+                            $value = 0;
+                        }
+                        $unit = managerUnits::getUnitID($uniteID);
+                        $unit->updateValueLoop($value); //Обновляем данные в объекте модуля
+                        $unit->updateUnitSharedMemory();
+
                     }
-                    else {
-                        $value = 0;
-                    }
-                    $unit = managerUnits::getUnitID($uniteID);
-                    $unit->updateValueLoop($value); //Обновляем данные в объекте модуля
-                    $unit->updateUnitSharedMemory();
 
                 }
 

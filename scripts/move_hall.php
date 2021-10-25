@@ -6,19 +6,18 @@
  * Time: 22:49
  */
 
-// проверить!!! Если день и ключить через сайт, то при движениитут же гаснет.
+// проверить!!! Если день и включить через сайт, то при движении тут же гаснет.
 // Если ночью включить через сайт, никогда не гаснет
 
 require_once(dirname(__FILE__) . '/../class/globalConst.interface.php');
 require_once(dirname(__FILE__) . '/../class/lists.class.php');
 require_once(dirname(__FILE__) . '/../class/managerUnits.class.php');
 require_once(dirname(__FILE__) . '/../class/sunInfo.class.php');
-require_once(dirname(__FILE__) . '/../class/logger.class.php');
 
 $NAME_MOVE = 'move_1';
 $NAME_LIGHT_N = 'light_hol_2_n';
-$MOVE_TIME_N = 8; //через сколько секунд вык. подсветка после отсутствия движения при включении от датчика движения
-$MOVE_TIME_GLOBAL = 1200; //через сколько секунд вык. подсветка независимо каким образом она была включена
+$MOVE_TIME_N = 8; //через сколько секунд выключится подсветка после отсутствия движения при включении от датчика движения
+$MOVE_TIME_GLOBAL = 1200; //через сколько секунд выключится подсветка независимо каким образом она была включена
 
 $NAME_LIGHT_3 = 'light_stairs_3';
 $unitLightStairs3 = managerUnits::getUnitLabel($NAME_LIGHT_3);
@@ -39,7 +38,7 @@ $timeNoMove = $moveData['dataValue'];
 //Получить данные с подсветки
 $nightLightData = json_decode($unitNightLight->getValues(), true);
 $isLight   = $nightLightData['value'];     //Свет горит
-$statusKey = $nightLightData['status'];     //Статус ключа - каким образом включилася подсветка или вообще выключена
+$statusKey = $nightLightData['status'];     //Статус ключа - каким образом включилась подсветка или вообще выключена
 $timeKey   = $nightLightData['dataStatus']; //Когда это было
 
 $outTime = 99999; //Прошло секунд с момента последней записи состояния подсветки

@@ -184,13 +184,6 @@ class maker extends device
         parent::__construct($deviceID, $net, $address, $typeDevice, $disabled,null,null,$topicCmnd,$topicStat);
     }
 
-    /**
-     * @param null $status
-     */
-    public function setStatus($status)
-    {
-        $this->status = $status;
-    }
 }
 
 class sensor extends device
@@ -522,37 +515,57 @@ class keyInSensor extends sensor
      *  Устанавливает set_alarm у физического датчика в соответствии со свойством alarm
      */
     public function updateAlarm() {
-
-        $OWNetDir = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_PATH);
-
+        $result = false;
+        $OWNetAddress = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_ADDRESS);
         $address = $this->getAddress();
-        if (preg_match("/^12\./", $address)) { //это датчик DS2406
-
-            $codeError = 0;
-            $fileAlarmName = $OWNetDir .'/'. $address . "/set_alarm";
-            if (file_exists($fileAlarmName)) {
-                if (is_writable($fileAlarmName)) {
-
-                    if ($handle = fopen($fileAlarmName, 'w+')) {
-                        if (fwrite($handle, $this->getAlarm()) === FALSE) {
-                            $codeError = 2;
-                        }
-                        else fclose($handle);
-                    }
-                    else $codeError = 1;
-                }
-                else $codeError = 3;
-            }
-            else  $codeError = 4;
-
-            if ($codeError) {
-                logger::writeLog('Ошибка установки set_alarm у датчика :: '.$address.', код ошибки '.$codeError, loggerTypeMessage::ERROR);
-            }
-
+        if (preg_match("/^12\./", $address)) {
+            /** @noinspection PhpUndefinedClassInspection */
+            $ow = new OWNet($OWNetAddress);
+            $result = $ow->set('/' . $address . '/set_alarm', $this->getAlarm());
+            unset($ow);
         }
         else {
-            logger::writeLog('что-то странное с датчиком :: ' . $address, loggerTypeMessage::ERROR);
+            logger::writeLog('что-то странное с датчиком :: ' . $address, loggerTypeMessage::ERROR, loggerName::ERROR);
         }
+
+        if (!$result) {
+            logger::writeLog('Ошибка установки set_alarm у датчика :: '.$address, loggerTypeMessage::ERROR, loggerName::ERROR);
+        }
+
+        return $result;
+
+//        $OWNetDir = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_PATH);
+//
+//        $address = $this->getAddress();
+//        if (preg_match("/^12\./", $address)) { //это датчик DS2406
+//
+//            $codeError = 0;
+//            $fileAlarmName = $OWNetDir .'/'. $address . "/set_alarm";
+//            if (file_exists($fileAlarmName)) {
+//                if (is_writable($fileAlarmName)) {
+//
+//                    if ($handle = fopen($fileAlarmName, 'w+')) {
+//                        if (fwrite($handle, $this->getAlarm()) === FALSE) {
+//                            $codeError = 2;
+//                        }
+//                        else {
+//                            fclose($handle);
+//                        }
+//                    }
+//                    else $codeError = 1;
+//                }
+//                else $codeError = 3;
+//            }
+//            else  $codeError = 4;
+//
+//            if ($codeError) {
+//                logger::writeLog('Ошибка установки set_alarm у датчика :: '.$address.', код ошибки '.$codeError, loggerTypeMessage::ERROR, loggerName::ERROR);
+//            }
+//
+//        }
+//        else {
+//            logger::writeLog('что-то странное с датчиком :: ' . $address, loggerTypeMessage::ERROR, loggerName::ERROR);
+//        }
 
     }
 }
@@ -611,7 +624,7 @@ class powerKeyMaker extends maker
         return $result;
     }
 
-    private function setValueOWNet($value = null, $chanel = null)
+    private function setValueOWNet($value = null, $channel = null)
     {
         $result = null;
         $OWNetAddress = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_ADDRESS);
@@ -619,11 +632,11 @@ class powerKeyMaker extends maker
         if (preg_match("/^3A\./", $address)) {
             /** @noinspection PhpUndefinedClassInspection */
             $ow = new OWNet($OWNetAddress);
-            $result = $ow->set('/uncached/' . $address . '/PIO.' . $chanel, $value);
+            $result = $ow->set('/uncached/' . $address . '/PIO.' . $channel, $value);
             unset($ow);
         }
         else {
-            logger::writeLog('Неудачаная попытка записать значение в датчик :: ' . $address, loggerTypeMessage::ERROR, loggerName::ERROR);
+            logger::writeLog('Неудачная попытка записать значение в датчик :: ' . $address, loggerTypeMessage::ERROR, loggerName::ERROR);
         }
 
         return $result;
