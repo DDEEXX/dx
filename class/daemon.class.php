@@ -27,13 +27,10 @@ class daemon implements idaemon
 
     public function __construct($dirPidFile, $namePidFile) {
         $this->namePidFile =  $dirPidFile.'/'.$namePidFile;
-        if (pcntl_signal(SIGTERM, array($this, "childSignalHandler"))) {
-            logger::writeLog("pcntl_signal ".$namePidFile, loggerTypeMessage::NOTICE, loggerName::DEBUG);
-        }
+        if (pcntl_signal(SIGTERM, array($this, "childSignalHandler")));
     }
 
     public function childSignalHandler($signo, $pid = null, $status = null) {
-        logger::writeLog("childSignalHandler = ".$signo, loggerTypeMessage::NOTICE, loggerName::DEBUG);
         switch($signo) {
             case SIGTERM:
                 // При получении сигнала завершения работы устанавливаем флаг
@@ -55,7 +52,7 @@ class daemon implements idaemon
                 //демон уже запущен
                 return 1;
             } else { //pid-файл есть, но процесса нет
-                if(!unlink($this->namePidFile)) {//не могу уничтожить pid-файл. ошибка
+                if(!unlink($this->namePidFile)) {//не могу уничтожить pid-файл, ошибка
                     return -1;
                 }
             }
