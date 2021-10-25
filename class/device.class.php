@@ -533,7 +533,7 @@ class keyInSensor extends sensor
             if (file_exists($fileAlarmName)) {
                 if (is_writable($fileAlarmName)) {
 
-                    if ($handle = fopen($filename, 'w+')) {
+                    if ($handle = fopen($fileAlarmName, 'w+')) {
                         if (fwrite($handle, $this->getAlarm()) === FALSE) {
                             $codeError = 2;
                         }
