@@ -9,6 +9,7 @@ class daemonLoopForever extends daemon
 {
     const NAME_PID_FILE = 'loopForever.pid';
     const INTERVAL = 600; //Интервал обновления списка модулей (количество итераций)
+    const PAUSE = 100000; //Пауза в основном цикле, в микросекундах
     protected $stop_server = FALSE;
 
     public function __construct($dirPidFile)
@@ -59,7 +60,7 @@ class daemonLoopForever extends daemon
 
             }
 
-            usleep(200000); //ждем 0.2 секунду
+            usleep(self::PAUSE); //ждем 0.1 секунду
             $i++;
             if ($i >= self::INTERVAL) {
                 $listUnit1WireLoop = managerUnits::getListUnits1WireLoop(0);
