@@ -172,6 +172,16 @@ class managerUnits
     }
 
     /**
+     *  Обновляет set_alarm у устройства
+     */
+    public static function setAlias1WireUnit() {
+        $listUnit1WireLoop = managerUnits::getListUnits1WireLoop(0);
+        foreach ($listUnit1WireLoop as $unite) {
+            $unite->updateAlarm();
+        }
+    }
+
+    /**
      * Получить список модулей устройства которых это MQQT клиенты, и у них есть подписки статуса
      * @param int $deviceDisables
      * @return array Одномерный массив ключ id модуля, значение тема сообщения

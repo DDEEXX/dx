@@ -518,6 +518,43 @@ class keyInSensor extends sensor
         return $this->alarm;
     }
 
+    /**
+     *  Устанавливает set_alarm у физического датчика в соответствии со свойством alarm
+     */
+    public function updateAlarm() {
+
+        $OWNetDir = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_PATH);
+
+        $address = $this->getAddress();
+        if (preg_match("/^12\./", $address)) { //это датчик DS2406
+
+            $codeError = 0;
+            $fileAlarmName = $OWNetDir .'/'. $address . "/set_alarm";
+            if (file_exists($fileAlarmName)) {
+                if (is_writable($fileAlarmName)) {
+
+                    if ($handle = fopen($filename, 'w+')) {
+                        if (fwrite($handle, $this->getAlarm()) === FALSE) {
+                            $codeError = 2;
+                        }
+                        else fclose($handle);
+                    }
+                    else $codeError = 1;
+                }
+                else $codeError = 3;
+            }
+            else  $codeError = 4;
+
+            if ($codeError) {
+                logger::writeLog('Ошибка установки set_alarm у датчика :: '.$address.', код ошибки '.$codeError, loggerTypeMessage::ERROR);
+            }
+
+        }
+        else {
+            logger::writeLog('что-то странное с датчиком :: ' . $address, loggerTypeMessage::ERROR);
+        }
+
+    }
 }
 
 class voltageSensor extends sensor
