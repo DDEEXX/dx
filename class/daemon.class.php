@@ -25,7 +25,9 @@ class daemon implements idaemon
 
     public function __construct($dirPidFile, $namePidFile) {
         $this->namePidFile =  $dirPidFile.'/'.$namePidFile;
-        pcntl_signal(SIGTERM, array($this, "childSignalHandler"));
+        if (pcntl_signal(SIGTERM, array($this, "childSignalHandler"))) {
+            logger::writeLog("pcntl_signal ".$namePidFile, loggerTypeMessage::NOTICE, loggerName::DEBUG);
+        }
     }
 
     public function childSignalHandler($signo, $pid = null, $status = null) {
