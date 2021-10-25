@@ -6,6 +6,8 @@
  * Time: 14:34
  */
 
+require_once(dirname(__FILE__) . "/logger.class.php");
+
 interface idaemon
 {
     public function run();
@@ -27,6 +29,7 @@ class daemon implements idaemon
     }
 
     public function childSignalHandler($signo, $pid = null, $status = null) {
+        logger::writeLog("childSignalHandler = ".$signo, loggerTypeMessage::NOTICE, loggerName::DEBUG);
         switch($signo) {
             case SIGTERM:
                 // При получении сигнала завершения работы устанавливаем флаг

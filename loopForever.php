@@ -5,7 +5,7 @@
  * Created by PhpStorm.
  */
 
-sleep(4);
+sleep(5);
 
 $fileDir = dirname(__FILE__);
 
@@ -20,7 +20,7 @@ if ($child_pid) { // Выходим из родительского, привя�
 posix_setsid();
 // Дальнейший код выполнится только дочерним процессом, который уже отвязан от консоли
 
-ini_set('error_log',$fileDir.'/logs/error.log');
+ini_set('error_log',$fileDir.'/logs/errorLoopForever.log');
 fclose(STDIN);
 fclose(STDOUT);
 fclose(STDERR);

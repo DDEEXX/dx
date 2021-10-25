@@ -1,57 +1,61 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: root
- * Date: 11.02.19
- * Time: 22:49
- */
 
-$alarmDir = '/mnt/1wire//uncached/alarm';
+require_once(dirname(__FILE__) . "/class/managerUnits.class.php");
+require_once(dirname(__FILE__) . "/class/sharedMemory.class.php");
+require_once(dirname(__FILE__) . "/class/logger.class.php");
 
-$time_start = microtime(true);
-if (is_dir($alarmDir)) {
-    //Помещаем адреса всех сработавших модулей в массив
-    if ($handle = opendir($alarmDir)) {
-        while (false !== ($file = readdir($handle))) {
-            if ($file != "." && $file != "..") {
-                $alarms[$file] = true;
-                echo $file."\n";
+$unit = managerUnits::getUnitID("5");
+
+echo $unit->
+
+
+$OWNetDir = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_PATH);
+$alarmDir = $OWNetDir.'/uncached/alarm';
+
+$listUnit1WireLoop = managerUnits::getListUnits1WireLoop(0);
+$i = 0;
+while (true) {
+    if ($this->stop_server) {
+        break;
+    }
+
+    $alarms = array();
+    if (is_dir($alarmDir)) {
+        //Помещаем адреса всех сработавших модулей в массив
+        try {
+            if ($handle = opendir($alarmDir)) {
+                while (false !== ($file = readdir($handle))) {
+                    if ($file != "." && $file != "..") {
+                        $alarms[$file] = true;
+                    }
+                }
+                rewinddir($handle);
             }
         }
-        rewinddir($handle);
+        catch (Exception $e) {
+            logger::writeLog($e->getMessage(), loggerTypeMessage::ERROR, loggerName::DEBUG);
+        }
+
+        //Обходим все модули и обновляем их состояние. Если есть в массиве то значение 1, если нет - 0
+        foreach ($listUnit1WireLoop as $uniteID => $address) {
+            if (array_key_exists($address, $alarms)) {
+                $value = 1;
+            }
+            else {
+                $value = 0;
+            }
+            $unit = managerUnits::getUnitID($uniteID);
+            $unit->updateValueLoop($value); //Обновляем данные в объекте модуля
+            $unit->updateUnitSharedMemory();
+
+        }
+
+    }
+
+    usleep(100000); //ждем 0.1 секунду
+    $i++;
+    if ($i >= self::INTERVAL) {
+        $listUnit1WireLoop = managerUnits::getListUnits1WireLoop(0);
+        $i = 0;
     }
 }
-
-$time_end = microtime(true);
-$time = $time_end - $time_start;
-
-echo "делал $time секунд\n";
-
-
-//require_once(dirname(__FILE__) . '/class/mqqt.class.php');
-//
-//echo 'S1:'.date("H:i:s").PHP_EOL;
-
-//managerUnits::initUnits();
-
-//$unitsID = managerUnits::getUnitStatusTopic('home/bathroom/mirror_light/stat/POWER');
-//foreach ($unitsID as $id) {
-//    $unite = managerUnits::getUnitID($id);
-//    if (is_null($unite)) {
-//        continue;
-//    }
-//}
-
-//$unit = managerUnits::getUnitLabel("bathroom_mirror_light");
-//
-//$unit->setValue('ON', statusKey::OUTSIDE);
-//sleep(1);
-//$unit->setValue('OFF', statusKey::OUTSIDE);
-
-//$mqqt = mqqt::Connect(true);
-//for ($i=0;$i<100;$i++) {
-//    $mqqt->loop();
-//    usleep(100000);
-//    //echo 'B'.$i.":".date("H:i:s").PHP_EOL;
-//}
-//echo "FINISH".date("H:i:s").PHP_EOL;

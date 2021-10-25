@@ -46,7 +46,7 @@ class daemonLoopForever extends daemon
                     logger::writeLog($e->getMessage(), loggerTypeMessage::ERROR, loggerName::DEBUG);
                 }
 
-                //Обходим все модули и обновляем их состояние. Если есть в массиве то значение 1, если нет - 0
+                //Обходим все модули и обновляем их состояние. Если есть в массиве, то значение 1, если нет - 0
                 foreach ($listUnit1WireLoop as $uniteID => $address) {
                     if (array_key_exists($address, $alarms)) {
                         $value = 1;
@@ -54,6 +54,7 @@ class daemonLoopForever extends daemon
                     else {
                         $value = 0;
                     }
+                    logger::writeLog("val = ".$value, loggerTypeMessage::NOTICE, loggerName::DEBUG);
                     $unit = managerUnits::getUnitID($uniteID);
                     $unit->updateValueLoop($value); //Обновляем данные в объекте модуля
                     $unit->updateUnitSharedMemory();
@@ -62,7 +63,7 @@ class daemonLoopForever extends daemon
 
             }
 
-            usleep(100000); //ждем 0.1 секунду
+            usleep(2000000); //ждем 0.2 секунду
             $i++;
             if ($i >= self::INTERVAL) {
                 $listUnit1WireLoop = managerUnits::getListUnits1WireLoop(0);
