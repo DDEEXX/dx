@@ -178,7 +178,7 @@ class managerUnits
         $listUnit1WireLoop = managerUnits::getListUnits1WireLoop(0);
         foreach ($listUnit1WireLoop as $uniteID => $address) {
             $unite = self::getUnitID($uniteID);
-            $unite->updateAlarm();
+            $unite->updateDeviceAlarm();
         }
     }
 

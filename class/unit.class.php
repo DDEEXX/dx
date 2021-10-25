@@ -901,6 +901,12 @@ class keyInUnit extends sensorUnit
         $this->dataValue = time();
     }
 
+    public function updateDeviceAlarm() {
+        if (!is_null($this->device)) {
+            $this->device->updateAlarm();
+        }
+    }
+
 }
 
 //Силовой ключ
