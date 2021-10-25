@@ -54,7 +54,6 @@ class daemonLoopForever extends daemon
                     else {
                         $value = 0;
                     }
-                    logger::writeLog("val = ".$value, loggerTypeMessage::NOTICE, loggerName::DEBUG);
                     $unit = managerUnits::getUnitID($uniteID);
                     $unit->updateValueLoop($value); //Обновляем данные в объекте модуля
                     $unit->updateUnitSharedMemory();
@@ -63,7 +62,7 @@ class daemonLoopForever extends daemon
 
             }
 
-            usleep(2000000); //ждем 0.2 секунду
+            usleep(200000); //ждем 0.2 секунду
             $i++;
             if ($i >= self::INTERVAL) {
                 $listUnit1WireLoop = managerUnits::getListUnits1WireLoop(0);
