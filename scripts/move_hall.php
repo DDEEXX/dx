@@ -26,6 +26,9 @@ $unitMove = managerUnits::getUnitLabel($NAME_MOVE);
 $unitNightLight = managerUnits::getUnitLabel($NAME_LIGHT_N);
 
 if (is_null($unitMove) || is_null($unitNightLight)) {
+    unset($unitMove);
+    unset($unitNightLight);
+    unset($unitLightStairs3);
     return;
 }
 
@@ -102,5 +105,3 @@ else { // светло
 unset($unitMove);
 unset($unitNightLight);
 unset($unitLightStairs3);
-
-exit();

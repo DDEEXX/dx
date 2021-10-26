@@ -6,9 +6,9 @@
  * Time: 14:34
  */
 
-require_once(dirname(__FILE__) . "/logger.class.php");
-
-declare(ticks = 1);
+if (defined('DEBUG')) {
+    require_once(dirname(__FILE__) . "/logger.class.php");
+}
 
 interface idaemon
 {
@@ -16,25 +16,23 @@ interface idaemon
 
     public function isDaemonActive();
 
-    public function putPitFile($pid);
 }
 
 class daemon implements idaemon
 {
 
-    protected $stop_server = FALSE;
-    protected $namePidFile;     //Полный путь до pid файла
+    private $stop_server = false;
+    private $namePidFile;     //Полный путь до pid файла
 
     public function __construct($dirPidFile, $namePidFile) {
         $this->namePidFile =  $dirPidFile.'/'.$namePidFile;
         pcntl_signal(SIGTERM, array($this, "childSignalHandler"));
     }
 
-    /** @noinspection SpellCheckingInspection
-     * @noinspection PhpUnusedParameterInspection
-     */
-    public function childSignalHandler($signo, $pid = null, $status = null) {
-        logger::writeLog('SIGNAL '.$signo, loggerTypeMessage::WARNING, loggerName::DEBUG);
+    protected function childSignalHandler($signo) {
+        if (defined('DEBUG')) {
+            logger::writeLog('SIGNAL ' . $signo, loggerTypeMessage::WARNING, loggerName::DEBUG);
+        }
         switch($signo) {
             case SIGTERM:
                 // При получении сигнала завершения работы устанавливаем флаг
@@ -46,6 +44,11 @@ class daemon implements idaemon
     }
 
     public function run() {
+        $this->putPitFile();
+    }
+
+    protected function stopServer() {
+        return $this->stop_server;
     }
 
     public function isDaemonActive() {
@@ -64,7 +67,8 @@ class daemon implements idaemon
         return 0;
     }
 
-    public function putPitFile($pid) {
+    protected function putPitFile() {
+        $pid = getmypid();
         file_put_contents($this->namePidFile, $pid);
     }
 
