@@ -9,6 +9,7 @@
 require_once(dirname(__FILE__) . "/sqlDataBase.class.php");
 require_once(dirname(__FILE__) . "/managerDevices.class.php");
 require_once(dirname(__FILE__) . '/globalConst.interface.php');
+require_once(dirname(__FILE__) . '/logger.class.php');
 
 interface iUnit
 {

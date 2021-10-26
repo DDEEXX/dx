@@ -6,9 +6,7 @@
  * Time: 22:45
  */
 
-declare(ticks = 1);
-
-//sleep(5);
+sleep(5);
 
 $fileDir = dirname(__FILE__);
 
@@ -34,7 +32,7 @@ $STDERR = fopen($fileDir.'/logs/daemonRunScript.log', 'ab');
 
 class daemonScripts extends daemon {
     const NAME_PID_FILE = 'runScript.pid';
-    const PAUSE = 100000;
+    const PAUSE = 200000;
     protected $scripts = array('move_hall.php');
     protected $bg;              //Объект для запуска процессов в фоне
     protected $dirScript;       //Путь до каталога со скриптами сценариев
@@ -62,6 +60,8 @@ class daemonScripts extends daemon {
             }
 
             usleep(self::PAUSE);
+
+            pcntl_signal_dispatch(); //Вызывает обработчики для ожидающих сигналов
 
         }
     }
