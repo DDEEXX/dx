@@ -25,7 +25,6 @@ interface iTemperatureSensor
 {
     public function getValue();
 
-    public function getModel();
 }
 
 interface iDevice
@@ -51,11 +50,11 @@ interface iDevice
 abstract class device implements iDevice
 {
 
-    private $net = netDevice::NONE;
-    private $address = '';
-    private $type = typeDevice::NONE;
-    private $deviceID = 0;
-    private $disabled = 0;
+    private $net;
+    private $address;
+    private $type;
+    private $deviceID;
+    private $disabled;
     protected $alarm = null;
     protected $model = null;
     protected $topicCmnd = null;
@@ -209,7 +208,7 @@ class sensor extends device
         //parent::__construct($options, $typeDevice);
     }
 
-    private function getValueOWNet($chanel = null)
+    private function getValueOWNet()
     {
         $result = null;
         //$OWNetAdress = DB::getConst('OWNetAddress');
@@ -234,7 +233,7 @@ class sensor extends device
                 logger::writeLog('Ошибка получения температуры с датчика :: ' . $address, loggerTypeMessage::ERROR);
             }
 
-            if (!is_null($tekValue)) { //иногда кодга датчик не срабатывает, возвращает 0
+            if (!is_null($tekValue)) { //иногда когда датчик не срабатывает, возвращает 0
                 if ($tekValue == 0) {
                     //т.е. 0 датчик никогда не вернет, но это очень редкая ситуация
                     //поэтому лучше без 0, чем провалы (т.е 15.0, 15.1, 15.2, 0 , 15.2, 15,3)
@@ -246,7 +245,7 @@ class sensor extends device
 
             $f = file($OWNetDir .'/'. $address . "/temperature12");
             if ($f === false) { //попробуем еще раз
-                usleep(500000); //ждем 0.5 сеунд
+                usleep(500000); //ждем 0.5 секунд
                 $f = file($OWNetDir .'/'. $address . "/temperature12");
             }
 
@@ -274,7 +273,7 @@ class sensor extends device
 
         }*/
         else {
-            logger::writeLog('Неудачаная попытка получить данные с датчика :: ' . $address, loggerTypeMessage::ERROR);
+            logger::writeLog('Неудачная попытка получить данные с датчика :: ' . $address, loggerTypeMessage::ERROR);
         }
 
         return $result;
@@ -297,7 +296,7 @@ class sensor extends device
 
                 // reading uncompensated temperature
                 i2c::writeByte($I2CBUS, $i2c_address, 0xF4, 0x2E);
-                usleep(4600); // Should be not less then 4500
+                usleep(4600); // Should be not less than 4500
                 $msb = i2c::readByte($I2CBUS, $i2c_address, 0xF6);
                 $lsb = i2c::readByte($I2CBUS, $i2c_address, 0xF7);
                 $ut = $msb << 8 | $lsb;
@@ -330,7 +329,7 @@ class sensor extends device
 
                 // reading uncompensated temperature
                 i2c::writeByte($I2CBUS, $i2c_address, 0xF4, 0x2E);
-                usleep(4600); // Should be not less then 4500
+                usleep(4600); // Should be not less than 4500
                 $msb = i2c::readByte($I2CBUS, $i2c_address, 0xF6);
                 $lsb = i2c::readByte($I2CBUS, $i2c_address, 0xF7);
                 $ut = $msb << 8 | $lsb;
@@ -368,7 +367,7 @@ class sensor extends device
                 $result = $p * 0.0075;
             }
             else {
-                logger::writeLog('Неудачаная попытка получить значение с I2C датчика с адресом:: ' . $i2c_address, loggerTypeMessage::ERROR);
+                logger::writeLog('Неудачная попытка получить значение с I2C датчика с адресом:: ' . $i2c_address, loggerTypeMessage::ERROR);
             }
         }
         elseif ($model == 'LM75') {
@@ -377,7 +376,7 @@ class sensor extends device
             $result = $ut * 0.125;
         }
         else {
-            logger::writeLog('Неудачаная попытка получить температуру с I2C датчика с адресом:: ' . $i2c_address, loggerTypeMessage::ERROR);
+            logger::writeLog('Неудачная попытка получить температуру с I2C датчика с адресом:: ' . $i2c_address, loggerTypeMessage::ERROR);
         }
 
         return $result;
@@ -395,20 +394,20 @@ class sensor extends device
             $result = $data->return_value / 100;
         }
         else {
-            logger::writeLog('Неудачаная попытка получить значение с Ethernet датчика с адресом:: ' . $address, loggerTypeMessage::ERROR);
+            logger::writeLog('Неудачная попытка получить значение с Ethernet датчика с адресом:: ' . $address, loggerTypeMessage::ERROR);
         }
 
         return $result;
     }
 
-    public function getValue($chanel = null)
+    public function getValue()
     {
         $result = null;
         $disabled = $this->getDisabled();
         if ($disabled == 0) { // датчик включен
             switch ($this->getNet()) {
                 case netDevice::ONE_WIRE :
-                    $result = $this->getValueOWNet($chanel);
+                    $result = $this->getValueOWNet();
                     break;
                 case netDevice::I2C :
                     $result = $this->getValueI2C();
@@ -433,7 +432,7 @@ class humiditySensor extends sensor
 
 }
 
-class temperatureSensor extends sensor
+class temperatureSensor extends sensor implements iTemperatureSensor
 {
 
     public function __construct(array $options)
@@ -618,7 +617,7 @@ class powerKeyMaker extends maker
 
         }
         else {
-            logger::writeLog('Неудачаная попытка получить значение с датчика :: ' . $address, loggerTypeMessage::ERROR);
+            logger::writeLog('Неудачная попытка получить значение с датчика :: ' . $address, loggerTypeMessage::ERROR);
         }
 
         return $result;

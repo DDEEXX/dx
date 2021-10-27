@@ -5,7 +5,7 @@
  * Created by PhpStorm.
  */
 
-sleep(5);
+sleep(6);
 
 //Создаем дочерний процесс весь код после pcntl_fork() будет выполняться двумя процессами: родительским и дочерним
 $child_pid = pcntl_fork();
@@ -20,7 +20,6 @@ $fileDir = dirname(__FILE__);
 
 require($fileDir."/class/daemon.class.php");
 require($fileDir."/class/managerUnits.class.php");
-require_once($fileDir."/class/logger.class.php");
 
 ini_set('error_log',$fileDir.'/logs/errorLoopForever.log');
 fclose(STDIN);

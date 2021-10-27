@@ -6,10 +6,6 @@
  * Time: 14:34
  */
 
-if (defined('DEBUG')) {
-    require_once(dirname(__FILE__) . "/logger.class.php");
-}
-
 interface idaemon
 {
     public function run();
@@ -30,16 +26,13 @@ class daemon implements idaemon
     }
 
     protected function childSignalHandler($signo) {
-        if (defined('DEBUG')) {
-            logger::writeLog('SIGNAL ' . $signo, loggerTypeMessage::WARNING, loggerName::DEBUG);
-        }
         switch($signo) {
             case SIGTERM:
                 // При получении сигнала завершения работы устанавливаем флаг
                 $this->stop_server = true;
                 break;
             default:
-                // все остальные сигналы
+                // все остальные сигналы игнорируем
         }
     }
 
