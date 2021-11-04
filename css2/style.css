@@ -92,10 +92,27 @@ body {
     background-image: url(temes/dx/images/background.jpg);
 }
 
-#backlight_first_floor.backlight .button {
+.backlight .button {
     padding: 0px;
     margin-top:5px;
     height:40px;
+}
+
+.light_level .button {
+    margin-top:0px;
+    border: 0px;
+    height: 38px;
+}
+
+.light_level {
+    padding: 0px;
+    margin-top: 5px;
+    height: 40px;
+    border: 1px solid #86aeff;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px
 }
 
 /*

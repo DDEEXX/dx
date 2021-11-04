@@ -314,16 +314,18 @@ if ($p == "light") {
                                     <button class="button" style="width:60px;" mqtt="on"><img src="img2/light_on1.png" alt="on"></button>
                                     <button class="button" style="width:60px;" mqtt="off"><img src="img2/light_off.png" alt="off"></button>
                                 </div>
-                                <div style="margin-left:25px;float: left">
-                                    <button class="button" style="width:50px" mqtt="+"><img src="img2/light_less.png" alt="+"></button>
-                                    <button class="button" style="width:40px;margin-left:-5px" mqtt="1"><img src="img2/light_1.png" alt="1"></button>
-                                    <button class="button" style="width:40px;margin-left:-5px" mqtt="2"><img src="img2/light_2.png" alt="2"></button>
-                                    <button class="button" style="width:40px;margin-left:-5px" mqtt="3"><img src="img2/light_3.png" alt="3"></button>
-                                    <button class="button" style="width:40px;margin-left:-5px" mqtt="4"><img src="img2/light_4.png" alt="4"></button>
-                                    <button class="button" style="width:40px;margin-left:-5px" mqtt="5"><img src="img2/light_5.png" alt="5"></button>
-                                    <button class="button" style="width:40px;margin-left:-5px" mqtt="6"><img src="img2/light_6.png" alt="6"></button>
-                                    <button class="button" style="width:40px;margin-left:-5px" mqtt="7"><img src="img2/light_7.png" alt="7"></button>
-                                    <button class="button" style="width:50px;margin-left:-5px" mqtt="-"><img src="img2/light_more.png" alt="-"></button>
+                                <div style="margin-left:25px;float:left">
+                                    <button class="button" style="width:50px;float:left" mqtt="8"><img src="img2/light_min.png" alt="max"></button>
+                                    <div class="light_level" style="height:38px;float:left">
+                                        <button class="button" style="width:40px;margin-left:0px" mqtt="1"><img src="img2/light_1.png" alt="1"></button>
+                                        <button class="button" style="width:40px;margin-left:-8px" mqtt="2"><img src="img2/light_2.png" alt="2"></button>
+                                        <button class="button" style="width:40px;margin-left:-8px" mqtt="3"><img src="img2/light_3.png" alt="3"></button>
+                                        <button class="button" style="width:40px;margin-left:-8px" mqtt="4"><img src="img2/light_4.png" alt="4"></button>
+                                        <button class="button" style="width:40px;margin-left:-8px" mqtt="5"><img src="img2/light_5.png" alt="5"></button>
+                                        <button class="button" style="width:40px;margin-left:-8px" mqtt="6"><img src="img2/light_6.png" alt="6"></button>
+                                        <button class="button" style="width:40px;margin-left:-8px" mqtt="7"><img src="img2/light_7.png" alt="7"></button>
+                                    </div>
+                                    <button class="button" style="width:50px;margin-left:0px;float:left" mqtt="9"><img src="img2/light_max.png" alt="max"></button>
                                 </div>
 
                             </div>
