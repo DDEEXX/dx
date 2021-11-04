@@ -1,19 +1,25 @@
-#mmenu.ui-menu { 
+nav#main #main-menu {
 	width: 76px;
 	border: 0px;	
 	left : -4px;
 }
 
-#mmenu.ui-menu .ui-menu-item {
+nav#main #main-menu .ui-menu-item {
     height: 76px;
 	padding: 0px;    
 	margin-top: 4px;	
 	margin-bottom: 4px;	
     min-height: 76px;
 	border: 3px solid #336699;
+	border-radius: 15px;
 }
 
-#mmenu.ui-menu .ui-menu-item .ui-icon {
+nav#main #main-menu .ui-menu-item .ui-menu-item-wrapper{
+	padding: 0px;
+	margin: -1px;
+}
+
+nav#main #main-menu li .ui-icon {
 	position: absolute;
 	top: 4px;
 	bottom: 0;
@@ -21,81 +27,86 @@
 	margin: 2px;
 	width: 64px;
 	height: 64px;
+	padding: 0px;
 }
 
-#mmenu.ui-menu .ui-state-focus,
-#mmenu.ui-menu .ui-state-selected{
+
+nav#main #main-menu.ui-menu .ui-state-focus,
+nav#main #main-menu.ui-menu .ui-state-selected {
 	border: 3px solid #99ffff;
 	font-weight: normal;
 	color: #ffffff;
-	background: none;	
+	background: none;
+	margin-left: 0px;
 }
 
-/* Corner radius */
-#mmenu.ui-menu .ui-corner-all.ui-menu-item  {
-	border-radius: 15px;
+/*навели курсор*/
+nav#main #main-menu.ui-menu .ui-state-active {
+	border: 0;
+	padding: 0px;
+	margin: -1px;
 }
 
-#mmenu.ui-menu .ui-icon-mmhome{
-	background-image: url(../img2/mmenu/home_.png);
+nav#main #main-menu.ui-menu .ui-icon-mmhome{
+	background-image: url(../img2/main-menu/home_.png);
 }
 
-#mmenu.ui-menu .ui-state-selected .ui-icon-mmhome{
-	background-image: url(../img2/mmenu/home_sel.png);
+nav#main #main-menu.ui-menu .ui-state-selected .ui-icon-mmhome{
+	background-image: url(../img2/main-menu/home_sel.png);
 }
 
-#mmenu.ui-menu .ui-icon-mmtemp{
-	background-image: url(../img2/mmenu/temperature_.png);
+nav#main #main-menu.ui-menu .ui-icon-mmtemp{
+	background-image: url(../img2/main-menu/temperature_.png);
 }
 
-#mmenu.ui-menu .ui-state-selected .ui-icon-mmtemp{
-	background-image: url(../img2/mmenu/temperature_sel.png);
+nav#main #main-menu.ui-menu .ui-state-selected .ui-icon-mmtemp{
+	background-image: url(../img2/main-menu/temperature_sel.png);
 }
 
-#mmenu.ui-menu .ui-icon-mmbulb{
-	background-image: url(../img2/mmenu/bulb_.png);
+nav#main #main-menu.ui-menu .ui-icon-mmbulb{
+	background-image: url(../img2/main-menu/bulb_.png);
 }
 
-#mmenu.ui-menu .ui-state-selected .ui-icon-mmbulb{
-	background-image: url(../img2/mmenu/bulb_sel.png);
+nav#main #main-menu.ui-menu .ui-state-selected .ui-icon-mmbulb{
+	background-image: url(../img2/main-menu/bulb_sel.png);
 }
 
-#mmenu.ui-menu .ui-icon-mmheater{
-	background-image: url(../img2/mmenu/heater_.png);
+nav#main #main-menu.ui-menu .ui-icon-mmheater{
+	background-image: url(../img2/main-menu/heater_.png);
 }
 
-#mmenu.ui-menu .ui-state-selected .ui-icon-mmheater{
-	background-image: url(../img2/mmenu/heater_sel.png);
+nav#main #main-menu.ui-menu .ui-state-selected .ui-icon-mmheater{
+	background-image: url(../img2/main-menu/heater_sel.png);
 }
 
-#mmenu.ui-menu .ui-icon-mmip_camera{
-	background-image: url(../img2/mmenu/ip_camera_.png);
+nav#main #main-menu.ui-menu .ui-icon-mmip_camera{
+	background-image: url(../img2/main-menu/ip_camera_.png);
 }
 
-#mmenu.ui-menu .ui-state-selected .ui-icon-mmip_camera{
-	background-image: url(../img2/mmenu/ip_camera_sel.png);
+nav#main #main-menu.ui-menu .ui-state-selected .ui-icon-mmip_camera{
+	background-image: url(../img2/main-menu/ip_camera_sel.png);
 }
 
-#mmenu.ui-menu .ui-icon-mmkey{
-	background-image: url(../img2/mmenu/key_.png);
+nav#main #main-menu.ui-menu .ui-icon-mmkey{
+	background-image: url(../img2/main-menu/key_.png);
 }
 
-#mmenu.ui-menu .ui-state-selected .ui-icon-mmkey{
-	background-image: url(../img2/mmenu/key_sel.png);
+nav#main #main-menu.ui-menu .ui-state-selected .ui-icon-mmkey{
+	background-image: url(../img2/main-menu/key_sel.png);
 }
 
-#mmenu.ui-menu .ui-icon-mmpower{
-	background-image: url(../img2/mmenu/power_.png);
+nav#main #main-menu.ui-menu .ui-icon-mmpower{
+	background-image: url(../img2/main-menu/power_.png);
 }
 
-#mmenu.ui-menu .ui-state-selected .ui-icon-mmpower{
-	background-image: url(../img2/mmenu/power_sel.png);
+nav#main #main-menu.ui-menu .ui-state-selected .ui-icon-mmpower{
+	background-image: url(../img2/main-menu/power_sel.png);
 }
 
-#mmenu.ui-menu .ui-icon-mmpref{
-	background-image: url(../img2/mmenu/power_button_.png);
+nav#main #main-menu.ui-menu .ui-icon-mmpref{
+	background-image: url(../img2/main-menu/power_button_.png);
 }
 
-#mmenu.ui-menu .ui-state-selected .ui-icon-mmpref{
-	background-image: url(../img2/mmenu/power_button_sel.png);
+nav#main #main-menu.ui-menu .ui-state-selected .ui-icon-mmpref{
+	background-image: url(../img2/main-menu/power_button_sel.png);
 }

@@ -267,81 +267,72 @@ if ($p == "weather") {
 if ($p == "light") {
     ?>
 
-    <script type="text/javascript">
+    <script src="js2/light.js"></script>
 
-        $(document).ready(function () {
+        <div id="page_light" class="grid_11">
 
-            $('.lampkey').click(function () {
-                var lamp = $(this);
-                var label = lamp.attr("label");
-                $.get("powerKey.php?label=" + label, function () {
-                });
-            });
-
-            $.get("getData.php?dev=light&label=light_hol_2_n&type=last&place=250;635&img=backlight", function (data) {
-                $("#light_lamp2").html(data);
-            });
-
-            $.get("getData.php?dev=light&label=light_stairs_3&type=last&place=220;685&img=backlight", function (data) {
-                $("#light_lamp3").html(data);
-            });
-
-            $.get("getData.php?dev=light&label=bathroom_mirror_light&type=last&place=295;735&img=backlight", function (data) {
-                $("#light_lamp10").html(data);
-            });
-
-
-        });
-
-        $(document).everyTime("1s", function () {
-
-            // $.get("getData.php?dev=light&label=light_hol_2&type=last&is_light=is_light_hol_2&place=220;685", function(data)	{
-            // 	$("#light_lamp1").html(data);
-            // });
-
-            $.get("getData.php?dev=light&label=light_hol_2_n&type=last&place=250;635&img=backlight", function (data) {
-                $("#light_lamp2").html(data);
-            });
-
-            $.get("getData.php?dev=light&label=light_stairs_3&type=last&place=220;685&img=backlight", function (data) {
-                $("#light_lamp3").html(data);
-            });
-
-            $.get("getData.php?dev=light&label=bathroom_mirror_light&type=last&place=295;735&img=backlight", function (data) {
-                $("#light_lamp10").html(data);
-            });
-
-        });
-
-    </script>
-
-    <div id="page_light" class="grid_11">
-        <div class="grid_11 alpha">
-            <div class="ui-corner-all ui-widget-header" style="margin-top: 5px">
-                <h2 style="margin-left:5px;font-size:150%;">Освещение</h2>
+            <div class="grid_11 alpha">
+                <div class="ui-corner-all ui-widget-header" style="margin-top: 5px">
+                    <h2 style="margin-left:5px;font-size:150%;">Освещение</h2>
+                </div>
             </div>
-        </div>
-        <div class="clear"></div>
-        <div class="grid_3 alpha">
-            <div class="ui-corner-all ui-state-default" style="margin-top:5px;height:80px">
+            <div class="clear"></div>
+
+            <div class="grid_3 alpha">
+                <div class="ui-corner-all ui-state-default" style="margin-top:5px;height:80px">
+                </div>
             </div>
-        </div>
-        <div class="clear"></div>
-        <div class="grid_11 alpha">
-            <div class="ui-corner-all ui-state-default ui-widget-content"
-                 style="height: 500px;margin-top:5px;position:relative;">
-                <div id="home_light"><img src="img2/home_.png">
-                    <div id="light_lamp2"></div>
-                    <div class='lampkey' label='light_hol_2_n' style='top:250px;left:635px'></div>
-                    <div id="light_lamp3"></div>
-                    <div class='lampkey' label='light_stairs_3' style='top:220px;left:685px'></div>
-                    <div id="light_lamp10"></div>
-                    <div class='lampkey' label='bathroom_mirror_light' style='top:295px;left:735px'></div>
+            <div class="clear"></div>
+
+            <div id="accordion_light">
+                <h3 class='dx'>План</h3>
+                <div style="padding:0;border:0;overflow:visible">
+                    <div class="grid_11 alpha">
+                        <div class="ui-corner-all ui-state-default ui-widget-content"
+                             style="height: 500px;margin-top:5px;position:relative;">
+                            <div id="home_light"><img src="img2/home_.png">
+                                <div id="light_lamp2"></div>
+                                <div class='lampkey' label='light_hol_2_n' style='top:250px;left:635px'></div>
+                                <div id="light_lamp3"></div>
+                                <div class='lampkey' label='light_stairs_3' style='top:220px;left:685px'></div>
+                                <div id="light_lamp10"></div>
+                                <div class='lampkey' label='bathroom_mirror_light' style='top:295px;left:735px'></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <h3 class='dx'>Управление</h3>
+                <div style="padding:0;border:0;overflow:visible">
+                    <div class="grid_11 alpha">
+                        <div class="ui-corner-all ui-state-default" style="margin-top:5px;height:50px">
+                            <div id="backlight_first_floor" class="backlight">
+                                <div style="float: left; margin-left:5px;height:40px;">
+                                    <h2>Подсветка 1 этаж</h2>
+                                </div>
+                                <div style="float: left; margin-left:15px;">
+                                    <button class="button" style="width:60px;" mqtt="on"><img src="img2/light_on1.png" alt="on"></button>
+                                    <button class="button" style="width:60px;" mqtt="off"><img src="img2/light_off.png" alt="off"></button>
+                                </div>
+                                <div style="margin-left:25px;float: left">
+                                    <button class="button" style="width:50px" mqtt="+"><img src="img2/light_less.png" alt="+"></button>
+                                    <button class="button" style="width:40px;margin-left:-5px" mqtt="1"><img src="img2/light_1.png" alt="1"></button>
+                                    <button class="button" style="width:40px;margin-left:-5px" mqtt="2"><img src="img2/light_2.png" alt="2"></button>
+                                    <button class="button" style="width:40px;margin-left:-5px" mqtt="3"><img src="img2/light_3.png" alt="3"></button>
+                                    <button class="button" style="width:40px;margin-left:-5px" mqtt="4"><img src="img2/light_4.png" alt="4"></button>
+                                    <button class="button" style="width:40px;margin-left:-5px" mqtt="5"><img src="img2/light_5.png" alt="5"></button>
+                                    <button class="button" style="width:40px;margin-left:-5px" mqtt="6"><img src="img2/light_6.png" alt="6"></button>
+                                    <button class="button" style="width:40px;margin-left:-5px" mqtt="7"><img src="img2/light_7.png" alt="7"></button>
+                                    <button class="button" style="width:50px;margin-left:-5px" mqtt="-"><img src="img2/light_more.png" alt="-"></button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
                 </div>
             </div>
         </div>
-        <div class="clear"></div>
-    </div>
 
     <?php
 }
@@ -415,27 +406,26 @@ if ($p == "heater") {
             </div>
         </div>
         <div class="clear"></div>
+        <div class="grid_3 alpha">
+            <div class="ui-corner-all ui-state-default" style="margin-top:5px;height:80px">
+                <h2 style="margin-left:5px">Температура на улице</h2>
+                <img style="margin-top:5px;float:left" src="img2/temp.png">
+                <div id="temp_out_1" style="margin-top:10px;"></div>
+            </div>
+        </div>
+        <div class="grid_3 ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:218px">
+        </div>
+        <div class="grid_3 ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:218px">
+        </div>
+        <div class="grid_1 ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:58px">
+        </div>
+        <div class="grid_1 omega ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:58px">
+        </div>
+        <div class="clear"></div>
 
-        <div id="accordion">
-
+        <div id="accordion" style="margin-top:5px">
             <h3 class='dx'>План</h3>
             <div style="padding:0;border:0;overflow:visible">
-                <div class="grid_3 alpha">
-                    <div class="ui-corner-all ui-state-default" style="margin-top:5px;height:80px">
-                        <h2 style="margin-left:5px">Температура на улице</h2>
-                        <img style="margin-top:5px;float:left" src="img2/temp.png">
-                        <div id="temp_out_1" style="margin-top:10px;"></div>
-                    </div>
-                </div>
-                <div class="grid_3 ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:218px">
-                </div>
-                <div class="grid_3 ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:218px">
-                </div>
-                <div class="grid_1 ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:58px">
-                </div>
-                <div class="grid_1 omega ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:58px">
-                </div>
-                <div class="clear"></div>
                 <div class="grid_11 alpha">
                     <div class="ui-corner-all ui-state-default ui-widget-content"
                          style="height: 500px;margin-top:5px;position:relative">

@@ -136,7 +136,7 @@ abstract class unit implements iUnit
     }
 
     /**
-     * Получить у устройства подписку статуса MQQT
+     * Получить у устройства топик подписки статуса MQQT
      * @return string|null
      */
     protected function getMQQTTopicStatus() {
@@ -163,6 +163,36 @@ abstract class unit implements iUnit
         }
         return $topicStat;
     }
+
+    /**
+     * Проверяет, есть ли у устройства топик для публикации MQQT. Если топик есть, возвращает топик иначе null.
+     * @return string|null
+     */
+    public function checkMQТTTopicPublish() {
+        if (is_null($this->device)) {
+            return null;
+        }
+        if ($this->device->getNet()!=netDevice::ETHERNET_MQTT) {
+            return null;
+        }
+        $topicStat = $this->getMQQTTopicCommand();
+        if (is_null($topicStat) || $topicStat === "") {
+            return null;
+        }
+        return $topicStat;
+    }
+
+    /**
+     * Получить у устройства топик публикации MQQT
+     * @return string|null
+     */
+    protected function getMQQTTopicCommand() {
+        if (is_null($this->device)) {
+            return null;
+        }
+        return $this->device->getTopicCmnd();
+    }
+
 
     /**
      * @return mixed

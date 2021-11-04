@@ -92,6 +92,13 @@ body {
     background-image: url(temes/dx/images/background.jpg);
 }
 
+#backlight_first_floor.backlight .button {
+    padding: 0px;
+    margin-top:5px;
+    height:40px;
+}
+
+/*
 .ui-button-text-only .ui-button-text {
     padding: .1em 1em;
 }
@@ -125,3 +132,4 @@ body {
 .ui-button.ui-button-icon-only.ui-state-hover {
     border: 1px solid #6CF;
 }
+*/
