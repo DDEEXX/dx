@@ -253,7 +253,7 @@ if ($p == "weather") {
                 <div class="grid_3 omega" style="margin-left: 5px">
                     <div style="overflow: hidden;margin-top: 10px">
                         <p style="float:right;font-size: 80%">изменение давления</p>
-                        <img src="pressureHistory.php" height=80 style="float:right">
+                        <!--<img src="pressureHistory.php" height=80 style="float:right">-->
                     </div>
                 </div>
             </div>
@@ -434,8 +434,6 @@ if ($p == "heater") {
                              style="position:absolute;left:120px;top:220px"></div>
                         <div id="temp_bedroom" class="ui-corner-all ui-state-default ui-widget-content"
                              style="position:absolute;left:560px;top:310px"></div>
-                        <div id="temp_cubie" class="ui-corner-all ui-state-default ui-widget-content"
-                             style="position:absolute;left:220px;top:160px"></div>
                     </div>
                 </div>
                 <div class="clear"></div>

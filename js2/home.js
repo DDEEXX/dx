@@ -8,10 +8,6 @@ function updateTemperature() {
         $("#temp_out_weather_home").html(data);
     });
 
-    $.get("getData.php?dev=pressure&label=pressure_cube&type=last", function (data) {
-        $("#pressure_weather_home").html(data);
-    });
-
 }
 
 Date.prototype.getMonthName = function() {

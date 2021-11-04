@@ -14,9 +14,6 @@ function updateTemperature() {
     $.get("getData.php?dev=temp&label=temp_bedroom&type=last&color=plan", function (data) {
         $("#temp_bedroom").html(data);
     });
-    $.get("getData.php?dev=temp&label=temp_cubie&type=last&color=plan", function (data) {
-        $("#temp_cubie").html(data);
-    });
 
     $.get("getData.php?dev=temp&label=temp_hall&type=last", function (data) {
         $("#temp_hall_g").html(data);
