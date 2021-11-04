@@ -316,7 +316,7 @@ if ($p == "light") {
                                 </div>
                                 <div style="margin-left:25px;float:left">
                                     <button class="button" style="width:50px;float:left" mqtt="8"><img src="img2/light_min.png" alt="max"></button>
-                                    <div class="light_level" style="height:38px;float:left">
+                                    <div class="light_level" style="height:38px;float:left;margin-left:1px">
                                         <button class="button" style="width:40px;margin-left:0px" mqtt="1"><img src="img2/light_1.png" alt="1"></button>
                                         <button class="button" style="width:40px;margin-left:-8px" mqtt="2"><img src="img2/light_2.png" alt="2"></button>
                                         <button class="button" style="width:40px;margin-left:-8px" mqtt="3"><img src="img2/light_3.png" alt="3"></button>
@@ -325,7 +325,7 @@ if ($p == "light") {
                                         <button class="button" style="width:40px;margin-left:-8px" mqtt="6"><img src="img2/light_6.png" alt="6"></button>
                                         <button class="button" style="width:40px;margin-left:-8px" mqtt="7"><img src="img2/light_7.png" alt="7"></button>
                                     </div>
-                                    <button class="button" style="width:50px;margin-left:0px;float:left" mqtt="9"><img src="img2/light_max.png" alt="max"></button>
+                                    <button class="button" style="width:50px;margin-left:2px;float:left" mqtt="9"><img src="img2/light_max.png" alt="max"></button>
                                 </div>
 
                             </div>
