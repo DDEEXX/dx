@@ -1,7 +1,7 @@
 <?php
 
 require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
-require_once(dirname(__FILE__) . '/class/mqqt.class.php');
+require_once(dirname(__FILE__) . '/class/mqtt.class.php');
 require_once(dirname(__FILE__) . '/class/globalConst.interface.php');
 require_once(dirname(__FILE__) . '/class/logger.class.php');
 
@@ -48,7 +48,7 @@ function keyCode ($label, $code) {
         return;
     }
 
-    $mqtt = mqqt::Connect(false);
+    $mqtt = mqttSend::Connect();
     $mqtt->publish($topicPublish, $code);
     unset($mqtt);
 

@@ -21,7 +21,7 @@ interface loggerName
     const ERROR = "error";
     const ACCESS = "access";
     const DEBUG = "debug";
-    const MQQT = "mqqt";
+    const MQTT = "mqtt";
 }
 
 class logger

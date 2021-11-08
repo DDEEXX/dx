@@ -68,11 +68,19 @@ interface sharedMemory
     const KEY_LABEL_MODULE = 2;
     const KEY_1WARE_PATH = 3;
     const KEY_1WARE_ADDRESS = 4;
-    const KEY_MQQT_STATUS_TOPIC = 5;
+    const KEY_MQTT_STATUS_TOPIC = 5;
 }
 
 interface modeDeviceValue {
     const IS_NULL = null;
     const GET_VALUE = 0; //можно получить значение датчика в любое время
     const LOOP_VALUE = 1; //надо постоянно слушать, данные датчик отправляет сам
+}
+
+interface testUnitCode {
+    const WORKING = 0;
+    const NO_CONNECTION = 1;
+    const NO_DEVICE = 2;
+    const DISABLED = 3;
+    const ONE_WIRE_ADDRESS = 4;
 }

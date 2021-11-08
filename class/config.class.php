@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Interface iConfigDB - возращает настройки подключения к базе данных mySQL
+ * Interface iConfigDB - возвращает настройки подключения к базе данных mySQL
  */
 interface iConfigDB
 {
@@ -87,15 +87,15 @@ interface iConfigMQTT
 }
 
 /**
- * Class mqqtConfig - настройки подключиения к MQTT брокеру
+ * Class mqttConfig - настройки подключения к MQTT брокеру
  */
-class mqqtConfig implements iConfigMQTT
+class mqttConfig implements iConfigMQTT
 {
-    private $mqqt_id;
-    private $mqqt_host;
-    private $mqqt_user;
-    private $mqqt_pwd;
-    private $mqqt_port;
+    private $mqtt_id;
+    private $mqtt_host;
+    private $mqtt_user;
+    private $mqtt_pwd;
+    private $mqtt_port;
     //private $err_rep = 32759; // -1, 0, E_ALL, 32759 as (E_ALL ^ E_NOTICE), etc...
 
     /**
@@ -104,35 +104,35 @@ class mqqtConfig implements iConfigMQTT
     public function __construct()
     {
         $DatabaseAccess = parse_ini_file(dirname(__FILE__) . '/../ini/access.ini', TRUE);
-        $this->mqqt_id   = $DatabaseAccess['mqttbroker']['id'];
-        $this->mqqt_host = $DatabaseAccess['mqttbroker']['host'];
-        $this->mqqt_user = $DatabaseAccess['mqttbroker']['user'];
-        $this->mqqt_pwd  = $DatabaseAccess['mqttbroker']['password'];
-        $this->mqqt_port = (int)$DatabaseAccess['mqttbroker']['port'];
+        $this->mqtt_id   = $DatabaseAccess['mqttbroker']['id'];
+        $this->mqtt_host = $DatabaseAccess['mqttbroker']['host'];
+        $this->mqtt_user = $DatabaseAccess['mqttbroker']['user'];
+        $this->mqtt_pwd  = $DatabaseAccess['mqttbroker']['password'];
+        $this->mqtt_port = (int)$DatabaseAccess['mqttbroker']['port'];
     }
 
     public function getID()
     {
-        return $this->mqqt_id;
+        return $this->mqtt_id;
     }
 
     public function getHost()
     {
-        return $this->mqqt_host;
+        return $this->mqtt_host;
     }
 
     public function getUser()
     {
-        return $this->mqqt_user;
+        return $this->mqtt_user;
     }
 
     public function getPassword()
     {
-        return $this->mqqt_pwd;
+        return $this->mqtt_pwd;
     }
 
     public function getPort()
     {
-        return $this->mqqt_port;
+        return $this->mqtt_port;
     }
 }

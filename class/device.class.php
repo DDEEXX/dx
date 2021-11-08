@@ -5,7 +5,7 @@ require_once(dirname(__FILE__) . "/sqlDataBase.class.php");
 require_once(dirname(__FILE__) . "/i2c.class.php");
 require_once(dirname(__FILE__) . "/logger.class.php");
 require_once(dirname(__FILE__) . "/sharedMemory.class.php");
-require_once(dirname(__FILE__) . '/mqqt.class.php');
+require_once(dirname(__FILE__) . '/mqtt.class.php');
 
 //if (file_exists("/opt/owfs/share/php/OWNet/ownet.php_"))
 //    /** @noinspection PhpIncludeInspection */
@@ -30,18 +30,14 @@ interface iTemperatureSensor
 interface iDevice
 {
     public function getDeviceID();
-
     public function getNet();
-
     public function getAddress();
-
     public function getType();
-
     public function getDisabled();
-
     public function getAlarm();
-
     public function addInBD();
+    public function test();
+
 }
 
 /**
@@ -59,9 +55,10 @@ abstract class device implements iDevice
     protected $model = null;
     protected $topicCmnd = null;
     protected $topicStat = null;
+    protected $topicTest = null;
 
     public function __construct($deviceID, $net, $adr, $type, $disabled, $alarm = null, $model = null,
-                                $topicCmnd = null, $topicStat = null)
+                                $topicCmnd = null, $topicStat = null, $topicTest = null)
     {
         $this->net = $net;
         $this->address = $adr;
@@ -73,6 +70,7 @@ abstract class device implements iDevice
         $this->model = $model;
         $this->topicCmnd = $topicCmnd;
         $this->topicStat = $topicStat;
+        $this->topicTest = $topicTest;
     }
 
     /**
@@ -136,8 +134,12 @@ abstract class device implements iDevice
         }
     }
 
+    public function test() {
+        return testUnitCode::WORKING;
+    }
+
     /**
-     * Получить подписку MQQT для отправки
+     * Получить подписку MQTT для отправки
      * @return string|null
      */
     public function getTopicCmnd()
@@ -150,13 +152,25 @@ abstract class device implements iDevice
     }
 
     /**
-     * Получить подписку статуса MQQT
+     * Получить подписку статуса MQTT
      * @return string|null
      */
     public function getTopicStat()
     {
         if (is_string($this->topicStat)) {
             return trim($this->topicStat);
+        }
+        else
+            return null;
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function getTopicTest()
+    {
+        if (is_string($this->topicTest)) {
+            return $this->topicTest;
         }
         else
             return null;
@@ -180,7 +194,8 @@ class maker extends device
         $disabled = $options['Disabled'];
         $topicCmnd = $options['topic_cmnd'];
         $topicStat = $options['topic_stat'];
-        parent::__construct($deviceID, $net, $address, $typeDevice, $disabled,null,null,$topicCmnd,$topicStat);
+        $topicTest = $options['topic_test'];
+        parent::__construct($deviceID, $net, $address, $typeDevice, $disabled,null,null,$topicCmnd,$topicStat,$topicTest);
     }
 
 }
@@ -203,8 +218,9 @@ class sensor extends device
         $model = $options['model'];
         $topicCmnd = $options['topic_cmnd'];
         $topicStat = $options['topic_stat'];
+        $topicTest = $options['topic_test'];
 
-        parent::__construct($deviceID, $net, $address, $typeDevice, $disabled, $alarm, $model, $topicCmnd, $topicStat);
+        parent::__construct($deviceID, $net, $address, $typeDevice, $disabled, $alarm, $model, $topicCmnd, $topicStat, $topicTest);
         //parent::__construct($options, $typeDevice);
     }
 
@@ -485,6 +501,47 @@ class temperatureSensor extends sensor implements iTemperatureSensor
         return $result;
     }
 
+    private function testOWNet()
+    {
+        $result = testUnitCode::NO_CONNECTION;
+        $OWNetAddress = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_ADDRESS);
+        $address = $this->getAddress();
+        if (preg_match("/^28\./", $address)) { //это датчик DS18B20
+            /** @noinspection PhpUndefinedClassInspection */
+            $ow = new OWNet($OWNetAddress);
+            for ($i=0; $i<5; $i++ ) {
+                $temperature = $ow->get($address.'/temperature12');
+                if (!is_null($temperature)) {
+                    $result = testUnitCode::WORKING;
+                    break;
+                }
+            }
+        }
+        else {
+            $result = testUnitCode::ONE_WIRE_ADDRESS;
+        }
+
+        return $result;
+
+    }
+
+    public function test()
+    {
+        $result = testUnitCode::WORKING;
+        $disabled = $this->getDisabled();
+        if ($disabled == 0) { // датчик включен
+            switch ($this->getNet()) {
+                case netDevice::ONE_WIRE :
+                    $result = $this->testOWNet();
+                    break;
+            }
+        }
+        else {
+            $result = testUnitCode::DISABLED;
+        }
+        return $result;
+    }
+
 }
 
 class pressureSensor extends sensor
@@ -591,6 +648,7 @@ class labelSensor extends sensor
 
 class powerKeyMaker extends maker
 {
+    const TEST_CODE = 'test';
 
     public function __construct(array $options)
     {
@@ -600,12 +658,12 @@ class powerKeyMaker extends maker
     private function getValueOWNet($chanel = null)
     {
         $result = null;
-        $OWNetAdress = DB::getConst('OWNetAddress');
+        $OWNetAddress = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_ADDRESS);
         $address = $this->getAddress();
         if (preg_match("/^3A\./", $address)) {
 
             /** @noinspection PhpUndefinedClassInspection */
-            $ow = new OWNet($OWNetAdress);
+            $ow = new OWNet($OWNetAddress);
 
             $result = $ow->get('/uncached/' . $address . '/PIO.' . $chanel);
 
@@ -641,11 +699,11 @@ class powerKeyMaker extends maker
         return $result;
     }
 
-    private function setValueMQQT($value = null) {
+    private function setValueMQTT($value = null) {
         $result = true;
         try {
-            $mqqt = mqqt::Connect();
-            $mqqt->publish($this->topicCmnd, $value);
+            $mqtt = mqttSend::Connect(true);
+            $mqtt->publish($this->getTopicCmnd(), $value);
         }
         catch (Exception $e) {
             $result = false;
@@ -677,11 +735,40 @@ class powerKeyMaker extends maker
                     $result = $this->setValueOWNet($value, $chanel);
                     break;
                 case netDevice::ETHERNET_MQTT :
-                    $result = $this->setValueMQQT($value);
+                    $result = $this->setValueMQTT($value);
                     break;
             }
         }
         return $result;
+    }
+
+    public function test()
+    {
+        $result = testUnitCode::WORKING;
+        $disabled = $this->getDisabled();
+        if ($disabled == 0) { // датчик включен
+            switch ($this->getNet()) {
+                case netDevice::ONE_WIRE :
+                    $result = $this->testOWNet();
+                    break;
+                case netDevice::ETHERNET_MQTT :
+                    $result = $this->testMQTT();
+                    break;
+            }
+        }
+        else {
+            $result = testUnitCode::DISABLED;
+        }
+        return $result;
+    }
+
+    private function testOWNet() {
+        return testUnitCode::WORKING;
+    }
+
+    private function testMQTT() {
+        $mqtt = mqttTest::Connect();
+        $mqtt->publish($this->getTopicTest(), self::TEST_CODE);
     }
 
 }

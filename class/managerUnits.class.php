@@ -104,7 +104,7 @@ class managerUnits
                 //записываем в массив: ключ - label модуля, значение элемент массива: ключ - id модуля, значение - буква проекта
                 $smLabelModule[$tekUnit->getLabel()] = array('id_module'=>$key, 'project_id'=>$projID);
             }
-            //Записываем с ключем 0 массив содержащий ID модулей, понадобится для дальнейшего доступа
+            //Записываем с ключом 0 массив содержащий ID модулей, понадобится для дальнейшего доступа
             $sm->set(sharedMemory::KEY_UNIT_ID, $keys);
             //записываем в массив: ключ - тип модуля, значение - буква проекта
             foreach ($typeUnit as $key=>$value) {
@@ -125,9 +125,9 @@ class managerUnits
         if (!$sm->set(sharedMemory::KEY_1WARE_PATH, DB::getConst('OWNETDir'))) {return false;}
         if (!$sm->set(sharedMemory::KEY_1WARE_ADDRESS, DB::getConst('OWNetAddress'))) {return false;}
 
-        //Для поиска модулей в sm по подписке MQQT, создадим массив
-        $listUnitsMQQTTopicStatus = self::getListUnitsMQQTTopicStatus(0);
-        if (!$sm->set(sharedMemory::KEY_MQQT_STATUS_TOPIC, $listUnitsMQQTTopicStatus)) {return false;}
+        //Для поиска модулей в sm по подписке MQTT, создадим массив
+        $listUnitsMQTTTopicStatus = self::getListUnitsMQTTTopicStatus(0);
+        if (!$sm->set(sharedMemory::KEY_MQTT_STATUS_TOPIC, $listUnitsMQTTTopicStatus)) {return false;}
         return true;
     }
 
@@ -211,13 +211,13 @@ class managerUnits
     }
 
     /**
-     * Получить список модулей устройства которых это MQQT клиенты, и у них есть подписки статуса
+     * Получить список модулей устройства которых это MQTT клиенты, и у них есть подписки статуса
      * @param int $deviceDisables
      * @return array Одномерный массив ключ id модуля, значение тема сообщения
      */
-    public static function getListUnitsMQQTTopicStatus($deviceDisables = 0)
+    public static function getListUnitsMQTTTopicStatus($deviceDisables = 0)
     {
-        $listUnitsMQQTLoop = array();
+        $listUnitsMQTTLoop = array();
         //Получаем все устройства
         $listAllUnits = self::getListUnits(null , $deviceDisables);
         foreach ($listAllUnits as $unit) {
@@ -228,12 +228,12 @@ class managerUnits
             if ($disabled!=$deviceDisables) {
                 continue;
             }
-            $topicStatus = $unit->checkMQQTTopicStatus();
+            $topicStatus = $unit->checkMQTTTopicStatus();
             if (isset($topicStatus)) {
-                $listUnitsMQQTLoop[$unit->getId()] = $topicStatus;
+                $listUnitsMQTTLoop[$unit->getId()] = $topicStatus;
             }
         }
-        return $listUnitsMQQTLoop;
+        return $listUnitsMQTTLoop;
     }
 
     /**
@@ -334,4 +334,33 @@ class managerUnits
         return $resUnit;
 
     }
+
+    public static function testUnits() {
+
+        //Получаем список всех включенных модулей
+        $Units = managerUnits::getListUnits(null, 0);
+
+        $result = array();
+
+        foreach ($Units as $unit) {
+
+            if (is_null($unit)) continue;
+
+            if (!is_null($unit->getDevice())) {
+                $testCode = $unit->test();
+            }
+            else {
+                $testCode = testUnitCode::NO_DEVICE;
+            }
+
+            $result[$unit->getId()] = $testCode;
+
+        }
+
+        unset($Units);
+
+        return $result;
+
+    }
+
 }

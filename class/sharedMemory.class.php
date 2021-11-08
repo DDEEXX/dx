@@ -6,6 +6,7 @@
  * - ключ переменной KEY_LABEL_MODULE = 2 : массив [uniteLabel=>['id_module'=>UniteID, 'project_id'=>projID]]
  * - ключ переменной KEY_1WARE_PATH = 3 : константа OWNETDir
  * - ключ переменной KEY_1WARE_ADDRESS = 4 : константа OWNetAddress
+ * - ключ переменной KEY_MQTT_STATUS_TOPIC = 5 : массив [uniteID=>topic_stat]
  *
  * В сегменте с ключом, созданному по идентификатору проект projID [B..Z] хранятся:
  * - ключ переменной 0 : массив [uniteID1, uniteID2, ...]
@@ -22,7 +23,7 @@ class shareMemoryInitUnitException extends Exception
     public function __construct($mess)
     {
         parent::__construct($mess);
-        logger::writeLog('Ошибка при иницилизации модулей в распределенную память.'.$mess,
+        logger::writeLog('Ошибка при инициализации модулей в распределенную память.'.$mess,
             loggerTypeMessage::ERROR,
             loggerName::ERROR);
     }
@@ -243,8 +244,8 @@ class sharedMemoryUnits
 
         $topic = trim($topic);
 
-        $listUnitsMQQTTopicStatus = $sm->get(sharedMemory::KEY_MQQT_STATUS_TOPIC);
-        foreach ($listUnitsMQQTTopicStatus as $key => $value) {
+        $listUnitsMQTTTopicStatus = $sm->get(sharedMemory::KEY_MQTT_STATUS_TOPIC);
+        foreach ($listUnitsMQTTTopicStatus as $key => $value) {
             if ($topic == $value) {
                 $result[] = $key;
             }
