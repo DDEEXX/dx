@@ -18,8 +18,8 @@ posix_setsid();
 
 $fileDir = dirname(__FILE__);
 
-require($fileDir."/class/daemon.class.php");
-require($fileDir."/class/managerUnits.class.php");
+require($fileDir.'/class/daemon.class.php');
+require($fileDir.'/class/managerUnits.class.php');
 
 ini_set('error_log',$fileDir.'/logs/errorLoopForever.log');
 fclose(STDIN);
@@ -42,7 +42,7 @@ class daemonLoopForever extends daemon
 
     public function run()
     {
-        $this->putPitFile(); // устанавливаем PID файла
+        parent::run();
 
         $OWNetAddress = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_ADDRESS);
         $ow = new OWNet($OWNetAddress);
@@ -53,7 +53,7 @@ class daemonLoopForever extends daemon
 
             $alarmDir = '';
             try {
-                $alarmDirData = $ow->dir("/alarm");
+                $alarmDirData = $ow->dir('/alarm');
                 if (is_array($alarmDirData) && array_key_exists('data', $alarmDirData)) {
                     $alarmDir = $alarmDirData['data'];
                 }
@@ -61,7 +61,7 @@ class daemonLoopForever extends daemon
             catch (Exception $e) {
             }
 
-            $alarms = array();
+            $alarms = [];
 
             //если в alarm есть данные, то последний символ в строке - точка, если ничего нет, то пустая строка
             if (strlen($alarmDir)) { //удаляем последний символ - точку
@@ -84,8 +84,7 @@ class daemonLoopForever extends daemon
                     $value = 0;
                 }
                 $unit = managerUnits::getUnitID($uniteID);
-                $unit->updateValueLoop($value); //Обновляем данные в объекте модуля
-                $unit->updateUnitSharedMemory();
+                $unit->updateValue($value); //Обновляем данные в объекте модуля
             }
 
             usleep(self::PAUSE); //ждем

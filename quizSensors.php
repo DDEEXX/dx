@@ -9,34 +9,47 @@
 require_once(dirname(__FILE__) . '/class/globalConst.interface.php');
 require_once(dirname(__FILE__) . '/class/lists.class.php');
 require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
+require_once(dirname(__FILE__) . '/class/mqtt.class.php');
 
 $temperatureUnits = managerUnits::getListUnits(typeUnit::TEMPERATURE, 0);
 foreach ($temperatureUnits as $unit) {
     if (is_null($unit)) continue;
     //опрашиваем датчики, которые могут вернуть значение в любое время
     if ($unit->getModeDeviceValue() == modeDeviceValue::GET_VALUE) {
-        $result = $unit->updateValue(); //Считываем и обновляем данные в объекте модуля
-        if (!is_null($result)) {
+        $value = $unit->getValueFromDevice();
+        if (!is_null($value)) {
+            $unit->updateValue($value);   //обновляем значение в модуле
             $unit->writeCurrentValueDB(); //Записываем данные в базу данных
         }
+    }
+    $topic = $unit->checkMqttTopicPublish();
+    if (!is_null($topic)) {
+        $mqtt = mqttSend::connect();
+        $mqtt->publish($topic, 'temperature');
+        //после публикации температура должна вернуться в модуль и записаться в базу данных
+        //эти действия делаются в обработке подписки
     }
 }
 unset($temperatureUnits);
 
-//$sel = new selectOption();
-//$sel->set('DeviceTypeID', typeDevice::PRESSURE);
-//$sel->set('Disabled', 0);
-//
-//$pressureUnits = managerUnits::getListUnitsDB($sel);
-//
-//foreach ($pressureUnits as $tekUnit) {
-//    $val = $tekUnit->getValue();
-//    if (!is_null($val)) {
-//        $tekUnit->writeValue($val);
-//    }
-//}
-//
-//unset($pressureUnits);
+$pressureUnits = managerUnits::getListUnits(typeUnit::PRESSURE, 0);
+foreach ($pressureUnits as $unit) {
+    if (is_null($unit)) continue;
+    if ($unit->getModeDeviceValue() == modeDeviceValue::GET_VALUE) {
+        $value = $unit->getValueFromDevice();
+        if (!is_null($value)) {
+            $unit->updateValue($value);   //обновляем значение в модуле
+            $unit->writeCurrentValueDB(); //Записываем данные в базу данных
+        }
+    }
+    $topic = $unit->checkMqttTopicPublish();
+    if (!is_null($topic)) {
+        $mqtt = mqttSend::connect();
+        $mqtt->publish($topic, 'pressure');
+    }
+}
+unset($pressureUnits);
+
 //
 //$sel = new selectOption();
 //$sel->set('DeviceTypeID', typeDevice::HUMIDITY);
@@ -45,7 +58,7 @@ unset($temperatureUnits);
 //$humidityUnits = managerUnits::getListUnitsDB($sel);
 //
 //foreach ($humidityUnits as $tekUnit) {
-//    $val = $tekUnit->getValue();
+//    $val = $tekUnit->getValueFromDevice();
 //    if (!is_null($val)) {
 //        $tekUnit->writeValue($val);
 //    }

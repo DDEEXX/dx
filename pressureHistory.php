@@ -10,13 +10,13 @@ require_once(dirname(__FILE__) . '/class/globalConst.interface.php');
 const DEFAULT_GR_WIDTH = 180;
 const DEFAULT_GR_HEIGHT = 80;
 const DEFAULT_GR_TYPE = graphType::BAR;
-const LABEL = 'pressure_cube';
+const LABEL = 'pressure';
 const DELTA_SETYBASE = 6;
 
 $grType = DEFAULT_GR_TYPE;
 
 function noData($width = DEFAULT_GR_WIDTH, $height = DEFAULT_GR_HEIGHT) {
-    $Title = "NO DATA";
+    $Title = 'NO DATA';
     $im = imagecreatetruecolor($width, $height);
     $blue = imagecolorallocate($im, 82, 114, 191);
     $trcolor = ImageColorAllocate($im, 0, 0, 0);
@@ -31,10 +31,10 @@ function noData($width = DEFAULT_GR_WIDTH, $height = DEFAULT_GR_HEIGHT) {
     imagedestroy($im);
 }
 
-$unit = managerUnits::getUnitLabelDB(LABEL);
+$unit = managerUnits::getUnitLabel(LABEL);
 
 if (is_null($unit)) {
-    logger::writeLog('Молуль с именем :: ' . LABEL . ' :: не найден (pressureHistory.php)',
+    logger::writeLog('Модуль с именем :: ' . LABEL . ' :: не найден (pressureHistory.php)',
         loggerTypeMessage::ERROR, loggerName::ERROR);
     noData();
     exit();
@@ -58,7 +58,7 @@ for ($i=0;$i<=10;$i=$i+2) {
 }
 
 //$pressure = array(734, 734,735,736,738,738);
-$hour = array('-2','-4','-6','-8','-10','-12');
+$hour = ['-2','-4','-6','-8','-10','-12'];
 
 if (count($pressure)>0) {
 
@@ -66,7 +66,7 @@ if (count($pressure)>0) {
     $interval = 1;
 
     $graph = new Graph(DEFAULT_GR_WIDTH, DEFAULT_GR_HEIGHT, 'auto');
-    $graph->SetScale("textlin");
+    $graph->SetScale('textlin');
     $graph->SetBox(false);
 //    $graph->SetTickDensity(TICKD_DENSE);
 //    $graph->SetAxisStyle(AXSTYLE_BOXOUT);
@@ -105,12 +105,12 @@ if (count($pressure)>0) {
     $graph->Add($b1);
 
     //$graph->img->SetMargin(45, 2, 2, 20);
-    $graph->img->SetTransparent("white");
+    $graph->img->SetTransparent('white');
 
     $graph->Stroke();
 
 }
 else {
-    noData($width, $height);
+    noData();
 }
 

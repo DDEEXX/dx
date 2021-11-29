@@ -19,7 +19,7 @@ interface typeDevice{
     const NONE              = 0;
     const TEMPERATURE       = 1; //Датчик температуры
     const LABEL             = 2; //Метка
-    const POWER_KEY         = 3; //Силовой ключ (коммутирует высокое наряжение)
+    const POWER_KEY         = 3; //Силовой ключ (коммутирует высокое напряжение)
     const KEY_IN            = 4; //Входящий ключ (сухой контакт и т.д.)
     const KEY_OUT           = 5; //Выходной ключ - коммутирует маленькие токи
     const VOLTAGE           = 6; //Датчик наличия напряжения
@@ -31,7 +31,7 @@ interface typeUnit{
     const NONE              = 0;
     const TEMPERATURE       = 1; //Температура
     const LABEL             = 2; //Метка
-    const POWER_KEY         = 3; //Силовой ключ (коммутирует высокое наряжение)
+    const POWER_KEY         = 3; //Силовой ключ (коммутирует высокое напряжение)
     const KEY_IN            = 4; //Входящий ключ (сухой контакт и т.д.)
     const KEY_OUT           = 5; //Выходной ключ - коммутирует маленькие токи
     const VOLTAGE           = 6; //Датчик наличия напряжения
@@ -44,11 +44,13 @@ interface graphType {
     const BAR  = 1; //столбчатый график
 }
 
+//Каким способом включился модуль
 interface statusKey {
-    const MOVE      = 'move';
-    const HEAD      = 'head';
-    const OUTSIDE   = 'outside';
-    const OFF       = 'off';
+    const MOVE      = 'move';       //от датчика движения
+    const WEB       = 'web';        //через сайт или приложение
+    const OFF       = 'off';        //выключен
+    const UNKNOWN   = 'unknown';    //неизвестно, скорее всего через выключатель не связанный с сервером
+    const DEVICE    = 'device';     //на самом модуле
 }
 
 interface modeUnit {
@@ -68,7 +70,6 @@ interface sharedMemory
     const KEY_LABEL_MODULE = 2;
     const KEY_1WARE_PATH = 3;
     const KEY_1WARE_ADDRESS = 4;
-    const KEY_MQTT_STATUS_TOPIC = 5;
 }
 
 interface modeDeviceValue {
@@ -84,3 +85,5 @@ interface testUnitCode {
     const DISABLED = 3;
     const ONE_WIRE_ADDRESS = 4;
 }
+
+const MQTT_CODE_SEPARATOR = ';';

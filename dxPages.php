@@ -253,7 +253,7 @@ if ($p == "weather") {
                 <div class="grid_3 omega" style="margin-left: 5px">
                     <div style="overflow: hidden;margin-top: 10px">
                         <p style="float:right;font-size: 80%">изменение давления</p>
-                        <!--<img src="pressureHistory.php" height=80 style="float:right">-->
+                        <img src="pressureHistory.php" height=80 style="float:right">
                     </div>
                 </div>
             </div>
@@ -310,9 +310,8 @@ if ($p == "light") {
                                 <div style="float: left; margin-left:5px;height:40px;">
                                     <h2>Подсветка 1 этаж</h2>
                                 </div>
-                                <div style="float: left; margin-left:15px;">
-                                    <button class="button" style="width:60px;" mqtt="on"><img src="img2/light_on1.png" alt="on"></button>
-                                    <button class="button" style="width:60px;" mqtt="off"><img src="img2/light_off.png" alt="off"></button>
+                                <div style="float: left; margin-left:25px;">
+                                    <button class="button" style="width:70px;" mqtt="on">ВКЛ</button>
                                 </div>
                                 <div style="margin-left:25px;float:left">
                                     <button class="button" style="width:50px;float:left" mqtt="8"><img src="img2/light_min.png" alt="max"></button>
@@ -327,7 +326,9 @@ if ($p == "light") {
                                     </div>
                                     <button class="button" style="width:50px;margin-left:2px;float:left" mqtt="9"><img src="img2/light_max.png" alt="max"></button>
                                 </div>
-
+                                <div style="float: left; margin-left:25px;">
+                                    <button class="button" style="width:70px;" mqtt="off">ВЫКЛ</button>
+                                </div>
                             </div>
                         </div>
                     </div>

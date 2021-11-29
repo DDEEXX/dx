@@ -2,14 +2,14 @@
 
 require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
 
-if ($_REQUEST['dev'] == "temp") { //получаем температру
+if ($_REQUEST['dev'] == 'temp') { //получаем температуру
 
     $label = $_GET['label']; //значение поля "UnitLabel" в таблице "tunits";
 
-    $unit = managerUnits::getUnitLabelDB($label);
+    $unit = managerUnits::getUnitLabel($label);
 
     if (is_null($unit)) {
-        logger::writeLog('Молуль с именем :: ' . $label . ' :: не найден',
+        logger::writeLog('Модуль с именем :: ' . $label . ' :: не найден',
             loggerTypeMessage::ERROR, loggerName::ERROR);
         echo '--'; //пока так
         exit(); //тут надо подумать что возвращать
@@ -34,7 +34,7 @@ if ($_REQUEST['dev'] == "temp") { //получаем температру
         $temperaturePrecision = DB::getConst('TemperaturePrecision');
         $temperature = (double)$value['Value'];
         $temperature = round($temperature, $temperaturePrecision);
-        // время с последнего имерения в течение которого температура считается еще актуальной
+        // время с последнего измерения в течение которого температура считается еще актуальной
         $actualTimeTemperature = DB::getConst('ActualTimeTemperature');
         $actualTemp = ((time() - strtotime($value['Date'])) < $actualTimeTemperature);
         if ($actualTemp) {
@@ -49,14 +49,18 @@ if ($_REQUEST['dev'] == "temp") { //получаем температру
     unset($unit);
 }
 
-if ($_REQUEST['dev'] == "pressure") { //получаем атмосферное давление
+if ($_REQUEST['dev'] == 'pressure') { //получаем атмосферное давление
 
     $label = $_GET['label']; //значение поля "UnitLabel" в таблице "tunits";
 
-    $unit = managerUnits::getUnitLabelDB($label);
+    $unit = managerUnits::getUnitLabel($label);
+
+    logger::writeLog('Получение давления ' . $label ,
+        loggerTypeMessage::NOTICE, loggerName::DEBUG);
+
 
     if (is_null($unit)) {
-        logger::writeLog('Молуль с именем :: ' . $label . ' :: не найден',
+        logger::writeLog('Модуль с именем :: ' . $label . ' :: не найден',
             loggerTypeMessage::ERROR, loggerName::ERROR);
         echo '--'; //пока так
         exit(); //тут надо подумать что возвращать
@@ -69,7 +73,7 @@ if ($_REQUEST['dev'] == "pressure") { //получаем атмосферное 
     }
     else {
         $pressure = (double)$value['Value'];
-        // время с последнего имерения в течение которого давление считается еще актуальной
+        // время с последнего измерения в течение которого давление считается еще актуальной
         $actualTimePressure = DB::getConst('ActualTimePressure');
         $actualPressure = ((time() - strtotime($value['Date'])) < $actualTimePressure);
         $actualPressureClass = $actualPressure ? 'actualPressure' : 'unActualPressure';
@@ -83,7 +87,7 @@ if ($_REQUEST['dev'] == "pressure") { //получаем атмосферное 
     unset($unit);
 }
 
-if ($_REQUEST['dev'] == "light") { //получаем значение освещения
+if ($_REQUEST['dev'] == 'light') { //получаем значение освещения
 
     $label = $_GET['label'];
 
@@ -99,7 +103,7 @@ if ($_REQUEST['dev'] == "light") { //получаем значение осве�
         $keyStatus = 'empty';
     }
 
-    $place = explode(";", $_GET['place']);
+    $place = explode(';', $_GET['place']);
 
     $nameImgFile = isset($_GET['img']) ? $_GET['img'] : 'light';
 
@@ -117,7 +121,7 @@ if ($_REQUEST['dev'] == "light") { //получаем значение осве�
     echo '</div>';
 }
 
-if ($_REQUEST['dev'] == "cam") { //камеры
+if ($_REQUEST['dev'] == 'cam') { //камеры
 
     $Monitor = $_GET['monitor'];
 

@@ -5,8 +5,8 @@ $(document).ready(function () {
 
 
     $('.lampkey').click(function () {
-        var lamp = $(this);
-        var label = lamp.attr("label");
+        const lamp = $(this);
+        const label = lamp.attr("label");
         $.get("powerKey.php?label=" + label, function () {
         });
     });
@@ -24,8 +24,8 @@ $(document).ready(function () {
     });
 
     $('#backlight_first_floor .button').click(function () {
-        var lamp = $(this);
-        var code = lamp.attr("mqtt");
+        const lamp = $(this);
+        const code = lamp.attr("mqtt");
         $.get("powerKey.php?label=backlight_first_floor&code=" + code, function () {
         });
     });

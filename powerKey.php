@@ -21,7 +21,7 @@ function key_d($label) {
     $isLight = $unit->getValue();
 
     $value = $isLight ? 0 : 1;
-    $statusKey = $isLight ? statusKey::OFF : statusKey::OUTSIDE;
+    $statusKey = $isLight ? statusKey::OFF : statusKey::WEB;
 
     try {
         $unit->updateValue($value, $statusKey);
@@ -43,7 +43,7 @@ function keyCode ($label, $code) {
         return;
     }
 
-    $topicPublish = $unit->checkMQТTTopicPublish();
+    $topicPublish = $unit->checkMqttTopicPublish();
     if (is_null($topicPublish)) {
         return;
     }

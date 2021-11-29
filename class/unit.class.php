@@ -6,17 +6,50 @@
  * Time: 12:13
  */
 
-require_once(dirname(__FILE__) . "/sqlDataBase.class.php");
-require_once(dirname(__FILE__) . "/managerDevices.class.php");
+require_once(dirname(__FILE__) . '/sqlDataBase.class.php');
+require_once(dirname(__FILE__) . '/managerDevices.class.php');
 require_once(dirname(__FILE__) . '/globalConst.interface.php');
 require_once(dirname(__FILE__) . '/logger.class.php');
 
 interface iUnit
 {
+    /**
+     * Получить универсальный ID модуля
+     * @return int
+     */
     public function getId();
+
+    /**
+     * Получить имя модуля
+     * @return string
+     */
     public function getLabel();
-    public function getValue();
+
+    /**
+     * Получить физическое устройство модуля
+     * @return iDevice|null
+     */
     public function getDevice();
+
+    /**
+     * Проверяет, есть ли у устройства подписка статуса MQTT. Если подписка есть, возвращает подписку иначе null.
+     * @return string|null
+     */
+    public function checkMQTTTopicStatus();
+
+    /**
+     * Проверяет, есть ли у устройства топик для публикации MQTT. Если топик есть, возвращает топик иначе null.
+     * @return string|null
+     */
+    public function checkMqttTopicPublish();
+
+    /**
+     * Получить данные с модуля
+     * (извлекаются готовые данные из модуля, не с физического датчика)
+     * @return mixed
+     */
+    public function getValues();
+
     public function test();
 }
 
@@ -29,6 +62,25 @@ interface iSensorUnite extends iUnit {
      */
     public function getModeDeviceValue();
 
+    /**
+     * Обновляем значение модуля
+     * @param $value
+     */
+    public function updateValue($value);
+
+    public function getValues();
+
+    /**
+     * Получить значение непосредственно с физического сенсора
+     * @return mixed
+     */
+    public function getValueFromDevice();
+
+}
+
+interface iModuleUnite extends iUnit {
+
+
 }
 
 abstract class unit implements iUnit
@@ -38,6 +90,7 @@ abstract class unit implements iUnit
     protected $id = 0;
     protected $label = '';
     protected $type = typeUnit::NONE;
+    protected $value = null;
 
     /**
      * unit constructor.
@@ -62,9 +115,6 @@ abstract class unit implements iUnit
         unset($this->device);
     }
 
-    /**
-     * @return int
-     */
     public function getId()
     {
         return $this->id;
@@ -79,24 +129,23 @@ abstract class unit implements iUnit
     }
 
     /**
-     * Получить/считать значение датчика
-     * @return null
+     * Получить физическое устройство модуля
+     * @return iDevice|null
      */
-    abstract public function getValue();
-
     public function getDevice() {
+        if (!is_object($this->device)) {
+            return null;
+        }
         return $this->device;
     }
 
-    /**
-     * Тестирует модуль на работоспособность
-     * @return int - код результата теста (0 - работает)
-     */
-    public function test() {
-        return testUnitCode::WORKING;
+    public function getValues() {
+        return json_encode([
+            'value' => $this->value,
+        ]);
     }
 
-    /** Добавляет модуль в распределяемую память, возращает id модуля, при ошибке добавления возвращает null
+    /** Добавляет модуль в распределяемую память, возвращает id модуля, при ошибке добавления возвращает null
      * @param $key - числовой идентификатор сегмента разделяемой памяти
      * @return int|null
      */
@@ -125,7 +174,7 @@ abstract class unit implements iUnit
      * Получить адрес устройства
      * @return int|null
      */
-    public function getDeviceAdress() {
+    public function getDeviceAddress() {
         if (is_null($this->device)) {
             return null;
         }
@@ -153,7 +202,7 @@ abstract class unit implements iUnit
      * Получить у устройства топик подписки статуса MQTT
      * @return string|null
      */
-    protected function getMQTTTopicStatus() {
+    private function getMQTTTopicStatus() {
         if (is_null($this->device)) {
             return null;
         }
@@ -172,25 +221,7 @@ abstract class unit implements iUnit
             return null;
         }
         $topicStat = $this->getMQTTTopicStatus();
-        if (is_null($topicStat) || $topicStat === "") {
-            return null;
-        }
-        return $topicStat;
-    }
-
-    /**
-     * Проверяет, есть ли у устройства топик для публикации MQTT. Если топик есть, возвращает топик иначе null.
-     * @return string|null
-     */
-    public function checkMQТTTopicPublish() {
-        if (is_null($this->device)) {
-            return null;
-        }
-        if ($this->device->getNet()!=netDevice::ETHERNET_MQTT) {
-            return null;
-        }
-        $topicStat = $this->getMQTTTopicCommand();
-        if (is_null($topicStat) || $topicStat === "") {
+        if (is_null($topicStat) || trim($topicStat) === '') {
             return null;
         }
         return $topicStat;
@@ -200,13 +231,54 @@ abstract class unit implements iUnit
      * Получить у устройства топик публикации MQTT
      * @return string|null
      */
-    protected function getMQTTTopicCommand() {
+    private function getMQTTTopicCommand() {
         if (is_null($this->device)) {
             return null;
         }
         return $this->device->getTopicCmnd();
     }
 
+    /**
+     * Проверяет, есть ли у устройства топик для публикации MQTT. Если топик есть, возвращает топик иначе null.
+     * @return string|null
+     */
+    public function checkMqttTopicPublish() {
+        if (is_null($this->device)) {
+            return null;
+        }
+        if ($this->device->getNet()!=netDevice::ETHERNET_MQTT) {
+            return null;
+        }
+        $topicStat = $this->getMQTTTopicCommand();
+        if (is_null($topicStat) || trim($topicStat) === '') {
+            return null;
+        }
+        return $topicStat;
+    }
+
+    /**
+     * Обновляем значение модуля и время обновления значения
+     * @param $value
+     * @return void
+     */
+    public function updateValue($value) {
+        $this->value = $value;
+    }
+
+    /**
+     * Конвертирует входящее значение полученное от MQTT брокера в значение датчика
+     * @param $payload
+     * @return mixed
+     */
+    protected function convertPayload($payload) {
+        return $payload;
+    }
+
+    /**
+     * Обновляем значение модуля и время обновления значения пришедшее по подписке MQTT
+     * @param $payload
+     */
+    abstract public function updateValueMQTT($payload);
 
     /**
      * @return mixed
@@ -217,19 +289,26 @@ abstract class unit implements iUnit
     }
 
     /**
-     *  Обновляет модуль в рапределяемой памяти
+     *  Обновляет модуль в распределяемой памяти
      */
     public function updateUnitSharedMemory() {
         sharedMemoryUnit::set($this);
     }
 
+    public function test() {
+        $device = $this->getDevice();
+        if (is_null($device)) {
+            return testUnitCode::NO_DEVICE;
+        }
+        return $device->test();
+    }
+
 }
 
-class sensorUnit extends unit implements iSensorUnite
+abstract class sensorUnit extends unit implements iSensorUnite
 {
 
     protected $valueTable = 0;
-    protected $value = null;
     protected $dataValue = null;
 
     /**
@@ -258,10 +337,10 @@ class sensorUnit extends unit implements iSensorUnite
     }
 
     /**
-     * Получить/считать значение датчика
-     * @return null
+     * Получить/считать значение с физического датчика
+     * @return string|null
      */
-    public function getValue() {
+    public function getValueFromDevice() {
         if (!is_null($this->device)) {
             return $this->device->getValue();
         }
@@ -271,50 +350,32 @@ class sensorUnit extends unit implements iSensorUnite
     }
 
     /**
-     * Считывает c физического датчика (device) значение и обновялет его и обновляет время получения этого значения
-     * @return null|string
-     */
-    public function updateValue() {
-        $this->value = $this->getValue();
-        $this->dataValue = time();
-        if (is_null($this->value)) {
-            return null;
-        }
-        return json_encode([
-            'value' => $this->value,
-            'dateValue' => $this->dataValue,
-        ]);
-    }
-
-    /**
-     * Возвращает тип устройства (device) привязанного к модулу, значение датчика можно получить в любое время или
-     * надо датчик постоянно "слушать", или неопределен = null
+     * Возвращает тип устройства (device) привязанного к модулю, значение датчика можно получить в любое время или
+     * надо датчик постоянно "слушать", или неопределённо = null
      * @return int|mixed|null
      */
     public function getModeDeviceValue()
     {
         return modeDeviceValue::IS_NULL;
-    }
-
-    public function __destruct()
-    {
-        parent::__destruct(); // TODO: Change the autogenerated stub
-    }
-
-    public function test() {
-        $device = $this->getDevice();
-        if (is_null($device)) {
-            return testUnitCode::NO_DEVICE;
+        if (is_null($this->device)) {
+            return $result;
         }
-        return $device->test();
+        if ($this->device->getNet() == netDevice::ONE_WIRE) {
+            $result = modeDeviceValue::GET_VALUE;
+        }
+        return $result;
+    }
+
+    public function updateValue($value) {
+        parent::updateValue($value);
+        $this->dataValue = time();
     }
 
 }
 
-class moduleUnit extends unit
+abstract class moduleUnit extends unit implements iModuleUnite
 {
 
-    protected $value = null; //значение
     protected $status = null; //статус, как изменил свое состояние
     protected $dataStatus = null; //время изменения состояния
 
@@ -334,30 +395,6 @@ class moduleUnit extends unit
 
     }
 
-    public function __destruct()
-    {
-        parent::__destruct(); // TODO: Change the autogenerated stub
-    }
-
-    public function getValue() {
-        return null;
-    }
-
-    public function setMode($mode) {
-    }
-
-    /**
-     * Получить режим работы модуля из БД
-     * @return mixed
-     */
-    public function getMode()
-    {
-        return DB::getModeUnit($this);
-    }
-
-    public function updateValue($value, $status = null)
-    {
-    }
 }
 
 /**
@@ -380,27 +417,42 @@ class temperatureUnit extends sensorUnit
         $this->delta = $options['Delta'];
     }
 
-    public function __destruct()
-    {
-        parent::__destruct(); // TODO: Change the autogenerated stub
+    /**
+     * Получить значение температуры непосредственно с датчика
+     * @return null
+     */
+    public function getValueFromDevice() {
+        if ($this->getModeDeviceValue() != modeDeviceValue::GET_VALUE) {
+            return null;
+        }
+        return parent::getValueFromDevice();
     }
 
     /**
-     * Считывает и обновялет значение датчика (device) и время получения этого значения,
-     * помещает объект модуля в распределяемую память
-     *
-     * @return mixed|null
+     * Обновляет значение модуля и время получения этого значения, помещает объект модуля в распределяемую память
+     * @param $value
      */
-    public function updateValue() {
-        $result = json_decode(parent::updateValue(), true);
+    public function updateValue($value) {
+        if (is_null($value)) return;
+        parent::updateValue($value);
         $this->updateUnitSharedMemory();
-        if (is_null($result)) {
-            return null;
+    }
+
+    /**
+     * Обновляет значение модуля и время получения этого значения, помещает объект модуля в распределяемую память
+     * и записывает в базу данных
+     * @param $payload
+     */
+    public function updateValueMQTT($payload) {
+        $value = $this->convertPayload($payload);
+        $this->updateValue($value);
+        try {
+            $this->writeCurrentValueDB();
+        } catch (connectDBException $e) {
+            logger::writeLog('ошибка подключения к базе данных', loggerTypeMessage::ERROR,loggerName::MQTT);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('ошибка добавление температуры в базу данных', loggerTypeMessage::ERROR,loggerName::MQTT);
         }
-        return json_encode([
-            'value' => $result['value'],
-            'dateValue' => $result['dateValue'],
-        ]);
     }
 
     /**
@@ -440,24 +492,16 @@ class temperatureUnit extends sensorUnit
 
     /**
      * Записать значение температуры в базу данных
-     * @param $value
      * @throws connectDBException
      * @throws querySelectDBException
      */
     public function writeCurrentValueDB()
     {
 
-//        $value = json_decode($result, true);
-//
-//        if (!is_double($value['value']) && !is_int($value['value'])) {
-//            //Пишем лог
-//            return;
-//        }
-
         $temperature = $this->value + (int)$this->delta;
         $uniteID = $this->id;
         $nameTabValue = 'tvalue_' . $this->valueTable;
-        $dateValue = date("Y-m-d H:i:s",$this->dataValue);
+        $dateValue = date('Y-m-d H:i:s',$this->dataValue);
 
         $query = 'INSERT INTO ' . $nameTabValue . ' VALUES (NULL, ' . "$uniteID,"." '$dateValue',"  . $temperature . ')';
 
@@ -495,7 +539,7 @@ class temperatureUnit extends sensorUnit
         $date_to = "'" . $dateTo . "'";
         //Если конечная дата не задана, используем настоящее время
         if (empty($dateTo)) {
-            $date_to = "NOW()";
+            $date_to = 'NOW()';
         }
 
         //Обрабатываем начальную дату
@@ -506,11 +550,11 @@ class temperatureUnit extends sensorUnit
             $date_from = "($date_to - INTERVAL 1 DAY)";
             $date_format = "DATE_FORMAT(Date, '%H:%i')";
         }
-        elseif ($dateFrom == "week") {
+        elseif ($dateFrom == 'week') {
             $date_from = "($date_to - INTERVAL 7 DAY)";
             $date_format = "DATE_FORMAT(Date, '%d.%m')";
         }
-        elseif ($dateFrom == "month") {
+        elseif ($dateFrom == 'month') {
             $date_from = "($date_to - INTERVAL 1 MONTH)";
             $date_format = "DATE_FORMAT(Date, '%d.%m')";
         }
@@ -518,7 +562,7 @@ class temperatureUnit extends sensorUnit
         $id = $this->getId();
         $nameTabValue = 'tvalue_' . $this->valueTable;
 
-        $query = "SELECT Value, $date_format Date_f FROM " . $nameTabValue . " WHERE UnitID=" . $id . " AND Date>=$date_from AND Date<=$date_to ORDER BY Date";
+        $query = "SELECT Value, $date_format Date_f FROM " . $nameTabValue . ' WHERE UnitID=' . $id . " AND Date>=$date_from AND Date<=$date_to ORDER BY Date";
 
         try {
             $con = sqlDataBase::Connect();
@@ -539,17 +583,6 @@ class temperatureUnit extends sensorUnit
 
     }
 
-    public function getModeDeviceValue() {
-        $result = modeDeviceValue::IS_NULL;
-        if (is_null($this->device)) {
-            return $result;
-        }
-        if ($this->device->getNet() == netDevice::ONE_WIRE) {
-            $result = modeDeviceValue::GET_VALUE;
-        }
-        return $result;
-    }
-
 }
 
 class humidityUnit extends sensorUnit
@@ -566,11 +599,6 @@ class humidityUnit extends sensorUnit
     {
         parent::__construct($options, typeUnit::HUMIDITY);
         $this->delta = $options['Delta'];
-    }
-
-    public function __destruct()
-    {
-        parent::__destruct(); // TODO: Change the autogenerated stub
     }
 
     /**
@@ -617,6 +645,10 @@ class humidityUnit extends sensorUnit
         return DB::getLastValueUnit($this);
     }
 
+    public function updateValueMQTT($payload)
+    {
+        // TODO: Implement updateValueMQTT() method.
+    }
 }
 
 class pressureUnit extends sensorUnit
@@ -635,11 +667,6 @@ class pressureUnit extends sensorUnit
         $this->delta = $options['Delta'];
     }
 
-    public function __destruct()
-    {
-        parent::__destruct(); // TODO: Change the autogenerated stub
-    }
-
     /**
      * Записать значение давления в базу данных
      * время записи берется текущее серверное
@@ -647,20 +674,21 @@ class pressureUnit extends sensorUnit
      * @throws connectDBException
      * @throws querySelectDBException
      */
-    public function writeValue($value)
+    public function writeCurrentValueDB()
     {
 
-        if (!is_double($value) && !is_int($value)) {
-            //Пишем лог
-            return;
-        }
+//        if (!is_double($this->value) && !is_int($this->value)) {
+//            logger::writeLog('Отсутствует значение для записи в базу данных (writeCurrentValueDB)',
+//                loggerTypeMessage::ERROR, loggerName::ERROR);
+//            return;
+//        }
 
-        $delta = $this->delta;
-        $pressure = $value + $delta;
+        $pressure = $this->value + (int)$this->delta;
         $uniteID = $this->id;
         $nameTabValue = 'tvalue_' . $this->valueTable;
+        $dateValue = date('Y-m-d H:i:s',$this->dataValue);
 
-        $query = 'INSERT INTO ' . $nameTabValue . ' VALUES (NULL, ' . "$uniteID, SYSDATE(), " . $pressure . ')';
+        $query = 'INSERT INTO ' . $nameTabValue . ' VALUES (NULL, ' . "$uniteID,"." '$dateValue',"  . $pressure . ')';
 
         $con = sqlDataBase::Connect();
 
@@ -669,7 +697,7 @@ class pressureUnit extends sensorUnit
         unset($con);
 
         if (!$result) {
-            logger::writeLog('Ошибка при записи в базу данных (writeValue)',
+            logger::writeLog('Ошибка при записи в базу данных (writeCurrentValueDB)',
                 loggerTypeMessage::ERROR, loggerName::ERROR);
         }
 
@@ -696,7 +724,7 @@ class pressureUnit extends sensorUnit
         $date_to = "'" . $dateTo . "'";
         //Если конечная дата не задана, используем настоящее время
         if (empty($dateTo)) {
-            $date_to = "NOW()";
+            $date_to = 'NOW()';
         }
 
         //Обрабатываем начальную дату
@@ -707,11 +735,11 @@ class pressureUnit extends sensorUnit
             $date_from = "($date_to - INTERVAL 1 DAY)";
             $date_format = "DATE_FORMAT(Date, '%H:%i')";
         }
-        elseif ($dateFrom == "week") {
+        elseif ($dateFrom == 'week') {
             $date_from = "($date_to - INTERVAL 7 DAY)";
             $date_format = "DATE_FORMAT(Date, '%d.%m')";
         }
-        elseif ($dateFrom == "month") {
+        elseif ($dateFrom == 'month') {
             $date_from = "($date_to - INTERVAL 1 MONTH)";
             $date_format = "DATE_FORMAT(Date, '%d.%m')";
         }
@@ -719,7 +747,7 @@ class pressureUnit extends sensorUnit
         $id = $this->getId();
         $nameTabValue = 'tvalue_' . $this->valueTable;
 
-        $query = "SELECT Value, $date_format Date_f FROM " . $nameTabValue . " WHERE UnitID=" . $id . " AND Date>=$date_from AND Date<=$date_to ORDER BY Date";
+        $query = "SELECT Value, $date_format Date_f FROM " . $nameTabValue . ' WHERE UnitID=' . $id . " AND Date>=$date_from AND Date<=$date_to ORDER BY Date";
 
         try {
             $con = sqlDataBase::Connect();
@@ -751,7 +779,7 @@ class pressureUnit extends sensorUnit
     public function getAverageForInterval($dateFrom = null, $dateTo = null){
         //Конечная дата
         if (empty($dateTo)) {
-            $dateTo = "NOW()";
+            $dateTo = 'NOW()';
         }
         else {
             $dateTo = '"'.$dateTo.'"';
@@ -776,7 +804,7 @@ class pressureUnit extends sensorUnit
             $con = sqlDataBase::Connect();
             $result = queryDataBase::getOne($con, $query);
         } catch (connectDBException $e) {
-            logger::writeLog('Ошибка при подключении к базе данных в функции getTemperatureForIntervall. ' . $e->getMessage(),
+            logger::writeLog('Ошибка при подключении к базе данных в функции getAverageForInterval. ' . $e->getMessage(),
                 loggerTypeMessage::FATAL, loggerName::ERROR);
         } catch (querySelectDBException $e) {
             logger::writeLog('Ошибка в функции getTemperatureForInterval. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
@@ -789,6 +817,28 @@ class pressureUnit extends sensorUnit
 
     }
 
+    public function updateValueMQTT($payload) {
+        $value = $this->convertPayload($payload);
+        $this->updateValue($value);
+        try {
+            $this->writeCurrentValueDB();
+        } catch (connectDBException $e) {
+            logger::writeLog('ошибка подключения к базе данных', loggerTypeMessage::ERROR,loggerName::MQTT);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('ошибка добавление температуры в базу данных', loggerTypeMessage::ERROR,loggerName::MQTT);
+        }
+    }
+
+    /**
+     * Обновляет значение модуля и время получения этого значения, помещает объект модуля в распределяемую память
+     * @param $value
+     */
+    public function updateValue($value) {
+        if (is_null($value)) return;
+        parent::updateValue($value);
+        $this->updateUnitSharedMemory();
+    }
+
 }
 
 class keyInUnit extends sensorUnit
@@ -796,7 +846,6 @@ class keyInUnit extends sensorUnit
 
     private $lastValue;
     private $lastDataValue;
-    private $chanel;
 
     /**
      * keyInUnit constructor.
@@ -805,7 +854,6 @@ class keyInUnit extends sensorUnit
      */
     public function __construct(array $options)
     {
-        $this->chanel = $options['Chanel'];
         parent::__construct($options, typeUnit::KEY_IN);
         $this->value = 0;
         $this->dataValue = time();
@@ -814,12 +862,7 @@ class keyInUnit extends sensorUnit
 
     }
 
-    public function __destruct()
-    {
-        parent::__destruct(); // TODO: Change the autogenerated stub
-    }
-
-    public function readWhereLastStatus($status) //посмотреть в журнале когда было последннее значение равное value
+    public function readWhereLastStatus($status) //посмотреть в журнале когда было последнее значение равное value
     {
         if (is_null($status)) {
             return null;
@@ -835,7 +878,7 @@ class keyInUnit extends sensorUnit
         }
     }
 
-    public function checkLastStatus() //посмотреть в журнале последннее значение value
+    public function checkLastStatus() //посмотреть в журнале последнее значение value
     {
         $lastValue = DB::getLastValueUnit($this);
 
@@ -851,7 +894,7 @@ class keyInUnit extends sensorUnit
     {
         if (is_null($status)) return;
 
-        if (is_null($this->lastValue)) {  // если последнне значение не известно
+        if (is_null($this->lastValue)) {  // если последнее значение не известно
             $lastStatus = $this->checkLastStatus(); // то читаем его из базы
             if (is_null($lastStatus)) { //если в базе его тоже нет, то условимся на 0
                 $lastStatus = 0;
@@ -906,34 +949,16 @@ class keyInUnit extends sensorUnit
     }
 
     /**
-     * Значение датчика
-     * @param bool $fromSensor - считать данные непосредственно с физического датчика или
-     * иначе взять значение из свойста объекта
-     * @return mixed
-     */
-    public function getValue($fromSensor = false)
-    {
-        if ($fromSensor) {
-            if (!is_null($this->device)) {
-                return $this->device->getValue($this->chanel);
-            } else {
-                return null;
-            }
-        }
-        else {
-            return $this->value;
-        }
-    }
-
-    /**
-     * Получить из объекта датчикка его значение (состояние), статус и дату изменения статуса и последнее отличное
+     * Получить из объекта датчика его значение (состояние), статус и дату изменения статуса и последнее отличное
      * от текущего состояние и дату изменения этого состояния
      * @return false|string
      */
     public function getValues()
     {
+        $values = json_decode(parent::getValues(), true);
+        $value = $values['value'];
         return json_encode([
-            'value' => $this->value,
+            'value' => $value,
             'dataValue' => $this->dataValue,
             'lastValue' => $this->lastValue,
             'lastDataValue' => $this->lastDataValue,
@@ -943,16 +968,26 @@ class keyInUnit extends sensorUnit
     /**
      * Обновляет в объекте датчика его значение и время получения этого значения
      * @param $value - значение датчика
-     * @return null|string
+     * @return void
      */
-    public function updateValueLoop($value) {
+    public function updateValue($value) {
         if ($this->value === $value) {
             return;
         }
         $this->lastValue = $this->value;
         $this->lastDataValue = $this->dataValue;
-        $this->value = $value;
-        $this->dataValue = time();
+        parent::updateValue($value);
+        $this->updateUnitSharedMemory();
+    }
+
+    /**
+     * Обновляет значение модуля и время получения этого значения, помещает объект модуля в распределяемую память
+     * и записывает в базу данных
+     * @param $payload
+     */
+    public function updateValueMQTT($payload) {
+        $value = $this->convertPayload($payload);
+        $this->updateValue($value);
     }
 
     public function updateDeviceAlarm() {
@@ -961,13 +996,29 @@ class keyInUnit extends sensorUnit
         }
     }
 
+    protected function convertPayload($payload) {
+        if (is_string($payload)) {
+            if (strtoupper($payload) == 'OFF' || strtoupper($payload) == 'FALSE' || $payload == '0') {return 0;}
+            if (strtoupper($payload) == 'ON' || strtoupper($payload) == 'TRUE' || $payload == '1') {return 1;}
+        }
+        if (is_int($payload)) {
+            if ($payload == 0) {return 0;}
+            else {return 1;}
+        }
+        if (is_bool($payload)) {
+            if ($payload) {return 1;}
+            else {return 0;}
+        }
+        return 0;
+    }
+
 }
 
 //Силовой ключ
 class powerKeyUnit extends moduleUnit
 {
 
-    private $chanel;
+    private $channel;
 
     /**
      * powerKeyUnit constructor.
@@ -976,31 +1027,8 @@ class powerKeyUnit extends moduleUnit
      */
     public function __construct(array $options)
     {
-        $this->chanel = $options['Chanel'];
+        $this->channel = $options['Chanel'];
         parent::__construct($options, typeUnit::POWER_KEY);
-    }
-
-    /**
-     * Отправляем на физический датчик значение и
-     * записываем в журнал когда и каким образом изменилось состояние ключа
-     * @param $value
-     * @param null $status - каким образом поменялось состояние (вручную, от датчика и т.д.)
-     */
-    public function setValue($value, $status = null)
-    {
-        if (is_null($value)) {
-            return;  //Пишем лог
-        }
-
-        if (is_null($this->device)) {
-            return;  //Пишем лог
-        }
-
-        $result = $this->device->setValue($value, $this->chanel);
-        if ($result) {
-            $this->writeStatusKeyJournal($status); //записываем в журнал каким образом изменилось значение
-        }
-
     }
 
     /**
@@ -1020,28 +1048,30 @@ class powerKeyUnit extends moduleUnit
         }
 
         if ($value!=$this->value) {
-            $result = $this->device->setValue($value, $this->chanel);
-            if ($result) {
-                $this->value = $value;
-                $this->status = $status;
-                $this->dataStatus = time();
-                $this->updateUnitSharedMemory();
+            $result = $this->device->setValue($value, $this->channel, $status);
+            //если связь не через MQTT, то обновляем значение, статус, и время сразу
+            //если через MQTT, то состояние и статус придут от модуля
+            if (is_null($this->checkMQTTTopicStatus())) {
+                if ($result) {
+                    $this->value = $value;
+                    $this->status = $status;
+                    $this->dataStatus = time();
+                    $this->updateUnitSharedMemory();
+                }
             }
         }
-
     }
 
     /**
      * Считать состояние модуля
-     * @param bool $fromSensor - считать непоссредственно с датчика или вязть состояние из объекта модуля
-     * @param null $chanel
+     * @param bool $fromSensor - считать непосредственно с датчика или взять состояние из объекта модуля
      * @return mixed
      */
-    public function getValue($fromSensor = false)
+    public function getValueFromDevice($fromSensor = false)
     {
         if ($fromSensor) {
             if (!is_null($this->device)) {
-                return $this->device->getValue($this->chanel);
+                return $this->device->getValue($this->channel);
             } else {
                 return null;
             }
@@ -1063,55 +1093,56 @@ class powerKeyUnit extends moduleUnit
         ]);
     }
 
-    /**
-     * Записать в журнал когда и каким образом изменилось состояние ключа
-     * @param $status
-     */
-    private function writeStatusKeyJournal($status)
+    public function updateValueMQTT($payload, $status = null)
     {
-        if (!is_string($status)) {
+        if (is_null($this->device)) {
+            logger::writeLog('У модуля ID '.$this->getId().' нет device', loggerTypeMessage::WARNING, loggerName::ERROR);
             return;
         }
 
-        $uniteID = $this->getId();
-
-        $query = 'INSERT INTO tjournalkey VALUES (NULL, ' . "$uniteID" . ', SYSDATE(), "' . $status . '")';
-
-        try {
-            $con = sqlDataBase::Connect();
-            $result = queryDataBase::execute($con, $query);
-        } catch (connectDBException $e) {
-            logger::writeLog('Ошибка при подключении к базе данных в функции writeStatusKeyJournal. ' . $e->getMessage(),
-                loggerTypeMessage::FATAL, loggerName::ERROR);
-            $result = null;
-        } catch (querySelectDBException $e) {
-            logger::writeLog('Ошибка в функции writeStatusKeyJournal. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
-                loggerTypeMessage::FATAL, loggerName::ERROR);
-            $result = null;
+        $value = json_decode($this->convertPayload($payload), true);
+        if (is_null($value['code'])) {
+            logger::writeLog('С модуля ID '.$this->getId().' не пришло значение', loggerTypeMessage::WARNING, loggerName::ERROR);
+            return;  //Пишем лог
         }
-        unset($con);
 
-        if (!$result) {
-            logger::writeLog('Ошибка при записи в базу данных (writeStatusKeyJournal)',
-                loggerTypeMessage::ERROR, loggerName::ERROR);
+        if ($value['code']!=$this->value || $value['status']!=$this->status) {
+            if (!is_null($this->checkMQTTTopicStatus())) {
+                $this->value = $value['code'];
+                $this->status = $value['status'];
+                $this->dataStatus = time();
+                $this->updateUnitSharedMemory();
+            }
         }
     }
 
-    /**
-     * посмотреть в журнале последнюю запись
-     * @return null
-     */
-    public function readLastRecordKeyJournal()
+    protected function convertPayload($payload)
     {
-        $lastRecord = DB::getLastStatusKeyJournal($this);
+        $code = null;
+        $status = null;
+        if (is_string($payload)) { //может прийти команда и статус
+            $p = explode(MQTT_CODE_SEPARATOR, $payload);
+            if (strtoupper($p[0]) == 'OFF' || strtoupper($p[0]) == 'FALSE' || $p[0] == '0') {$code = 0;}
+            if (strtoupper($p[0]) == 'ON' || strtoupper($p[0]) == 'TRUE' || $p[0] == '1') {$code = 1;}
+            if (count($p) > 1) {
+                $status = $p[1];
+            }
+            else {
+                $status = statusKey::UNKNOWN;
+            }
+        }
+        if (is_int($payload)) {
+            if ($payload == 0) {$code = 0;}
+            else {$code = 1;}
+        }
+        if (is_bool($payload)) {
+            if ($payload) {$code = 1;}
+            else {$code = 0;}
+        }
+        return json_encode([
+        'code' => $code,
+        'status' => $status,
+        ]);
 
-        if (is_null($lastRecord)) {
-            return null;
-        }
-        else {
-            return $lastRecord;
-        }
     }
-
-
 }

@@ -6,7 +6,7 @@
  * Time: 12:11
  */
 
-require_once(dirname(__FILE__) . "/sqlDataBase.class.php");
+require_once(dirname(__FILE__) . '/sqlDataBase.class.php');
 require_once(dirname(__FILE__) . '/unit.class.php');
 require_once(dirname(__FILE__) . '/lists.class.php');
 require_once(dirname(__FILE__) . '/globalConst.interface.php');
@@ -48,7 +48,7 @@ class unitFactory
             return new $className($value);
         }
         else {
-            throw new Exception("Неверный тип продукта");
+            throw new Exception('Неверный тип продукта');
         }
 
     }
@@ -125,9 +125,6 @@ class managerUnits
         if (!$sm->set(sharedMemory::KEY_1WARE_PATH, DB::getConst('OWNETDir'))) {return false;}
         if (!$sm->set(sharedMemory::KEY_1WARE_ADDRESS, DB::getConst('OWNetAddress'))) {return false;}
 
-        //Для поиска модулей в sm по подписке MQTT, создадим массив
-        $listUnitsMQTTTopicStatus = self::getListUnitsMQTTTopicStatus(0);
-        if (!$sm->set(sharedMemory::KEY_MQTT_STATUS_TOPIC, $listUnitsMQTTTopicStatus)) {return false;}
         return true;
     }
 
@@ -165,7 +162,7 @@ class managerUnits
                         continue;
                     }
                 }
-                $listUnits1WireLoop[$unit->getId()] = $unit->getDeviceAdress();
+                $listUnits1WireLoop[$unit->getId()] = $unit->getDeviceAddress();
             }
         }
         return $listUnits1WireLoop;
@@ -190,7 +187,7 @@ class managerUnits
         }
 
         if (!$is1wire) {
-            logger::writeLog("При попытки обновить set_alarm не найден путь до каталога 1wire", loggerTypeMessage::WARNING ,loggerName::ACCESS);
+            logger::writeLog('При попытки обновить set_alarm не найден путь до каталога 1wire', loggerTypeMessage::WARNING ,loggerName::ACCESS);
             return;
         }
 
@@ -239,7 +236,7 @@ class managerUnits
     /**
      * Ищет модуль по имени в распределенной памяти. Если модуля с таким именем нет, то возвращает null
      * @param $label
-     * @return mixed|null
+     * @return iUnit|null
      */
     public static function getUnitLabel($label)
     {
@@ -249,32 +246,11 @@ class managerUnits
     /**
      * Ищет модуль по ID в распределенной памяти. Если модуля с таким именем нет, то возвращает null
      * @param $id
-     * @return mixed|null
+     * @return iUnit|null
      */
     public static function getUnitID($id)
     {
         return sharedMemoryUnits::getUnitID($id);
-    }
-
-    /**
-     * Ищет модули по подписке в распределенной памяти.
-     * @param $topic
-     * @return array - массив с id модулей
-     */
-    public static function getUnitStatusTopic($topic)
-    {
-        return sharedMemoryUnits::getUnitStatusTopic($topic);
-    }
-
-    /**
-     * Считывает данные с датчика, обновляет значение и дату считывания, помещает объект модуля в
-     *распределяемую память
-     * @param unit $unit
-     * @return null int
-     */
-    public static function updateValueUnit(unit $unit) {
-        $unit->updateValue();
-        return sharedMemoryUnit::set($unit);
     }
 
     /** Создает получает объект модуля по параметрам в $value

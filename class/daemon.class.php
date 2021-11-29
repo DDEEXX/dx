@@ -22,7 +22,7 @@ class daemon implements idaemon
 
     public function __construct($dirPidFile, $namePidFile) {
         $this->namePidFile =  $dirPidFile.'/'.$namePidFile;
-        pcntl_signal(SIGTERM, array($this, "childSignalHandler"));
+        pcntl_signal(SIGTERM, [$this, 'childSignalHandler']);
     }
 
     protected function childSignalHandler($signo) {

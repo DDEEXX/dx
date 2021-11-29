@@ -35,7 +35,9 @@ $(document).ready(function () {
 
     $("#accordion").accordion();
 
-    $(".rg_g_temp").buttonset();
+    $(".rg_g_temp").buttonset({
+        items: "input[type=radio]"
+    });
 
     $(".set_period").click(function () {
         $("#g_" + $(this).attr("dev_type")).attr("src", "graph.php?label=" + $(this).attr("dev_type") +

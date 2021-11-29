@@ -10,6 +10,16 @@ function updateWeather() {
 
 }
 
+function updatePressure() {
+
+    /* dev=pressure - событие = давление */
+    /* label=pressure - имя датчика в базе = pressure*/
+    $.get("getData.php?dev=pressure&label=pressure", function (data) {
+        $("#pressure_weather").html(data);
+    });
+
+}
+
 $(document).ready( function() {
 
     $.get("weather.php", function(data) {
@@ -17,6 +27,7 @@ $(document).ready( function() {
     });
 
     updateWeather();
+    updatePressure();
 
 });
 
@@ -26,7 +37,8 @@ $(document).everyTime("3600s", function() {
     });
 });
 
-//Обновление показания погоды кажные 5 минут
+//Обновление показания погоды каждые 5 минут
 $(document).everyTime("300s", function() {
     updateWeather();
+    updatePressure();
 });

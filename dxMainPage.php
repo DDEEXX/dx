@@ -29,7 +29,9 @@ session_start();
 
             $.ajaxSetup({cache: false});
 
-            $("nav#main #main-menu").menu();
+            $("nav#main #main-menu").menu({
+                icons: { submenu: "12345" }
+            });
 
             $("button.upDown").button({
                 icons: {
@@ -43,24 +45,24 @@ session_start();
                 });
 
             //подсвечиваем выбранный пункт меню
-            $('nav#main #main-menu').find('li:first').addClass('ui-state-selected'); // при загрузке страницы сразу даем класс первой ссылке, то есть индексной странице
+            $('nav#main #main-menu').find('li:first').addClass('ui-menu-item-selected'); // при загрузке страницы сразу даем класс первой ссылке, то есть индексной странице
             $('nav#main #main-menu').find('a').each(function () { // проходим по нужным нам ссылками
-                var location = window.location.href; // переменная с адресом страницы
-                var link = this.href; // переменная с url ссылки
+                const location = window.location.href; // переменная с адресом страницы
+                const link = this.href; // переменная с url ссылки
                 if (location === link) {
-                    $('nav#main #main-menu').find('li:first').removeClass('ui-state-selected'); // сначала удаляем класс с индексной страницы
-                    $(this).parent().addClass('ui-state-selected'); // добавляем класс
+                    $('nav#main #main-menu').find('li:first').removeClass('ui-menu-item-selected'); // сначала удаляем класс с индексной страницы
+                    $(this).parent().addClass('ui-menu-item-selected'); // добавляем класс
                 }
             });
 
-            $('nav#main #main-menu').removeClass('ui-widget-content'); // при загрузке страницы сразу даем класс первой ссылке, то есть индексной странице
+            //$('nav#main #main-menu').removeClass('ui-widget-content'); // при загрузке страницы сразу даем класс первой ссылке, то есть индексной странице
 
             $( "nav#main #main-menu" ).menu({
                 blur: function( event, ui ) {
-                    ui.item.removeClass('ui-state-focus');
+                    ui.item.removeClass('ui-menu-item-focus');
                 },
                 focus: function( event, ui ) {
-                    ui.item.addClass('ui-state-focus');
+                    ui.item.addClass('ui-menu-item-focus');
                 }
             });
 
@@ -85,7 +87,7 @@ else {
     <div class="container_12">
         <div class="grid_1">
             <nav id="main">
-                <ul id="main-menu" class="ui-corner-all">
+                <ul id="main-menu">
                     <li class="ui-corner-all">
                         <a href="dxMainPage.php?p=home">
                             <span class="ui-icon ui-icon-mmhome">1</span>

@@ -109,17 +109,14 @@ body {
     margin-top: 5px;
     height: 40px;
     border: 1px solid #86aeff;
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-    border-bottom-left-radius: 6px;
-    border-bottom-right-radius: 6px
+    border-radius: 6px;
 }
 
-/*
-.ui-button-text-only .ui-button-text {
+.ui-button {
     padding: .1em 1em;
 }
 
+/*
 .ui-accordion .dx.ui-accordion-header {
     padding-top: 0em;
     padding-bottom: 0em;

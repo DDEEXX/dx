@@ -1,12 +1,11 @@
 <?php
 /* Структура данных хранимых в разделяемой памяти
- * В сегменте с ключом, созданному по идентификатору проект ROJECT_LETTER_KEY = 'A' хранятся:
+ * В сегменте с ключом, созданному по идентификатору проект PROJECT_LETTER_KEY = 'A' хранятся:
  * - ключ переменной KEY_UNIT_TYPE = 0 : массив [uniteType=>projID]
  * - ключ переменной KEY_ID_MODULE = 1 : массив [uniteID=>projID]
  * - ключ переменной KEY_LABEL_MODULE = 2 : массив [uniteLabel=>['id_module'=>UniteID, 'project_id'=>projID]]
  * - ключ переменной KEY_1WARE_PATH = 3 : константа OWNETDir
  * - ключ переменной KEY_1WARE_ADDRESS = 4 : константа OWNetAddress
- * - ключ переменной KEY_MQTT_STATUS_TOPIC = 5 : массив [uniteID=>topic_stat]
  *
  * В сегменте с ключом, созданному по идентификатору проект projID [B..Z] хранятся:
  * - ключ переменной 0 : массив [uniteID1, uniteID2, ...]
@@ -31,7 +30,7 @@ class shareMemoryInitUnitException extends Exception
 
 class sharedMemoryUnit
 {
-    /** запись в разделяемую память модуля
+    /** Запись в разделяемую память модуля
      * @param unit $unit
      * @return null
      */
@@ -42,11 +41,11 @@ class sharedMemoryUnit
         $semID = sem_get($smKey);
         $idUnit = $unit->getId();
         if ($shmID === false) {
-            logger::writeLog("При иницилизации модуля с id ".$idUnit." ошибка в shm_attach()", loggerTypeMessage::ERROR, loggerName::ERROR);
+            logger::writeLog("При инициализации модуля с id ".$idUnit." ошибка в shm_attach()", loggerTypeMessage::ERROR, loggerName::ERROR);
             return null;
         }
         if ($semID === false) {
-            logger::writeLog("При иницилизации модуля с id ".$idUnit." ошибка в sem_get()", loggerTypeMessage::ERROR, loggerName::ERROR);
+            logger::writeLog("При инициализации модуля с id ".$idUnit." ошибка в sem_get()", loggerTypeMessage::ERROR, loggerName::ERROR);
             return null;
         }
         $error = false;
@@ -70,7 +69,7 @@ class sharedMemoryUnits
 
     private static $instance = array(); //массив объектов sharedMemoryUnits
 
-    /** получить числовой идентификатор сегмента разделяемой памяти
+    /** Получить числовой идентификатор сегмента разделяемой памяти
      * @return int
      */
     public function getKey()
@@ -101,7 +100,8 @@ class sharedMemoryUnits
         }
     }
 
-    /** Создание или получает объект по идентификатору для работы с разделяемой памятью
+    /**
+     * Создание или получает объект по идентификатору для работы с разделяемой памятью
      * @param string $projectID
      * @param int $size
      * @return sharedMemoryUnits
@@ -190,7 +190,7 @@ class sharedMemoryUnits
                     $list->append($unit);
                 }
                 else {
-                    //т.к. в одном сегменте могут храниться несколько типов модулей, то еще проверяем тип
+                    //Т.к. в одном сегменте могут храниться несколько типов модулей, то еще проверяем тип
                     if ($unit->getType() == $unitType) {
                         $list->append($unit);
                     }
@@ -201,6 +201,11 @@ class sharedMemoryUnits
         return $list;
     }
 
+    /**
+     * Возвращает из распределяемой памяти модуль по имени
+     * @param $label - имя модуля
+     * @return mixed|null
+     */
     static public function getUnitLabel($label) {
 
         try {
@@ -229,29 +234,6 @@ class sharedMemoryUnits
         }
 
         return $sm->get($idModule);
-
-    }
-
-    static public function getUnitStatusTopic($topic) {
-
-        $result = array();
-
-        try {
-            $sm = self::getInstance(sharedMemory::PROJECT_LETTER_KEY);
-        } catch (shareMemoryInitUnitException $e) {
-            return $result;
-        }
-
-        $topic = trim($topic);
-
-        $listUnitsMQTTTopicStatus = $sm->get(sharedMemory::KEY_MQTT_STATUS_TOPIC);
-        foreach ($listUnitsMQTTTopicStatus as $key => $value) {
-            if ($topic == $value) {
-                $result[] = $key;
-            }
-        }
-
-        return $result;
 
     }
 
@@ -300,7 +282,7 @@ class sharedMemoryUnits
             return null;
         }
 
-        //Получаем массив с указателями на сегменты распределяеммой памяти, ключ - тип модуля
+        //Получаем массив с указателями на сегменты распределяемой памяти, ключ - тип модуля
         return $sm->get($key);
 
     }

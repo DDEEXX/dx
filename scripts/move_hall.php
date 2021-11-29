@@ -22,12 +22,8 @@ class move_hall
     const MOVE_TIME_N = 8; //через сколько секунд выключится подсветка после отсутствия движения при включении от датчика движения
     const MOVE_TIME_GLOBAL = 1200; //через сколько секунд выключится подсветка независимо каким образом она была включена
 
-    const NAME_LIGHT_3 = 'light_stairs_3'; //Временно, чтобы еще включалась и подсветка лестницы
-
     static function start()
     {
-
-        $unitLightStairs3 = managerUnits::getUnitLabel(self::NAME_LIGHT_3); //временно
 
         $unitMove = managerUnits::getUnitLabel(self::NAME_MOVE);
         $unitNightLight = managerUnits::getUnitLabel(self::NAME_LIGHT_N);
@@ -35,7 +31,6 @@ class move_hall
         if (is_null($unitMove) || is_null($unitNightLight)) {
             unset($unitMove);
             unset($unitNightLight);
-            unset($unitLightStairs3); //временно
             return;
         }
 
@@ -52,22 +47,18 @@ class move_hall
         $timeKey = $nightLightData['dataStatus']; //Когда это было
 
         $outTime = 99999; //Прошло секунд с момента последней записи состояния подсветки
+        $now = time();
         if (!is_null($timeKey)) {
-            $outTime = time() - strtotime($timeKey);
+            $outTime = $now - $timeKey;
         }
 
         //Часть дня - ночь/утро/день/вечер
         $sunInfo = sunInfo::getSunInfo(mktime());
 
-        //для отладки
-        //echo 'Move '.$isMove.', Light '.$isLight.' Status '.$statusKey.' Sun '.$sunInfo.' Time '.date("Y-m-d H:i:s", $timeNoMove).PHP_EOL;
-        //$sunInfo = dayPart::NIGHT;
-
         if ($sunInfo == dayPart::NIGHT) { // ночь
             if ($isMove) { // есть движение
                 if (!$isLight) { // свет не горит
                     $unitNightLight->updateValue(1, statusKey::MOVE); // включает, записываем что от датчика
-                    $unitLightStairs3->updateValue(1, statusKey::MOVE); // включает, записываем что от датчика
                 }
             } else { // нет движения
                 if ($isLight) { // горит свет
@@ -75,18 +66,16 @@ class move_hall
                     //Определяем сколько секунд прошло после отключения датчика движения
                     $moveTime = 99999; // если не известно когда изменилось состояние датчика движения
                     if (!is_null($timeNoMove)) {
-                        $moveTime = time() - $timeNoMove;
+                        $moveTime = $now - $timeNoMove;
                     }
 
                     if ($statusKey == statusKey::MOVE) { // включился датчиком движения
                         if ($moveTime > self::MOVE_TIME_N) { // время вышло с последнего отсутствия движения
                             $unitNightLight->updateValue(0, statusKey::OFF); //гасим
-                            $unitLightStairs3->updateValue(0, statusKey::OFF); //гасим
                         }
                     } else { // свет включили вручную (через сайт) ???
                         if ($outTime > self::MOVE_TIME_GLOBAL) { // время вышло с последней активности подсветки
                             $unitNightLight->updateValue(0, statusKey::OFF); //гасим
-                            $unitLightStairs3->updateValue(0, statusKey::OFF); //гасим
                         }
                     }
                 }
@@ -95,11 +84,9 @@ class move_hall
             if ($isLight) { // горит свет
                 if ($statusKey == statusKey::MOVE) { // включился датчиком движения
                     $unitNightLight->updateValue(0, statusKey::OFF); //гасим
-                    $unitLightStairs3->updateValue(0, statusKey::OFF); //гасим
                 } else { // свет включили вручную (через сайт) ???
                     if ($outTime > self::MOVE_TIME_GLOBAL) { // время вышло с последней активности подсветки
                         $unitNightLight->updateValue(0, statusKey::OFF); //гасим
-                        $unitLightStairs3->updateValue(0, statusKey::OFF); //гасим
                     }
                 }
             }
@@ -107,7 +94,6 @@ class move_hall
 
         unset($unitMove);
         unset($unitNightLight);
-        unset($unitLightStairs3);
     }
 
 }

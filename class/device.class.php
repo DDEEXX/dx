@@ -108,7 +108,7 @@ abstract class device implements iDevice
 
     public function getAlarm()
     {
-        return null;
+        return $this->alarm;
     }
 
     public function addInBD()
@@ -456,6 +456,10 @@ class temperatureSensor extends sensor implements iTemperatureSensor
         parent::__construct($options, typeDevice::TEMPERATURE);
     }
 
+    /**
+     * Получить значение температуры непосредственно с датчика
+     * @return float|int|mixed|null
+     */
     public function getValue()
     {
         $result = null;
@@ -562,11 +566,6 @@ class keyInSensor extends sensor
         parent::__construct($options, typeDevice::KEY_IN);
     }
 
-    public function getAlarm()
-    {
-        return $this->alarm;
-    }
-
     /**
      *  Устанавливает set_alarm у физического датчика в соответствии со свойством alarm
      */
@@ -589,40 +588,6 @@ class keyInSensor extends sensor
         }
 
         return $result;
-
-//        $OWNetDir = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_PATH);
-//
-//        $address = $this->getAddress();
-//        if (preg_match("/^12\./", $address)) { //это датчик DS2406
-//
-//            $codeError = 0;
-//            $fileAlarmName = $OWNetDir .'/'. $address . "/set_alarm";
-//            if (file_exists($fileAlarmName)) {
-//                if (is_writable($fileAlarmName)) {
-//
-//                    if ($handle = fopen($fileAlarmName, 'w+')) {
-//                        if (fwrite($handle, $this->getAlarm()) === FALSE) {
-//                            $codeError = 2;
-//                        }
-//                        else {
-//                            fclose($handle);
-//                        }
-//                    }
-//                    else $codeError = 1;
-//                }
-//                else $codeError = 3;
-//            }
-//            else  $codeError = 4;
-//
-//            if ($codeError) {
-//                logger::writeLog('Ошибка установки set_alarm у датчика :: '.$address.', код ошибки '.$codeError, loggerTypeMessage::ERROR, loggerName::ERROR);
-//            }
-//
-//        }
-//        else {
-//            logger::writeLog('что-то странное с датчиком :: ' . $address, loggerTypeMessage::ERROR, loggerName::ERROR);
-//        }
-
     }
 }
 
@@ -655,7 +620,7 @@ class powerKeyMaker extends maker
         parent::__construct($options, typeDevice::POWER_KEY);
     }
 
-    private function getValueOWNet($chanel = null)
+    private function getValueOWNet($channel = null)
     {
         $result = null;
         $OWNetAddress = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_ADDRESS);
@@ -665,7 +630,7 @@ class powerKeyMaker extends maker
             /** @noinspection PhpUndefinedClassInspection */
             $ow = new OWNet($OWNetAddress);
 
-            $result = $ow->get('/uncached/' . $address . '/PIO.' . $chanel);
+            $result = $ow->get('/uncached/' . $address . '/PIO.' . $channel);
 
             if (empty($result)) {
                 $result = 0;
@@ -699,11 +664,12 @@ class powerKeyMaker extends maker
         return $result;
     }
 
-    private function setValueMQTT($value = null) {
+    private function setValueMQTT($value = null, $status = statusKey::UNKNOWN) {
         $result = true;
         try {
-            $mqtt = mqttSend::Connect(true);
-            $mqtt->publish($this->getTopicCmnd(), $value);
+            $payload = $value.MQTT_CODE_SEPARATOR.$status;
+            $mqtt = mqttSend::connect(true);
+            $mqtt->publish($this->getTopicCmnd(), $payload);
         }
         catch (Exception $e) {
             $result = false;
@@ -711,31 +677,31 @@ class powerKeyMaker extends maker
         return $result;
     }
 
-    public function getValue($chanel = null)
+    public function getValue($channel = null)
     {
         $result = null;
         $disabled = $this->getDisabled();
         if ($disabled == 0) { // датчик включен
             switch ($this->getNet()) {
                 case netDevice::ONE_WIRE :
-                    $result = $this->getValueOWNet($chanel);
+                    $result = $this->getValueOWNet($channel);
                     break;
             }
         }
         return $result;
     }
 
-    public function setValue($value = null, $chanel = null)
+    public function setValue($value = null, $channel = null, $status = statusKey::UNKNOWN)
     {
         $result = null;
         $disabled = $this->getDisabled();
         if ($disabled == 0) { // датчик включен
             switch ($this->getNet()) {
                 case netDevice::ONE_WIRE :
-                    $result = $this->setValueOWNet($value, $chanel);
+                    $result = $this->setValueOWNet($value, $channel);
                     break;
                 case netDevice::ETHERNET_MQTT :
-                    $result = $this->setValueMQTT($value);
+                    $result = $this->setValueMQTT($value, $status);
                     break;
             }
         }

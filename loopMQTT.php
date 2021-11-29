@@ -4,6 +4,8 @@
  * Created by PhpStorm.
  */
 
+sleep(2);
+
 //Создаем дочерний процесс весь код после pcntl_fork() будет выполняться двумя процессами: родительским и дочерним
 $child_pid = pcntl_fork();
 if ($child_pid) { // Выходим из родительского, привязанного к консоли, процесса
@@ -14,9 +16,8 @@ posix_setsid();
 // Дальнейший код выполнится только дочерним процессом, который уже отвязан от консоли
 
 $fileDir = dirname(__FILE__);
-require($fileDir."/class/daemon.class.php");
-require($fileDir."/class/mqtt.class.php");
-require_once($fileDir."/class/logger.class.php");
+require($fileDir. '/class/daemon.class.php');
+require($fileDir. '/class/mqtt.class.php');
 
 ini_set('error_log',$fileDir.'/logs/errorLoopMQTT.log');
 fclose(STDIN);
@@ -31,7 +32,6 @@ class daemonLoopMQTT extends daemon
 
     const NAME_PID_FILE = 'loopMQTT.pid';
     const PAUSE = 100000; //Пауза в основном цикле, в микросекундах (0.1 сек)
-    const PAUSE_RECONNECT = 1000000; //Пауза при подключении, в микросекундах (1 сек)
 
     public function __construct($dirPidFile)
     {
@@ -40,15 +40,16 @@ class daemonLoopMQTT extends daemon
 
     public function run()
     {
-        $this->putPitFile(); // устанавливаем PID файла
+        parent::run();
 
-        $mqtt = new mqttLoop(true, true);
+        $mqtt = new mqttLoop(true);
         $mqtt->connect();
-        $mqtt->loopForever();
 
         while (!$this->stopServer()) {
 
-            sleep(1);
+            $mqtt->loop();
+
+            usleep(self::PAUSE);
 
             pcntl_signal_dispatch(); //Вызывает обработчики для ожидающих сигналов
         }
@@ -63,4 +64,25 @@ $daemon = new daemonLoopMQTT( $fileDir.'/tmp');
 if ($daemon->isDaemonActive()) {
     exit();
 }
-$daemon->run();
+$flag = 1;
+$mes = '';
+while ($flag != 0) {
+    logger::writeLog('Подключение к MQTT брокеру. Попытка '.$flag, loggerTypeMessage::NOTICE, loggerName::MQTT);
+    try {
+        $daemon->run();
+        $flag = 0;
+    }
+    catch (Exception $e) {
+        $flag++;
+        sleep(2);
+    }
+    if ($flag>10) {
+        $flag = 0;
+        $mes = 'Не удалось подключиться к MQTT брокеру. Проверти параметры подключения и доступность брокера.';
+    }
+}
+if (strlen($mes) > 0 ) {
+    logger::writeLog($mes, loggerTypeMessage::ERROR, loggerName::MQTT);
+    logger::writeLog($mes, loggerTypeMessage::ERROR, loggerName::ERROR);
+}
+
