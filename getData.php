@@ -55,10 +55,6 @@ if ($_REQUEST['dev'] == 'pressure') { //получаем атмосферное 
 
     $unit = managerUnits::getUnitLabel($label);
 
-    logger::writeLog('Получение давления ' . $label ,
-        loggerTypeMessage::NOTICE, loggerName::DEBUG);
-
-
     if (is_null($unit)) {
         logger::writeLog('Модуль с именем :: ' . $label . ' :: не найден',
             loggerTypeMessage::ERROR, loggerName::ERROR);

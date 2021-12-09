@@ -17,11 +17,12 @@ interface loggerTypeMessage
 
 interface loggerName
 {
-    const DEFAULTLOGGER = "default";
-    const ERROR = "error";
-    const ACCESS = "access";
-    const DEBUG = "debug";
-    const MQTT = "mqtt";
+    const DEFAULTLOGGER = 'default';
+    const ERROR = 'error';
+    const ACCESS = 'access';
+    const DEBUG = 'debug';
+    const MQTT = 'mqtt';
+    const CAMERAS = 'cameras';
 }
 
 class logger
@@ -30,7 +31,7 @@ class logger
     protected $timeFormat = 'd.m.Y - H:i:s';
 
     protected static $PATH = 'logs';
-    protected static $loggers = array();
+    protected static $loggers = [];
     protected $fp;
     protected $nameFile;
 
@@ -60,7 +61,7 @@ class logger
     static public function getLogger($name = loggerName::DEFAULTLOGGER)
     {
         //Если имя не задано или не подходит, то по умолчанию
-        if (empty($name) || !is_string($name) || !preg_match("/^([_a-z0-9A-Z]+)$/i", $name)) {
+        if (empty($name) || !is_string($name) || !preg_match('/^([_a-z0-9A-Z]+)$/i', $name)) {
             $name = loggerName::DEFAULTLOGGER;
         }
         if (!isset(self::$loggers[$name])) {
@@ -77,7 +78,7 @@ class logger
     public function log($message, $messageType = loggerTypeMessage::NOTICE)
     {
         if (!is_string($message)) {
-            $message = "[!!!] Не возможно вывести сообщение в лог. Сообщение не строкового типа";
+            $message = '[!!!] Не возможно вывести сообщение в лог. Сообщение не строкового типа';
         }
         if ($messageType != loggerTypeMessage::NOTICE &&
             $messageType != loggerTypeMessage::WARNING &&
@@ -119,7 +120,7 @@ class logger
      */
     public static function readLog($name = loggerName::DEFAULTLOGGER)
     {
-        $result = array();
+        $result = [];
         $l = self::getLogger($name);
         if (!is_null($l)) {
             $result = $l->readLogFile();
@@ -130,8 +131,8 @@ class logger
 
     private function readLogFile()
     {
-        $result = array();
-        $file_path = self::$PATH . '/' . $this->nameFile . '.log'; // путь к лог файлу
+        $result = [];
+        $file_path = self::$PATH . '/' . $this->nameFile . '.log'; // путь к файлу лога
         if (is_writable($file_path)) {
             $file = file($file_path, FILE_IGNORE_NEW_LINES);
             for ($i = count($file) - 1; $i >= 0; $i--) {

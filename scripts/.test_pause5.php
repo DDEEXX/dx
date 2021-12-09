@@ -17,3 +17,4 @@ move_hall::start();
 move_under_stair::start();
 test_pause5::start();
 move_stair::start();
+move_bathroom::start();

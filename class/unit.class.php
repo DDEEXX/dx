@@ -602,26 +602,21 @@ class humidityUnit extends sensorUnit
     }
 
     /**
-     * Записать значение температуры в базу данных
+     * Записать значение давления в базу данных
      * время записи берется текущее серверное
      * @param $value
      * @throws connectDBException
      * @throws querySelectDBException
      */
-    public function writeValue($value)
+    public function writeCurrentValueDB()
     {
 
-        if (!is_double($value) && !is_int($value)) {
-            //Пишем лог
-            return;
-        }
-
-        $delta = $this->delta;
-        $temperature = $value + $delta;
+        $pressure = $this->value + (int)$this->delta;
         $uniteID = $this->id;
         $nameTabValue = 'tvalue_' . $this->valueTable;
+        $dateValue = date('Y-m-d H:i:s',$this->dataValue);
 
-        $query = 'INSERT INTO ' . $nameTabValue . ' VALUES (NULL, ' . "$uniteID, SYSDATE(), " . $temperature . ')';
+        $query = 'INSERT INTO ' . $nameTabValue . ' VALUES (NULL, ' . "$uniteID,"." '$dateValue',"  . $pressure . ')';
 
         $con = sqlDataBase::Connect();
 
@@ -630,7 +625,7 @@ class humidityUnit extends sensorUnit
         unset($con);
 
         if (!$result) {
-            logger::writeLog('Ошибка при записи в базу данных (writeValue)',
+            logger::writeLog('Ошибка при записи в базу данных (writeCurrentValueDB)',
                 loggerTypeMessage::ERROR, loggerName::ERROR);
         }
 
@@ -645,10 +640,28 @@ class humidityUnit extends sensorUnit
         return DB::getLastValueUnit($this);
     }
 
-    public function updateValueMQTT($payload)
-    {
-        // TODO: Implement updateValueMQTT() method.
+    public function updateValueMQTT($payload) {
+        $value = $this->convertPayload($payload);
+        $this->updateValue($value);
+        try {
+            $this->writeCurrentValueDB();
+        } catch (connectDBException $e) {
+            logger::writeLog('ошибка подключения к базе данных', loggerTypeMessage::ERROR,loggerName::MQTT);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('ошибка добавление температуры в базу данных', loggerTypeMessage::ERROR,loggerName::MQTT);
+        }
     }
+
+    /**
+     * Обновляет значение модуля и время получения этого значения, помещает объект модуля в распределяемую память
+     * @param $value
+     */
+    public function updateValue($value) {
+        if (is_null($value)) return;
+        parent::updateValue($value);
+        $this->updateUnitSharedMemory();
+    }
+
 }
 
 class pressureUnit extends sensorUnit
@@ -676,12 +689,6 @@ class pressureUnit extends sensorUnit
      */
     public function writeCurrentValueDB()
     {
-
-//        if (!is_double($this->value) && !is_int($this->value)) {
-//            logger::writeLog('Отсутствует значение для записи в базу данных (writeCurrentValueDB)',
-//                loggerTypeMessage::ERROR, loggerName::ERROR);
-//            return;
-//        }
 
         $pressure = $this->value + (int)$this->delta;
         $uniteID = $this->id;

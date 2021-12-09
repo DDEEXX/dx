@@ -103,7 +103,11 @@ class daemonLoopForever extends daemon
 }
 
 $daemon = new daemonLoopForever( $fileDir.'/tmp');
-if ($daemon->isDaemonActive()) {
-    exit();
+$daemonActive = $daemon->isDaemonActive();
+if ($daemonActive == 0) {
+    $daemon->run();
 }
-$daemon->run();
+else {
+    logger::writeLog('Невозможно запустить демона daemonLoopForever, код возврата - '.$daemonActive,
+        loggerTypeMessage::ERROR, loggerName::ERROR);
+}

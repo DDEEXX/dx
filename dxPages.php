@@ -1,13 +1,13 @@
 <?php
-$p = isset($_REQUEST['p']) ? $_REQUEST['p'] : "home";
+$p = isset($_REQUEST['p']) ? $_REQUEST['p'] : 'home';
 
 $alarm = 'off'; //Это затычка
 
 if ($alarm != 'off') {
-    $p = "alarm";
+    $p = 'alarm';
 }
 
-if ($p == "alarm") {
+if ($p == 'alarm') {
     ?>
 
     <script>
@@ -144,7 +144,7 @@ if ($p == "alarm") {
     <?php
 }
 
-if ($p == "home" || empty($p)) {
+if ($p == 'home' || empty($p)) {
     ?>
 
     <script src="js2/home.js"></script>
@@ -200,7 +200,7 @@ if ($p == "home" || empty($p)) {
     <?php
 }
 
-if ($p == "weather") {
+if ($p == 'weather') {
     ?>
 
     <script src="js2/weather.js"></script>
@@ -264,7 +264,7 @@ if ($p == "weather") {
 }
 
 //Освещение
-if ($p == "light") {
+if ($p == 'light') {
     ?>
 
     <script src="js2/light.js"></script>
@@ -340,7 +340,7 @@ if ($p == "light") {
     <?php
 }
 
-if ($p == "power") {
+if ($p == 'power') {
     ?>
 
     <script src="js2/power.js"></script>
@@ -398,7 +398,7 @@ if ($p == "power") {
     <?php
 }
 
-if ($p == "heater") {
+if ($p == 'heater') {
     ?>
     <script src="js2/heater.js"></script>
 
@@ -417,6 +417,9 @@ if ($p == "heater") {
             </div>
         </div>
         <div class="grid_3 ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:218px">
+            <h2 style="margin-left:5px">Температура под лестницей</h2>
+            <img style="margin-top:5px;float:left" src="img2/temp.png">
+            <div id="temp_under_stair" style="margin-top:10px;"></div>
         </div>
         <div class="grid_3 ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:218px">
         </div>
@@ -437,6 +440,8 @@ if ($p == "heater") {
                              style="position:absolute;left:120px;top:220px"></div>
                         <div id="temp_bedroom" class="ui-corner-all ui-state-default ui-widget-content"
                              style="position:absolute;left:560px;top:310px"></div>
+                        <div id="temp_bathroom" class="ui-corner-all ui-state-default ui-widget-content"
+                             style="position:absolute;left:750px;top:260px"></div>
                     </div>
                 </div>
                 <div class="clear"></div>
@@ -510,7 +515,7 @@ if ($p == "heater") {
     <?php
 }
 
-if ($p == "cam") {
+if ($p == 'cam') {
 
     ?>
 
@@ -554,6 +559,9 @@ if ($p == "cam") {
         </div>
         <div class="grid_5 omega ui-corner-all ui-state-default ui-widget-content"
              style="margin-top:5px;height:270px;position:relative;width:418px">
+            <div style="text-align: center">
+                <img src="http://192.168.1.4:8081/" alt="http://192.168.1.4:8081/">
+            </div>
         </div>
     </div>
 

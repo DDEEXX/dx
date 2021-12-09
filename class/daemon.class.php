@@ -25,6 +25,12 @@ class daemon implements idaemon
         pcntl_signal(SIGTERM, [$this, 'childSignalHandler']);
     }
 
+    public function __destruct() {
+        if (file_exists($this->namePidFile)) {
+            unlink($this->namePidFile);
+        }
+    }
+
     protected function childSignalHandler($signo) {
         switch($signo) {
             case SIGTERM:

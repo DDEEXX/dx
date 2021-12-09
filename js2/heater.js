@@ -4,9 +4,11 @@ function updateTemperature() {
     /* label=temp_out_1 - имя датчика в базе = temp_out_1*/
     /* type=last - тип события = последнее показание */
 
-
     $.get("getData.php?dev=temp&label=temp_out_1&type=last", function (data) {
         $("#temp_out_1, #temp_out_1_g").html(data);
+    });
+    $.get("getData.php?dev=temp&label=temp_stair&type=last", function (data) {
+        $("#temp_under_stair").html(data);
     });
     $.get("getData.php?dev=temp&label=temp_hall&type=last&color=plan", function (data) {
         $("#temp_hall").html(data);
@@ -14,7 +16,9 @@ function updateTemperature() {
     $.get("getData.php?dev=temp&label=temp_bedroom&type=last&color=plan", function (data) {
         $("#temp_bedroom").html(data);
     });
-
+    $.get("getData.php?dev=temp&label=temp_bathroom&type=last&color=plan", function (data) {
+        $("#temp_bathroom").html(data);
+    });
     $.get("getData.php?dev=temp&label=temp_hall&type=last", function (data) {
         $("#temp_hall_g").html(data);
     });
@@ -46,7 +50,7 @@ $(document).ready(function () {
 
 });
 
-//Обновление показания температуры кажные 5 минут
+//Обновление показания температуры каждые 5 минут
 $(document).everyTime("300s", function () {
     updateTemperature();
 });
