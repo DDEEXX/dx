@@ -28,6 +28,9 @@ function updateTemperature() {
     $.get("getData.php?dev=temp&label=temp_bedroom&type=last", function (data) {
         $("#temp_bedroom_g").html(data);
     });
+    $.get("getData.php?dev=temp&label=temp_bedroom_Lera&type=last", function (data) {
+        $("#temp_bedroom_Lera_g").html(data);
+    });
 
 }
 

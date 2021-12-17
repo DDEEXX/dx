@@ -509,6 +509,27 @@ if ($p == 'heater') {
                     </div>
                 </div>
 
+                <div class="grid_5 omega ui-corner-all ui-state-default"
+                     style="margin-top:5px;height:215px;width:418px">
+                    <h2 style="margin-left:5px;float:left">Спальня Леры</h2>
+                    <div id="temp_bedroom_Lera_g" style="margin-right:5px;float:right"></div>
+                    <div style="text-align: center">
+                        <?php
+                        echo '<img id="g_temp_bedroom_Lera" src="graph.php?label=temp_bedroom_Lera&t=line&date_from=day&' . rand() . '" height="160">';
+                        ?>
+                    </div>
+                    <div class="rg_g_temp" style="margin-left:5px;float:left">
+                        <input type="radio" name="period2" class="set_period" dev_type="temp_bedroom_Lera" dev_period="day"
+                               checked id="day_hall"><label for="day_hall">сут.</label>
+                        <input type="radio" name="period2" class="set_period" dev_type="temp_bedroom_Lera" dev_period="week"
+                               id="week_hall"><label for="week_hall">нед.</label>
+                        <input type="radio" name="period2" class="set_period" dev_type="temp_bedroom_Lera" dev_period="month"
+                               id="month_hall"><label for="month_hall">мес.</label>
+                    </div>
+                </div>
+
+                <div class="clear"></div>
+
             </div>
 
         </div>
