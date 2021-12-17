@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__FILE__) . "/class/sqlDataBase.class.php");
+require_once(dirname(__FILE__) . '/class/sqlDataBase.class.php');
 
 class widgetWeather
 {
@@ -20,12 +20,11 @@ class widgetWeather
         if (is_null(self::$url)) self::$url = 'http://informer.gismeteo.ru/xml/' . self::$city_id . '.xml';
     }
 
-    static private function loadxmlyandex()
+    static private function loadYandexXML()
     {
-        $userAgent = 'Googlebot/2.1 (+http://www.google.com/bot.html)';
+        $userAgent = 'Googlebot/2.1 (+https://www.google.com/bot.html)';
         $ch = curl_init(self::$url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
         curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);
         $output = curl_exec($ch);
         $fh = fopen(self::$cache_file, 'w');
@@ -37,18 +36,23 @@ class widgetWeather
     {
         if (file_exists(self::$cache_file)) {
 
-            $cache_modified = time() - @filemtime(self::$cache_file);
+            try {
+                $cache_modified = time() - filemtime(self::$cache_file);
+            }
+            catch (Exception $e) {
+                $cache_modified = 0;
+            }
             if ($cache_modified > self::cache_lifetime) //обновляем файл погоды, если время файла кэша устарело
             {
                 $check_url = get_headers(self::$url);
                 $ok = 'Connection: close';
                 if (!(strpos($check_url[3], $ok) === false)) {
-                    self::loadxmlyandex();
+                    self::loadYandexXML();
                 }
             }
         }
         else {
-            self::loadxmlyandex();
+            self::loadYandexXML();
         }
     }
 
@@ -65,37 +69,23 @@ class widgetWeather
             $data = simplexml_load_file(self::$cache_file);
         }
 
-        $aResult = array();
+        $aResult = [];
 
-        /** @noinspection PhpUndefinedFieldInspection */
         foreach ($data->REPORT->TOWN->FORECAST as $forecast) {
 
             $tod = intval($forecast['tod']);
-            /** @noinspection PhpUndefinedFieldInspection */
             $temp_min = intval($forecast->TEMPERATURE['min']);
-            /** @noinspection PhpUndefinedFieldInspection */
             $temp_max = intval($forecast->TEMPERATURE['max']);
-            /** @noinspection PhpUndefinedFieldInspection */
             $precipitation = intval($forecast->PHENOMENA['precipitation']);
-            /** @noinspection PhpUndefinedFieldInspection */
-            $rpower = intval($forecast->PHENOMENA['rpower']);
-            /** @noinspection PhpUndefinedFieldInspection */
-            $spower = intval($forecast->PHENOMENA['spower']);
-            /** @noinspection PhpUndefinedFieldInspection */
+            $rainPower = intval($forecast->PHENOMENA['rainPower']);
+            $snowPower = intval($forecast->PHENOMENA['snowPower']);
             $cloudiness = intval($forecast->PHENOMENA['cloudiness']);
-            /** @noinspection PhpUndefinedFieldInspection */
             $pressure_min = intval($forecast->PRESSURE['min']);
-            /** @noinspection PhpUndefinedFieldInspection */
             $pressure_max = intval($forecast->PRESSURE['max']);
-            /** @noinspection PhpUndefinedFieldInspection */
             $wind_min = intval($forecast->WIND['min']);
-            /** @noinspection PhpUndefinedFieldInspection */
             $wind_max = intval($forecast->WIND['max']);
-            /** @noinspection PhpUndefinedFieldInspection */
             $wind_dir = intval($forecast->WIND['direction']);
-            /** @noinspection PhpUndefinedFieldInspection */
             $relwet_min = intval($forecast->RELWET['min']);
-            /** @noinspection PhpUndefinedFieldInspection */
             $relwet_max = intval($forecast->RELWET['max']);
 
             $temp = round(($temp_min + $temp_max) / 2);
@@ -105,95 +95,117 @@ class widgetWeather
             $wind = round(($wind_min + $wind_max) / 2);
             $relwet = round(($relwet_min + $relwet_max) / 2);
 
-            $aTek = array(
+            $aTek = [
                 'temp' => $temp_,
                 'temp_class' => $temp_class,
                 'tod' => $tod,
                 'precipitation' => $precipitation,
                 'cloudiness' => $cloudiness,
-                'rpower' => $rpower,
-                'spower' => $spower,
+                'rainPower' => $rainPower,
+                'snowPower' => $snowPower,
                 'pressure' => $pressure,
                 'wind' => $wind,
                 'wind_dir' => $wind_dir,
                 'relwet' => $relwet
-            );
+            ];
             $aResult[] = $aTek;
         }
         return $aResult;
     }
 
-    static public function get_img($tod, $precipitation, $cloudiness, $rpower, $spower)
+    /**
+     * Получить рисунок отображающий погоду
+     * @param $tod - часть суток: 0 - Ночь, 1 - Утро, 2 - День, 3 - Вечер
+     * @param $precipitation - осадки: 4 5 - дождь, 6 7 - снег, 8 - гроза, 9 10 - ясно
+     * @param $cloudiness - облачность: 0 - ясно, 1 - малооблачно, 2 - облачно, 3 - пасмурно
+     * @param $rainPower - интенсивность дождя
+     * @param $snowPower - интенсивность снега
+     * @return string - путь до картинки
+     */
+    static public function getImageURL($tod, $precipitation, $cloudiness, $rainPower, $snowPower)
     {
-        //$tod: 0 - Ночь, 1 - Утро, 2 - День, 3 - Вечер
-        //$cloudiness: 0 - ясно, 1 - малооблачно, 2 - облачно, 3 - пасмурно
-        //$precipitation: 4 5 - дождь, 6 7 - снег, 8 - гроза, 9 10 - ясно
-        //$rpower = интенсивность дождя
-        //$spower = интенсивность снега
+        $myRow = (!$tod ? 'n' : 'd'); // день или ночь
 
-        $myrow = (!$tod ? "n" : "d"); // день или ночь
-
-        if ($cloudiness > 0) { // есть облочность
-            if ($cloudiness >= 3) { // если облачность 3 то знак день/ночь не нужны
-                $myrow = "c3";
+        if ($cloudiness > 0) { // есть облачность
+            if ($cloudiness >= 3) { // если облачность 3, то знак день/ночь не нужны
+                $myRow = 'c3';
             }
             else {
-                $myrow = $myrow . "_c" . $cloudiness;
+                $myRow = $myRow . '_c' . $cloudiness;
             }
         }
 
         if ($precipitation == 4 || $precipitation == 5) { //дождь
-            $rpower = !$rpower ? 1 : $rpower;
-            $rpower = $rpower > 3 ? 3 : $rpower;
-            $myrow = $myrow . "_r" . $rpower;
+            $rainPower = !$rainPower ? 1 : $rainPower;
+            $rainPower = min($rainPower, 3);
+            $myRow = $myRow . '_r' . $rainPower;
         }
 
         if ($precipitation == 6 || $precipitation == 7) { //снег
-            $spower = !$spower ? 1 : $spower;
-            $spower = $spower > 3 ? 3 : $spower;
-            $myrow = $myrow . "_s" . $spower;
+            $snowPower = !$snowPower ? 1 : $snowPower;
+            $snowPower = min($snowPower, 3);
+            $myRow = $myRow . '_s' . $snowPower;
         }
 
         if ($precipitation == 8) { //гроза
-            $myrow = $myrow . "_st";
+            $myRow = $myRow . '_st';
         }
 
-        $bk = "background:url(img2/weather/$myrow.png) no-repeat scroll 0 0 transparent";
+        $bk = "background:url(img2/weather/$myRow.png) no-repeat scroll 0 0 transparent";
 
-        return "<div class='$myrow' style='$bk;height:55px;width:55px'></div>";
+        return "<div class='$myRow' style='$bk;height:55px;width:55px'></div>";
     }
 
     static public function get_wind($wind_dir)
     {
         switch ($wind_dir) {
             case 1 :
-                $w = "С";
+                $w = 'С';
                 break;
             case 2 :
-                $w = "СВ";
+                $w = 'СВ';
                 break;
             case 3 :
-                $w = "В";
+                $w = 'В';
                 break;
             case 4 :
-                $w = "ЮВ";
+                $w = 'ЮВ';
                 break;
             case 5 :
-                $w = "Ю";
+                $w = 'Ю';
                 break;
             case 6 :
-                $w = "ЮЗ";
+                $w = 'ЮЗ';
                 break;
             case 7 :
-                $w = "З";
+                $w = 'З';
                 break;
             case 8 :
-                $w = "СЗ";
+                $w = 'СЗ';
                 break;
             default :
-                $w = "";
+                $w = '';
         }
         return $w;
+    }
+
+    static public function getDayPart($part) {
+        $dayPart = '';
+        switch ($part) {
+            case 0 :
+                $dayPart = 'ночь';
+                break;
+            case 1 :
+                $dayPart = 'утро';
+                break;
+            case 2 :
+                $dayPart = 'день';
+                break;
+            case 3 :
+                $dayPart = 'вечер';
+                break;
+        }
+        return $dayPart;
     }
 }
 
@@ -215,66 +227,51 @@ class widgetWeather
     }
 </style>
 
-<div class="weather_home" style="width:680px">
+<div class="weather_home" style="width:800px">
     <?php
 
     $w = widgetWeather::getWeather();
 
     $temp_class = $w[0]['temp_class'];
-    $temp = $w[0]["temp"];
-    $img = widgetWeather::get_img($w[0]["tod"],
-        $w[0]["precipitation"],
-        $w[0]["cloudiness"],
-        $w[0]["rpower"],
-        $w[0]["spower"]);
-    $pressure = $w[0]["pressure"];
-    $wind = $w[0]["wind"];
-    $wind_dir = widgetWeather::get_wind($w[0]["wind_dir"]);
-    $relwet = $w[0]["relwet"];
-
-    $pd = '';
-    switch ($w[0]["tod"]) {
-        case 0 :
-            $pd = "ночь";
-            break;
-        case 1 :
-            $pd = "утро";
-            break;
-        case 2 :
-            $pd = "день";
-            break;
-        case 3 :
-            $pd = "вечер";
-            break;
-    }
+    $temp = $w[0]['temp'];
+    $img = widgetWeather::getImageURL($w[0]['tod'],
+        $w[0]['precipitation'],
+        $w[0]['cloudiness'],
+        $w[0]['rainPower'],
+        $w[0]['snowPower']);
+    $pressure = $w[0]['pressure'];
+    $wind = $w[0]['wind'];
+    $wind_dir = widgetWeather::get_wind($w[0]['wind_dir']);
+    $relwet = $w[0]['relwet'];
     ?>
 
-    <div class='temp_now' style='width:260px;float:left'>
-        <div class='<?php echo "$temp_class" ?>' style='float:right;font-size:160%'> <?php echo "$temp" ?> &deg</div>
-        <div style='float:right'><?php echo "$img" ?></div>
-        <div class='w_line' style='color:#DDDDDD;float:left;font-size:70%'>
+    <div class='temp_now' style='width:200px;float:left'>
+        <h3 class="Title1">Прогноз погоды</h3>
+        <div class='w_line' style='color:#DDDDDD;float:left;font-size:85%'>
             <p>давление: <?php echo "$pressure" ?> мм</p>
             <p>ветер: <?php echo "$wind" ?> м/с <?php echo "$wind_dir" ?></p>
-            <p>влажность: <?php echo "$relwet" ?> %</p>
-            <p>прогноз на: <?php echo "$pd" ?> </p>
+            <p>влажность: <?php echo "$relwet" ?>%</p>
         </div>
     </div>
 
     <?php
-    for ($i = 1; $i <= 3; $i++) {
+    for ($i = 0; $i <= 3; $i++) {
         $temp_class = $w[$i]['temp_class'];
-        $temp = $w[$i]["temp"];
-        $img = widgetWeather::get_img($w[$i]["tod"],
-            $w[$i]["precipitation"],
-            $w[$i]["cloudiness"],
-            $w[$i]["rpower"],
-            $w[$i]["spower"]);
+        $temp = $w[$i]['temp'];
+        $img = widgetWeather::getImageURL($w[$i]['tod'],
+            $w[$i]['precipitation'],
+            $w[$i]['cloudiness'],
+            $w[$i]['rainPower'],
+            $w[$i]['snowPower']);
+        $dayPart = widgetWeather::getDayPart($w[$i]['tod']);
         ?>
 
-        <div class='temp_other' style='width:140px;float:left'>
-            <div class='<?php echo "$temp_class" ?>' style='float:right;font-size:160%'> <?php echo "$temp" ?>&deg
+        <div class='temp_other' style='width:140px;float:left;display:block'>
+            <div style='width:140px;float:left;font-size:80%'><?php echo "$dayPart" ?></div>
+            <div style="display:inline;">
+                <div style="float:left;margin-top: 5px;"><?php echo "$img" ?></div>
+                <div class='<?php echo "$temp_class" ?>' style='float:left;margin-top:5px;margin-left:5px;font-size:160%'> <?php echo "$temp" ?>&deg</div>
             </div>
-            <div style='float:right'><?php echo "$img" ?></div>
         </div>
 
         <?php

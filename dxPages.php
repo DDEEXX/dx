@@ -215,8 +215,8 @@ if ($p == 'weather') {
         <div class="grid_11 alpha">
             <div class="ui-corner-all ui-state-default" style="overflow:hidden;margin-top:5px">
                 <div style="margin-left:5px">
-                    <h3 class="Title1">Прогноз погоды</h3>
-                    <div class="clear"></div>
+                    <!--<h3 class="Title1">Прогноз погоды</h3>
+                    <div class="clear"></div> -->
                     <div id="weather_forecast"></div>
                 </div>
             </div>
@@ -437,9 +437,9 @@ if ($p == 'heater') {
                          style="height: 500px;margin-top:5px;position:relative">
                         <div id="floor1"><img src="img2/home_.png"></div>
                         <div id="temp_hall" class="ui-corner-all ui-state-default ui-widget-content"
-                             style="position:absolute;left:120px;top:220px"></div>
+                             style="position:absolute;left:100px;top:220px"></div>
                         <div id="temp_bedroom" class="ui-corner-all ui-state-default ui-widget-content"
-                             style="position:absolute;left:560px;top:310px"></div>
+                             style="position:absolute;left:540px;top:310px"></div>
                         <div id="temp_bathroom" class="ui-corner-all ui-state-default ui-widget-content"
                              style="position:absolute;left:750px;top:260px"></div>
                         <div id="temp_bedroom_Lera" class="ui-corner-all ui-state-default ui-widget-content"
