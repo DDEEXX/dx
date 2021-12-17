@@ -85,7 +85,7 @@ class camera implements iCamera
     private $timelapseDir = 'timelapse'; //наименование каталога для хранения timelapse файлов
     private $countTimelapseFiles = 30; //максимальное количество timelapse файлов в архиве
     private $videoDir = 'video'; //наименование каталога для хранения склеенных video файлов с движением
-    private $countVideoFiles = 90; //максимальное количество timelapse файлов в архиве
+    private $countVideoFiles = 90; //максимальное количество видео файлов в архиве
     private $nameVideoFiles = '-camera';
     private $imageDir = 'image'; //наименование каталога для хранения стоп кадров видео с движением
     private $permissions = 0644; //права для создаваемых каталогов (владелец - запись/чтение, остальные - чтение)

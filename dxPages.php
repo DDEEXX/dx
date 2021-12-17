@@ -411,13 +411,13 @@ if ($p == 'heater') {
         <div class="clear"></div>
         <div class="grid_3 alpha">
             <div class="ui-corner-all ui-state-default" style="margin-top:5px;height:80px">
-                <h2 style="margin-left:5px">Температура на улице</h2>
+                <h2 style="margin-left:5px">На улице</h2>
                 <img style="margin-top:5px;float:left" src="img2/temp.png">
                 <div id="temp_out_1" style="margin-top:10px;"></div>
             </div>
         </div>
         <div class="grid_3 ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:218px">
-            <h2 style="margin-left:5px">Температура под лестницей</h2>
+            <h2 style="margin-left:5px">Под лестницей</h2>
             <img style="margin-top:5px;float:left" src="img2/temp.png">
             <div id="temp_under_stair" style="margin-top:10px;"></div>
         </div>
@@ -442,6 +442,8 @@ if ($p == 'heater') {
                              style="position:absolute;left:560px;top:310px"></div>
                         <div id="temp_bathroom" class="ui-corner-all ui-state-default ui-widget-content"
                              style="position:absolute;left:750px;top:260px"></div>
+                        <div id="temp_bedroom_Lera" class="ui-corner-all ui-state-default ui-widget-content"
+                             style="position:absolute;left:600px;top:190px"></div>
                     </div>
                 </div>
                 <div class="clear"></div>
