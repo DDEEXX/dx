@@ -9,6 +9,7 @@
 require_once(dirname(__FILE__) . '/../class/globalConst.interface.php');
 require_once(dirname(__FILE__) . '/../class/lists.class.php');
 require_once(dirname(__FILE__) . '/../class/managerUnits.class.php');
+require_once(dirname(__FILE__) . '/../class/sunInfo.class.php');
 
 class move_stair
 {
@@ -39,12 +40,17 @@ class move_stair
         $isMoveUp = $moveDataUp['value'];
         //Время когда состояние датчика изменилось
 
-        if ($isMoveDown) { // есть движение
-            $unitLight->updateValue('on_up', statusKey::MOVE); // включает, записываем что от датчика
-        }
+        //Часть дня - ночь/утро/день/вечер
+        $sunInfo = sunInfo::getSunInfo(mktime());
 
-        if ($isMoveUp) { // есть движение
-            $unitLight->updateValue('on_down', statusKey::MOVE); // включает, записываем что от датчика
+        if ($sunInfo == dayPart::NIGHT) { // ночь
+            if ($isMoveDown) { // есть движение
+                $unitLight->updateValue('on_up', statusKey::MOVE); // включает, записываем что от датчика
+            }
+
+            if ($isMoveUp) { // есть движение
+                $unitLight->updateValue('on_down', statusKey::MOVE); // включает, записываем что от датчика
+            }
         }
 
         unset($unitMoveDown);
