@@ -356,7 +356,7 @@ abstract class sensorUnit extends unit implements iSensorUnite
      */
     public function getModeDeviceValue()
     {
-        return modeDeviceValue::IS_NULL;
+        $result = modeDeviceValue::IS_NULL;
         if (is_null($this->device)) {
             return $result;
         }
@@ -470,8 +470,7 @@ class temperatureUnit extends sensorUnit
             return;
         }
 
-        $delta = $this->delta;
-        $temperature = $value + $delta;
+        $temperature = $value + (float)$this->delta;
         $uniteID = $this->id;
         $nameTabValue = 'tvalue_' . $this->valueTable;
 
@@ -498,7 +497,7 @@ class temperatureUnit extends sensorUnit
     public function writeCurrentValueDB()
     {
 
-        $temperature = $this->value + (int)$this->delta;
+        $temperature = $this->value + (float)$this->delta;
         $uniteID = $this->id;
         $nameTabValue = 'tvalue_' . $this->valueTable;
         $dateValue = date('Y-m-d H:i:s',$this->dataValue);
@@ -611,7 +610,7 @@ class humidityUnit extends sensorUnit
     public function writeCurrentValueDB()
     {
 
-        $pressure = $this->value + (int)$this->delta;
+        $pressure = $this->value + (float)$this->delta;
         $uniteID = $this->id;
         $nameTabValue = 'tvalue_' . $this->valueTable;
         $dateValue = date('Y-m-d H:i:s',$this->dataValue);
@@ -690,7 +689,7 @@ class pressureUnit extends sensorUnit
     public function writeCurrentValueDB()
     {
 
-        $pressure = $this->value + (int)$this->delta;
+        $pressure = $this->value + (float)$this->delta;
         $uniteID = $this->id;
         $nameTabValue = 'tvalue_' . $this->valueTable;
         $dateValue = date('Y-m-d H:i:s',$this->dataValue);
