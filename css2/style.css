@@ -117,6 +117,13 @@ body {
 }
 
 /*
+
+ */
+.temp_plan.ui-state-default.ui-widget-content {
+    background-color: #a9a9a9d1;
+}
+
+/*
 .ui-accordion .dx.ui-accordion-header {
     padding-top: 0em;
     padding-bottom: 0em;

@@ -47,8 +47,8 @@ session_start();
             //подсвечиваем выбранный пункт меню
             $('nav#main #main-menu').find('li:first').addClass('ui-menu-item-selected'); // при загрузке страницы сразу даем класс первой ссылке, то есть индексной странице
             $('nav#main #main-menu').find('a').each(function () { // проходим по нужным нам ссылками
-                const location = window.location.href; // переменная с адресом страницы
-                const link = this.href; // переменная с url ссылки
+                var location = window.location.href; // переменная с адресом страницы
+                var link = this.href; // переменная с url ссылки
                 if (location === link) {
                     $('nav#main #main-menu').find('li:first').removeClass('ui-menu-item-selected'); // сначала удаляем класс с индексной страницы
                     $(this).parent().addClass('ui-menu-item-selected'); // добавляем класс
@@ -79,7 +79,7 @@ session_start();
 $UID = $_SESSION['idUser'];
 
 if (!$UID) {
-    include_once "login.php";
+    include_once 'login.php';
 }
 else {
     ?>

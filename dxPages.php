@@ -436,11 +436,11 @@ if ($p == 'heater') {
                     <div class="ui-corner-all ui-state-default ui-widget-content"
                          style="height: 500px;margin-top:5px;position:relative">
                         <div id="floor1"><img src="img2/home_.png"></div>
-                        <div id="temp_hall" class="ui-corner-all ui-state-default ui-widget-content"
+                        <div id="temp_hall" class="ui-corner-all ui-state-default ui-widget-content temp_plan"
                              style="position:absolute;left:100px;top:220px"></div>
-                        <div id="temp_bedroom" class="ui-corner-all ui-state-default ui-widget-content"
+                        <div id="temp_bedroom" class="temp_plan ui-corner-all ui-state-default ui-widget-content"
                              style="position:absolute;left:540px;top:310px"></div>
-                        <div id="temp_bathroom" class="ui-corner-all ui-state-default ui-widget-content"
+                        <div id="temp_bathroom" class="temp_plan ui-corner-all ui-state-default ui-widget-content"
                              style="position:absolute;left:750px;top:260px"></div>
                         <div id="temp_bedroom_Lera" class="ui-corner-all ui-state-default ui-widget-content"
                              style="position:absolute;left:600px;top:190px"></div>
