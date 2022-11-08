@@ -116,9 +116,7 @@ body {
     padding: .1em 1em;
 }
 
-/*
-
- */
+/*цвет фона показания температуры на плане*/
 .temp_plan.ui-state-default.ui-widget-content {
     background-color: #a9a9a9d1;
 }

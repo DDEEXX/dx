@@ -19,8 +19,8 @@ if ($child_pid) { // Выходим из родительского, привя�
 posix_setsid();
 // Дальнейший код выполнится только дочерним процессом, который уже отвязан от консоли
 
-require_once($fileDir."/class/daemon.class.php");
-require_once($fileDir."/class/logger.class.php");
+require_once($fileDir. '/class/daemon.class.php');
+require_once($fileDir. '/class/logger.class.php');
 
 ini_set('error_log',$fileDir.'/logs/errorRunScript.log');
 fclose(STDIN);
@@ -96,7 +96,7 @@ function getNamesScrips($dirScripts) {
     else {
         $cdir = scandir($dirScripts);
         foreach ($cdir as $value) {
-            if (!in_array($value, array(".", ".."))) {
+            if (!in_array($value, ['.', '..'])) {
                 if (!is_dir($dirScripts . DIRECTORY_SEPARATOR . $value)) {
                     if (substr($value, 0, 1) != '.') {//файлы начинающиеся с точки, игнорируются
                         $result[$value] = 0;
@@ -110,7 +110,7 @@ function getNamesScrips($dirScripts) {
 
 }
 
-$dirScripts = $fileDir."/scripts";
+$dirScripts = $fileDir.'/scripts';
 $scripts = getNamesScrips($dirScripts);
 
 foreach ($scripts as $key=>$value) {

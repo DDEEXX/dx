@@ -15,18 +15,22 @@ class move_bathroom
 
     const NAME_MOVE = 'move_bathroom';
     const NAME_LIGHT = 'backlight _bathroom';
-    const MOVE_TIME = 60;         //через сколько секунд выключится подсветка после отсутствия движения при включении от датчика движения
-    const MOVE_TIME_GLOBAL = 120; //через сколько секунд выключится подсветка независимо каким образом она была включена
+    const NAME_TOUCH_KEY = 'touch_key1_bathroom';
+    const MOVE_TIME = 60;          //через сколько секунд выключится подсветка после отсутствия движения при включении от датчика движения
+    const MOVE_TIME_GLOBAL = 1800; //через сколько секунд выключится подсветка независимо каким образом она была включена
+    const TIME_OFF_LIGHT = '10000'; //время (в миллисекундах, 1000 - 1 секунда), после поступления команды на выключение, которое надо выдержать, прежде чем отключать подсветку
 
     static function start()
     {
 
         $unitMove = managerUnits::getUnitLabel(self::NAME_MOVE);
         $unitLight = managerUnits::getUnitLabel(self::NAME_LIGHT);
+        $unitTouchKey = managerUnits::getUnitLabel(self::NAME_TOUCH_KEY);
 
-        if (is_null($unitMove) || is_null($unitLight)) {
+        if (is_null($unitMove) || is_null($unitLight) || is_null($unitTouchKey)) {
             unset($unitMove);
             unset($unitLight);
+            unset($unitTouchKey);
             return;
         }
 
@@ -35,6 +39,10 @@ class move_bathroom
         $isMove = $moveData['value'];
         //Время когда состояние датчика изменилось
         $timeNoMove = $moveData['dataValue'];
+
+        //Получить данные кнопки
+        $keyData = json_decode($unitTouchKey->getValues(), true);
+        $keyPress = $keyData['value'];
 
         //Получить данные с подсветки
         $nightLightData = json_decode($unitLight->getValues(), true);
@@ -48,26 +56,31 @@ class move_bathroom
             $outTime = $now - $timeKey;
         }
 
-        if ($isMove) { // есть движение
-            if (!$isLight) { // свет не горит
-                $unitLight->updateValue(1, statusKey::MOVE); // включает, записываем что от датчика
-            }
-        } else { // нет движения
-            if ($isLight) { // горит свет
-
-                //Определяем сколько секунд прошло после отключения датчика движения
-                $moveTime = 99999; // если не известно когда изменилось состояние датчика движения
-                if (!is_null($timeNoMove)) {
-                    $moveTime = $now - $timeNoMove;
+        if ($keyPress) { //Прикоснулись к кнопке выключения
+            $unitLight->updateValue(0, statusKey::OFF, self::TIME_OFF_LIGHT); //гасим
+        }
+        else {
+            if ($isMove) { // есть движение
+                if (!$isLight) { // свет не горит
+                    $unitLight->updateValue(1, statusKey::MOVE); // включает, записываем что от датчика
                 }
+            } else { // нет движения
+                if ($isLight) { // горит свет
 
-                if ($statusKey == statusKey::MOVE) { // включился датчиком движения
-                    if ($moveTime > self::MOVE_TIME) { // время вышло с последнего отсутствия движения
-                        $unitLight->updateValue(0, statusKey::OFF); //гасим
+                    //Определяем сколько секунд прошло после отключения датчика движения
+                    $moveTime = 99999; // если не известно когда изменилось состояние датчика движения
+                    if (!is_null($timeNoMove)) {
+                        $moveTime = $now - $timeNoMove;
                     }
-                } else { // свет включили вручную (через сайт) ???
-                    if ($outTime > self::MOVE_TIME_GLOBAL) { // время вышло с последней активности подсветки
-                        $unitLight->updateValue(0, statusKey::OFF); //гасим
+
+                    if ($statusKey == statusKey::MOVE) { // включился датчиком движения
+                        if ($moveTime > self::MOVE_TIME) { // время вышло с последнего отсутствия движения
+                            $unitLight->updateValue(0, statusKey::OFF); //гасим
+                        }
+                    } else { // свет включили вручную (через сайт) ???
+                        if ($outTime > self::MOVE_TIME_GLOBAL) { // время вышло с последней активности подсветки
+                            $unitLight->updateValue(0, statusKey::OFF); //гасим
+                        }
                     }
                 }
             }
@@ -75,6 +88,8 @@ class move_bathroom
 
         unset($unitMove);
         unset($unitNightLight);
+        unset($unitTouchKey);
+
     }
 
 }

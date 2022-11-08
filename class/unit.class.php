@@ -1043,7 +1043,7 @@ class powerKeyUnit extends moduleUnit
      * @param $value
      * @param null $status - каким образом поменялось состояние (вручную, от датчика и т.д.)
      */
-    public function updateValue($value, $status = null)
+    public function updateValue($value, $status = null, $timePause = '')
     {
         if (is_null($value)) {
             return;  //Пишем лог
@@ -1054,7 +1054,7 @@ class powerKeyUnit extends moduleUnit
         }
 
         if ($value!=$this->value) {
-            $result = $this->device->setValue($value, $this->channel, $status);
+            $result = $this->device->setValue($value, $this->channel, $status, $timePause);
             //если связь не через MQTT, то обновляем значение, статус, и время сразу
             //если через MQTT, то состояние и статус придут от модуля
             if (is_null($this->checkMQTTTopicStatus())) {

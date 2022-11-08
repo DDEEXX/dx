@@ -664,10 +664,11 @@ class powerKeyMaker extends maker
         return $result;
     }
 
-    private function setValueMQTT($value = null, $status = statusKey::UNKNOWN) {
+    private function setValueMQTT($value = null, $status = statusKey::UNKNOWN, $timePause ='')
+    {
         $result = true;
         try {
-            $payload = $value.MQTT_CODE_SEPARATOR.$status;
+            $payload = $value.MQTT_CODE_SEPARATOR.$status.MQTT_CODE_SEPARATOR.$timePause;
             $mqtt = mqttSend::connect(true);
             $mqtt->publish($this->getTopicCmnd(), $payload);
         }
@@ -691,7 +692,7 @@ class powerKeyMaker extends maker
         return $result;
     }
 
-    public function setValue($value = null, $channel = null, $status = statusKey::UNKNOWN)
+    public function setValue($value = null, $channel = null, $status = statusKey::UNKNOWN, $timePause = '')
     {
         $result = null;
         $disabled = $this->getDisabled();
@@ -701,7 +702,7 @@ class powerKeyMaker extends maker
                     $result = $this->setValueOWNet($value, $channel);
                     break;
                 case netDevice::ETHERNET_MQTT :
-                    $result = $this->setValueMQTT($value, $status);
+                    $result = $this->setValueMQTT($value, $status, $timePause);
                     break;
             }
         }
