@@ -1,0 +1,44 @@
+/*вертикальные группы для отображения погоды на закладке weather*/
+.weather_b_1 {
+    margin-top: 6px;
+    height: 42px
+}
+
+/*короткий блок с содержимым датчика*/
+.weather_sensor_1 {
+    height: 42px;
+    width: 135px;
+    float: left
+}
+
+/*длинный блок с содержимым датчика*/
+.weather_sensor_2 {
+    height: 42px;
+    width: 163px;
+    float: left
+}
+
+/*внешний блок показания датчика*/
+.weather_sensor_wrapper {
+    float: left;
+    height: 40px;
+    margin-left: 5px
+}
+
+.weather_sensor_inner {
+    display: inline-block;
+    vertical-align: bottom;
+}
+
+/*прижимаем внутренний блок вниз*/
+.weather_sensor_wrapper:after {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: bottom;
+}
+
+#weather_temperature_out, #weather_pressure, #weather_humidity_out, #weather_wind {
+    font-size: 170%;
+    font-weight: 500;
+}

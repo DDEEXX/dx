@@ -1,20 +1,28 @@
-function updateTemperature() {
+function updateWeatherHome() {
 
-    /* dev=temp - событие = температура */
-    /* label=temp_out_1 - имя датчика в базе = temp_out_1*/
-    /* type=last - тип события = последнее показание */
+	/* dev=temp - событие = температура */
+	/* label=temp_out_1 - имя датчика в базе = temp_out_1*/
+	/* type=last - тип события = последнее показание */
+	$.get("getData.php?dev=temp&label=temp_out_1", function (data) {
+		$("#home_temperature_out").html(data);
+	});
 
-    $.get("getData.php?dev=temp&label=temp_out_1&type=last", function (data) {
-        $("#temp_out_weather_home").html(data);
-    });
-
-}
-
-function updatePressure() {
 	/* dev=pressure - событие = давление */
 	/* label=pressure - имя датчика в базе = pressure*/
 	$.get("getData.php?dev=pressure&label=pressure", function (data) {
-		$("#pressure_weather_home").html(data);
+		$("#home_pressure").html(data);
+	});
+
+	/* dev=humidity - событие = влажность */
+	/* label=humidity_out - имя датчика в базе !!! пока влажность из ванной*/
+	$.get("getData.php?dev=humidity&label=bathroom_humidity", function (data) {
+		$("#home_humidity_out").html(data);
+	});
+
+	/* dev=wind - событие = ветер */
+	/* label=wind - имя датчика в базе !!! пока нет*/
+	$.get("getData.php?dev=wind&label=wind", function (data) {
+		$("#home_wind").html(data);
 	});
 
 }
@@ -29,7 +37,6 @@ Date.prototype.getDayName = function() {
 	var day = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
 	return day[this.getDay()];
 }
-
 
 function date()	{
 	var Data = new Date();
@@ -48,10 +55,9 @@ function clock() {
 }	
 
 $(document).ready( function() {
+	updateWeatherHome();
 
-    updateTemperature();
-	updatePressure();
-
+/*
 	var $alarmKey = $('#alarm_key');
 	$alarmKey.button();
 	$alarmKey.click(function () {
@@ -59,10 +65,10 @@ $(document).ready( function() {
 		console.info("123");
 		location.reload(true);
 	});
-	
+*/
+
 	$(".TekDate").html(date());		
 	$(".TekTime").html(clock());		
-
 });
 
 $(document).everyTime("1s", function() {
@@ -72,6 +78,5 @@ $(document).everyTime("1s", function() {
 
 //Обновление показания температуры каждые 5 минут
 $(document).everyTime("300s", function () {
-    updateTemperature();
-	updatePressure();
+	updateWeatherHome();
 });

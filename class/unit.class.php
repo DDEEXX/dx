@@ -371,6 +371,11 @@ abstract class sensorUnit extends unit implements iSensorUnite
         $this->dataValue = time();
     }
 
+    public function readValue()
+    {
+        return null;
+    }
+
 }
 
 abstract class moduleUnit extends unit implements iModuleUnite
@@ -393,6 +398,11 @@ abstract class moduleUnit extends unit implements iModuleUnite
 //        parent::__construct($type, $options['UnitID'], $options['UnitLabel'], $arr[0]);
         parent::__construct($type, $options['UnitID'], $options['UnitLabel'], $options['DeviceID']);
 
+    }
+
+    public function readValue()
+    {
+        return null;
     }
 
 }

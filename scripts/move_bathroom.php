@@ -9,6 +9,7 @@
 require_once(dirname(__FILE__) . '/../class/globalConst.interface.php');
 require_once(dirname(__FILE__) . '/../class/lists.class.php');
 require_once(dirname(__FILE__) . '/../class/managerUnits.class.php');
+require_once(dirname(__FILE__) . '/../class/sunInfo.class.php');
 
 class move_bathroom
 {
@@ -18,7 +19,7 @@ class move_bathroom
     const NAME_TOUCH_KEY = 'touch_key1_bathroom';
     const MOVE_TIME = 60;          //через сколько секунд выключится подсветка после отсутствия движения при включении от датчика движения
     const MOVE_TIME_GLOBAL = 1800; //через сколько секунд выключится подсветка независимо каким образом она была включена
-    const TIME_OFF_LIGHT = '10000'; //время (в миллисекундах, 1000 - 1 секунда), после поступления команды на выключение, которое надо выдержать, прежде чем отключать подсветку
+    const TIME_OFF_LIGHT = '12000'; //время (в миллисекундах, 1000 - 1 секунда), после поступления команды на выключение, которое надо выдержать, прежде чем отключать подсветку
 
     static function start()
     {
@@ -56,13 +57,22 @@ class move_bathroom
             $outTime = $now - $timeKey;
         }
 
+
         if ($keyPress) { //Прикоснулись к кнопке выключения
             $unitLight->updateValue(0, statusKey::OFF, self::TIME_OFF_LIGHT); //гасим
         }
         else {
             if ($isMove) { // есть движение
                 if (!$isLight) { // свет не горит
-                    $unitLight->updateValue(1, statusKey::MOVE); // включает, записываем что от датчика
+                    //Включение от датчика только
+                    // если (ночь) И (время больше 23 часов ИЛИ время меньше (в будние 7 утра, в выходные 8 утра)
+                    $sunInfo = sunInfo::getSunInfo(mktime());
+                    $today = getdate();
+                    $hours = $today['hours'];
+                    $weekends = $today['wday'] == 0 || $today['wday'] == 6;
+                    if ($sunInfo == dayPart::NIGHT && ($hours>=23 || ($weekends && $hours<8) || (!$weekends && $hours<7))) {
+                        $unitLight->updateValue(1, statusKey::MOVE); // включает, записываем что от датчика
+                    }
                 }
             } else { // нет движения
                 if ($isLight) { // горит свет
@@ -73,7 +83,7 @@ class move_bathroom
                         $moveTime = $now - $timeNoMove;
                     }
 
-                    if ($statusKey == statusKey::MOVE) { // включился датчиком движения
+                    if ($statusKey == statusKey::MOVE) { // включился от датчика движения
                         if ($moveTime > self::MOVE_TIME) { // время вышло с последнего отсутствия движения
                             $unitLight->updateValue(0, statusKey::OFF); //гасим
                         }

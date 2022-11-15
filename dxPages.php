@@ -162,8 +162,34 @@ if ($p == 'home' || empty($p)) {
         </div>
         <div class="clear"></div>
 
-        <div class="grid_8 alpha">1
+        <div class="grid_6 alpha">
+            .
         </div>
+        <div class="grid_5 alpha">
+            <div class="ui-corner-all ui-state-default" style="margin-top:5px">
+                <h2 style="margin-left:5px">Погода на улице</h2>
+                <div id="block_home_outdoor_data" style="display: table; margin: 5px">
+                    <div style="height: 40px; width: 90px; display: table-cell">
+                        <img style="margin-top:5px;float: left" src="img2/icon_medium/thermometer.png">
+                        <div id="home_temperature_out" style="margin-top:10px;margin-left:5px;float: left"></div>
+                    </div>
+                    <div style="height: 40px; width: 90px; display: table-cell">
+                        <img style="margin-top:5px;float: left" src="img2/icon_medium/barometer.png">
+                        <div id="home_pressure" style="margin-top:10px;margin-left:5px;float: left"></div>
+                    </div>
+                    <div style="height: 40px; width: 90px; display: table-cell">
+                        <img style="margin-top:5px;float: left" src="img2/icon_medium/humidity.png">
+                        <div id="home_humidity_out" style="margin-top:10px;margin-left:5px;float: left"></div>
+                    </div>
+                    <div style="height: 40px; width: 100px; display: table-cell">
+                        <img style="margin-top:5px;float: left" src="img2/icon_medium/wind.png">
+                        <div id="home_wind" style="margin-top:10px;margin-left:5px;float: left"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--
         <div class="grid_3 omega">
             <div class="ui-corner-all ui-state-default" style="margin-top:5px">
                 <p style="margin-left:3px; font-size:100%">Погода на улице</p>
@@ -183,7 +209,7 @@ if ($p == 'home' || empty($p)) {
                 </div>
             </div>
         </div>
-
+        -->
         <div class="clear"></div>
 
 
@@ -215,17 +241,49 @@ if ($p == 'weather') {
         <div class="grid_11 alpha">
             <div class="ui-corner-all ui-state-default" style="overflow:hidden;margin-top:5px">
                 <div style="margin-left:5px">
-                    <!--<h3 class="Title1">Прогноз погоды</h3>
-                    <div class="clear"></div> -->
                     <div id="weather_forecast"></div>
                 </div>
             </div>
         </div>
         <div class="clear"></div>
-        <div class="grid_5 alpha">
-            <p>1</p>
+        <div class="grid_4 alpha">
+            <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 119px">
+                <h2 style="margin-left:5px">Погода на улице</h2>
+                <div id="block_weather_outdoor_data">
+                    <div class="weather_b_1">
+                        <div class="weather_sensor_1">
+                            <img style="float: left" src="img2/icon_big/thermometer.png">
+                            <div id="weather_temperature_out" class="weather_sensor_wrapper"></div>
+                        </div>
+                        <div class="weather_sensor_2">
+                            <img style="float: left" src="img2/icon_big/barometer.png">
+                            <div id="weather_pressure" class="weather_sensor_wrapper"></div>
+                            <div class="weather_sensor_wrapper">
+                                <div class="weather_sensor_inner" style="margin-bottom: 2px">мм</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="weather_b_1" style="clear: both">
+                        <div class="weather_sensor_1">
+                            <img style="float: left" src="img2/icon_big/humidity.png">
+                            <div id="weather_humidity_out" class="weather_sensor_wrapper""></div>
+                            <div class="weather_sensor_wrapper">
+                                <div class="weather_sensor_inner" style="margin-bottom: 2px">%</div>
+                            </div>
+                        </div>
+                        <div class="weather_sensor_2">
+                            <img style="float: left" src="img2/icon_big/wind.png">
+                            <div id="weather_wind" class="weather_sensor_wrapper"></div>
+                            <div class="weather_sensor_wrapper">
+                                <div class="weather_sensor_inner" style="margin-bottom: 2px">м/c</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="grid_6 omega">
+            <!--
             <div class="ui-corner-all ui-state-default" style="margin-top:5px;height:180px">
                 <h2 style="margin-left:5px">Погода на улице</h2>
                 <div class="grid_3 alpha">
@@ -257,6 +315,7 @@ if ($p == 'weather') {
                     </div>
                 </div>
             </div>
+            -->
         </div>
     </div>
 

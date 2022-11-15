@@ -6,7 +6,7 @@
  * Time: 19:12
  */
 
-require_once(dirname(__FILE__)."/sqlDataBase.class.php");
+require_once(dirname(__FILE__). '/sqlDataBase.class.php');
 
 interface dayPart {
     const MORNING   = 0;
@@ -22,26 +22,17 @@ interface twilight {
 
 class sunInfo {
 
-    function sunSet() { //восход солнца
-
-    }
-
-    function sunRise() { //заход солнца
-
-    }
-
     /**
-     * N - если ночь, D - если день, M - если утро, E - если вечер
-     * @param $time
-     * @return int
+     * Определяет часть суток
+     * @param $time - момент времени для определения
+     * @return int - dayPart::MORNING - утро, dayPart::DAY - день, dayPart::EVENING - вечер, dayPart::NIGHT - ночь,
      */
     public static function getSunInfo($time) {
 
         $latitude =  DB::getConst('latitude');
         $longitude = DB::getConst('longitude');
-        $sun = dayPart::DAY;
         if (is_null($latitude) || is_null($longitude)) {
-            return $sun;
+            return dayPart::DAY;
         }
 
         $sunInfo = date_sun_info($time, $latitude, $longitude);
@@ -49,7 +40,6 @@ class sunInfo {
         $sec     = $time - mktime(0,0,0); //прошло секунд с начала суток
         $secRise = $sunInfo['sunrise'] - mktime(0,0,0); //секунд с даты восхода
         $secSet  = $sunInfo['sunset'] - mktime(0,0,0); // секунд с даты заката
-
 
         if (($sec<=$secRise) && ($sec>=$secRise-twilight::TWILIGHT_M)) {
             $sun = dayPart::MORNING;
