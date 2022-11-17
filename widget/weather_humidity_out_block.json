@@ -1,0 +1,10 @@
+{
+  "label" : "bathroom_humidity",
+  "image" : "img2/icon_small/humidity.png",
+  "graph" : {
+    "type" : 0,
+    "variant" : 1,
+    "width" : 264,
+    "height" : 101
+  }
+}

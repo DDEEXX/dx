@@ -44,6 +44,11 @@ interface graphType {
     const BAR  = 1; //столбчатый график
 }
 
+interface graphVariant {
+    const VAR1 = 0; //график минимальный
+    const VAR2 = 1; //график средний
+}
+
 //Каким способом включился модуль
 interface statusKey {
     const MOVE      = 'move';       //от датчика движения

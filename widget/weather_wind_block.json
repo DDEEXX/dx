@@ -1,0 +1,10 @@
+{
+  "label" : "wind",
+  "image" : "img2/icon_small/wind.png",
+  "graph" : {
+    "type" : 1,
+    "variant" : 1,
+    "width" : 264,
+    "height" : 101
+  }
+}

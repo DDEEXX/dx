@@ -303,6 +303,9 @@ abstract class unit implements iUnit
         return $device->test();
     }
 
+    public function getValuesForInterval($dateFrom = null, $dateTo = null) {
+        return null;
+    }
 }
 
 abstract class sensorUnit extends unit implements iSensorUnite
@@ -541,8 +544,10 @@ class temperatureUnit extends sensorUnit
      * @param null $dateTo
      * @return array|null
      */
-    public function getTemperatureForInterval($dateFrom = null, $dateTo = null)
+    public function getValuesForInterval($dateFrom = null, $dateTo = null)
     {
+
+        $result = parent::getValuesForInterval();
 
         //Конечная дата
         $date_to = "'" . $dateTo . "'";
@@ -561,17 +566,15 @@ class temperatureUnit extends sensorUnit
         }
         elseif ($dateFrom == 'week') {
             $date_from = "($date_to - INTERVAL 7 DAY)";
-            $date_format = "DATE_FORMAT(Date, '%d.%m')";
         }
         elseif ($dateFrom == 'month') {
             $date_from = "($date_to - INTERVAL 1 MONTH)";
-            $date_format = "DATE_FORMAT(Date, '%d.%m')";
         }
 
         $id = $this->getId();
         $nameTabValue = 'tvalue_' . $this->valueTable;
 
-        $query = "SELECT Value, $date_format Date_f FROM " . $nameTabValue . ' WHERE UnitID=' . $id . " AND Date>=$date_from AND Date<=$date_to ORDER BY Date";
+        $query = 'SELECT Value, '.$date_format.' Date_f FROM '.$nameTabValue.' WHERE UnitID='.$id.' AND Date>='.$date_from.' AND Date<='.$date_to.' ORDER BY Date';
 
         try {
             $con = sqlDataBase::Connect();
@@ -579,19 +582,15 @@ class temperatureUnit extends sensorUnit
         } catch (connectDBException $e) {
             logger::writeLog('Ошибка при подключении к базе данных в функции getTemperatureForInterval. ' . $e->getMessage(),
                 loggerTypeMessage::FATAL, loggerName::ERROR);
-            $result = null;
         } catch (querySelectDBException $e) {
             logger::writeLog('Ошибка в функции getTemperatureForInterval. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
                 loggerTypeMessage::FATAL, loggerName::ERROR);
-            $result = null;
         }
 
         unset($con);
-
         return $result;
 
     }
-
 }
 
 class humidityUnit extends sensorUnit
@@ -823,7 +822,7 @@ class pressureUnit extends sensorUnit
             logger::writeLog('Ошибка при подключении к базе данных в функции getAverageForInterval. ' . $e->getMessage(),
                 loggerTypeMessage::FATAL, loggerName::ERROR);
         } catch (querySelectDBException $e) {
-            logger::writeLog('Ошибка в функции getTemperatureForInterval. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
+            logger::writeLog('Ошибка в функции getAverageForInterval. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
                 loggerTypeMessage::FATAL, loggerName::ERROR);
         }
 

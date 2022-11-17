@@ -1,6 +1,6 @@
 /*вертикальные группы для отображения погоды на закладке weather*/
 .weather_b_1 {
-    margin-top: 6px;
+    margin-top: 10px;
     height: 42px
 }
 
@@ -25,6 +25,7 @@
     margin-left: 5px
 }
 
+/*внутренний блок показания датчика*/
 .weather_sensor_inner {
     display: inline-block;
     vertical-align: bottom;
@@ -38,7 +39,8 @@
     vertical-align: bottom;
 }
 
-#weather_temperature_out, #weather_pressure, #weather_humidity_out, #weather_wind {
+/*размер шрифта показаний*/
+div.weather_sensor_data {
     font-size: 170%;
     font-weight: 500;
 }

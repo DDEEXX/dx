@@ -247,75 +247,13 @@ if ($p == 'weather') {
         </div>
         <div class="clear"></div>
         <div class="grid_4 alpha">
-            <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 119px">
+            <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 130px">
                 <h2 style="margin-left:5px">Погода на улице</h2>
-                <div id="block_weather_outdoor_data">
-                    <div class="weather_b_1">
-                        <div class="weather_sensor_1">
-                            <img style="float: left" src="img2/icon_big/thermometer.png">
-                            <div id="weather_temperature_out" class="weather_sensor_wrapper"></div>
-                        </div>
-                        <div class="weather_sensor_2">
-                            <img style="float: left" src="img2/icon_big/barometer.png">
-                            <div id="weather_pressure" class="weather_sensor_wrapper"></div>
-                            <div class="weather_sensor_wrapper">
-                                <div class="weather_sensor_inner" style="margin-bottom: 2px">мм</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="weather_b_1" style="clear: both">
-                        <div class="weather_sensor_1">
-                            <img style="float: left" src="img2/icon_big/humidity.png">
-                            <div id="weather_humidity_out" class="weather_sensor_wrapper""></div>
-                            <div class="weather_sensor_wrapper">
-                                <div class="weather_sensor_inner" style="margin-bottom: 2px">%</div>
-                            </div>
-                        </div>
-                        <div class="weather_sensor_2">
-                            <img style="float: left" src="img2/icon_big/wind.png">
-                            <div id="weather_wind" class="weather_sensor_wrapper"></div>
-                            <div class="weather_sensor_wrapper">
-                                <div class="weather_sensor_inner" style="margin-bottom: 2px">м/c</div>
-                            </div>
-                        </div>
-                    </div>
+                <div id="block_weather_outdoor">
                 </div>
             </div>
         </div>
         <div class="grid_6 omega">
-            <!--
-            <div class="ui-corner-all ui-state-default" style="margin-top:5px;height:180px">
-                <h2 style="margin-left:5px">Погода на улице</h2>
-                <div class="grid_3 alpha">
-                    <div style="overflow: hidden">
-                        <img style="margin-top:5px;margin-left:5px" src="img2/thermometer.png">
-                        <div id="temp_out_weather" style="margin-top:10px;margin-left:15px;float:right">--</div>
-                    </div>
-                </div>
-                <div class="grid_3 omega" style="margin-left: 5px">
-                    <div style="overflow: hidden">
-                        <img style="margin-top:5px;margin-left:10px;float:left" src="img2/barometer.png">
-                        <div id="pressure_weather" style="float:left;margin-left:15px;margin-top:10px;">--</div>
-                        <div style="float:right;margin-right:2px;margin-top:27px;font-size: 80%"> мм рт.ст.</div>
-                    </div>
-                </div>
-                <div class="clear"></div>
-                <div class="grid_3 alpha">
-                    <div style="overflow: hidden;margin-top: 10px">
-                        <img style="margin-top:5px;margin-left:12px;float:left" src="img2/windsock.png">
-                        <div id="wind_weather" style="float:left;margin-left:15px;margin-top:10px;">--</div>
-                        <div style="float:left;margin-left:2px;margin-top:27px;font-size: 80%">м/с</div>
-                        <div id="wind_dir_weather" style="float:left;margin-left:15px;margin-top:10px;">сз</div>
-                    </div>
-                </div>
-                <div class="grid_3 omega" style="margin-left: 5px">
-                    <div style="overflow: hidden;margin-top: 10px">
-                        <p style="float:right;font-size: 80%">изменение давления</p>
-                        <img src="pressureHistory.php" height=80 style="float:right">
-                    </div>
-                </div>
-            </div>
-            -->
         </div>
     </div>
 
