@@ -2,9 +2,11 @@
   "label" : "pressure",
   "image" : "img2/icon_small/barometer.png",
   "graph" : {
-    "type" : 1,
-    "variant" : 1,
+    "type" : 3,
+    "variant" : 0,
     "width" : 264,
-    "height" : 101
+    "height" : 101,
+    "count" : 6,
+    "min_delta" : 5
   }
 }

@@ -34,7 +34,7 @@ function clickOnWeatherWidget() {
 
 function getSensorWidget(data) {
     var newElement = $(data);
-    $('#block_weather_outdoor').off('click', '.expand');
+    $('#block_weather_outdoor').off('click');
     $('#block_weather_outdoor_data').replaceWith(newElement);
     $('#block_weather_outdoor').on('click', '#block_weather_outdoor_data_widger', clickOnWeatherWidget);
 }
@@ -49,6 +49,8 @@ function clickOnWeatherSensor() {
 }
 
 function loadWeatherOutdoorData() {
+
+    $('#block_weather_outdoor').off('click');
     $('#block_weather_outdoor').load('load2/weather_outdoor.html', function () {
         $('#block_weather_outdoor').on('click', '.expand', clickOnWeatherSensor);
         updateWeatherData();

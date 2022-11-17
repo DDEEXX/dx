@@ -89,7 +89,7 @@ if (count($pressure)>0) {
     $graph->yaxis->HideLabels();
     $graph->yaxis->HideTicks(true, true);
     $graph->yaxis->HideLine();
-    $graph->yaxis->HideZeroLabel();
+    $graph->yaxis->HideZeroLabel(false);
     //$graph->yaxis->Hide();
     //$graph->yaxis->SetTextTickInterval(1,2)
     //$graph->yaxis->SetTickLabels(array('-8>','','','','','','>','','','','','','8 >'));

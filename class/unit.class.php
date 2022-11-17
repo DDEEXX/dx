@@ -306,6 +306,10 @@ abstract class unit implements iUnit
     public function getValuesForInterval($dateFrom = null, $dateTo = null) {
         return null;
     }
+
+    public function getValueAverageForInterval() {
+        return null;
+    }
 }
 
 abstract class sensorUnit extends unit implements iSensorUnite
@@ -374,11 +378,130 @@ abstract class sensorUnit extends unit implements iSensorUnite
         $this->dataValue = time();
     }
 
+    /** Получить последнее записанное значение датчика из базы данных
+     * @return array|null
+     */
     public function readValue()
     {
-        return null;
+        return DB::getLastValueUnit($this);
     }
 
+    /**
+     * @param null $dateFrom
+     * @param null $dateTo
+     * @return array|null
+     */
+    public function getValuesForInterval($dateFrom = null, $dateTo = null, $dataFormat = null)
+    {
+
+        $result = parent::getValuesForInterval();
+
+        //Конечная дата
+        $dateToQuery = "'" . $dateTo . "'";
+        //Если конечная дата не задана, используем настоящее время
+        if (empty($dateTo)) {
+            $dateToQuery = 'NOW()';
+        }
+
+        //Обрабатываем начальную дату
+        $dateFromQuery = $dateFrom;
+        if (!is_null($dataFormat)) {
+            //$date_format = "DATE_FORMAT(Date, '%H:%i')";
+            $dataFormatQuery = 'DATE_FORMAT(Date, \''.$dataFormat.'\')';
+        }
+        elseif ($dateFrom == 'week' || $dateFrom == 'month') {
+            $dataFormatQuery = "DATE_FORMAT(Date, '%d.%m')";
+        }
+        else {
+            $dataFormatQuery = "DATE_FORMAT(Date, '%H')";
+        }
+
+        if (empty($dateFrom) || $dateFrom == 'day') {
+            $dateFromQuery = "($dateToQuery - INTERVAL 1 DAY)";
+        }
+        elseif ($dateFrom == 'week') {
+            $dateFromQuery = "($dateToQuery - INTERVAL 7 DAY)";
+        }
+        elseif ($dateFrom == 'month') {
+            $dateFromQuery = "($dateToQuery - INTERVAL 1 MONTH)";
+        }
+
+        $id = $this->getId();
+        $nameTabValue = 'tvalue_' . $this->valueTable;
+
+//        $query = 'SELECT Value, '.$date_format.' Date_f FROM '.$nameTabValue.' WHERE UnitID='.$id.' AND Date>='.$dateFromQuery.' AND Date<='.$dateToQuery.' ORDER BY Date';
+        /** @noinspection SqlResolve */
+        $query = 'SELECT Value,'.$dataFormatQuery.' Date_f FROM '.$nameTabValue.' WHERE UnitID='.$id.' AND Date>='.$dateFromQuery.' AND Date<='.$dateToQuery.' ORDER BY Date';
+
+        try {
+            $con = sqlDataBase::Connect();
+            $result = queryDataBase::getAll($con, $query);
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции getTemperatureForInterval. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка в функции getTemperatureForInterval. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+        }
+
+        unset($con);
+        return $result;
+
+    }
+
+    /**
+     * Получить среднее значение из базы за интервал
+     * @param null $date - конечная дата, задается в виде даты, если не задана или пустая,
+     * то берется текущая дата
+     * @param null $intervalHour - количество часов от начальной даты,
+     * если пустая берется -1 час (среднее значение за час до начальной даты)
+     * @return float
+     */
+    public function getValueAverageForInterval($date = null, $intervalHour = null) {
+
+        $result = parent::getValueAverageForInterval();
+
+        //исходная дата
+        if (empty($date)) {
+            $date1 = 'NOW()';
+        } else {
+            $date1 = '\''.$date.'\'';
+        }
+
+        //интервал
+        if (!is_int($intervalHour) || $intervalHour == 0) {
+            $intervalHour = -1;
+        }
+        $date2 = '('.$date1.' '.($intervalHour>0?'+ ':'- ').'INTERVAL '.abs($intervalHour).' HOUR)';
+
+        if ($intervalHour>0) {
+            $dateFrom = $date1;
+            $dateTo = $date2;
+        } else {
+            $dateFrom = $date2;
+            $dateTo = $date1;
+        }
+
+        $id = $this->getId();
+        $nameTabValue = 'tvalue_' . $this->valueTable;
+
+        /** @noinspection SqlResolve */
+        $query = 'SELECT avg(Value) AS Value FROM '.$nameTabValue.' WHERE UnitID='.$id.' AND Date>='.$dateFrom.' AND Date<='.$dateTo;
+
+        try {
+            $con = sqlDataBase::Connect();
+            $result = queryDataBase::getOne($con, $query);
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции getValueAverageForInterval. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка в функции getValueAverageForInterval. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+        }
+        unset($con);
+
+        return $result['Value'];
+    }
 }
 
 abstract class moduleUnit extends unit implements iModuleUnite
@@ -530,67 +653,6 @@ class temperatureUnit extends sensorUnit
 
     }
 
-    /**
-     * Получить последнюю температуру из базы данных
-     *
-     */
-    public function readValue()
-    {
-        return DB::getLastValueUnit($this);
-    }
-
-    /**
-     * @param null $dateFrom
-     * @param null $dateTo
-     * @return array|null
-     */
-    public function getValuesForInterval($dateFrom = null, $dateTo = null)
-    {
-
-        $result = parent::getValuesForInterval();
-
-        //Конечная дата
-        $date_to = "'" . $dateTo . "'";
-        //Если конечная дата не задана, используем настоящее время
-        if (empty($dateTo)) {
-            $date_to = 'NOW()';
-        }
-
-        //Обрабатываем начальную дату
-        $date_from = $dateFrom;
-        $date_format = "DATE_FORMAT(Date, '%d.%m')";
-
-        if (empty($dateFrom) || $dateFrom == 'day') {
-            $date_from = "($date_to - INTERVAL 1 DAY)";
-            $date_format = "DATE_FORMAT(Date, '%H:%i')";
-        }
-        elseif ($dateFrom == 'week') {
-            $date_from = "($date_to - INTERVAL 7 DAY)";
-        }
-        elseif ($dateFrom == 'month') {
-            $date_from = "($date_to - INTERVAL 1 MONTH)";
-        }
-
-        $id = $this->getId();
-        $nameTabValue = 'tvalue_' . $this->valueTable;
-
-        $query = 'SELECT Value, '.$date_format.' Date_f FROM '.$nameTabValue.' WHERE UnitID='.$id.' AND Date>='.$date_from.' AND Date<='.$date_to.' ORDER BY Date';
-
-        try {
-            $con = sqlDataBase::Connect();
-            $result = queryDataBase::getAll($con, $query);
-        } catch (connectDBException $e) {
-            logger::writeLog('Ошибка при подключении к базе данных в функции getTemperatureForInterval. ' . $e->getMessage(),
-                loggerTypeMessage::FATAL, loggerName::ERROR);
-        } catch (querySelectDBException $e) {
-            logger::writeLog('Ошибка в функции getTemperatureForInterval. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
-                loggerTypeMessage::FATAL, loggerName::ERROR);
-        }
-
-        unset($con);
-        return $result;
-
-    }
 }
 
 class humidityUnit extends sensorUnit
@@ -637,15 +699,6 @@ class humidityUnit extends sensorUnit
                 loggerTypeMessage::ERROR, loggerName::ERROR);
         }
 
-    }
-
-    /**
-     * Получить последнюю температуру из базы данных
-     *
-     */
-    public function readValue()
-    {
-        return DB::getLastValueUnit($this);
     }
 
     public function updateValueMQTT($payload) {
@@ -719,15 +772,6 @@ class pressureUnit extends sensorUnit
     }
 
     /**
-     * Получить последнее давление из базы данных
-     *
-     */
-    public function readValue()
-    {
-        return DB::getLastValueUnit($this);
-    }
-
-    /**
      * @param null $dateFrom
      * @param null $dateTo
      * @return array|null
@@ -780,55 +824,6 @@ class pressureUnit extends sensorUnit
         unset($con);
 
         return $result;
-
-    }
-
-    /**
-     * Получить среднее значение (давление) за интервал
-     * @param null $dateFrom - начальная дата, задается количеством часов от начальной даты,
-     * если пустая берется 1 час (среднее давление за час)
-     * @param null $dateTo - конечная дата, задается в виде даты, если не задана или пустая,
-     * то берется текущая дата
-     * @return float
-     */
-    public function getAverageForInterval($dateFrom = null, $dateTo = null){
-        //Конечная дата
-        if (empty($dateTo)) {
-            $dateTo = 'NOW()';
-        }
-        else {
-            $dateTo = '"'.$dateTo.'"';
-        }
-
-        //Начальная дата
-        if (is_int($dateFrom)) {
-            $dateFrom = '('.$dateTo.' - INTERVAL '.$dateFrom.' HOUR)';
-        }
-        else {
-            $dateFrom = '('.$dateTo.' - INTERVAL 1 HOUR)';
-        }
-
-        $id = $this->getId();
-        $nameTabValue = 'tvalue_' . $this->valueTable;
-
-        $query = 'SELECT avg(Value) AS Value FROM '.$nameTabValue.' WHERE UnitID='.$id.' AND Date>='.$dateFrom.' AND Date<='.$dateTo;
-
-        $result = null;
-
-        try {
-            $con = sqlDataBase::Connect();
-            $result = queryDataBase::getOne($con, $query);
-        } catch (connectDBException $e) {
-            logger::writeLog('Ошибка при подключении к базе данных в функции getAverageForInterval. ' . $e->getMessage(),
-                loggerTypeMessage::FATAL, loggerName::ERROR);
-        } catch (querySelectDBException $e) {
-            logger::writeLog('Ошибка в функции getAverageForInterval. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
-                loggerTypeMessage::FATAL, loggerName::ERROR);
-        }
-
-        unset($con);
-
-        return (double)$result['Value'];
 
     }
 

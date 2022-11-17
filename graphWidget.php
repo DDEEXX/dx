@@ -10,8 +10,10 @@ $type = $_GET['graph']['type'];
 $variant = $_GET['graph']['variant'];
 $width = $_GET['graph']['width'];
 $height = $_GET['graph']['height'];
+$count = $_GET['graph']['count'];
+$minDelta = $_GET['graph']['min_delta'];
 
-$graphWidget = new graphUnitValues($label, $type, $variant, $width, $height);
+$graphWidget = new graphUnitValues($label, $type, $variant, $width, $height,null, null, $count, $minDelta);
 $imageGraph64 = $graphWidget->getGraph64();
 
 echo

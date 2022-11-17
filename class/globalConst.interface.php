@@ -42,6 +42,7 @@ interface typeUnit{
 interface graphType {
     const LINE = 0; //линейный график
     const BAR  = 1; //столбчатый график
+    const BAR_AVERAGE  = 3; //столбчатый график, средние значения, график не с 0, только изменения (для давления)
 }
 
 interface graphVariant {
