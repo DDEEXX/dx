@@ -123,7 +123,8 @@ class graphUnitValues implements iGraphUnitValues
         }
 
         $graph = new Graph($this->width, $this->height, 'auto');
-        $graph->SetScale('textlin');
+        $graph->SetScale('textlin',0,10);
+        //$graph->SetScale('textlin');
         $graph->SetBox(false);
 
         $graph->xaxis->SetTickLabels($x_data);
@@ -144,8 +145,12 @@ class graphUnitValues implements iGraphUnitValues
         //$graph->yaxis->HideZeroLabel();
 
         $tickLabels = [];
-        for ($i = 0; $i <= $delta * 2; $i++)
-            $tickLabels[] = $i - $delta;
+        for ($i = 1; $i < $delta * 2; $i++)
+            $tickLabels[$i] = $i - $delta;
+        $tickLabels[0] = ''.(-$delta).' >';
+        $tickLabels[$delta] = '>';
+        $tickLabels[$delta*2] = ''.($delta).' >';
+
         $graph->yaxis->SetTickLabels($tickLabels);
 
         $graph->xaxis->SetPos('min');
@@ -153,6 +158,8 @@ class graphUnitValues implements iGraphUnitValues
         $graph->ygrid->Show(true);
         $graph->ygrid->SetFill(false);
         $graph->ygrid->SetColor('#4d6893');
+
+        //$graph->yaxis->scale->ticks->Set(10);
 
         $b1 = new BarPlot($y_data);
         $b1->SetYBase($delta * 2);

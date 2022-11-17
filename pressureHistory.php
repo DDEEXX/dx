@@ -66,7 +66,7 @@ if (count($pressure)>0) {
     $interval = 1;
 
     $graph = new Graph(DEFAULT_GR_WIDTH, DEFAULT_GR_HEIGHT, 'auto');
-    $graph->SetScale('textlin');
+    $graph->SetScale('linlin');
     $graph->SetBox(false);
 //    $graph->SetTickDensity(TICKD_DENSE);
 //    $graph->SetAxisStyle(AXSTYLE_BOXOUT);
@@ -98,6 +98,9 @@ if (count($pressure)>0) {
     $graph->ygrid->Show(true);
     $graph->ygrid->SetFill(false);
     $graph->ygrid->SetColor('#4d6893');
+
+    $graph->SetScale('linlin',5,75);
+    $graph->yaxis->scale->ticks->Set(10);
 
     $b1 = new BarPlot($pressure);
     $b1->SetYBase($currentPressure - DELTA_SETYBASE);
