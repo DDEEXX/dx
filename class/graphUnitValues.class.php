@@ -81,7 +81,7 @@ class graphUnitValues implements iGraphUnitValues
 
         $y_data = [];
         $x_data = [];
-        $delta = $this->minDelta * 2;
+        $delta = $this->minDelta;
 
         //Получаем среднее значение давления по интервалам в 2 часа
         $everyHour = (int)(24 / (int)$this->count);
@@ -120,11 +120,15 @@ class graphUnitValues implements iGraphUnitValues
                     $y_data[$i] = 0;
                 }
             }
+        } else {
+            for ($i = 0; $i < $this->count; $i++)
+                $y_data[$i] = 0;
+
         }
 
         $graph = new Graph($this->width, $this->height, 'auto');
-        $graph->SetScale('textlin',0,10);
-        //$graph->SetScale('textlin');
+        $graph->SetScale('textlin', 0, $delta * 2);
+        $graph->img->SetMargin(45, 5, 5, 20);
         $graph->SetBox(false);
 
         $graph->xaxis->SetTickLabels($x_data);
@@ -147,9 +151,9 @@ class graphUnitValues implements iGraphUnitValues
         $tickLabels = [];
         for ($i = 1; $i < $delta * 2; $i++)
             $tickLabels[$i] = $i - $delta;
-        $tickLabels[0] = ''.(-$delta).' >';
+        $tickLabels[0] = '' . (-$delta) . ' >';
         $tickLabels[$delta] = '>';
-        $tickLabels[$delta*2] = ''.($delta).' >';
+        $tickLabels[$delta * 2] = '' . ($delta) . ' >';
 
         $graph->yaxis->SetTickLabels($tickLabels);
 
@@ -190,7 +194,7 @@ class graphUnitValues implements iGraphUnitValues
         if ($this->type == 3) {
             return $this->drawGraphVariant3();
         } else {
-            $values = $this->unit->getValuesForInterval($this->date_from, $this->date_to, '%H');
+            $values = $this->unit->getValuesForInterval($this->date_from, $this->date_to,'%H');
             $count_r = count($values);
             for ($i = 0; $i < $count_r; $i++) {
                 $y_data[$i] = round($values[$i]['Value'], 1);
@@ -206,7 +210,7 @@ class graphUnitValues implements iGraphUnitValues
             $graph->SetScale('textlin');
             $graph->SetBox(false);
             $graph->SetTickDensity(TICKD_DENSE);
-            $graph->SetAxisStyle(AXSTYLE_BOXOUT);
+            //$graph->SetAxisStyle(AXSTYLE_BOXOUT);
 
             if ($this->variant == graphVariant::VAR1) {
                 $graph->xaxis->HideTicks();
@@ -215,9 +219,17 @@ class graphUnitValues implements iGraphUnitValues
                 $graph->xaxis->SetFont(FF_FONT1, FS_BOLD);
                 $graph->xaxis->SetColor('lightblue');
                 $graph->xaxis->SetLabelMargin(2);
-                $graph->xaxis->SetTextTickInterval($interval); //6 меток
+                $graph->xaxis->SetTextTickInterval($interval);
+                $graph->xaxis->SetPos('min');
 
-                $graph->img->SetMargin(45, 0, 0, 20);
+                $graph->yaxis->SetPos('max');
+                $graph->yaxis->SetLabelSide('SIDE_RIGHT');
+                $graph->yaxis->SetFont(FF_FONT1, FS_BOLD);
+                $graph->yaxis->HideLine();
+                $graph->yaxis->HideFirstLastLabel();
+                $graph->yaxis->SetColor('lightblue');
+
+                $graph->img->SetMargin(0, 45, 0, 20);
             } elseif ($this->variant == graphVariant::VAR2) {
                 $graph->xaxis->SetTickLabels($x_data);
                 $graph->xaxis->SetTextLabelInterval(2);
@@ -228,17 +240,17 @@ class graphUnitValues implements iGraphUnitValues
                 $graph->xaxis->HideLine();
                 $graph->xaxis->SetTextTickInterval($interval);
 
+                $graph->yaxis->SetFont(FF_FONT1, FS_BOLD);
+                $graph->yaxis->HideLine();
+                $graph->yaxis->HideFirstLastLabel();
+                $graph->yaxis->SetColor('lightblue');
+
                 $graph->img->SetMargin(45, 5, 5, 60);
             }
 
             $graph->ygrid->Show(true);
             $graph->ygrid->SetFill(false);
             $graph->ygrid->SetColor('#4d6893');
-
-            $graph->yaxis->SetFont(FF_FONT1, FS_BOLD);
-            $graph->yaxis->HideLine();
-            $graph->yaxis->HideFirstLastLabel();
-            $graph->yaxis->SetColor('lightblue');
 
             if ($this->type == graphType::LINE) {
                 $l1 = new LinePlot($y_data);

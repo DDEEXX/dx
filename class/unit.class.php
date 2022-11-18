@@ -386,12 +386,15 @@ abstract class sensorUnit extends unit implements iSensorUnite
         return DB::getLastValueUnit($this);
     }
 
-    /**
-     * @param null $dateFrom
-     * @param null $dateTo
+    /** Получить показания за интервал
+     * @param $dateFrom - с даты, может быть задана относительно $dateTo, значениями day|week|month,
+     *                    значение по умолчанию day
+     * @param $dateTo - по дату, если не задана, то берется текущий момент
+     * @param $dataFormat - формат возвращаемой даты, значение по умолчанию '%H';
+     * @param $descSort
      * @return array|null
      */
-    public function getValuesForInterval($dateFrom = null, $dateTo = null, $dataFormat = null)
+    public function getValuesForInterval($dateFrom = 'day', $dateTo = null, $dataFormat = '%H', $descSort = false)
     {
 
         $result = parent::getValuesForInterval();
@@ -429,9 +432,15 @@ abstract class sensorUnit extends unit implements iSensorUnite
         $id = $this->getId();
         $nameTabValue = 'tvalue_' . $this->valueTable;
 
+        $sortQuery = '';
+        if ($descSort) {
+            $sortQuery = ' DESC';
+        }
+
 //        $query = 'SELECT Value, '.$date_format.' Date_f FROM '.$nameTabValue.' WHERE UnitID='.$id.' AND Date>='.$dateFromQuery.' AND Date<='.$dateToQuery.' ORDER BY Date';
         /** @noinspection SqlResolve */
-        $query = 'SELECT Value,'.$dataFormatQuery.' Date_f FROM '.$nameTabValue.' WHERE UnitID='.$id.' AND Date>='.$dateFromQuery.' AND Date<='.$dateToQuery.' ORDER BY Date';
+        $query = 'SELECT Value,'.$dataFormatQuery.' Date_f FROM '.$nameTabValue.' WHERE UnitID='.$id.
+            ' AND Date>='.$dateFromQuery.' AND Date<='.$dateToQuery.' ORDER BY Date'.$sortQuery;
 
         try {
             $con = sqlDataBase::Connect();

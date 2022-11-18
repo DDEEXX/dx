@@ -18,10 +18,10 @@ $imageGraph64 = $graphWidget->getGraph64();
 
 echo
 '<div id="block_weather_outdoor_data_widger" style="margin-left: 5px; margin-top: 5px">'.
-    '<div>'.
-        '<img src="'.$urlImage.'" style="float: left">'.
+    '<div style="float: left">'.
+        '<img src="'.$urlImage.'">'.
     '</div>'.
-    '<div>'.
+    '<div style="margin-left: 5px; float: left">'.
         '<img src="data:image/png;base64,'.$imageGraph64.'"/>'.
     '</div>'.
 '</div>';
