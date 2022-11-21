@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "dev": "temp",
+      "label": "temp_bedroom_Lera",
+      "id": "weather_temperature_bedroomLera_data"
+    }
+  ],
+  "widget": {
+    "weather_temperature_bedroomLera_block": {
+      "label": "temp_bedroom_Lera",
+      "image": "img2/icon_small/thermometer.png",
+      "graph": {
+        "type": 0,
+        "variant": 0,
+        "width": 246,
+        "height": 101,
+        "count": 6
+      }
+    }
+  }
+}

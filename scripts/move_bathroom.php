@@ -15,7 +15,7 @@ class move_bathroom
 {
 
     const NAME_MOVE = 'move_bathroom';
-    const NAME_LIGHT = 'backlight _bathroom';
+    const NAME_LIGHT = 'backlight_bathroom';
     const NAME_TOUCH_KEY = 'touch_key1_bathroom';
     const MOVE_TIME = 60;          //через сколько секунд выключится подсветка после отсутствия движения при включении от датчика движения
     const MOVE_TIME_GLOBAL = 1800; //через сколько секунд выключится подсветка независимо каким образом она была включена

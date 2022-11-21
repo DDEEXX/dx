@@ -7,14 +7,14 @@
 /*короткий блок с содержимым датчика*/
 .weather_sensor_1 {
     height: 42px;
-    width: 135px;
+    width: 130px;
     float: left
 }
 
 /*длинный блок с содержимым датчика*/
 .weather_sensor_2 {
     height: 42px;
-    width: 163px;
+    width: 151px;
     float: left
 }
 
@@ -41,6 +41,6 @@
 
 /*размер шрифта показаний*/
 div.weather_sensor_data {
-    font-size: 170%;
+    font-size: 150%;
     font-weight: 500;
 }

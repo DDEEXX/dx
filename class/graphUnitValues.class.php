@@ -185,7 +185,7 @@ class graphUnitValues implements iGraphUnitValues
     {
 
         if (is_null($this->unit)) {
-            return noData();
+            return $this->noData();
         }
 
         $y_data = [];

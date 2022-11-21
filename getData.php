@@ -39,9 +39,10 @@ if ($_REQUEST['dev'] == 'temp') { //получаем температуру
         }
     }
 
-    echo '<div class="' . $temperatureClass . ' weather_sensor_inner">
-            ' . $temperature . '&deg
-          </div>';
+    echo
+    '<div class="' . $temperatureClass . ' weather_sensor_inner">'.
+    $temperature.'&deg'.
+    '</div>';
 
     unset($unit);
 }

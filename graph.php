@@ -20,7 +20,7 @@ $date_from = null;
 $date_to = null;
 $variant = graphVariant::VAR1;
 
-function noData($width, $height) {
+function noData_($width, $height) {
     $Title = 'NO DATA';
     $image = imagecreatetruecolor($width, $height);
     $blueColor = imagecolorallocate($image, 0, 0, 255);
@@ -47,7 +47,7 @@ $label = $_GET['label'];
 if (!isset($label)) {
     logger::writeLog('Не задано имя модуля (graph.php)',
         loggerTypeMessage::ERROR, loggerName::ERROR);
-    noData($width, $height);
+    noData_($width, $height);
     exit();
 }
 
@@ -55,7 +55,7 @@ $unit = managerUnits::getUnitLabel($label);
 if (is_null($unit)) {
     logger::writeLog('Модуль с именем :: ' . $label . ' :: не найден (graph.php)',
         loggerTypeMessage::ERROR, loggerName::ERROR);
-    noData($width, $height);
+    noData_($width, $height);
     exit();
 }
 
@@ -117,5 +117,5 @@ if ($count_r > 1) {
 
 }
 else {
-    noData($width, $height);
+    noData_($width, $height);
 }

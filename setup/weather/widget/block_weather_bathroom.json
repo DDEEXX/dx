@@ -1,0 +1,38 @@
+{
+  "data": [
+    {
+      "dev": "temp",
+      "label": "temp_bathroom",
+      "id": "weather_temperature_bathroom_data"
+    },
+    {
+      "dev": "humidity",
+      "label": "bathroom_humidity",
+      "id": "weather_humidity_bathroom_data"
+    }
+  ],
+  "widget": {
+    "weather_temperature_bathroom_block": {
+      "label": "temp_bathroom",
+      "image": "img2/icon_small/thermometer.png",
+      "graph": {
+        "type": 0,
+        "variant": 0,
+        "width": 247,
+        "height": 101,
+        "count": 6
+      }
+    },
+    "weather_humidity_bathroom_block": {
+      "label": "bathroom_humidity",
+      "image": "img2/icon_small/humidity.png",
+      "graph": {
+        "type": 0,
+        "variant": 0,
+        "width": 247,
+        "height": 101,
+        "count": 6
+      }
+    }
+  }
+}

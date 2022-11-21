@@ -246,15 +246,72 @@ if ($p == 'weather') {
             </div>
         </div>
         <div class="clear"></div>
-        <div class="grid_4 alpha">
+        <div class="grid_860_1 alpha">
             <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 130px">
-                <h2 style="margin-left:5px">Погода на улице</h2>
-                <div id="block_weather_outdoor">
+                <h2 style="margin-left:5px">На улице</h2>
+                <div id="block_weather_outdoor" isBlock="true">
                 </div>
             </div>
         </div>
-        <div class="grid_6 omega">
+        <div class="grid_860_1">
+            <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 130px">
+                <h2 style="margin-left:5px">Баня</h2>
+            </div>
         </div>
+        <div class="grid_860_1 omega">
+            <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 130px">
+                <h2 style="margin-left:5px">Погреб</h2>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div class="grid_860_1 alpha">
+            <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 130px">
+                <h2 style="margin-left:5px">Зал</h2>
+                <div id="block_weather_hall" isBlock="true">
+                </div>
+            </div>
+        </div>
+        <div class="grid_860_1">
+            <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 130px">
+                <h2 style="margin-left:5px">Кабинет</h2>
+            </div>
+        </div>
+        <div class="grid_860_1 omega">
+            <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 130px">
+                <h2 style="margin-left:5px">Сервер</h2>
+                <div id="block_weather_server" isBlock="true">
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div class="grid_860_1 alpha">
+            <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 130px">
+                <h2 style="margin-left:5px">Спальня</h2>
+                <div id="block_weather_bedroom" isBlock="true">
+                </div>
+            </div>
+        </div>
+        <div class="grid_860_1">
+            <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 130px">
+                <h2 style="margin-left:5px">Спальня Леры</h2>
+                <div id="block_weather_bedroom_Lera" isBlock="true">
+                </div>
+            </div>
+        </div>
+        <div class="grid_860_1 omega">
+            <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 130px">
+                <h2 style="margin-left:5px">Ванная</h2>
+                <div id="block_weather_bathroom" isBlock="true">
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div class="grid_860_1 alpha">
+            <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 130px">
+                <h2 style="margin-left:5px">Резерв</h2>
+            </div>
+        </div>
+
     </div>
 
     <?php
