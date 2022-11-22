@@ -90,19 +90,19 @@ function loadData(updateData) {
 }
 
 function updateWeatherTemperaturePlan() {
-    $.get("getData.php?dev=temp&label=temp_hall", function (data) {
+    $.get("getData.php?dev=temp&label=temp_hall&color=plan", function (data) {
         $("#weather_plan_temp_hall").html(data);
     });
-    $.get("getData.php?dev=temp&label=temp_stair", function (data) {
+    $.get("getData.php?dev=temp&label=temp_stair&color=plan", function (data) {
         $("#weather_plan_temp_server").html(data);
     });
-    $.get("getData.php?dev=temp&label=temp_bedroom", function (data) {
+    $.get("getData.php?dev=temp&label=temp_bedroom&color=plan", function (data) {
         $("#weather_plan_temp_bedroom").html(data);
     });
-    $.get("getData.php?dev=temp&label=temp_bedroom_Lera", function (data) {
+    $.get("getData.php?dev=temp&label=temp_bedroom_Lera&color=plan", function (data) {
         $("#weather_plan_temp_bedroomLera").html(data);
     });
-    $.get("getData.php?dev=temp&label=temp_bathroom", function (data) {
+    $.get("getData.php?dev=temp&label=temp_bathroom&color=plan", function (data) {
         $("#weather_plan_temp_bathroom").html(data);
     });
 }
