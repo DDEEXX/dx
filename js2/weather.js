@@ -5,6 +5,10 @@ var arrBlockID = ['block_weather_outdoor',
     'block_weather_bedroom_Lera',
     'block_weather_bathroom'];
 
+function getElementWait() {
+    return $('<span class="weather_widget_wait"></span>');
+}
+
 function getSensorWidget(idBlock, data) {
     var selector = '#' + idBlock;
     $(selector).off('click');
@@ -14,17 +18,22 @@ function getSensorWidget(idBlock, data) {
     });
 }
 
-function clickOnDataSensor() {
-    /*параметры виджетов в виде JSON хранятся в файле, имя файла совпадает с id родительского блока с атрибутом isBlock="true"*/
-    var idBlock = $(this).parentsUntil("div[isBlock=\"true\"]").parent().attr('id');
-    var idBlockClick = $(this).attr('id');
-    var url = 'setup/weather/widget/' + idBlock + '.json';
+function getWidget(idBlock, idBlockClick) {
+    $("#" + idBlock).html(getElementWait());
+    var url = 'data/weather/widget/' + idBlock + '.json';
     $.getJSON(url, function (data) {
         var widgetParam = data['widget'][idBlockClick];
         $.get("graphWidget.php", widgetParam, function (data) {
             getSensorWidget(idBlock, data);
         });
     })
+}
+
+function clickOnDataSensor() {
+    /*параметры виджетов в виде JSON хранятся в файле, имя файла совпадает с id родительского блока с атрибутом isBlock="true"*/
+    var idBlock = $(this).parentsUntil("div[isBlock=\"true\"]").parent().attr('id');
+    var idBlockClick = $(this).attr('id');
+    getWidget(idBlock, idBlockClick);
 }
 
 function updateDataJSON(data) { //получить данные, параметры показаний в data.data
@@ -38,7 +47,7 @@ function updateDataJSON(data) { //получить данные, парамет�
 }
 
 function updateData(idBlock) { //получить параметры для отображения показаний из json файла
-    var url = 'setup/weather/widget/' + idBlock + '.json';
+    var url = 'data/weather/widget/' + idBlock + '.json';
     $.getJSON(url, updateDataJSON);
 }
 
@@ -48,7 +57,7 @@ function updateData(idBlock) { //получить параметры для от
 function loadBlockData(idBlock) {
     var selector = "#" + idBlock;
     $(selector).off('click');
-    $(selector).load('setup/weather/load/' + idBlock + '.html', idBlock, function (response, status) {
+    $(selector).load('data/weather/load/' + idBlock + '.html', idBlock, function (response, status) {
         if (status === 'success') {
             $(selector).on('click', '.expand', clickOnDataSensor);
             updateData(idBlock); //функция для обновления показаний датчиков в блоке
@@ -68,11 +77,87 @@ function loadWeatherData() {
     })
 }
 
+function afterLoadWeatherData() {
+    loadWeatherData();
+}
+
+function loadData(updateData) {
+    $("#weather_content").load('data/weather/load/weather_data.html', function () {
+        if (updateData) {
+            afterLoadWeatherData();
+        }
+    });
+}
+
+function updateWeatherTemperaturePlan() {
+    $.get("getData.php?dev=temp&label=temp_hall", function (data) {
+        $("#weather_plan_temp_hall").html(data);
+    });
+    $.get("getData.php?dev=temp&label=temp_stair", function (data) {
+        $("#weather_plan_temp_server").html(data);
+    });
+    $.get("getData.php?dev=temp&label=temp_bedroom", function (data) {
+        $("#weather_plan_temp_bedroom").html(data);
+    });
+    $.get("getData.php?dev=temp&label=temp_bedroom_Lera", function (data) {
+        $("#weather_plan_temp_bedroomLera").html(data);
+    });
+    $.get("getData.php?dev=temp&label=temp_bathroom", function (data) {
+        $("#weather_plan_temp_bathroom").html(data);
+    });
+}
+
+function afterLoadWeatherPlan() {
+    updateWeatherTemperaturePlan();
+}
+
+function loadPlan() {
+    $("#weather_content").load('data/weather/load/weather_plan.html', function (){
+        afterLoadWeatherPlan();
+    });
+}
+
+function checkWeatherPlan() {
+    return $("#weather_plan").length;
+}
+
+function checkWeatherData() {
+    return $("#weather_data").length;
+}
+
+function setButtonWeatherClick() {
+    $("#weather_button_123").click(function () {
+        if (!checkWeatherData()) {
+            loadData(true);
+        }
+        arrBlockID.forEach(function (item) {
+            loadBlockData(item);
+        })
+    })
+    $("#weather_button_graph").click(function () {
+        if (!checkWeatherData()) {
+            loadData(false);
+        }
+        getWidget("block_weather_outdoor", "weather_temperature_out_block");
+        getWidget("block_weather_hall", "weather_temperature_out_block");
+        getWidget("block_weather_server", "weather_temperature_server_block");
+        getWidget("block_weather_bedroom", "weather_temperature_bedroom_block");
+        getWidget("block_weather_bedroom_Lera", "weather_temperature_bedroomLera_block");
+        getWidget("block_weather_bathroom", "weather_temperature_bathroom_block");
+    })
+    $("#weather_button_plan").click(function () {
+        if (!checkWeatherPlan()) {
+            loadPlan();
+        }
+    })
+}
+
 $(document).ready(function () {
     $.get("weather.php", function (data) {
         $("#weather_forecast").html(data)
     });
-    loadWeatherData();
+    setButtonWeatherClick();
+    loadData(true);
 })
 
 //Обновление прогноза погоды 1 раз в час
