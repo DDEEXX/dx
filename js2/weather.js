@@ -91,19 +91,22 @@ function loadData(updateData) {
 
 function updateWeatherTemperaturePlan() {
     $.get("getData.php?dev=temp&label=temp_hall&color=plan", function (data) {
-        $("#weather_plan_temp_hall").html(data);
+        $("#weather_plan_temp_hall_data").html(data);
     });
     $.get("getData.php?dev=temp&label=temp_stair&color=plan", function (data) {
-        $("#weather_plan_temp_server").html(data);
+        $("#weather_plan_temp_server_data").html(data);
     });
     $.get("getData.php?dev=temp&label=temp_bedroom&color=plan", function (data) {
-        $("#weather_plan_temp_bedroom").html(data);
+        $("#weather_plan_temp_bedroom_data").html(data);
     });
     $.get("getData.php?dev=temp&label=temp_bedroom_Lera&color=plan", function (data) {
-        $("#weather_plan_temp_bedroomLera").html(data);
+        $("#weather_plan_temp_bedroomLera_data").html(data);
     });
     $.get("getData.php?dev=temp&label=temp_bathroom&color=plan", function (data) {
-        $("#weather_plan_temp_bathroom").html(data);
+        $("#weather_plan_temp_bathroom_data").html(data);
+    });
+    $.get("getData.php?dev=humidity&label=bathroom_humidity&color=plan", function (data) {
+        $("#weather_plan_humidity_bathroom_data").html(data);
     });
 }
 
