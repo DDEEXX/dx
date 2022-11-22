@@ -85,6 +85,8 @@ function loadData(updateData) {
     $("#weather_content").load('data/weather/load/weather_data.html', function () {
         if (updateData) {
             afterLoadWeatherData();
+        } else {
+            getAllWeatherWidget();
         }
     });
 }
@@ -128,6 +130,15 @@ function checkWeatherData() {
     return $("#weather_data").length;
 }
 
+function getAllWeatherWidget() {
+    getWidget("block_weather_outdoor", "weather_temperature_out_block");
+    getWidget("block_weather_hall", "weather_temperature_out_block");
+    getWidget("block_weather_server", "weather_temperature_server_block");
+    getWidget("block_weather_bedroom", "weather_temperature_bedroom_block");
+    getWidget("block_weather_bedroom_Lera", "weather_temperature_bedroomLera_block");
+    getWidget("block_weather_bathroom", "weather_temperature_bathroom_block");
+}
+
 function setButtonWeatherClick() {
     $("#weather_button_123").click(function () {
         if (!checkWeatherData()) {
@@ -140,13 +151,9 @@ function setButtonWeatherClick() {
     $("#weather_button_graph").click(function () {
         if (!checkWeatherData()) {
             loadData(false);
+        } else {
+            getAllWeatherWidget()
         }
-        getWidget("block_weather_outdoor", "weather_temperature_out_block");
-        getWidget("block_weather_hall", "weather_temperature_out_block");
-        getWidget("block_weather_server", "weather_temperature_server_block");
-        getWidget("block_weather_bedroom", "weather_temperature_bedroom_block");
-        getWidget("block_weather_bedroom_Lera", "weather_temperature_bedroomLera_block");
-        getWidget("block_weather_bathroom", "weather_temperature_bathroom_block");
     })
     $("#weather_button_plan").click(function () {
         if (!checkWeatherPlan()) {
