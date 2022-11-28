@@ -1,3 +1,5 @@
+<script src="js2/global.js"></script>
+
 <?php
 $p = isset($_REQUEST['p']) ? $_REQUEST['p'] : 'home';
 
@@ -147,79 +149,48 @@ if ($p == 'alarm') {
 if ($p == 'home' || empty($p)) {
     ?>
 
+    <link rel="stylesheet" type="text/css" href="css2/style_home.css">
     <script src="js2/home.js"></script>
 
-    <div id="page_home" class="grid_11">
-        <div class="grid_8 alpha">1
+    <div id="page_home" class="grid_12" style="height: 790px">
+        <div class="grid_12" style="height: 70px">
+            <div class="grid_9 alpha">1</div>
+            <div class="grid_2 omega">
+                <div id="TekDate" class="TekDate" style="font-size:110%"></div>
+                <br>
+                <div id="TekTime" class="TekTime" style="font-size:160%"></div>
+            </div>
+            <div class="grid_1 alpha">1
+                <a href="/?action=out">Выход</a>
+            </div>
+            <div class="clear"></div>
         </div>
-        <div class="grid_2 omega">
-            <div id="TekDate" class="TekDate" style="font-size:110%"></div>
-            <br>
-            <div id="TekTime" class="TekTime" style="font-size:160%"></div>
-        </div>
-        <div class="grid_1 alpha">1
-            <a href="/?action=out">Выход</a>
-        </div>
-        <div class="clear"></div>
 
-        <div class="grid_6 alpha">
-            .
-        </div>
         <div class="grid_5 alpha">
-            <div class="ui-corner-all ui-state-default" style="margin-top:5px">
-                <h2 style="margin-left:5px">Погода на улице</h2>
-                <div id="block_home_outdoor_data" style="display: table; margin: 5px">
-                    <div style="height: 40px; width: 90px; display: table-cell">
-                        <img style="margin-top:5px;float: left" src="img2/icon_medium/thermometer.png">
-                        <div id="home_temperature_out" style="margin-top:10px;margin-left:5px;float: left"></div>
-                    </div>
-                    <div style="height: 40px; width: 90px; display: table-cell">
-                        <img style="margin-top:5px;float: left" src="img2/icon_medium/barometer.png">
-                        <div id="home_pressure" style="margin-top:10px;margin-left:5px;float: left"></div>
-                    </div>
-                    <div style="height: 40px; width: 90px; display: table-cell">
-                        <img style="margin-top:5px;float: left" src="img2/icon_medium/humidity.png">
-                        <div id="home_humidity_out" style="margin-top:10px;margin-left:5px;float: left"></div>
-                    </div>
-                    <div style="height: 40px; width: 100px; display: table-cell">
-                        <img style="margin-top:5px;float: left" src="img2/icon_medium/wind.png">
-                        <div id="home_wind" style="margin-top:10px;margin-left:5px;float: left"></div>
-                    </div>
+            <div id="home_cam" class="ui-corner-all ui-state-default" style="text-align: center">
+                <img src="http://192.168.1.4:8081/" alt="http://192.168.1.4:8081/" style="margin: 5px; height: 266px; width: 470px">
+                <div id="home_cameraFullSize">
+                    <img src="http://192.168.1.4:8081/" alt="http://192.168.1.4:8081/">
                 </div>
             </div>
         </div>
-
-        <!--
-        <div class="grid_3 omega">
-            <div class="ui-corner-all ui-state-default" style="margin-top:5px">
-                <p style="margin-left:3px; font-size:100%">Погода на улице</p>
-                <div style="overflow: hidden">
-                    <div style="margin-left:5px;float:left">t</div>
-                    <div id="temp_out_weather_home" style="margin-left:30px;float:left">--</div>
-                </div>
-                <div style="overflow: hidden;position:relative">
-                    <div style="margin-left:5px;float:left">p</div>
-                    <div id="pressure_weather_home" style="margin-left:30px;float:left">--</div>
-                    <div style="margin-left:85px;font-size:60%;position:absolute;bottom:2px"> мм рт.ст.</div>
-                </div>
-                <div style="overflow: hidden;position:relative">
-                    <div style="margin-left:5px;float:left">w</div>
-                    <div id="wind_weather_home" style="margin-left:30px;float:left">--</div>
-                    <div style="margin-left:85px;font-size:60%;position:absolute;bottom:2px"> м/c</div>
-                </div>
+        <div class="grid_3">.</div>
+        <div class="grid_4 omega">
+            <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 120px">
+                <h2 class="title_sensor">На улице</h2>
+                <div id="block_home_outdoor"></div>
             </div>
         </div>
-        -->
         <div class="clear"></div>
 
 
-        <!--        <div id="alarm_key" class="grid_2 alpha ui-corner-all ui-state-default"-->
-        <!--             style="margin-top:5px;height:100px;width:138px">-->
-        <!--            <h2 style="margin-left:5px">Охрана</h2>-->
-        <!--            <div style="text-align:center;margin-top:5px">-->
-        <!--                <img src="img2/icon/lock a.png">-->
-        <!--            </div>-->
-        <!--        </div>-->
+<!--                <div id="alarm_key" class="grid_2 alpha ui-corner-all ui-state-default"-->
+<!--                     style="margin-top:5px;height:100px;width:138px">-->
+<!--                    <h2 style="margin-left:5px">Охрана</h2>-->
+<!--                    <div style="text-align:center;margin-top:5px">-->
+<!--                        <img src="img2/icon/lock a.png">-->
+<!--                    </div>-->
+<!--                </div>-->
 
     </div>
 
@@ -229,51 +200,40 @@ if ($p == 'home' || empty($p)) {
 if ($p == 'weather') {
     ?>
 
+    <link rel="stylesheet" type="text/css" href="css2/style_weather.css">
     <script src="js2/weather.js"></script>
 
-    <div id="page_weather" class="grid_11">
-        <div class="grid_11 alpha">
-            <div class="ui-corner-all ui-widget-header" style="margin-top: 5px">
-                <h2 style="margin-left:5px;font-size:150%;">Погода</h2>
+    <div id="page_weather" class="grid_12">
+        <div class="grid_12 alpha">
+            <div class="title_page ui-corner-all ui-widget-header">
+                <h2>Погода</h2>
             </div>
         </div>
         <div class="clear"></div>
-        <!-- Прогноз погоды -->
-        <div class="grid_11 alpha">
-            <div class="ui-corner-all ui-state-default" style="overflow:hidden;margin-top:5px">
-                <div style="margin-left:5px">
-                    <div id="weather_forecast"></div>
-                </div>
-            </div>
-        </div>
-        <div class="clear"></div>
-        <!-- Управление -->
-        <div>
-            <div class="grid_860_1 alpha">
-                <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 130px">
-                    <div style="height: 55px; margin-top: 7px">
-                        <button id="weather_button_123" class="weather_button_setup"></button>
-                        <button id="weather_button_graph" class="weather_button_setup"></button>
-                    </div>
-                    <div style="height: 55px; margin-top: 7px">
-                        <button id="weather_button_plan" class="weather_button_setup"></button>
-                        <button id="weather_button_" class="weather_button_setup"></button>
-                    </div>
-                </div>
-            </div>
-            <div class="grid_860_1">
-                <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 130px">
-                </div>
-            </div>
-            <div class="grid_860_1 omega">
-                <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 130px">
-                    <h2 style="margin-left:5px">На улице</h2>
-                    <div id="block_weather_outdoor" isBlock="true">
-                    </div>
-                </div>
+        <div class="grid_8 alpha">
+            <!-- Прогноз погоды -->
+            <div class="grid_8 alpha">
+                <div id="weather_forecast" class="ui-corner-all ui-state-default" style="height:78px;margin-top:5px"></div>
             </div>
             <div class="clear"></div>
+            <!-- Управление -->
+            <div class="grid_8 alpha">
+                <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 69px">
+                    <div style="height: 55px; margin-top: 7px; margin-bottom: 7px">
+                        <button id="weather_button_123" class="weather_button_setup"></button>
+                        <button id="weather_button_graph" class="weather_button_setup"></button>
+                        <button id="weather_button_plan" class="weather_button_setup"></button>
+                    </div>
+                </div>
+            </div>
         </div>
+        <div class="grid_4 alpha">
+            <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 154px">
+                <h2 class="title_sensor">На улице</h2>
+                <div id="block_weather_outdoor"></div>
+            </div>
+        </div>
+        <div class="clear"></div>
         <!-- содержание -->
         <div id="weather_content">
         </div>
@@ -561,19 +521,19 @@ if ($p == 'cam') {
 
     ?>
 
-    <script type="text/javascript">
-
-        $(document).everyTime("5s", function () {
-
-        });
-
-        $(document).ready(function () {
-
-            $(".button").button();
-
-        });
-
-    </script>
+<!--    <script type="text/javascript">-->
+<!---->
+<!--        $(document).everyTime("5s", function () {-->
+<!---->
+<!--        });-->
+<!---->
+<!--        $(document).ready(function () {-->
+<!---->
+<!--            $(".button").button();-->
+<!---->
+<!--        });-->
+<!---->
+<!--    </script>-->
 
     <div id="page_power" class="grid_11">
         <div class="grid_11 alpha">

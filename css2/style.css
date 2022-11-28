@@ -1,3 +1,33 @@
+/*группа для отображения числовых данных с датчика, средние иконки*/
+.block_sensor_data {
+    margin: 5px;
+    height: 42px;
+    display: flex;
+}
+
+/*заголовок блока с показаниями датчиков*/
+.title_sensor {
+    margin-left: 5px;
+    margin-bottom: 4px;
+}
+
+/*неактуальные показания датчиков*/
+.unActualDataSensor {
+    color: #8A8A8A;
+}
+
+/*заголовок страницы*/
+.title_page {
+    margin-top: 5px;
+}
+
+/*текст заголовка страницы*/
+.title_page > h2 {
+    margin-left:5px;
+    font-size:150%;
+}
+
+
 #temp_out_1, #temp_under_stair {
     font-size: 200%;
     font-weight: 600;

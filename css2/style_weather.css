@@ -1,47 +1,27 @@
-/*вертикальные группы для отображения погоды на закладке weather*/
-.weather_b_1 {
-    margin-top: 10px;
-    height: 42px
+/*область для вывода датчиков (иконка, показания, единицы и т.д.)*/
+.weather_sensor {
+    cursor: pointer;
+    display: flex;
+    align-items: flex-end
 }
 
-/*короткий блок с содержимым датчика*/
-.weather_sensor_1 {
-    height: 42px;
-    width: 130px;
-    float: left
+.weather_sensor.short {
+    width: 150px;
+    margin-right: 10px;
+}
+.weather_sensor.long {
+    width: 220px;
 }
 
-/*длинный блок с содержимым датчика*/
-.weather_sensor_2 {
-    height: 42px;
-    width: 151px;
-    float: left
-}
-
-/*внешний блок показания датчика*/
-.weather_sensor_wrapper {
-    float: left;
-    height: 40px;
-    margin-left: 5px
-}
-
-/*внутренний блок показания датчика*/
-.weather_sensor_inner {
-    display: inline-block;
-    vertical-align: bottom;
-}
-
-/*прижимаем внутренний блок вниз*/
-.weather_sensor_wrapper:after {
-    content: '';
-    display: inline-block;
-    height: 100%;
-    vertical-align: bottom;
+/*размер шрифта показаний на улице*/
+.weather_outdoor_sensor_data {
+    font-size: 200%;
+    font-weight: 500;
 }
 
 /*размер шрифта показаний*/
-div.weather_sensor_data {
-    font-size: 150%;
+.weather_sensor_data {
+    font-size: 180%;
     font-weight: 500;
 }
 
@@ -49,7 +29,6 @@ div.weather_sensor_data {
     margin-left: 8px;
     height: 55px;
     width: 128px;
-    float: left;
 }
 
 #weather_button_123 {

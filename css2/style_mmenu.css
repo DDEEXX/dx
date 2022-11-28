@@ -1,105 +1,106 @@
-nav#main #main-menu {
-	width: 76px;
-	border: 0px;	
-	left : -4px;
+/*все размеры в меню фиксированы, поэтому нет относительных размеров*/
+#mainMenu {
+	border: 0px;
+	float: right;
 }
 
-nav#main #main-menu .ui-menu-item {
-    height: 76px;
-	padding: 0px;    
-	margin-top: 4px;	
-	margin-bottom: 4px;	
-    min-height: 76px;
+#mainMenu .ui-menu-item {
+	height: 76px;
+	width: 76px;
+	margin-top: 4px;
+	margin-bottom: 4px;
 	border: 3px solid #336699;
 	border-radius: 15px;
 }
 
-nav#main #main-menu .ui-menu-item .ui-menu-item-wrapper{
-	padding: 0px;
-	margin: -1px;
-}
-
-nav#main #main-menu .ui-menu-item .ui-icon {
-	position: absolute;
-	top: 4px;
-	bottom: 0;
-	left: 2px;
-	margin: 2px;
-	width: 64px;
-	height: 64px;
+#mainMenu > .ui-menu-item > .ui-menu-item-wrapper {
 	padding: 0px;
 }
 
-nav#main #main-menu .ui-menu-item.ui-menu-item-focus,
-nav#main #main-menu .ui-menu-item.ui-menu-item-selected {
+#mainMenu > .ui-menu-item > .ui-menu-item-wrapper.ui-state-active {
+	margin: 0px;
+}
+
+#mainMenu .ui-menu-item .ui-icon {
+	left: -3px;
+	top: -3px;
+	margin: 0px;
+	width: 82px;
+	height: 82px;
+	background-position: center;
+}
+
+#mainMenu .ui-menu-item.ui-menu-item-focus,
+#mainMenu .ui-menu-item.ui-menu-item-selected {
 	border: 3px solid #99ffff;
+	/*border: 3px solid #c7e8fc;*/
 }
 
 /*навели курсор*/
-nav#main #main-menu.ui-menu .ui-menu-item .ui-state-active {
+#mainMenu.ui-menu .ui-menu-item .ui-state-active {
 	border: 0;
 }
 
-nav#main #main-menu.ui-menu .ui-icon-mmhome{
+#mainMenu.ui-menu .ui-icon-mmhome{
 	background-image: url(../img2/main-menu/home_.png);
 }
 
-nav#main #main-menu.ui-menu .ui-menu-item-selected .ui-icon-mmhome{
+#mainMenu.ui-menu .ui-menu-item-selected .ui-icon-mmhome{
 	background-image: url(../img2/main-menu/home_sel.png);
 }
 
-nav#main #main-menu.ui-menu .ui-icon-mmtemp{
+#mainMenu.ui-menu .ui-icon-mmtemp{
 	background-image: url(../img2/main-menu/temperature_.png);
 }
 
-nav#main #main-menu.ui-menu .ui-menu-item-selected .ui-icon-mmtemp{
+#mainMenu.ui-menu .ui-menu-item-selected .ui-icon-mmtemp{
 	background-image: url(../img2/main-menu/temperature_sel.png);
 }
 
-nav#main #main-menu.ui-menu .ui-icon-mmbulb{
+#mainMenu.ui-menu .ui-icon-mmbulb{
 	background-image: url(../img2/main-menu/bulb_.png);
 }
 
-nav#main #main-menu.ui-menu .ui-menu-item-selected .ui-icon-mmbulb{
+#mainMenu.ui-menu .ui-menu-item-selected .ui-icon-mmbulb{
 	background-image: url(../img2/main-menu/bulb_sel.png);
 }
 
-nav#main #main-menu.ui-menu .ui-icon-mmheater{
+#mainMenu.ui-menu .ui-icon-mmheater{
 	background-image: url(../img2/main-menu/heater_.png);
 }
 
-nav#main #main-menu.ui-menu .ui-menu-item-selected .ui-icon-mmheater{
+#mainMenu.ui-menu .ui-menu-item-selected .ui-icon-mmheater{
 	background-image: url(../img2/main-menu/heater_sel.png);
 }
 
-nav#main #main-menu.ui-menu .ui-icon-mmip_camera{
+#mainMenu.ui-menu .ui-icon-mmip_camera{
 	background-image: url(../img2/main-menu/ip_camera_.png);
 }
 
-nav#main #main-menu.ui-menu .ui-menu-item-selected .ui-icon-mmip_camera{
+#mainMenu.ui-menu .ui-menu-item-selected .ui-icon-mmip_camera{
 	background-image: url(../img2/main-menu/ip_camera_sel.png);
 }
 
-nav#main #main-menu.ui-menu .ui-icon-mmkey{
+#mainMenu.ui-menu .ui-icon-mmkey{
 	background-image: url(../img2/main-menu/key_.png);
 }
 
-nav#main #main-menu.ui-menu .ui-menu-item-selected .ui-icon-mmkey{
+#mainMenu.ui-menu .ui-menu-item-selected .ui-icon-mmkey{
 	background-image: url(../img2/main-menu/key_sel.png);
 }
 
-nav#main #main-menu.ui-menu .ui-icon-mmpower{
+#mainMenu.ui-menu .ui-icon-mmpower{
 	background-image: url(../img2/main-menu/power_.png);
 }
 
-nav#main #main-menu.ui-menu .ui-menu-item-selected .ui-icon-mmpower{
+#mainMenu.ui-menu .ui-menu-item-selected .ui-icon-mmpower{
 	background-image: url(../img2/main-menu/power_sel.png);
 }
 
-nav#main #main-menu.ui-menu .ui-icon-mmpref{
+#mainMenu.ui-menu .ui-icon-mmpref{
 	background-image: url(../img2/main-menu/power_button_.png);
 }
 
-nav#main #main-menu.ui-menu .ui-menu-item-selected .ui-icon-mmpref{
+#mainMenu.ui-menu .ui-menu-item-selected .ui-icon-mmpref{
 	background-image: url(../img2/main-menu/power_button_sel.png);
 }

@@ -7,7 +7,7 @@
     }
   ],
   "widget": {
-    "weather_temperature_out_block": {
+    "weather_temperature_hall_block": {
       "label": "temp_hall",
       "image": "img2/icon_small/thermometer.png",
       "graph": {

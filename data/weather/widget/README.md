@@ -1,15 +1,15 @@
 В этом каталоге файлы с параметрами виджетов в формате JSON
 
 {
-"data": [ массив параметров для обращения к скрипту getData 
-    {
-        "dev": событие temp|pressure|humidity|wind
-        "label": наименование датчика в базе данных, поле UniteLabel в таблице tunits
-        "id": id div для отображения показания 
-    }
+"data": [ массив параметров для обращения к скрипту getData
+{
+"dev": событие temp|pressure|humidity|wind
+"label": наименование датчика в базе данных, поле UniteLabel в таблице tunits
+"id": id div для отображения показания
+}
 ],
 "widget": { //структура из данных виджетов
-    "weather_temperature_bedroomLera_block": { //наименование виджета, Id div по которому надо произвести клик
+    "weather_temperature_bedroomLera_block": { //наименование виджета, Id div по которому сделали клик
         "label" : имя датчика в БД
         "image" : иконка виджета
         "graph" : { параметры графика

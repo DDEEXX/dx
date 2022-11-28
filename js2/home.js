@@ -1,32 +1,3 @@
-function updateWeatherHome() {
-
-	/* dev=temp - событие = температура */
-	/* label=temp_out_1 - имя датчика в базе = temp_out_1*/
-	/* type=last - тип события = последнее показание */
-	$.get("getData.php?dev=temp&label=temp_out_1", function (data) {
-		$("#home_temperature_out").html(data);
-	});
-
-	/* dev=pressure - событие = давление */
-	/* label=pressure - имя датчика в базе = pressure*/
-	$.get("getData.php?dev=pressure&label=pressure", function (data) {
-		$("#home_pressure").html(data);
-	});
-
-	/* dev=humidity - событие = влажность */
-	/* label=humidity_out - имя датчика в базе !!! пока влажность из ванной*/
-	$.get("getData.php?dev=humidity&label=bathroom_humidity", function (data) {
-		$("#home_humidity_out").html(data);
-	});
-
-	/* dev=wind - событие = ветер */
-	/* label=wind - имя датчика в базе !!! пока нет*/
-	$.get("getData.php?dev=wind&label=wind", function (data) {
-		$("#home_wind").html(data);
-	});
-
-}
-
 Date.prototype.getMonthName = function() {
 	var month = ['января', 'февраля', 'марта', 'апреля', 'майя', 'июня',
 		'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
@@ -52,10 +23,35 @@ function clock() {
 	if (m <=9 ) m="0" + m;
 
 	return h + ":" + m;
-}	
+}
+
+function home_clickOnDataSensor() {
+	/*параметры виджетов в виде JSON хранятся в файле, имя файла совпадает с id*/
+	var idBlock = $(this).parent().parent().parent().attr('id');
+	var idBlockClick = $(this).attr('id');
+	var url = 'data/home/widget/' + idBlock + '.json';
+	var selector = "#"+idBlock;
+	$(selector).off('click');
+	getWidgetSensor(idBlock, idBlockClick, url);
+	$(selector).on('click', function () {
+		home_loadOutdoorData(idBlock);
+	});
+}
+
+function home_loadOutdoorData() {
+	var idBlock = "block_home_outdoor";
+	var selector = "#"+idBlock;
+	$(selector).off('click');
+	$(selector).load('data/home/load/block_home_outdoor.html', function (response, status) {
+		if (status === 'success') {
+			$(selector).on('click', '.expand', home_clickOnDataSensor);
+			var url = 'data/home/widget/' + idBlock + '.json';
+			getDataSensor(url); //функция для обновления показаний датчиков
+		}
+	});
+}
 
 $(document).ready( function() {
-	updateWeatherHome();
 
 /*
 	var $alarmKey = $('#alarm_key');
@@ -68,7 +64,10 @@ $(document).ready( function() {
 */
 
 	$(".TekDate").html(date());		
-	$(".TekTime").html(clock());		
+	$(".TekTime").html(clock());
+
+	home_loadOutdoorData();
+
 });
 
 $(document).everyTime("1s", function() {
@@ -78,5 +77,26 @@ $(document).everyTime("1s", function() {
 
 //Обновление показания температуры каждые 5 минут
 $(document).everyTime("300s", function () {
-	updateWeatherHome();
+	home_loadOutdoorData();
 });
+
+$(function () {
+
+	$( "#home_cameraFullSize" ).dialog({
+		autoOpen: false,
+		draggable: false,
+		position: { my: "center", at: "center", of: "#page_home" },
+		resizable: false,
+		title: "Камера",
+		height: 610,
+		width: 990,
+	});
+
+	$("#home_cam").on( "click", function() {
+		$("#home_cameraFullSize").dialog("open");
+	});
+	$("#home_cameraFullSize").on( "click", function() {
+		$("#home_cameraFullSize").dialog("close");
+	});
+
+})

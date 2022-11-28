@@ -245,7 +245,7 @@ class widgetWeather
     $relwet = $w[0]['relwet'];
     ?>
 
-    <div class='temp_now' style='width:200px;float:left'>
+    <div class='temp_now' style='width:200px;float:left;margin-left:5px'>
         <h3 class="Title1">Прогноз погоды</h3>
         <div class='w_line' style='color:#DDDDDD;float:left;font-size:85%'>
             <p>давление: <?php echo "$pressure" ?> мм</p>

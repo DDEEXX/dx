@@ -1,0 +1,284 @@
+
+/**
+ * Generated with https://github.com/trungdq88/960-grid-generator
+ * Columns number: 13 column(s)
+ * Column width: 92px
+ * Column space: 5px
+ *
+ * Content width: 1256px
+ * Full width: 1261px
+ */
+body {
+  min-width: 1261px;
+}
+.container_13 {
+  margin-left: auto;
+  margin-right: auto;
+  width: 1261px;
+  overflow: hidden;
+}
+.grid_1,
+.grid_2,
+.grid_3,
+.grid_4,
+.grid_5,
+.grid_6,
+.grid_7,
+.grid_8,
+.grid_9,
+.grid_10,
+.grid_11,
+.grid_12,
+.grid_13
+{
+  display:inline;
+  float: left;
+  position: relative;
+  margin-left: 2.5px;
+  margin-right: 2.5px;
+}
+.push_1,.pull_1,
+.push_2,.pull_2,
+.push_3,.pull_3,
+.push_4,.pull_4,
+.push_5,.pull_5,
+.push_6,.pull_6,
+.push_7,.pull_7,
+.push_8,.pull_8,
+.push_9,.pull_9,
+.push_10,.pull_10,
+.push_11,.pull_11,
+.push_12,.pull_12,
+.pull_13,.push_13
+{
+  position:relative;
+}
+.alpha {
+  margin-left: 0;
+}
+.omega {
+  margin-right: 0;
+}
+.container_13 .grid_1 {
+  width: 92px
+}
+.container_13 .grid_2 {
+  width: 189px
+}
+.container_13 .grid_3 {
+  width: 286px
+}
+.container_13 .grid_4 {
+  width: 383px
+}
+.container_13 .grid_5 {
+  width: 480px
+}
+.container_13 .grid_6 {
+  width: 577px
+}
+.container_13 .grid_7 {
+  width: 674px
+}
+.container_13 .grid_8 {
+  width: 771px
+}
+.container_13 .grid_9 {
+  width: 868px
+}
+.container_13 .grid_10 {
+  width: 965px
+}
+.container_13 .grid_11 {
+  width: 1062px
+}
+.container_13 .grid_12 {
+  width: 1159px
+}
+.container_13 .grid_13 {
+  width: 1256px
+}
+.container_13 .prefix_1 {
+  padding-left: 97px
+}
+.container_13 .prefix_2 {
+  padding-left: 194px
+}
+.container_13 .prefix_3 {
+  padding-left: 291px
+}
+.container_13 .prefix_4 {
+  padding-left: 388px
+}
+.container_13 .prefix_5 {
+  padding-left: 485px
+}
+.container_13 .prefix_6 {
+  padding-left: 582px
+}
+.container_13 .prefix_7 {
+  padding-left: 679px
+}
+.container_13 .prefix_8 {
+  padding-left: 776px
+}
+.container_13 .prefix_9 {
+  padding-left: 873px
+}
+.container_13 .prefix_10 {
+  padding-left: 970px
+}
+.container_13 .prefix_11 {
+  padding-left: 1067px
+}
+.container_13 .prefix_12 {
+  padding-left: 1164px
+}
+.container_13 .suffix_1 {
+  padding-right: 97px
+}
+.container_13 .suffix_2 {
+  padding-right: 194px
+}
+.container_13 .suffix_3 {
+  padding-right: 291px
+}
+.container_13 .suffix_4 {
+  padding-right: 388px
+}
+.container_13 .suffix_5 {
+  padding-right: 485px
+}
+.container_13 .suffix_6 {
+  padding-right: 582px
+}
+.container_13 .suffix_7 {
+  padding-right: 679px
+}
+.container_13 .suffix_8 {
+  padding-right: 776px
+}
+.container_13 .suffix_9 {
+  padding-right: 873px
+}
+.container_13 .suffix_10 {
+  padding-right: 970px
+}
+.container_13 .suffix_11 {
+  padding-right: 1067px
+}
+.container_13 .suffix_12 {
+  padding-right: 1164px
+}
+.container_13 .push_1 {
+  left: 97px
+}
+.container_13 .push_2 {
+  left: 194px
+}
+.container_13 .push_3 {
+  left: 291px
+}
+.container_13 .push_4 {
+  left: 388px
+}
+.container_13 .push_5 {
+  left: 485px
+}
+.container_13 .push_6 {
+  left: 582px
+}
+.container_13 .push_7 {
+  left: 679px
+}
+.container_13 .push_8 {
+  left: 776px
+}
+.container_13 .push_9 {
+  left: 873px
+}
+.container_13 .push_10 {
+  left: 970px
+}
+.container_13 .push_11 {
+  left: 1067px
+}
+.container_13 .push_12 {
+  left: 1164px
+}
+.container_13 .pull_1 {
+  left: -97px
+}
+.container_13 .pull_2 {
+  left: -194px
+}
+.container_13 .pull_3 {
+  left: -291px
+}
+.container_13 .pull_4 {
+  left: -388px
+}
+.container_13 .pull_5 {
+  left: -485px
+}
+.container_13 .pull_6 {
+  left: -582px
+}
+.container_13 .pull_7 {
+  left: -679px
+}
+.container_13 .pull_8 {
+  left: -776px
+}
+.container_13 .pull_9 {
+  left: -873px
+}
+.container_13 .pull_10 {
+  left: -970px
+}
+.container_13 .pull_11 {
+  left: -1067px
+}
+.container_13 .pull_12 {
+  left: -1164px
+}
+
+/* Clear Floated Elements
+----------------------------------------------------------------------------------------------------*/
+
+/* http://sonspring.com/journal/clearing-floats */
+
+.clear {
+  clear: both;
+  display: block;
+  overflow: hidden;
+  visibility: hidden;
+  width: 0;
+  height: 0;
+}
+
+/* http://www.yuiblog.com/blog/2010/09/27/clearfix-reloaded-overflowhidden-demystified */
+
+.clearfix:before,
+.clearfix:after {
+  content: '\0020';
+  display: block;
+  overflow: hidden;
+  visibility: hidden;
+  width: 0;
+  height: 0;
+}
+
+.clearfix:after {
+  clear: both;
+}
+
+/*
+  The following zoom:1 rule is specifically for IE6 + IE7.
+  Move to separate stylesheet if invalid CSS is a problem.
+*/
+
+.clearfix {
+  zoom: 1;
+}
+  

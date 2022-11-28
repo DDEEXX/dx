@@ -7,7 +7,7 @@ if ($_REQUEST['dev'] == 'temp') { //получаем температуру
     $label = $_GET['label']; //значение поля "UnitLabel" в таблице "tunits";
     $unit = managerUnits::getUnitLabel($label);
 
-    $temperatureClass = 'unActualTemperature';
+    $temperatureClass = 'unActualDataSensor';
     $temperature = '--';
 
     if (is_null($unit)) {
@@ -40,8 +40,8 @@ if ($_REQUEST['dev'] == 'temp') { //получаем температуру
     }
 
     echo
-    '<div class="' . $temperatureClass . ' weather_sensor_inner">'.
-    $temperature.'&deg'.
+    '<div class="' . $temperatureClass . '">'.
+    $temperature.
     '</div>';
 
     unset($unit);
@@ -53,7 +53,7 @@ if ($_REQUEST['dev'] == 'pressure') { //получаем атмосферное 
     $unit = managerUnits::getUnitLabel($label);
 
     $pressure = '--';
-    $actualPressureClass = 'unActualPressure';
+    $actualPressureClass = 'unActualDataSensor';
 
     if (is_null($unit)) {
         logger::writeLog('Модуль с именем :: ' . $label . ' :: не найден',
@@ -67,12 +67,12 @@ if ($_REQUEST['dev'] == 'pressure') { //получаем атмосферное 
             // время с последнего измерения в течение которого давление считается еще актуальной
             $actualTimePressure = DB::getConst('ActualTimePressure');
             $actualPressure = ((time() - strtotime($value['Date'])) < $actualTimePressure);
-            $actualPressureClass = $actualPressure ? 'actualPressure' : 'unActualPressure';
+            $actualPressureClass = $actualPressure ? 'actualPressure' : 'unActualDataSensor';
             $pressure = round($pressure);
         }
     }
 
-    echo '<div class="' . $actualPressureClass . ' weather_sensor_inner">
+    echo '<div class="' . $actualPressureClass . '">
             ' . $pressure . '
           </div>';
 
@@ -85,7 +85,7 @@ if ($_REQUEST['dev'] == 'humidity') { //получаем влажность
     $unit = managerUnits::getUnitLabel($label);
 
     $humidity = '--';
-    $actualHumidityClass = 'unActualHumidity';
+    $actualHumidityClass = 'unActualDataSensor';
 
     if (is_null($unit)) {
         logger::writeLog('Модуль с именем :: ' . $label . ' :: не найден',
@@ -99,12 +99,12 @@ if ($_REQUEST['dev'] == 'humidity') { //получаем влажность
             // время с последнего измерения в течение которого влажность считается еще актуальной
             $actualTimeHumidity = DB::getConst('ActualTimePressure'); //совпадает с давлением
             $actualHumidity = ((time() - strtotime($value['Date'])) < $actualTimeHumidity);
-            $actualHumidityClass = $actualHumidity ? 'actualHumidity' : 'unActualHumidity';
+            $actualHumidityClass = $actualHumidity ? 'actualHumidity' : 'unActualDataSensor';
             $humidity = round($humidity);
         }
     }
 
-    echo '<div class="' . $actualHumidityClass . ' weather_sensor_inner">
+    echo '<div class="' . $actualHumidityClass . '">
             ' . $humidity . '
           </div>';
 
@@ -114,9 +114,9 @@ if ($_REQUEST['dev'] == 'humidity') { //получаем влажность
 if ($_REQUEST['dev'] == 'wind') { //получаем влажность
 
     $wind = '--';
-    $actualHumidityClass = 'unActualWind';
+    $actualHumidityClass = 'unActualDataSensor';
 
-    echo '<div class="' . $actualHumidityClass . ' weather_sensor_inner">
+    echo '<div class="' . $actualHumidityClass . '">
             ' . $wind . '
           </div>';
 

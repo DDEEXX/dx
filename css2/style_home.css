@@ -1,0 +1,20 @@
+/*область для вывода датчиков (иконка, показания, единицы и т.д.)*/
+.home_weather_sensor {
+    cursor: pointer;
+    display: flex;
+    align-items: flex-end
+}
+
+.home_weather_sensor.short {
+    width: 150px;
+    margin-right: 10px;
+}
+.home_weather_sensor.long {
+    width: 220px;
+}
+
+/*числовые показания датчиков погоды на домашней странице*/
+.home_sensor_data {
+    font-size: 200%;
+    font-weight: 500;
+}
