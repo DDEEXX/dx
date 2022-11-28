@@ -88,8 +88,8 @@ $(function () {
 		position: { my: "center", at: "center", of: "#page_home" },
 		resizable: false,
 		title: "Камера",
-		height: 610,
-		width: 990,
+		height: "auto",
+		width: 962,
 	});
 
 	$("#home_cam").on( "click", function() {

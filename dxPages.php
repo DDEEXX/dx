@@ -169,7 +169,7 @@ if ($p == 'home' || empty($p)) {
         <div class="grid_5 alpha">
             <div id="home_cam" class="ui-corner-all ui-state-default" style="text-align: center">
                 <img src="http://192.168.1.4:8081/" alt="http://192.168.1.4:8081/" style="margin: 5px; height: 266px; width: 470px">
-                <div id="home_cameraFullSize">
+                <div id="home_cameraFullSize" style="padding: 0">
                     <img src="http://192.168.1.4:8081/" alt="http://192.168.1.4:8081/">
                 </div>
             </div>
