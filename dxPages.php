@@ -227,7 +227,7 @@ if ($p == 'weather') {
                 </div>
             </div>
         </div>
-        <div class="grid_4 alpha">
+        <div class="grid_4 omega">
             <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 154px">
                 <h2 class="title_sensor">На улице</h2>
                 <div id="block_weather_outdoor"></div>
@@ -269,7 +269,7 @@ if ($p == 'light') {
                     <div class="grid_11 alpha">
                         <div class="ui-corner-all ui-state-default ui-widget-content"
                              style="height: 500px;margin-top:5px;position:relative;">
-                            <div id="home_light"><img src="img2/home_.png">
+                            <div id="home_light"><img src="img2/home_.png" alt="img2/home_.png">
                                 <div id="light_lamp2"></div>
                                 <div class='lampkey' label='light_hol_2_n' style='top:250px;left:635px'></div>
                                 <div id="light_lamp3"></div>
@@ -521,38 +521,37 @@ if ($p == 'cam') {
 
     ?>
 
-<!--    <script type="text/javascript">-->
-<!---->
-<!--        $(document).everyTime("5s", function () {-->
-<!---->
-<!--        });-->
-<!---->
-<!--        $(document).ready(function () {-->
-<!---->
-<!--            $(".button").button();-->
-<!---->
-<!--        });-->
-<!---->
-<!--    </script>-->
+    <link rel="stylesheet" type="text/css" href="css2/style_cameras.css">
+    <script src="js2/cameras.js"></script>
 
-    <div id="page_power" class="grid_11">
-        <div class="grid_11 alpha">
-            <div class="ui-corner-all ui-widget-header" style="margin-top: 5px">
-                <h2 style="margin-left:5px;font-size:150%;">Видеонаблюдение</h2>
+    <div id="page_cameras" class="grid_12" style="height: 790px">
+        <div class="grid_12 alpha omega">
+            <div class="title_page ui-corner-all ui-widget-header">
+                <h2>Видеонаблюдение</h2>
             </div>
         </div>
         <div class="clear"></div>
-        <div class="grid_5 alpha ui-corner-all ui-state-default ui-widget-content"
-             style="margin-top:5px;height:270px;position:relative;width:418px">
-            <div style="text-align: center">
-                <img src="http://192.168.1.4:8081/" alt="http://192.168.1.4:8081/" style="margin-top:5px;height:226px;width:400px">
+        <div id="cam_data">
+            <div class="grid_4 alpha">
+                <div class="ui-corner-all ui-state-default ui-widget-content" style="margin-top: 5px">
+                    <div class="camera_monitor">
+                        <img src="http://192.168.1.4:8081/" alt="http://192.168.1.4:8081/" style="width:375px;height:213px">
+                    </div>
+                    <button id="cam_archive1" class="cam_button" style="margin: 5px">Архив</button>
+                </div>
             </div>
-            <a class="button" href="cam_archive.php?cam=1" target="_blank" style="margin-left:5px;margin-top:5px">Архив</a>
+            <div class="grid_4">
+                <div class="ui-corner-all ui-state-default ui-widget-content" style="margin-top: 5px">
+                --
+                </div>
+            </div>
+            <div class="grid_4 omega">
+                <div class="ui-corner-all ui-state-default ui-widget-content" style="margin-top: 5px">
+                --
+                </div>
+            </div>
+            <div class="clear"></div>
         </div>
-        <div class="grid_5 omega ui-corner-all ui-state-default ui-widget-content"
-             style="margin-top:5px;height:270px;position:relative;width:418px">
-        </div>
-
     </div>
 
     <?php

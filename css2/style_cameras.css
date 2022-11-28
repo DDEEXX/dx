@@ -1,0 +1,13 @@
+.camera_monitor {
+    margin-top:3px;
+    margin-left:3px;
+    height:214px;
+    overflow: hidden;
+}
+
+.camera_button_nav1 {
+    margin-left: 8px;
+    margin-top: 8px;
+    height: 45px;
+    width: 220px;
+}

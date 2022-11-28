@@ -67,6 +67,7 @@ function weather_updateTemperaturePlan() {
 
 function weather_loadPlan() {
     $("#weather_content").load('data/weather/load/weather_plan.html', function (){
+        weather_loadBlockData('block_weather_outdoor');
         weather_updateTemperaturePlan();
     });
 }
@@ -147,3 +148,7 @@ $(document).everyTime("3600s", function () {
 $(document).everyTime("600s", function () {
     weather_updateDataAll();
 });
+
+$(function () {
+    $(".weather_button_setup").button();
+})

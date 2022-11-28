@@ -49,7 +49,7 @@ session_start();
                 }
             });
 
-            $("button").button();
+            //$("button").button();
 
             // $("button.upDown").button({
             //     icons: {

@@ -18,3 +18,7 @@
     font-size: 200%;
     font-weight: 500;
 }
+
+#home_cam, #home_cameraFullSize {
+    cursor: pointer;
+}
