@@ -146,7 +146,7 @@ class managerUnits
      */
     public static function getListUnits1WireLoop($deviceDisables = null) {
         //Получаем все устройства
-        $listUnits1WireLoop = array();
+        $listUnits1WireLoop = [];
         $listAllUnits = self::getListUnits(null , $deviceDisables);
         foreach ($listAllUnits as $unit) {
             if (is_null($unit)) {
@@ -214,7 +214,7 @@ class managerUnits
      */
     public static function getListUnitsMQTTTopicStatus($deviceDisables = 0)
     {
-        $listUnitsMQTTLoop = array();
+        $listUnitsMQTTLoop = [];
         //Получаем все устройства
         $listAllUnits = self::getListUnits(null , $deviceDisables);
         foreach ($listAllUnits as $unit) {

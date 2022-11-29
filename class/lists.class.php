@@ -9,7 +9,7 @@
 abstract class listArray implements Iterator
 {
 
-    protected $list = array();
+    protected $list = [];
 
     /**
      * lists constructor.

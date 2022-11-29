@@ -11,3 +11,46 @@
     height: 45px;
     width: 220px;
 }
+
+/*Изображения из архива камеры
+------------------------------*/
+
+/*отображение пути*/
+.camera_nav_image_path {
+    margin-left: 0px;
+    margin-top: 0px;
+    height: 30px;
+}
+
+/*блок папок года и месяцев*/
+.camera_block_image_year_month {
+    margin-left: 15px;
+    margin-top: 10px;
+}
+
+/*папка год**/
+.camera_nav_image_year {
+    width: 120px;
+    height: 40px;
+}
+
+/*папка месяц*/
+.camera_nav_image_month {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-right: 5px;
+}
+
+/*папка день*/
+.camera_nav_image_day {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding-left: 16px;
+    padding-right: 16px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}

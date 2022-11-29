@@ -275,7 +275,7 @@ class DB
         } catch (connectDBException $e) {
             logger::writeLog('Ошибка подключения к базе данных в DB::getListBD. ' . $e->getMessage(),
                 loggerTypeMessage::ERROR, loggerName::ERROR);
-            return array();
+            return [];
         }
 
         $query = $con->getConnect()->real_escape_string($titleQuery);
@@ -283,12 +283,12 @@ class DB
         if (!is_null($sel)) {
             if ($sel instanceof selectOption) {
 
-                $w = "";
+                $w = '';
 
                 foreach ($sel as $key => $value) {
 
                     if (!empty($w)) {
-                        $w = $w . " AND";
+                        $w = $w . ' AND';
                     }
 
                     $realValue = $con->getConnect()->real_escape_string($value);
@@ -302,7 +302,7 @@ class DB
                 }
 
                 if (!empty($w)) {
-                    $query = $query . " WHERE" . $w;
+                    $query = $query . ' WHERE' . $w;
                 }
             }
         }
@@ -310,7 +310,7 @@ class DB
         try {
             $aDevices = queryDataBase::getAll($con, $query);
         } catch (querySelectDBException $e) {
-            logger::writeLog('Ошибка при выполнии запроса в DB::getListBD. ' . $query . '. ' . $e->getMessage(),
+            logger::writeLog('Ошибка при выполнение запроса в DB::getListBD. ' . $query . '. ' . $e->getMessage(),
                 loggerTypeMessage::ERROR, loggerName::ERROR);
             return array();
         }
@@ -406,7 +406,7 @@ class DB
     {
         $uniteID = $unit->getId();
 
-        $query = 'SELECT Date, Status FROM tjournalkey WHERE UnitID="' . $uniteID . '" ORDER BY JournalKeyID DESC LIMIT 1';
+        $query = 'SELECT Date, Status FROM tjournalkey WHERE UnitID=' . $uniteID . ' ORDER BY JournalKeyID DESC LIMIT 1';
 
         try {
             $con = sqlDataBase::Connect();
@@ -419,33 +419,6 @@ class DB
             logger::writeLog('Ошибка в функции DB::getLastStatusKeyJournal. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
                 loggerTypeMessage::FATAL, loggerName::ERROR);
             $result = null;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Получить режим работы модуля OFF|ON|AUTO
-     * @param iUnit $unit
-     * @return mixed
-     */
-    static public function getModeUnit(iUnit $unit) {
-        $uniteID = $unit->getId();
-
-        $query = 'SELECT Mode FROM tunits WHERE UnitID="' . $uniteID . '"';
-
-        try {
-            $con = sqlDataBase::Connect();
-            $result = queryDataBase::getOne($con, $query);
-            $result = $result['Mode'];
-        } catch (connectDBException $e) {
-            logger::writeLog('Ошибка при подключении к базе данных в функции DB::getLastValueUnit. ' . $e->getMessage(),
-                loggerTypeMessage::FATAL, loggerName::ERROR);
-            $result = 0;
-        } catch (querySelectDBException $e) {
-            logger::writeLog('Ошибка в функции DB::getLastValueUnit. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
-                loggerTypeMessage::FATAL, loggerName::ERROR);
-            $result = 0;
         }
 
         return $result;
