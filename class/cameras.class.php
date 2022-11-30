@@ -635,7 +635,9 @@ class camera implements iCamera
         $result = [];
         $imageDir = $this->getImageDir();
         if (!is_dir($imageDir)) {
-            logger::writeLog('Не удалось обратиться к архиву изображений камеры, путь='.$imageDir);
+            logger::writeLog('Не удалось обратиться к архиву изображений камеры, путь='.$imageDir,
+                loggerTypeMessage::ERROR,
+                loggerName::CAMERAS);
             return $result;
         }
         if ($handleY = opendir($imageDir)) { //сканирование годов
