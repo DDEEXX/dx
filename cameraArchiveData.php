@@ -3,6 +3,7 @@ include_once(dirname(__FILE__) . '/class/cameras.class.php');
 
 $numCamera = $_REQUEST['cam'];
 $dev = $_REQUEST['dev'];
+$dataType = $_REQUEST['type'];
 $month = empty($_REQUEST['month']) ? null : $_REQUEST['month'];
 $day = empty($_REQUEST['day']) ? null : $_REQUEST['day'];
 
@@ -39,9 +40,9 @@ if ($dev === 'image') { ?>
         ?>
     </div>
 
-    <?php
-    if (empty($month)) { //месяц пустой надо вывести все имеющиеся года и месяца
-        $dirStructure = $cam->getImageDirStructure();
+<?php
+    if ($dataType == 'month') { //режим вывода структуры архива в виде годов и месяцев
+        $dirStructure = $cam->getImageDirStructureYearMonth();
         foreach ($dirStructure as $curYear => $curMonths) {
 
             echo '<div class="camera_block_image_year_month">

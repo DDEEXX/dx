@@ -4,7 +4,7 @@ $(function () {
     $(".camera_nav_image_month").click(function () { //кнопка месяца
         var cam = $(this).attr('cam');
         var month = $(this).attr('month');
-        var url = "showCameraArchiveData.php?cam="+cam+"&dev=image&month="+month;
+        var url = "cameraArchiveData.php?cam="+cam+"&dev=image&month="+month;
         $.get(url, function (data) {
             $("#cam_data_archive").html(data);
         });
@@ -14,7 +14,7 @@ $(function () {
         var cam = $(this).attr('cam');
         var month = $(this).attr('month');
         var day = $(this).attr('day');
-        var url = "showCameraArchiveData.php?cam="+cam+"&dev=image&month="+month+"&day="+day;
+        var url = "cameraArchiveData.php?cam="+cam+"&dev=image&month="+month+"&day="+day;
         $.get(url, function (data) {
             $("#cam_data_archive").html(data);
         });

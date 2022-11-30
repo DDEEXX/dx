@@ -58,7 +58,7 @@ class logger
         }
     }
 
-    static public function getLogger($name = loggerName::DEFAULTLOGGER)
+    static private function getLogger($name = loggerName::DEFAULTLOGGER)
     {
         //Если имя не задано или не подходит, то по умолчанию
         if (empty($name) || !is_string($name) || !preg_match('/^([_a-z0-9A-Z]+)$/i', $name)) {
@@ -68,14 +68,14 @@ class logger
             try {
                 self::$loggers[$name] = new logger($name);
             } catch (Exception $e) {
-                error_log('Ошибка при создании логгера', 0);
+                error_log('Ошибка при создании логгера');
                 return null;
             }
         }
         return self::$loggers[$name];
     }
 
-    public function log($message, $messageType = loggerTypeMessage::NOTICE)
+    private function log($message, $messageType = loggerTypeMessage::NOTICE)
     {
         if (!is_string($message)) {
             $message = '[!!!] Не возможно вывести сообщение в лог. Сообщение не строкового типа';

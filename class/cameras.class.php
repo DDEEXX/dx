@@ -15,7 +15,7 @@ interface iCamera
     const MONTH = [1=>'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
         'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь' ];
     function checkCameraDir();
-    function getImageDirStructure();
+    function getImageDirStructureYearMonth();
     function getImageDays($year, $month);
 }
 
@@ -630,11 +630,12 @@ class camera implements iCamera
     /** Получает структуру папок хранения архива изображений
      * @return array - индекс год, значение массив месяцев
      */
-    public function getImageDirStructure() {
+    public function getImageDirStructureYearMonth() {
 
         $result = [];
         $imageDir = $this->getImageDir();
         if (!is_dir($imageDir)) {
+            logger::writeLog('Не удалось обратиться к архиву изображений камеры, путь='.$imageDir);
             return $result;
         }
         if ($handleY = opendir($imageDir)) { //сканирование годов
