@@ -8,4 +8,4 @@
 
 require(dirname(__FILE__) . '/class/cameras.class.php');
 
-managerCameras::run();
+managerCameras::runJobCreateArchive();

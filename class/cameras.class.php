@@ -21,7 +21,7 @@ interface iCamera
 
 class managerCameras
 {
-    public static function run()
+    public static function runJobCreateArchive()
     {
 
         logger::writeLog('Старт архивирования записей с камер', loggerTypeMessage::NOTICE, loggerName::CAMERAS);

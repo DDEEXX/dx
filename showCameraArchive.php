@@ -15,5 +15,3 @@ $numCamera = $_REQUEST['cam'];
         <div id="cam_data_archive"></div>
     </div>
 </div>
-
-<?php
