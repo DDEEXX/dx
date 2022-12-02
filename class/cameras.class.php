@@ -15,8 +15,10 @@ interface iCamera
     const MONTH = [1=>'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
         'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь' ];
     function checkCameraDir();
-    function getImageDirStructureYearMonth();
-    function getImageDays($year, $month);
+    function getArchiveImageDirStructureYearMonth();
+    function getArchiveImageDays($year, $month);
+    function getArchiveImageShots($year, $month, $day);
+    function getArchiveImageShotFullFileName($nameFileArchive);
 }
 
 class managerCameras
@@ -630,7 +632,7 @@ class camera implements iCamera
     /** Получает структуру папок хранения архива изображений
      * @return array - индекс год, значение массив месяцев
      */
-    public function getImageDirStructureYearMonth() {
+    public function getArchiveImageDirStructureYearMonth() {
 
         $result = [];
         $imageDir = $this->getImageDir();
@@ -666,7 +668,7 @@ class camera implements iCamera
         return $result;
     }
 
-    public function getImageDays($year, $month) {
+    public function getArchiveImageDays($year, $month) {
         $result = [];
         $path = $this->getImageDir().'/'.$year.'/'.$month;
         if (!is_dir($path)) {
@@ -686,4 +688,33 @@ class camera implements iCamera
         return $result;
     }
 
+    function getArchiveImageShots($year, $month, $day) {
+        $result = [];
+        $path = $this->getImageDir().'/'.$year.'/'.$month.'/'.$day;
+        if (!is_dir($path)) {
+            return $result;
+        }
+        if ($handle = opendir($path)) { //сканирование годов
+            while (false !== ($file = readdir($handle))) {
+                $image_name = $path . '/' . $file;
+                if (is_file($image_name)) {
+                    $ext = strtolower(pathinfo($image_name, PATHINFO_EXTENSION));
+                    if ($ext == 'jpg') {
+                        $result[] = $file;
+                    }
+                }
+            }
+            closedir($handle);
+        }
+        sort($result,  SORT_NATURAL );
+        return $result;
+    }
+
+    function getArchiveImageShotFullFileName($nameFileArchive) {
+        $fullNameFile = $this->getImageDir().'/'.$nameFileArchive;
+        if (is_file($fullNameFile)) {
+            return $fullNameFile;
+        }
+        return '';
+    }
 }

@@ -3,20 +3,19 @@ $(function () {
 
     $(".camera_nav_image_month").click(function () { //кнопка месяца
         var cam = $(this).attr('cam');
-        var month = $(this).attr('month');
-        var url = "cameraArchiveData.php?cam="+cam+"&dev=image&month="+month;
+        var path = $(this).attr('path');
+        var url = "cameraArchiveData.php?cam="+cam+"&dev=image&type=day&path="+path;
         $.get(url, function (data) {
-            $("#cam_data_archive").html(data);
+            $("#cam_archive_data").html(data);
         });
     })
 
     $(".camera_nav_image_day").click(function () { //кнопка день
         var cam = $(this).attr('cam');
-        var month = $(this).attr('month');
-        var day = $(this).attr('day');
-        var url = "cameraArchiveData.php?cam="+cam+"&dev=image&month="+month+"&day="+day;
+        var path = $(this).attr('path');
+        var url = "cameraArchiveData.php?cam="+cam+"&dev=image&type=shots&path="+path;
         $.get(url, function (data) {
-            $("#cam_data_archive").html(data);
+            $("#cam_archive_shots").html(data);
         });
     })
 

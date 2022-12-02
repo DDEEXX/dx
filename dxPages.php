@@ -524,16 +524,16 @@ if ($p == 'cam') {
     <link rel="stylesheet" type="text/css" href="css2/style_cameras.css">
     <script src="js2/cameras.js"></script>
 
-    <div id="page_cameras" class="grid_12" style="height: 790px">
-        <div class="grid_12 alpha omega">
+    <div id="page_cameras" class="grid_12" style="display: flex; flex-direction: column; align-content: flex-start; height: 790px">
+        <div class="grid_12 alpha omega" style="align-self: flex-start">
             <div class="title_page ui-corner-all ui-widget-header">
                 <h2>Видеонаблюдение</h2>
             </div>
         </div>
         <div class="clear"></div>
-        <div id="cam_data">
+        <div id="cam_data" class="grid_12 alpha omega" style="align-self: stretch; margin-top: 5px; margin-bottom: 2px; flex-grow: 1">
             <div class="grid_4 alpha">
-                <div class="ui-corner-all ui-state-default ui-widget-content" style="margin-top: 5px">
+                <div class="ui-corner-all ui-state-default ui-widget-content">
                     <div class="camera_monitor">
                         <img src="http://192.168.1.4:8081/" alt="http://192.168.1.4:8081/" style="width:375px;height:213px">
                     </div>
@@ -541,12 +541,12 @@ if ($p == 'cam') {
                 </div>
             </div>
             <div class="grid_4">
-                <div class="ui-corner-all ui-state-default ui-widget-content" style="margin-top: 5px">
+                <div class="ui-corner-all ui-state-default ui-widget-content">
                 --
                 </div>
             </div>
             <div class="grid_4 omega">
-                <div class="ui-corner-all ui-state-default ui-widget-content" style="margin-top: 5px">
+                <div class="ui-corner-all ui-state-default ui-widget-content">
                 --
                 </div>
             </div>
