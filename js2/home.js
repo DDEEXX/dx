@@ -66,6 +66,8 @@ $(document).ready( function() {
 	$(".TekDate").html(date());		
 	$(".TekTime").html(clock());
 
+	$("#home_cameraFullSize").html('<img src="http://192.168.1.4:8081/" alt="http://192.168.1.4:8081/">');
+
 	home_loadOutdoorData();
 
 });
@@ -82,21 +84,23 @@ $(document).everyTime("300s", function () {
 
 $(function () {
 
-	$( "#home_cameraFullSize" ).dialog({
+	var home_cam_dialog = "#home_cameraFullSize";
+	$(home_cam_dialog).dialog({
 		autoOpen: false,
 		draggable: false,
 		position: { my: "center", at: "center", of: "#page_home" },
 		resizable: false,
 		title: "Камера",
 		height: "auto",
-		width: 962,
+		width: 962
+	});
+
+	$(home_cam_dialog).on( "click", function() {
+		$("#home_cameraFullSize").dialog("close");
 	});
 
 	$("#home_cam").on( "click", function() {
 		$("#home_cameraFullSize").dialog("open");
-	});
-	$("#home_cameraFullSize").on( "click", function() {
-		$("#home_cameraFullSize").dialog("close");
 	});
 
 })

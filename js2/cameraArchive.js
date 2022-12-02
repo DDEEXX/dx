@@ -7,5 +7,13 @@ $(function (){
             $("#cam_archive_data").html(data);
         });
     })
+    $("#camera_navigation_timelapse").click(function () { //кнопка Image панели управления архива
+        var cam = $(this).attr('cam');
+        var url = "cameraArchiveData.php?cam="+cam+"&dev=timelapse&type=list";
+        $.get(url, function (data) {
+            $("#cam_archive_data").html(data);
+        });
+    })
+
 
 })

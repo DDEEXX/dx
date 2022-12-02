@@ -19,6 +19,7 @@ interface iCamera
     function getArchiveImageDays($year, $month);
     function getArchiveImageShots($year, $month, $day);
     function getArchiveImageShotFullFileName($nameFileArchive);
+    function getArchiveTimelapse();
 }
 
 class managerCameras
@@ -577,7 +578,7 @@ class camera implements iCamera
                 $data .= "file '" . $key . "'" . PHP_EOL;
             }
             file_put_contents($this->listVideoFiles, $data);
-            $command = 'ffmpeg -f concat -safe 0 -i ' . $this->listVideoFiles . ' -c copy ' . $nameArchiveVideoFile;
+            $command = 'ffmpeg -f concat -safe 0 -i ' . $this->listVideoFiles . ' -c:v libx264 -c:a copy ' . $nameArchiveVideoFile;
             $output = NULL;
             $result_code = NULL;
             exec($command, $output, $result_code);
@@ -674,7 +675,7 @@ class camera implements iCamera
         if (!is_dir($path)) {
             return $result;
         }
-        if ($handle = opendir($path)) { //сканирование годов
+        if ($handle = opendir($path)) {
             while (false !== ($file = readdir($handle))) {
                 $fullName = $path . '/' . $file;
                 if (is_dir($fullName)) {
@@ -694,7 +695,7 @@ class camera implements iCamera
         if (!is_dir($path)) {
             return $result;
         }
-        if ($handle = opendir($path)) { //сканирование годов
+        if ($handle = opendir($path)) {
             while (false !== ($file = readdir($handle))) {
                 $image_name = $path . '/' . $file;
                 if (is_file($image_name)) {
@@ -716,5 +717,29 @@ class camera implements iCamera
             return $fullNameFile;
         }
         return '';
+    }
+
+    function getArchiveTimelapse() {
+        $result = [];
+        $path = $this->getTimelapseDir();
+        if (!is_dir($path)) {
+            logger::writeLog('Не найден каталог с timelapse камеры, путь='.$path,
+                loggerTypeMessage::ERROR,
+                loggerName::CAMERAS);
+            return $result;
+        }
+        if ($handle = opendir($path)) { //сканирование годов
+            while (false !== ($file = readdir($handle))) {
+                $fullName = $path . '/' . $file;
+                if (is_file($fullName)) {
+                    if (fnmatch('*-timelapse.avi', $file)) {
+                        $result[] = $file;
+                    }
+                }
+            }
+            closedir($handle);
+        }
+        sort($result,  SORT_NATURAL );
+        return $result;
     }
 }

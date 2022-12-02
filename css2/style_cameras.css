@@ -54,3 +54,27 @@
     margin-right: 5px;
     margin-bottom: 5px;
 }
+
+#cam_archive_timelapse th {
+    padding: 10px;
+}
+
+#cam_archive_timelapse th:nth-child(1) {
+    text-align: center
+}
+
+#cam_archive_timelapse th:nth-child(2) {
+    padding-left: 20px
+}
+
+#cam_archive_timelapse thead {
+    background-color: #336699
+}
+
+#cam_archive_timelapse tbody {
+    cursor: pointer;
+}
+
+#cam_archive_timelapse tbody tr:hover {
+    background-color: rgba(51, 102, 153, 0.5)
+}

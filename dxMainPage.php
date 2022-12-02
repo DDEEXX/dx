@@ -14,6 +14,10 @@ session_start();
     <script src="js2/jquery.timers.js"></script>
     <script src="js2/jquery-ui.js"></script>
 
+    <script type="text/javascript" src="js2/jPlayer/jquery.jplayer.min.js"></script>
+
+
+
     <link rel="stylesheet" type="text/css" href="css2/temes/dx/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="css2/reset.css">
     <link rel="stylesheet" type="text/css" href="css2/style_mmenu.css">
@@ -50,21 +54,18 @@ session_start();
             });
 
             //$("button").button();
-
             // $("button.upDown").button({
             //     icons: {
             //         primary: "ui-icon-upDown"
             //     },
             //     text: false
             // });
-
             // $("button").button().click(function (event) {
             //         event.preventDefault();
             // });
 
-
-
         });
+
     </script>
 
 </head>

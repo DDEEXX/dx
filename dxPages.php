@@ -167,11 +167,9 @@ if ($p == 'home' || empty($p)) {
         </div>
 
         <div class="grid_5 alpha">
-            <div id="home_cam" class="ui-corner-all ui-state-default" style="text-align: center">
+            <div id="home_cam" class="ui-corner-all ui-state-default" style="text-align: center; min-height: 276px">
                 <img src="http://192.168.1.4:8081/" alt="http://192.168.1.4:8081/" style="margin: 5px; height: 266px; width: 470px">
-                <div id="home_cameraFullSize" style="padding: 0">
-                    <img src="http://192.168.1.4:8081/" alt="http://192.168.1.4:8081/">
-                </div>
+                <div id="home_cameraFullSize" style="padding: 0"></div>
             </div>
         </div>
         <div class="grid_3">.</div>
@@ -533,11 +531,12 @@ if ($p == 'cam') {
         <div class="clear"></div>
         <div id="cam_data" class="grid_12 alpha omega" style="align-self: stretch; margin-top: 5px; margin-bottom: 2px; flex-grow: 1">
             <div class="grid_4 alpha">
-                <div class="ui-corner-all ui-state-default ui-widget-content">
-                    <div class="camera_monitor">
+                <div class="ui-corner-all ui-state-default ui-widget-content" style="min-height: 255px">
+                    <div id="cam_monitor_1" class="camera_monitor">
                         <img src="http://192.168.1.4:8081/" alt="http://192.168.1.4:8081/" style="width:375px;height:213px">
                     </div>
-                    <button id="cam_archive1" class="cam_button" style="margin: 5px">Архив</button>
+                    <div id="cam_Monitor_1_full_size" style="padding: 0"></div>
+                    <button id="cam_archive_1" class="cam_button" style="margin: 5px">Архив</button>
                 </div>
             </div>
             <div class="grid_4">
