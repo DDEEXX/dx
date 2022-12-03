@@ -10,14 +10,9 @@ session_start();
     header('Content-type: text/html; charset=utf-8')
     ?>
     <title>DX HOME</title>
-    <script src="js2/jquery.js"></script>
+    <script type="text/javascript" src="js2/jquery.js"></script>
     <script src="js2/jquery.timers.js"></script>
     <script src="js2/jquery-ui.js"></script>
-
-    <script type="text/javascript" src="js2/jPlayer/jquery.jplayer.min.js"></script>
-
-
-
     <link rel="stylesheet" type="text/css" href="css2/temes/dx/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="css2/reset.css">
     <link rel="stylesheet" type="text/css" href="css2/style_mmenu.css">
@@ -28,6 +23,7 @@ session_start();
     <link rel="stylesheet" type="text/css" href="css2/grid.css">
     <link rel="stylesheet" type="text/css" href="css2/icon.css">
     <link rel="stylesheet" type="text/css" href="css2/style.css">
+    <link href="js2/jPlayer/skin/dxhome/css/jplayer.blue.monday.min.css" rel="stylesheet" type="text/css" />
 
     <!--suppress JSJQueryEfficiency -->
     <script>

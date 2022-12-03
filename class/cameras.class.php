@@ -101,6 +101,7 @@ class camera implements iCamera
     protected $targetDir; //каталог, куда камера сохраняет все файлы
     protected $archiveDir; //каталог архива камеры
     private $extensionVideo = 'avi'; //расширение видео файлов
+    private $extensionVideoConvert = 'mp4'; //расширение видео файлов
     private $extensionImage = 'jpg'; //расширение изображений
     private $maskTimelapseFiles = '*-timelapse.avi'; //маска для поиска timelapse файлов
     private $maskTimelapseFiles_ = '-timelapse.avi'; //маска для проверки является ли файл timelapse файлом
@@ -153,12 +154,19 @@ class camera implements iCamera
                 if ($time > $today) {
                     continue;
                 }
-                $newFilename = pathinfo($filename, PATHINFO_BASENAME);
-                $newName = $this->getTimelapseDir() . '/' . $newFilename;
+                $newFilename = pathinfo($filename,  PATHINFO_FILENAME);
+                $newName = $this->getTimelapseDir() . '/' . $newFilename. '.' . $this->extensionVideoConvert;
                 try {
-                    if (!rename($filename, $newName)) {
-                        logger::writeLog($this->getInformation() . ' Ошибка при перемещении файла ' . $filename . ' в ' . $newName . '. ',
+                    $command = sprintf('ffmpeg -i %s -c:v libx264 -c:a copy -y %s', $filename, $newName);
+                    $output = NULL;
+                    $result_code = NULL;
+                    exec($command, $output, $result_code);
+                    if ($result_code != 0) {
+                        logger::writeLog($this->getInformation() . ' Ошибка при перемещении файла ' . $filename . ' в ' . $newName,
                             loggerTypeMessage::ERROR, loggerName::CAMERAS);
+                    }
+                    else {
+                        unlink($filename);
                     }
                 } catch (Exception $e) {
                     logger::writeLog($this->getInformation() . ' Ошибка при перемещении файла ' . $filename . ' в ' . $newName . '. ' . $e->getMessage(),
@@ -207,7 +215,7 @@ class camera implements iCamera
             //Получаем все видео файлы за день
             $videoFiles = $this->getVideoFilesDay($tekDate);
             if (count($videoFiles) > 0) {
-                $nameConcatVideoFile = $this->getVideoDir() . '/' . date('Ymd', $tekDate) . $this->nameVideoFiles . $this->getId() . '.' . $this->extensionVideo;
+                $nameConcatVideoFile = $this->getVideoDir() . '/' . date('Ymd', $tekDate) . $this->nameVideoFiles . $this->getId() . '.' . $this->extensionVideoConvert;
                 if ($this->concatenationVideoFileInArchive($nameConcatVideoFile, $videoFiles)) {
                     //Удаляем исходные файлы
                     $this->deleteFiles($videoFiles);
@@ -732,7 +740,7 @@ class camera implements iCamera
             while (false !== ($file = readdir($handle))) {
                 $fullName = $path . '/' . $file;
                 if (is_file($fullName)) {
-                    if (fnmatch('*-timelapse.avi', $file)) {
+                    if (fnmatch('*-timelapse.mp4', $file)) {
                         $result[] = $file;
                     }
                 }
