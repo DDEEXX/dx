@@ -19,13 +19,13 @@ $(function () {
         });
     })
 
-    // $("#cam_archive_timelapse table tbody tr").click(function () {
-    //     var element = $(this).children("th").eq(1);
-    //     var nameFile = element.html();
-    //     var cam = $(this).attr("cam");
-    //     var url = "cameraArchiveData.php?cam="+cam+"&dev=timelapse&type=video&path="+nameFile;
-    //     $.get(url, function (data) {
-    //         $("#cam_archive_timelapse").html(data);
-    //     });
-    // });
+    $("#cam_archive_timelapse table tbody tr").click(function () {
+        var element = $(this).children("th").eq(1);
+        var nameFile = element.html();
+        var cam = $(this).attr("cam");
+        var url = "cameraArchiveData.php?cam="+cam+"&dev=timelapse&type=video&path="+nameFile;
+        $.get(url, function (data) {
+            $("#cam_archive_timelapse").html(data);
+        });
+    });
 })
