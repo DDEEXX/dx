@@ -751,12 +751,13 @@ class camera implements iCamera
         }
         if ($handle = opendir($path)) {
             while (false !== ($file = readdir($handle))) {
+                if ($file == '.' || $file == '..') {
+                    continue;
+                }
                 $image_name = $path . '/' . $file;
-                if (is_file($image_name)) {
-                    $ext = strtolower(pathinfo($image_name, PATHINFO_EXTENSION));
-                    if ($ext == 'jpg') {
-                        $result[] = $file;
-                    }
+                $ext = strtolower(pathinfo($image_name, PATHINFO_EXTENSION));
+                if ($ext == 'jpg') {
+                    $result[] = $file;
                 }
             }
             closedir($handle);

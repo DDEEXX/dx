@@ -86,7 +86,6 @@ if ($dev == 'image') {
             echo '<div> 
               <img src=cameraArchiveShot.php?cam='.$numCamera.'&path='.$path.'/'.$nameShot .' alt="img2/frame.png" style="width:280px;height:159px">
               </div>';
-
         }
         echo '</div>';
     }
