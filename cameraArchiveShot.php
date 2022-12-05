@@ -7,9 +7,10 @@ $path = empty($_REQUEST['path']) ? null : $_REQUEST['path'];
 $cam = managerCameras::getCamera($numCamera);
 
 header('Content-Type: image/jpeg');
-header('Cache-Control: max-age=86400');
-header('Pragma: cache');
-header('Expires: ' . date(DATE_RFC2822, time() + 86400));
+//header('Cache-Control: max-age=86400');
+//header('Cache-Control: private, max-age=0, no-cache');
+//header('Pragma: cache');
+//header('Expires: ' . date(DATE_RFC2822, time() + 86400));
 
 $fileLocation = $cam->getArchiveImageShotFullFileName($path);
 $image = imagecreatefromstring($fileLocation);

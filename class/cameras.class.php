@@ -750,6 +750,7 @@ class camera implements iCamera
             return $result;
         }
         if ($handle = opendir($path)) {
+            clearstatcache();
             while (false !== ($file = readdir($handle))) {
                 if ($file == '.' || $file == '..') {
                     continue;
@@ -768,10 +769,10 @@ class camera implements iCamera
 
     function getArchiveImageShotFullFileName($nameFileArchive) {
         $fullNameFile = $this->getImageDir().'/'.$nameFileArchive;
-        if (is_file($fullNameFile)) {
+        //if (is_file($fullNameFile)) {
             return $fullNameFile;
-        }
-        return '';
+        //}
+        //return '';
     }
 
     function getArchiveTimelapse() {
