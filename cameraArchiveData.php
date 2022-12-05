@@ -100,7 +100,7 @@ elseif ($dev == 'timelapse') {
         echo '<div id="cam_archive_timelapse" 
             style="align-self: stretch; flex-grow: 1; width: 100%; height: 1px; overflow: auto; margin-top: 5px; margin-left: 5px">';
         echo '<table>';
-        echo '<thead><tr><th>Дата</th><th>Имя файла</th></tr></thead>';
+        echo '<thead><tr><th style="min-width: 100px">Дата</th><th style="min-width: 200px">Имя файла</th></tr></thead>';
         echo '<tbody>';
 
         foreach ($timeLapses as $nameShot) {
@@ -108,7 +108,7 @@ elseif ($dev == 'timelapse') {
                 $dateFile = substr($nameShot, 6, 2) . '.'
                     . substr($nameShot, 4, 2) . '.' .
                     substr($nameShot, 0, 4);
-                echo '<tr><th>' . $dateFile . '</th><th cam="' . $numCamera . '">' . $nameShot . '</th></tr>';
+                echo '<tr cam="' . $numCamera . '"><th>' . $dateFile . '</th><th>' . $nameShot . '</th></tr>';
             }
 
         }
@@ -116,7 +116,6 @@ elseif ($dev == 'timelapse') {
         echo '</div>';
     }
     elseif ($dataType == 'video') {
-        $qq = 12;
         ?>
 
         <script type="text/javascript" src="js2/jPlayer/jquery.jplayer.min.js"></script>
@@ -125,7 +124,7 @@ elseif ($dev == 'timelapse') {
         <div id="jp_container_1" class="jp-video jp-video-360p" role="application" aria-label="media player">
             <div class="jp-type-single">
 
-                <div id="cam_video_player"></div>
+                <div id="cam_video_player" tl_name = "<?php echo $cam->getArchiveTimelapseLocalFileName($path)?>"></div>
                 <div class="jp-gui">
                     <div class="jp-video-play">
                         <button class="jp-video-play-icon" role="button" tabindex="0">play</button>

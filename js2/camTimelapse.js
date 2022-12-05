@@ -1,10 +1,14 @@
 $(document).ready(function(){
 
-    $("#cam_video_player").jPlayer({
+    var selector_video_player = "#cam_video_player";
+    var fileName = $(selector_video_player).attr('tl_name');
+
+    $(selector_video_player).jPlayer({
         ready: function () {
             $(this).jPlayer("setMedia", {
                 title: "dx home",
-                m4v: "333.mp4",
+                // m4v: "cam2/archive/cam1/timelapse/20221203-timelapse.mp4",
+                m4v: fileName,
                 poster: "img2/frame.png"
             });
         },

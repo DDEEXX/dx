@@ -14,12 +14,14 @@ interface iCamera
 {
     const MONTH = [1=>'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
         'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь' ];
+    const DIR_ARCHIVE = 'cam2/archive';
     function checkCameraDir();
     function getArchiveImageDirStructureYearMonth();
     function getArchiveImageDays($year, $month);
     function getArchiveImageShots($year, $month, $day);
     function getArchiveImageShotFullFileName($nameFileArchive);
     function getArchiveTimelapse();
+    function getArchiveTimelapseLocalFileName($nameFileArchive);
 }
 
 class managerCameras
@@ -98,8 +100,9 @@ class camera implements iCamera
 {
     protected $id;
     protected $title;
-    protected $targetDir; //каталог, куда камера сохраняет все файлы
-    protected $archiveDir; //каталог архива камеры
+    protected $targetDir = ''; //каталог, куда камера сохраняет все файлы
+    protected $archiveDir = ''; //каталог архива камеры
+    protected $archiveDirLocal = ''; //каталог архива камеры относительно сайта
     private $extensionVideo = 'avi'; //расширение видео файлов
     private $extensionVideoConvert = 'mp4'; //расширение видео файлов
     private $extensionImage = 'jpg'; //расширение изображений
@@ -111,16 +114,21 @@ class camera implements iCamera
     private $countVideoFiles = 90; //максимальное количество видео файлов в архиве
     private $nameVideoFiles = '-camera';
     private $imageDir = 'image'; //наименование каталога для хранения стоп кадров видео с движением
-    private $permissions = 0644; //права для создаваемых каталогов (владелец - запись/чтение, остальные - чтение)
-    private $wwwGroup = 'www-data'; //группа назначаемая на новые каталоги
+    private $permissions = 0755; //права для создаваемых каталогов (владелец - запись/чтение, остальные - чтение)
+    private $wwwGroup = 'www-data'; //группа назначаемая на новые каталоги файлы
+    private $wwwOwner = 'www-data'; //пользователь назначаемый на новые каталоги и файлы
     private $listVideoFiles = 'list_cam.txt'; //временный файл для склейки видео
 
     public function __construct(array $options)
     {
         $this->id = $options['ID'];
         $this->title = $options['Title'];
-        $this->targetDir = $options['Target'];
-        $this->archiveDir = $options['Archive'];
+        if (is_dir($options['Target'])) {
+            $this->targetDir = $options['Target'];
+        }
+        $archiveDir = $options['Archive'];
+        $this->archiveDirLocal = iCamera::DIR_ARCHIVE . ($archiveDir[0] === DIRECTORY_SEPARATOR ? $archiveDir : (DIRECTORY_SEPARATOR . $archiveDir));
+        $this->archiveDir = __DIR__ .'/../'.$this->archiveDirLocal;
     }
 
     /**
@@ -167,6 +175,9 @@ class camera implements iCamera
                     }
                     else {
                         unlink($filename);
+                        chgrp($newName, $this->wwwGroup);
+                        chown($newName, $this->wwwOwner);
+                        chmod($newName, $this->permissions);
                     }
                 } catch (Exception $e) {
                     logger::writeLog($this->getInformation() . ' Ошибка при перемещении файла ' . $filename . ' в ' . $newName . '. ' . $e->getMessage(),
@@ -278,7 +289,12 @@ class camera implements iCamera
             if ($hourFile > $tekHour) {
                 $newName = $imageDir . '/' . pathinfo($nameFile, PATHINFO_BASENAME);
                 try {
-                    if (!rename($nameFile, $newName)) {
+                    if (rename($nameFile, $newName)) {
+                        chgrp($newName, $this->wwwGroup);
+                        chown($newName, $this->wwwOwner);
+                        chmod($newName, $this->permissions);
+                    }
+                    else {
                         logger::writeLog($this->getInformation() . ' Ошибка при перемещении файла ' . $nameFile . ' в ' . $newName . '. ',
                             loggerTypeMessage::ERROR, loggerName::CAMERAS);
                         return false;
@@ -325,7 +341,7 @@ class camera implements iCamera
      * @param $nameDir - имя каталога
      * @return bool - результат выполнения
      */
-    private function changeGroupDir($nameDir)
+    private function changeGroupUserDir($nameDir)
     {
         if (is_dir($nameDir)) {
             try {
@@ -335,6 +351,27 @@ class camera implements iCamera
                     try {
                         if (!chgrp($nameDir, $this->wwwGroup)) {
                             logger::writeLog($this->getInformation() . ' Ошибка при назначении группы ' . $this->wwwGroup . ' каталогу ' . $nameDir . '. ',
+                                loggerTypeMessage::ERROR, loggerName::CAMERAS);
+                            return false;
+                        }
+                    } catch (Exception $e) {
+                        logger::writeLog($this->getInformation() . '. ' . $e->getMessage(),
+                            loggerTypeMessage::ERROR, loggerName::CAMERAS);
+                        return false;
+                    }
+                }
+            } catch (Exception $e) {
+                logger::writeLog($this->getInformation() . '. ' . $e->getMessage(),
+                    loggerTypeMessage::ERROR, loggerName::CAMERAS);
+                return false;
+            }
+            try {
+                $idOwner = fileowner($nameDir);
+                $ownerInfo = posix_getpwuid($idOwner);
+                if (strcasecmp($this->wwwOwner, $ownerInfo['name']) !== 0) {
+                    try {
+                        if (!chown($nameDir, $this->wwwOwner)) {
+                            logger::writeLog($this->getInformation() . ' Ошибка при назначении владельца ' . $this->wwwGroup . ' каталогу ' . $nameDir . '. ',
                                 loggerTypeMessage::ERROR, loggerName::CAMERAS);
                             return false;
                         }
@@ -363,11 +400,11 @@ class camera implements iCamera
     private function checkDir($dir)
     {
         if (is_dir($dir)) {
-            $result = $this->changeGroupDir($dir);
+            $result = $this->changeGroupUserDir($dir);
         } else {
             try {
                 if (mkdir($dir, $this->permissions, true)) {
-                    $result = $this->changeGroupDir($dir);
+                    $result = $this->changeGroupUserDir($dir);
                 } else {
                     logger::writeLog($this->getInformation() . ' Ошибка при создании каталога ' . $dir . '. ',
                         loggerTypeMessage::ERROR, loggerName::CAMERAS);
@@ -445,6 +482,7 @@ class camera implements iCamera
                 if ($today !== false && $today > $timeFile) {
                     $result = $timeFile;
                 }
+                $result = $timeFile;
             }
         }
         return $result;
@@ -454,8 +492,11 @@ class camera implements iCamera
      * Получить полный путь до Timelapse каталога камеры
      * @return string
      */
-    private function getTimelapseDir()
+    private function getTimelapseDir($local = false)
     {
+        if ($local) {
+            return $this->archiveDirLocal . '/' . $this->timelapseDir;
+        }
         return $this->archiveDir . '/' . $this->timelapseDir;
     }
 
@@ -586,13 +627,18 @@ class camera implements iCamera
                 $data .= "file '" . $key . "'" . PHP_EOL;
             }
             file_put_contents($this->listVideoFiles, $data);
-            $command = 'ffmpeg -f concat -safe 0 -i ' . $this->listVideoFiles . ' -c:v libx264 -c:a copy ' . $nameArchiveVideoFile;
+            $command = sprintf('ffmpeg -f concat -safe 0 -i %s -c:v libx264 -c:a copy %s', $this->listVideoFiles, $nameArchiveVideoFile);
             $output = NULL;
             $result_code = NULL;
             exec($command, $output, $result_code);
             unlink($this->listVideoFiles);
             if ($result_code != 0) {
                 return false;
+            }
+            else {
+                chgrp($nameArchiveVideoFile, $this->wwwGroup);
+                chown($nameArchiveVideoFile, $this->wwwOwner);
+                chmod($nameArchiveVideoFile, $this->permissions);
             }
         }
         return true;
@@ -747,7 +793,22 @@ class camera implements iCamera
             }
             closedir($handle);
         }
+        else {
+            logger::writeLog('Не удалось прочитать содержимое каталога '.$path.
+                ' при получении файлов timelapse',
+                loggerTypeMessage::ERROR,
+                loggerName::CAMERAS);
+        }
         sort($result,  SORT_NATURAL );
         return $result;
+    }
+
+    function getArchiveTimelapseLocalFileName($nameFileArchive)
+    {
+       $fullNameFile = $this->getTimelapseDir(true).'/'.$nameFileArchive;
+        if (is_file($fullNameFile)) {
+            return $fullNameFile;
+        }
+        return '';
     }
 }
