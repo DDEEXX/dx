@@ -29,7 +29,7 @@
         "type": 0,
         "variant": 0,
         "width": 344,
-        "height": 94,
+        "height": 126,
         "count": 6
       }
     },
@@ -40,7 +40,7 @@
         "type": 3,
         "variant": 0,
         "width": 344,
-        "height": 94,
+        "height": 126,
         "count": 6,
         "min_delta": 5
       }
@@ -52,7 +52,7 @@
         "type": 0,
         "variant": 0,
         "width": 344,
-        "height": 94,
+        "height": 126,
         "count": 6
       }
     },
@@ -63,7 +63,7 @@
         "type": 1,
         "variant": 1,
         "width": 344,
-        "height": 94,
+        "height": 126,
         "count": 6
       }
     }

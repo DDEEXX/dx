@@ -38,10 +38,5 @@ $(document).ready(function () {
 
 //Обновление показания температуры каждые 5 минут
 $(document).everyTime("300s", function () {
-
+    heater_updateDataAll();
 });
-
-// $(document).everyTime("120s", function() {
-// 	$('#g_temp_out_1').attr('src', 'graph.php?label=temp_out_1&t=line&date_from=day&'+Math.random());
-// });
-

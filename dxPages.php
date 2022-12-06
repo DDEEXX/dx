@@ -174,7 +174,7 @@ if ($p == 'home' || empty($p)) {
         </div>
         <div class="grid_3">.</div>
         <div class="grid_4 omega">
-            <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 120px">
+            <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 154px">
                 <h2 class="title_sensor">На улице</h2>
                 <div id="block_home_outdoor"></div>
             </div>
