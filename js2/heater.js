@@ -1,64 +1,44 @@
-function updateTemperature() {
+var arrBlockHeaterSchemeID = [['temp_heater_boiler_out','heater_temp_boiler_out_data'],
+    ['temp_heater_boiler_in', 'heater_temp_boiler_in_data'],
+    ['temp_heater_floor_out', 'heater_temp_floor_out_data'],
+    ['temp_heater_floor_in', 'heater_temp_floor_in_data'],
+    ['temp_heater_sauna_out', 'heater_temp_sauna_out_data'],
+    ['temp_heater_floor1_out', 'heater_temp_floor1_out_data'],
+    ['temp_heater_floor2_out', 'heater_temp_floor2_out_data']];
 
-    /* dev=temp - событие = температура */
-    /* label=temp_out_1 - имя датчика в базе = temp_out_1*/
-    /* type=last - тип события = последнее показание */
+function getDataSchemeSensor(item) {
+    $.get("getData.php?dev=temp&label=" + item[0], function (data) {
+        $("#" + item[1]).html(data);
+    });
+}
 
-    $.get("getData.php?dev=temp&label=temp_out_1&type=last", function (data) {
-        $("#temp_out_1, #temp_out_1_g").html(data);
+function heater_updateDataScheme() {
+    arrBlockHeaterSchemeID.forEach(function (item) {
+        getDataSchemeSensor(item);
+    })
+
+    $.get("getData.php?dev=temp_delta&label1=temp_heater_boiler_out&label2=temp_heater_boiler_in", function (data) {
+        $("#heater_temp_boiler_delta_data").html(data);
     });
-    $.get("getData.php?dev=temp&label=temp_stair&type=last", function (data) {
-        $("#temp_under_stair").html(data);
-    });
-    $.get("getData.php?dev=temp&label=temp_hall&type=last&color=plan", function (data) {
-        $("#temp_hall").html(data);
-    });
-    $.get("getData.php?dev=temp&label=temp_bedroom&type=last&color=plan", function (data) {
-        $("#temp_bedroom").html(data);
-    });
-    $.get("getData.php?dev=temp&label=temp_bedroom_Lera&type=last&color=plan", function (data) {
-        $("#temp_bedroom_Lera").html(data);
-    });
-    $.get("getData.php?dev=temp&label=temp_bathroom&type=last&color=plan", function (data) {
-        $("#temp_bathroom").html(data);
-    });
-    $.get("getData.php?dev=temp&label=temp_hall&type=last", function (data) {
-        $("#temp_hall_g").html(data);
-    });
-    $.get("getData.php?dev=temp&label=temp_bedroom&type=last", function (data) {
-        $("#temp_bedroom_g").html(data);
-    });
-    $.get("getData.php?dev=temp&label=temp_bedroom_Lera&type=last", function (data) {
-        $("#temp_bedroom_Lera_g").html(data);
+    $.get("getData.php?dev=temp_delta&label1=temp_heater_floor_in&label2=temp_heater_floor_out", function (data) {
+        $("#heater_temp_floor_delta_data").html(data);
     });
 
+
+}
+
+function heater_updateDataAll() {
+    heater_updateDataScheme();
 }
 
 $(document).ready(function () {
 
-    // $('#tempgraph').click(function () {
-    //     $.get("dxMainPage.php?p=power1", function () {
-    //     });
-    // });
-
-    updateTemperature();
-
-    $("#accordion").accordion();
-
-    $(".rg_g_temp").buttonset({
-        items: "input[type=radio]"
-    });
-
-    $(".set_period").click(function () {
-        $("#g_" + $(this).attr("dev_type")).attr("src", "graph.php?label=" + $(this).attr("dev_type") +
-            "&date_from=" + $(this).attr("dev_period") + "&rnd=" + Math.random());
-    });
-
+    heater_updateDataAll();
 });
 
 //Обновление показания температуры каждые 5 минут
 $(document).everyTime("300s", function () {
-    updateTemperature();
+
 });
 
 // $(document).everyTime("120s", function() {

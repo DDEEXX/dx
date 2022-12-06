@@ -379,136 +379,99 @@ if ($p == 'heater') {
     ?>
     <script src="js2/heater.js"></script>
 
-    <div id="page_temp" class="grid_11">
-        <div class="grid_11 alpha">
-            <div class="ui-corner-all ui-widget-header" style="margin-top: 5px">
+    <div id="page_heater" class="grid_12" style="display: flex; flex-direction: column; align-content: flex-start; height: 790px">
+        <div class="grid_12 alpha omega" style="align-self: flex-start">
+            <div class="title_page ui-corner-all ui-widget-header">
                 <h2 style="margin-left:5px;font-size:150%;">Отопление и климат</h2>
             </div>
         </div>
         <div class="clear"></div>
-        <div class="grid_3 alpha">
-            <div class="ui-corner-all ui-state-default" style="margin-top:5px;height:80px">
-                <h2 style="margin-left:5px">На улице</h2>
-                <img style="margin-top:5px;float:left" src="img2/temp.png">
-                <div id="temp_out_1" style="margin-top:10px;"></div>
+        <div class="grid_12 alpha omega" style="align-self: flex-start">
+            <div class="ui-corner-all ui-state-default ui-widget-content" style="height: 250px">
+                <span>резерв</span>
             </div>
-        </div>
-        <div class="grid_3 ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:218px">
-            <h2 style="margin-left:5px">Под лестницей</h2>
-            <img style="margin-top:5px;float:left" src="img2/temp.png">
-            <div id="temp_under_stair" style="margin-top:10px;"></div>
-        </div>
-        <div class="grid_3 ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:218px">
-        </div>
-        <div class="grid_1 ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:58px">
-        </div>
-        <div class="grid_1 omega ui-corner-all ui-state-default" style="margin-top:5px;height:80px;width:58px">
         </div>
         <div class="clear"></div>
+        <div id="heater_data" class="grid_12 alpha omega" style="align-self: stretch; margin-top: 5px; margin-bottom: 2px; flex-grow: 1">
+            <div class="grid_6 alpha" style="height: 100%">
+                <div class="ui-corner-all ui-state-default ui-widget-content" style="height: 100%">
+                    <div><img src="img2/heater.png" style="position: absolute; margin-left: 15px;margin-top: 30px"></div>
 
-        <div id="accordion" style="margin-top:5px">
-            <h3 class='dx'>План</h3>
-            <div style="padding:0;border:0;overflow:visible">
-                <div class="grid_11 alpha">
-                    <div class="ui-corner-all ui-state-default ui-widget-content"
-                         style="height: 500px;margin-top:5px;position:relative">
-                        <div id="floor1"><img src="img2/home_.png"></div>
-                        <div id="temp_hall" class="temp_plan ui-corner-all ui-state-default ui-widget-content"
-                             style="position:absolute;left:100px;top:220px"></div>
-                        <div id="temp_bedroom" class="temp_plan ui-corner-all ui-state-default ui-widget-content"
-                             style="position:absolute;left:540px;top:310px"></div>
-                        <div id="temp_bathroom" class="temp_plan ui-corner-all ui-state-default ui-widget-content"
-                             style="position:absolute;left:750px;top:260px"></div>
-                        <div id="temp_bedroom_Lera" class="temp_plan ui-corner-all ui-state-default ui-widget-content"
-                             style="position:absolute;left:600px;top:190px"></div>
+                    <div id="heater_temp_boiler_out" class="ui-corner-all ui-state-default ui-widget-content"
+                         style="position:absolute; left:10px; top:335px; display: flex; align-items: flex-end; padding: 5px">
+                        <div id="heater_temp_boiler_out_data">58.4</div>
+                        <span style="margin-left: 2px">&deg</span>
                     </div>
+                    <div id="heater_temp_boiler_in" class="ui-corner-all ui-state-default ui-widget-content"
+                         style="position:absolute; left:75px; top:335px; display: flex; align-items: flex-end; padding: 5px">
+                        <div id="heater_temp_boiler_in_data">48.4</div>
+                        <span style="margin-left: 2px">&deg</span>
+                    </div>
+                    <div id="heater_temp_boiler_delta" class="ui-corner-all ui-state-default ui-widget-content"
+                         style="position:absolute; left:40px; top:375px; display: flex; align-items: flex-end; padding: 5px">
+                        <span style="padding-right: 5px">&#916</span>
+                        <div id="heater_temp_boiler_delta_data">8.2</div>
+                        <span style="margin-left: 2px">&deg</span>
+                    </div>
+
+                    <div id="heater_temp_floor_in" class="ui-corner-all ui-state-default ui-widget-content"
+                         style="position:absolute; left:330px; top:330px; display: flex; align-items: flex-end; padding: 5px">
+                        <div id="heater_temp_floor_in_data">48.4</div>
+                        <span style="margin-left: 2px">&deg</span>
+                    </div>
+                    <div id="heater_temp_floor_out" class="ui-corner-all ui-state-default ui-widget-content"
+                         style="position:absolute; left:330px; top:420px; display: flex; align-items: flex-end; padding: 5px">
+                        <div id="heater_temp_floor_out_data">58.4</div>
+                        <span style="margin-left: 2px">&deg</span>
+                    </div>
+                    <div id="heater_temp_floor_delta" class="ui-corner-all ui-state-default ui-widget-content"
+                         style="position:absolute; left:330px; top:375px; display: flex; align-items: flex-end; padding: 5px">
+                        <span style="padding-right: 5px">&#916</span>
+                        <div id="heater_temp_floor_delta_data">8.2</div>
+                        <span style="margin-left: 2px">&deg</span>
+                    </div>
+
+                    <div id="heater_temp_sauna_out" class="ui-corner-all ui-state-default ui-widget-content"
+                         style="position:absolute; left:150px; top:130px; display: flex; flex-direction: column; padding: 5px">
+                            <div>Баня</div>
+                            <div style="display: flex; align-items: flex-end">
+                                <div id="heater_temp_sauna_out_data">48.4</div>
+                                <span style="margin-left: 2px">&deg</span>
+                            </div>
+                    </div>
+                    <div id="heater_temp_floor1_out" class="ui-corner-all ui-state-default ui-widget-content"
+                         style="position:absolute; left:210px; top:190px; display: flex; flex-direction: column; padding: 5px">
+                        <div>1 этаж</div>
+                        <div style="display: flex; align-items: flex-end">
+                            <div id="heater_temp_floor1_data">51.4</div>
+                            <span style="margin-left: 2px">&deg</span>
+                        </div>
+                    </div>
+                    <div id="heater_temp_floor2_out" class="ui-corner-all ui-state-default ui-widget-content"
+                         style="position:absolute; left:270px; top:250px; display: flex; flex-direction: column; padding: 5px">
+                        <div>2 этаж</div>
+                        <div style="display: flex; align-items: flex-end">
+                            <div id="heater_temp_floor2_out_data">48.4</div>
+                            <span style="margin-left: 2px">&deg</span>
+                        </div>
+                    </div>
+
+
+
+
                 </div>
-                <div class="clear"></div>
             </div>
-            <h3 class='dx'>Графики</h3>
-            <div style="padding:0;border:0;overflow:visible">
-                <div class="grid_5 alpha ui-corner-all ui-state-default"
-                     style="margin-top:5px;height:215px;width:418px">
-                    <h2 style="margin-left:5px;float:left">Температура на улице</h2>
-                    <div id="temp_out_1_g" style="margin-right:5px;float:right"></div>
-                    <div style="text-align: center">
-                        <?php
-                        echo '<img id="g_temp_out_1" src="graph.php?label=temp_out_1&t=line&date_from=day&' . rand() . '" height="160">';
-                        ?>
-                    </div>
-                    <div class="rg_g_temp" style="margin-left:5px;float:left">
-                        <input type="radio" name="period1" class="set_period" dev_type="temp_out_1" dev_period="day"
-                               checked id="day_out1"><label for="day_out1">сут.</label>
-                        <input type="radio" name="period1" class="set_period" dev_type="temp_out_1" dev_period="week"
-                               id="week_out1"><label for="week_out1">нед.</label>
-                        <input type="radio" name="period1" class="set_period" dev_type="temp_out_1" dev_period="month"
-                               id="month_out1"><label for="month_out1">мес.</label>
-                    </div>
+            <div class="grid_6 omega" style="height: 100%">
+                <div class="ui-corner-all ui-state-default ui-widget-content" style="height: 100%">
+                    <span>резерв</span>
                 </div>
-
-                <div class="grid_5 omega ui-corner-all ui-state-default"
-                     style="margin-top:5px;height:215px;width:418px">
-                    <h2 style="margin-left:5px;float:left">Температура 1 этаж</h2>
-                    <div id="temp_hall_g" style="margin-right:5px;float:right"></div>
-                    <div style="text-align: center">
-                        <?php
-                        echo '<img id="g_temp_hall" src="graph.php?label=temp_hall&t=line&date_from=day&' . rand() . '" height="160">';
-                        ?>
-                    </div>
-                    <div class="rg_g_temp" style="margin-left:5px;float:left">
-                        <input type="radio" name="period2" class="set_period" dev_type="temp_hall" dev_period="day"
-                               checked id="day_hall"><label for="day_hall">сут.</label>
-                        <input type="radio" name="period2" class="set_period" dev_type="temp_hall" dev_period="week"
-                               id="week_hall"><label for="week_hall">нед.</label>
-                        <input type="radio" name="period2" class="set_period" dev_type="temp_hall" dev_period="month"
-                               id="month_hall"><label for="month_hall">мес.</label>
-                    </div>
-                </div>
-
-                <div class="clear"></div>
-
-                <div class="grid_5 alpha ui-corner-all ui-state-default"
-                     style="margin-top:5px;height:215px;width:418px">
-                    <h2 style="margin-left:5px;float:left">Температура спальня</h2>
-                    <div id="temp_bedroom_g" style="margin-right:5px;float:right"></div>
-                    <div style="text-align: center">
-                        <?php
-                        echo '<img id="g_temp_bedroom" src="graph.php?label=temp_bedroom&t=line&date_from=day&' . rand() . '" height="160">';
-                        ?>
-                    </div>
-                    <div class="rg_g_temp" style="margin-left:5px;float:left">
-                        <input type="radio" name="period3" class="set_period" dev_type="temp_bedroom" dev_period="day"
-                               checked id="day_temp_bedroom"><label for="day_temp_bedroom">сут.</label>
-                        <input type="radio" name="period3" class="set_period" dev_type="temp_bedroom" dev_period="week"
-                               id="week_temp_bedroom"><label for="week_temp_bedroom">нед.</label>
-                        <input type="radio" name="period3" class="set_period" dev_type="temp_bedroom" dev_period="month"
-                               id="month_temp_bedroom"><label for="month_temp_bedroom">мес.</label>
-                    </div>
-                </div>
-
-                <div class="grid_5 omega ui-corner-all ui-state-default"
-                     style="margin-top:5px;height:215px;width:418px">
-                    <h2 style="margin-left:5px;float:left">Спальня Леры</h2>
-                    <div id="temp_bedroom_Lera_g" style="margin-right:5px;float:right"></div>
-                    <div style="text-align: center">
-                        <?php
-                        echo '<img id="g_temp_bedroom_Lera" src="graph.php?label=temp_bedroom_Lera&t=line&date_from=day&' . rand() . '" height="160">';
-                        ?>
-                    </div>
-                    <div class="rg_g_temp" style="margin-left:5px;float:left">
-                        <input type="radio" name="period2" class="set_period" dev_type="temp_bedroom_Lera" dev_period="day"
-                               checked id="day_hall"><label for="day_hall">сут.</label>
-                        <input type="radio" name="period2" class="set_period" dev_type="temp_bedroom_Lera" dev_period="week"
-                               id="week_hall"><label for="week_hall">нед.</label>
-                        <input type="radio" name="period2" class="set_period" dev_type="temp_bedroom_Lera" dev_period="month"
-                               id="month_hall"><label for="month_hall">мес.</label>
-                    </div>
-                </div>
-
-                <div class="clear"></div>
-
             </div>
+            <div class="clear"></div>
 
+<!--            <div class="ui-corner-all ui-state-default ui-widget-content" style="height: 100%">-->
+<!--                <span>резерв</span>-->
+<!--                <div><img src="img2/home_.png" style="margin-left: 65px;margin-top: 5px"></div>-->
+<!--            </div>-->
         </div>
     </div>
 

@@ -47,6 +47,40 @@ if ($_REQUEST['dev'] == 'temp') { //получаем температуру
     unset($unit);
 }
 
+if ($_REQUEST['dev'] == 'temp_delta') { //получаем температуру
+
+    $label1 = $_GET['label1']; //значение поля "UnitLabel" в таблице "tunits";
+    $unit1 = managerUnits::getUnitLabel($label1);
+
+    $label2 = $_GET['label2']; //значение поля "UnitLabel" в таблице "tunits";
+    $unit2 = managerUnits::getUnitLabel($label2);
+
+    $delta = '--';
+
+    if (is_null($unit1)) {
+        logger::writeLog('Модуль с именем :: ' . $label1 . ' :: не найден',
+            loggerTypeMessage::ERROR, loggerName::ERROR);
+    }
+    elseif (is_null($unit2)) {
+        logger::writeLog('Модуль с именем :: ' . $label2 . ' :: не найден',
+            loggerTypeMessage::ERROR, loggerName::ERROR);
+    }
+    else {
+        $value1 = $unit1->readValue();
+        $value2 = $unit2->readValue();
+
+        if (is_numeric($value1) && is_numeric($value2)) {
+            $temperaturePrecision = DB::getConst('TemperaturePrecision');
+            $delta = round((double)$value1 - (double)$value2, $temperaturePrecision);
+        }
+    }
+
+    echo '<div>'.$delta.'</div>';
+
+    unset($unit1);
+    unset($unit2);
+}
+
 if ($_REQUEST['dev'] == 'pressure') { //получаем атмосферное давление
 
     $label = $_GET['label']; //значение поля "UnitLabel" в таблице "tunits";
