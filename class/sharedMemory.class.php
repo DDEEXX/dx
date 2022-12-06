@@ -107,7 +107,7 @@ class sharedMemoryUnits
      * @return sharedMemoryUnits
      * @throws shareMemoryInitUnitException
      */
-    public static function getInstance($projectID, $size = 10000)
+    public static function getInstance($projectID, $size = 12000)
     {
         if (!array_key_exists($projectID, self::$instance)) { //если еще не выделена память
             self::$instance[$projectID] = new sharedMemoryUnits($projectID, $size);

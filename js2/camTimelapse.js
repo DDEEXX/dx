@@ -6,13 +6,12 @@ $(document).ready(function(){
     $(selector_video_player).jPlayer({
         ready: function () {
             $(this).jPlayer("setMedia", {
-                title: "dx home",
-                // m4v: "cam2/archive/cam1/timelapse/20221203-timelapse.mp4",
+                title: "camera",
                 m4v: fileName,
                 poster: "img2/frame.png"
-            });
+            }).jPlayer("play");
         },
-        // swfPath: "js2/jPlayer",
+        swfPath: "js2/jPlayer",
         supplied: "m4v",
         size: {
             width: "640px",

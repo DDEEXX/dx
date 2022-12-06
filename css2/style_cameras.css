@@ -55,26 +55,26 @@
     margin-bottom: 5px;
 }
 
-#cam_archive_timelapse th {
+#cam_archive_timelapse th, #cam_archive_video th {
     padding: 10px;
 }
 
-#cam_archive_timelapse th:nth-child(1) {
+#cam_archive_timelapse th:nth-child(1), #cam_archive_video th:nth-child(1) {
     text-align: center
 }
 
-#cam_archive_timelapse th:nth-child(2) {
+#cam_archive_timelapse th:nth-child(2), #cam_archive_video th:nth-child(2) {
     padding-left: 20px
 }
 
-#cam_archive_timelapse thead {
+#cam_archive_timelapse thead, #cam_archive_video thead {
     background-color: #336699
 }
 
-#cam_archive_timelapse tbody {
+#cam_archive_timelapse tbody, #cam_archive_video tbody {
     cursor: pointer;
 }
 
-#cam_archive_timelapse tbody tr:hover {
+#cam_archive_timelapse tbody tr:hover, #cam_archive_video tbody tr:hover {
     background-color: rgba(51, 102, 153, 0.5)
 }

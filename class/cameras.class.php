@@ -22,6 +22,8 @@ interface iCamera
     function getArchiveImageShotFullFileName($nameFileArchive);
     function getArchiveTimelapse();
     function getArchiveTimelapseLocalFileName($nameFileArchive);
+    function getArchiveVideo();
+    function getArchiveVideoLocalFileName($nameFileArchive);
 }
 
 class managerCameras
@@ -514,8 +516,11 @@ class camera implements iCamera
      * Получить полный путь до Video каталога камеры
      * @return string
      */
-    private function getVideoDir()
+    private function getVideoDir($local = false)
     {
+        if ($local) {
+            return $this->archiveDirLocal . '/' . $this->videoDir;
+        }
         return $this->archiveDir . '/' . $this->videoDir;
     }
 
@@ -769,10 +774,10 @@ class camera implements iCamera
 
     function getArchiveImageShotFullFileName($nameFileArchive) {
         $fullNameFile = $this->getImageDir().'/'.$nameFileArchive;
-        //if (is_file($fullNameFile)) {
+        if (is_file($fullNameFile)) {
             return $fullNameFile;
-        //}
-        //return '';
+        }
+        return '';
     }
 
     function getArchiveTimelapse() {
@@ -808,6 +813,46 @@ class camera implements iCamera
     function getArchiveTimelapseLocalFileName($nameFileArchive)
     {
        $fullNameFile = $this->getTimelapseDir(true).'/'.$nameFileArchive;
+        if (is_file($fullNameFile)) {
+            return $fullNameFile;
+        }
+        return '';
+    }
+
+    function getArchiveVideo()
+    {
+        $result = [];
+        $path = $this->getVideoDir(true);
+        if (!is_dir($path)) {
+            logger::writeLog('Не найден каталог с timelapse камеры, путь='.$path,
+                loggerTypeMessage::ERROR,
+                loggerName::CAMERAS);
+            return $result;
+        }
+        if ($handle = opendir($path)) { //сканирование годов
+            while (false !== ($file = readdir($handle))) {
+                $fullName = $path . '/' . $file;
+                if (is_file($fullName)) {
+                    if (fnmatch('*.mp4', $file)) {
+                        $result[] = $file;
+                    }
+                }
+            }
+            closedir($handle);
+        }
+        else {
+            logger::writeLog('Не удалось прочитать содержимое каталога '.$path.
+                ' при получении файлов timelapse',
+                loggerTypeMessage::ERROR,
+                loggerName::CAMERAS);
+        }
+        sort($result,  SORT_NATURAL );
+        return $result;
+    }
+
+    function getArchiveVideoLocalFileName($nameFileArchive)
+    {
+        $fullNameFile = $this->getVideoDir(true).'/'.$nameFileArchive;
         if (is_file($fullNameFile)) {
             return $fullNameFile;
         }
