@@ -443,7 +443,7 @@ if ($p == 'heater') {
                          style="position:absolute; left:210px; top:190px; display: flex; flex-direction: column; padding: 5px">
                         <div>1 этаж</div>
                         <div style="display: flex; align-items: flex-end">
-                            <div id="heater_temp_floor1_data">51.4</div>
+                            <div id="heater_temp_floor1_out_data">51.4</div>
                             <span style="margin-left: 2px">&deg</span>
                         </div>
                     </div>

@@ -67,11 +67,13 @@ if ($_REQUEST['dev'] == 'temp_delta') { //получаем температур�
     }
     else {
         $value1 = $unit1->readValue();
+        $temp1 = $value1['Value'];
         $value2 = $unit2->readValue();
+        $temp2 = $value2['Value'];
 
-        if (is_numeric($value1) && is_numeric($value2)) {
+        if (is_numeric($temp1) && is_numeric($temp2)) {
             $temperaturePrecision = DB::getConst('TemperaturePrecision');
-            $delta = round((double)$value1 - (double)$value2, $temperaturePrecision);
+            $delta = round((double)$temp1 - (double)$temp2, $temperaturePrecision);
         }
     }
 
