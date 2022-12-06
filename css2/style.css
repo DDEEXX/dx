@@ -146,6 +146,12 @@ body {
     background-color: #a9a9a9d1;
 }
 
+.temp_scheme.ui-state-default.ui-widget-content {
+    background-color: rgba(206, 206, 206, 0.2);
+    font-size: 20px;
+}
+
+
 /*
 .ui-accordion .dx.ui-accordion-header {
     padding-top: 0em;
