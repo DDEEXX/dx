@@ -484,7 +484,6 @@ class camera implements iCamera
                 if ($today !== false && $today > $timeFile) {
                     $result = $timeFile;
                 }
-                $result = $timeFile;
             }
         }
         return $result;
