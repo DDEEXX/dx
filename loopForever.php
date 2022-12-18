@@ -18,26 +18,45 @@ posix_setsid();
 
 $fileDir = dirname(__FILE__);
 
-require($fileDir.'/class/daemon.class.php');
-require($fileDir.'/class/managerUnits.class.php');
+require($fileDir . '/class/daemon.class.php');
+require($fileDir . '/class/managerDevices.class.php');
 
-ini_set('error_log',$fileDir.'/logs/errorLoopForever.log');
+ini_set('error_log', $fileDir . '/logs/errorLoopForever.log');
 fclose(STDIN);
 fclose(STDOUT);
 fclose(STDERR);
 $STDIN = fopen('/dev/null', 'r');
-$STDOUT = fopen($fileDir.'/logs/application.log', 'ab');
-$STDERR = fopen($fileDir.'/logs/daemonLoopForever.log', 'ab');
+$STDOUT = fopen($fileDir . '/logs/application.log', 'ab');
+$STDERR = fopen($fileDir . '/logs/daemonLoopForever.log', 'ab');
 
 class daemonLoopForever extends daemon
 {
     const NAME_PID_FILE = 'loopForever.pid';
     const UPDATE_UNITE_DELAY = 60; //Интервал обновления списка модулей, в секундах
     const PAUSE = 100000; //Пауза в основном цикле, в микросекундах (0.1 сек)
+    const SEPARATOR_OWNET_ALARM_FILES = ',';
 
     public function __construct($dirPidFile)
     {
         parent::__construct($dirPidFile, self::NAME_PID_FILE);
+    }
+
+    private function getAlarmOWireSensorDevice()
+    {
+        $listDevices = [];
+        $sel = new selectOption();
+        $sel->set('Disabled', 0);
+        $sel->set('NetTypeID', netDevice::ONE_WIRE);
+        $sel->set('DeviceTypeID', typeDevice::KEY_IN);
+        $sel->set('OW_is_alarm', 1);
+        $listDeviceSensor1Wire = managerDevices::getListDevices($sel);
+        foreach ($listDeviceSensor1Wire as $device) {
+            $devicePhysic = $device->getDevicePhysic();
+            if (is_a($devicePhysic, 'iDeviceSensorPhysicOWire')) {
+                $listDevices[$device->getDeviceID()] = $devicePhysic->getAddress();
+            }
+        }
+        return $listDevices;
     }
 
     public function run()
@@ -48,52 +67,48 @@ class daemonLoopForever extends daemon
         $ow = new OWNet($OWNetAddress);
 
         $previousTime = time();
-        $listUnit1WireLoop = managerUnits::getListUnits1WireLoop(0);
+
+        $listDevice1Wire = $this->getAlarmOWireSensorDevice();
+
         while (!$this->stopServer()) {
 
             $alarmDir = '';
-            try {
-                $alarmDirData = $ow->dir('/alarm');
-                if (is_array($alarmDirData) && array_key_exists('data', $alarmDirData)) {
-                    $alarmDir = $alarmDirData['data'];
-                }
-            }
-            catch (Exception $e) {
+            $alarmDirData = $ow->dir('/alarm');
+            if (is_array($alarmDirData) && array_key_exists('data', $alarmDirData)) {
+                $alarmDir = $alarmDirData['data'];
             }
 
             $alarms = [];
-
             //если в alarm есть данные, то последний символ в строке - точка, если ничего нет, то пустая строка
             if (strlen($alarmDir)) { //удаляем последний символ - точку
                 $alarmDir = substr($alarmDir, 0, -1);
-                $listAlarmAddress = explode(',', $alarmDir);
+                $listAlarmAddress = explode(self::SEPARATOR_OWNET_ALARM_FILES, $alarmDir);
                 foreach ($listAlarmAddress as $fullAddress) {
                     $listAddress = explode('/', $fullAddress);
                     $address = array_pop($listAddress);
                     $alarms[$address] = true;
                 }
-
             }
 
+            $now = time();
             //Обходим все модули и обновляем их состояние. Если есть в массиве, то значение 1, если нет - 0
-            foreach ($listUnit1WireLoop as $uniteID => $address) {
+            foreach ($listDevice1Wire as $deviceID => $address) {
                 if (array_key_exists($address, $alarms)) {
                     $value = 1;
-                }
-                else {
+                } else {
                     $value = 0;
                 }
-                $unit = managerUnits::getUnitID($uniteID);
-                $unit->updateValue($value); //Обновляем данные в объекте модуля
+                $deviceData = new deviceData($deviceID);
+                $deviceData->updateData($value, $now, false);
             }
+
 
             usleep(self::PAUSE); //ждем
 
             //обновляем список модулей через определенный промежуток времени
-            $now = time();
-            if ($now-$previousTime > self::UPDATE_UNITE_DELAY) {
+            if ($now - $previousTime > self::UPDATE_UNITE_DELAY) {
                 $previousTime = $now;
-                $listUnit1WireLoop = managerUnits::getListUnits1WireLoop(0);
+                $listDevice1Wire = $this->getAlarmOWireSensorDevice();
             }
 
             pcntl_signal_dispatch(); //Вызывает обработчики для ожидающих сигналов
@@ -102,12 +117,11 @@ class daemonLoopForever extends daemon
     }
 }
 
-$daemon = new daemonLoopForever( $fileDir.'/tmp');
+$daemon = new daemonLoopForever($fileDir . '/tmp');
 $daemonActive = $daemon->isDaemonActive();
 if ($daemonActive == 0) {
     $daemon->run();
-}
-else {
-    logger::writeLog('Невозможно запустить демона daemonLoopForever, код возврата - '.$daemonActive,
+} else {
+    logger::writeLog('Невозможно запустить демона daemonLoopForever, код возврата - ' . $daemonActive,
         loggerTypeMessage::ERROR, loggerName::ERROR);
 }

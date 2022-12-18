@@ -27,8 +27,11 @@ function getWidgetSensor(idBlock, idBlockClick, url) {
     $(selector).html(getWaitElement());
     $.getJSON(url, function (data) {
         var widgetParam = data['widget'][idBlockClick];
-        $.get("graphWidget.php", widgetParam, function (data) {
+        // $.get("graphWidget.php", widgetParam, function (data) {
+        //     $(selector).html(data);
+        // });
+        $.post("graphWidget.php", widgetParam, function (data) {
             $(selector).html(data);
-        });
-    })
+        }, "html");
+   })
 }

@@ -45,7 +45,6 @@ interface iUnit
 
     /**
      * Получить данные с модуля
-     * (извлекаются готовые данные из модуля, не с физического датчика)
      * @return mixed
      */
     public function getValues();
@@ -86,11 +85,11 @@ interface iModuleUnite extends iUnit {
 abstract class unit implements iUnit
 {
     private $smKey; //Числовой идентификатор сегмента разделяемой памяти
-    protected $device = null;
     protected $id = 0;
     protected $label = '';
     protected $type = typeUnit::NONE;
     protected $value = null;
+    protected $device = null;
 
     /**
      * unit constructor.
@@ -143,16 +142,6 @@ abstract class unit implements iUnit
         return json_encode([
             'value' => $this->value,
         ]);
-    }
-
-    /** Добавляет модуль в распределяемую память, возвращает id модуля, при ошибке добавления возвращает null
-     * @param $key - числовой идентификатор сегмента разделяемой памяти
-     * @return int|null
-     */
-    public function initUnit($key)
-    {
-        $this->smKey = $key;
-        return sharedMemoryUnit::set($this);
     }
 
     /**
@@ -315,6 +304,7 @@ abstract class unit implements iUnit
 abstract class sensorUnit extends unit implements iSensorUnite
 {
 
+    protected $delta = 0.0;
     protected $valueTable = 0;
     protected $dataValue = null;
 
@@ -511,6 +501,15 @@ abstract class sensorUnit extends unit implements iSensorUnite
 
         return $result['Value'];
     }
+
+    /**
+     * @return float
+     */
+    public function getDelta()
+    {
+        return $this->delta;
+    }
+
 }
 
 abstract class moduleUnit extends unit implements iModuleUnite
@@ -549,8 +548,6 @@ abstract class moduleUnit extends unit implements iModuleUnite
 class temperatureUnit extends sensorUnit
 {
 
-    private $delta;
-
     /**
      * temperatureUnit constructor.
      * @param array $options
@@ -559,7 +556,7 @@ class temperatureUnit extends sensorUnit
     public function __construct(array $options)
     {
         parent::__construct($options, typeUnit::TEMPERATURE);
-        $this->delta = $options['Delta'];
+        $this->delta = (float)$options['Delta'];
     }
 
     /**
@@ -600,74 +597,10 @@ class temperatureUnit extends sensorUnit
         }
     }
 
-    /**
-     * Записать значение температуры в базу данных
-     * время записи берется текущее серверное
-     * @param $value
-     * @throws connectDBException
-     * @throws querySelectDBException
-     */
-    public function writeValue($value)
-    {
-
-        if (!is_double($value) && !is_int($value)) {
-            //Пишем лог
-            return;
-        }
-
-        $temperature = $value + (float)$this->delta;
-        $uniteID = $this->id;
-        $nameTabValue = 'tvalue_' . $this->valueTable;
-
-        $query = 'INSERT INTO ' . $nameTabValue . ' VALUES (NULL, ' . "$uniteID, SYSDATE(), " . $temperature . ')';
-
-        $con = sqlDataBase::Connect();
-
-        $result = queryDataBase::execute($con, $query);
-
-        unset($con);
-
-        if (!$result) {
-            logger::writeLog('Ошибка при записи в базу данных (writeValue)',
-                loggerTypeMessage::ERROR, loggerName::ERROR);
-        }
-
-    }
-
-    /**
-     * Записать значение температуры в базу данных
-     * @throws connectDBException
-     * @throws querySelectDBException
-     */
-    public function writeCurrentValueDB()
-    {
-
-        $temperature = $this->value + (float)$this->delta;
-        $uniteID = $this->id;
-        $nameTabValue = 'tvalue_' . $this->valueTable;
-        $dateValue = date('Y-m-d H:i:s',$this->dataValue);
-
-        $query = 'INSERT INTO ' . $nameTabValue . ' VALUES (NULL, ' . "$uniteID,"." '$dateValue',"  . $temperature . ')';
-
-        $con = sqlDataBase::Connect();
-
-        $result = queryDataBase::execute($con, $query);
-
-        unset($con);
-
-        if (!$result) {
-            logger::writeLog('Ошибка при записи в базу данных (writeValue)',
-                loggerTypeMessage::ERROR, loggerName::ERROR);
-        }
-
-    }
-
 }
 
 class humidityUnit extends sensorUnit
 {
-
-    private $delta;
 
     /**
      * temperatureUnit constructor.
@@ -736,8 +669,6 @@ class humidityUnit extends sensorUnit
 
 class pressureUnit extends sensorUnit
 {
-
-    private $delta;
 
     /**
      * pressureUnit constructor.

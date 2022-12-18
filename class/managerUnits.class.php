@@ -59,179 +59,6 @@ class unitFactory
 */
 class managerUnits
 {
-    /**
-     * Иницилизация всех модулей.
-     * Метод должет выполнятся самым первым, перед работой всех остальных модулей
-     * Помещает все объекты модулей в распределяемую память
-     * @return bool
-     */
-    public static function initUnits()
-    {
-        $smTypeUniteID = array(); //ключ - тип модуля, значение символ идентификатора проекта
-        $smIdModule = array();    //ключ - id модуля, значение символ идентификатора проекта, в сегменте key=id
-        $smLabelModule = array();
-        $listProjectID = DB::getProjectIDUnits();
-        foreach ($listProjectID as $projectID) {
-            $projID = $projectID['ProjID'];
-            if ($projID == sharedMemory::PROJECT_LETTER_KEY) { //зарезервированный служебный символ, нельзя использовать для модулей
-                return false;
-            }
-            //Получает все модули в UniteType которых указан соответствующий projID (модули могут быть нескольких типов)
-            $sel = new selectOption();
-            $sel->set('ProjID', $projID);
-            $listUnit = self::getListUnitsDB($sel);
-
-            try {
-                $sm = sharedMemoryUnits::getInstance($projID);
-            } catch (shareMemoryInitUnitException $e) {
-                return false;
-            }
-
-            //в одном сегменте разделяемой памяти могут быть модули с разными типами
-            $typeUnit = array();
-            //массив с id модулей
-            $keys = array();
-            foreach ($listUnit as $tekUnit) {
-                $key = $tekUnit->initUnit($sm->getKey());
-                if (is_null($key)) {
-                    return false;
-                }
-                $keys[] = $key;
-                //добавляем в массив (ключи), тип моделей UniteTypeID (1-temp? 2-label и т.д.)
-                $typeUnit[$tekUnit->getType()] = true;
-                //записываем в массив: ключ - id модуля, значение - буква проекта
-                $smIdModule[$key] = $projID;
-                //записываем в массив: ключ - label модуля, значение элемент массива: ключ - id модуля, значение - буква проекта
-                $smLabelModule[$tekUnit->getLabel()] = array('id_module'=>$key, 'project_id'=>$projID);
-            }
-            //Записываем с ключом 0 массив содержащий ID модулей, понадобится для дальнейшего доступа
-            $sm->set(sharedMemory::KEY_UNIT_ID, $keys);
-            //записываем в массив: ключ - тип модуля, значение - буква проекта
-            foreach ($typeUnit as $key=>$value) {
-                $smTypeUniteID[$key] = $projID;
-            }
-        }
-        unset($listProjectID);
-
-        try {
-            $sm = sharedMemoryUnits::getInstance(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::MEMORY_SIZE_KEY);
-        } catch (shareMemoryInitUnitException $e) {
-            return false;
-        }
-        //Записываем с ключем 0 массив содержащий в ключах тип модуля, в значениях букву projectID
-        if (!$sm->set(sharedMemory::KEY_UNIT_TYPE, $smTypeUniteID)) {return false;}
-        if (!$sm->set(sharedMemory::KEY_ID_MODULE, $smIdModule)) {return false;}
-        if (!$sm->set(sharedMemory::KEY_LABEL_MODULE, $smLabelModule)) {return false;}
-        if (!$sm->set(sharedMemory::KEY_1WARE_PATH, DB::getConst('OWNETDir'))) {return false;}
-        if (!$sm->set(sharedMemory::KEY_1WARE_ADDRESS, DB::getConst('OWNetAddress'))) {return false;}
-
-        return true;
-    }
-
-    /**
-     * Получить модули как объекты в виде массива из распределяемой памяти
-     * @param null $unitType
-     * @param null $deviceDisables
-     * @return listUnits
-     */
-    public static function getListUnits($unitType = null, $deviceDisables = null)
-    {
-        return sharedMemoryUnits::getListUnits($unitType, $deviceDisables);
-    }
-
-    /**
-     * Получить список модулей на шине 1-Wire опрашиваемые по команде Read Conditional Search ROM (условный поиск)
-     * @param null $deviceDisables
-     * @return array одномерный массив ключ id модуля, значение адрес в 1-wire сети
-     */
-    public static function getListUnits1WireLoop($deviceDisables = null) {
-        //Получаем все устройства
-        $listUnits1WireLoop = [];
-        $listAllUnits = self::getListUnits(null , $deviceDisables);
-        foreach ($listAllUnits as $unit) {
-            if (is_null($unit)) {
-                continue;
-            }
-            if ($unit->check1WireLoop()) {
-                $disabled = $unit->checkDeviceDisabled();
-                if (is_null($disabled)) {
-                    continue;
-                }
-                elseif (!is_null($deviceDisables)){
-                    if ($disabled!=$deviceDisables) {
-                        continue;
-                    }
-                }
-                $listUnits1WireLoop[$unit->getId()] = $unit->getDeviceAddress();
-            }
-        }
-        return $listUnits1WireLoop;
-    }
-
-    /**
-     *  Обновляет set_alarm у 1wire устройств
-     */
-    public static function setAlias1WireUnit() {
-
-        $MAX_CHECK_1WIRE_DIR = 10;  //количество попыток
-        $PAUSE_CHECK_1WIRE_DIR = 5; //пауза между попытками
-
-        //т.к. взаимодействие с 1wire идет через файловую систему сначала ждем пока будут доступен
-        //соответствующий каталог
-
-        $n = 1; //номер попытки обращения к каталогу
-        $is1wire = self::check1WireDir();
-        while ((!$is1wire) && $n<=$MAX_CHECK_1WIRE_DIR) {
-            sleep($PAUSE_CHECK_1WIRE_DIR);
-            $is1wire = self::check1WireDir();
-        }
-
-        if (!$is1wire) {
-            logger::writeLog('При попытки обновить set_alarm не найден путь до каталога 1wire', loggerTypeMessage::WARNING ,loggerName::ACCESS);
-            return;
-        }
-
-        $listUnit1WireLoop = managerUnits::getListUnits1WireLoop(0);
-        foreach ($listUnit1WireLoop as $uniteID => $address) {
-            $unite = self::getUnitID($uniteID);
-            $unite->updateDeviceAlarm();
-        }
-    }
-
-    public static function check1WireDir() {
-        $OWNetDir = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_PATH);
-        if (is_null($OWNetDir)) {
-            return false;
-        }
-        $dir1WireAlarm = $OWNetDir.'/alarm';
-        return is_dir($dir1WireAlarm);
-    }
-
-    /**
-     * Получить список модулей устройства которых это MQTT клиенты, и у них есть подписки статуса
-     * @param int $deviceDisables
-     * @return array Одномерный массив ключ id модуля, значение тема сообщения
-     */
-    public static function getListUnitsMQTTTopicStatus($deviceDisables = 0)
-    {
-        $listUnitsMQTTLoop = [];
-        //Получаем все устройства
-        $listAllUnits = self::getListUnits(null , $deviceDisables);
-        foreach ($listAllUnits as $unit) {
-            $disabled = $unit->checkDeviceDisabled();
-            if (is_null($disabled)) {
-                continue;
-            }
-            if ($disabled!=$deviceDisables) {
-                continue;
-            }
-            $topicStatus = $unit->checkMQTTTopicStatus();
-            if (isset($topicStatus)) {
-                $listUnitsMQTTLoop[$unit->getId()] = $topicStatus;
-            }
-        }
-        return $listUnitsMQTTLoop;
-    }
 
     /**
      * Ищет модуль по имени в распределенной памяти. Если модуля с таким именем нет, то возвращает null
@@ -274,41 +101,18 @@ class managerUnits
      * @param Iterator|null $sel
      * @return listUnits
      */
-    public static function getListUnitsDB(Iterator $sel = null)
+    public static function getListUnits(Iterator $sel = null)
     {
         $list = new listUnits();
         $arr = DB::getListUnits($sel);
         foreach ($arr as $value) {
-            $Unit = self::createUniteDB($value);
-            $list->append($Unit);
+            $unit = self::createUniteDB($value);
+            if (!is_null($unit)) {
+                $list->append($unit);
+            }
         }
         unset($arr);
         return $list;
-    }
-
-    /**
-     * Ищет модуль по имени в базе данных. Если модуля с таким именем нет, то возвращает null
-     * @param $label
-     * @return mixed|null
-     */
-    public static function getUnitLabelDB($label)
-    {
-
-        $sel = new selectOption();
-        $sel->set('UnitLabel', $label);
-
-        $listUnits = self::getListUnitsDB($sel);
-
-        $resUnit = null;
-
-        foreach ($listUnits as $tekUnit) {
-            $resUnit = $tekUnit;
-        }
-
-        unset($listUnits);
-
-        return $resUnit;
-
     }
 
     public static function testUnits() {
@@ -336,6 +140,50 @@ class managerUnits
         unset($Units);
 
         return $result;
+
+    }
+
+}
+
+class unitsValuesHistory {
+
+    static public function saveDataToDB(iSensorUnite $unit, iDeviceDataValue $data) {
+
+        $uniteID = $unit->getId();
+        if ($data->valueNull === true) {
+            logger::writeLog('Попытка записать в базу данных NULL значение модуля id='.$uniteID,
+                loggerTypeMessage::WARNING, loggerName::ACCESS);
+            return;
+        }
+        if (!is_a($unit, 'sensorUnit')) {
+            logger::writeLog('Попытка записать в базу данных значение модуля не являющемся сенсором id='.$uniteID,
+                loggerTypeMessage::WARNING, loggerName::ACCESS);
+            return;
+        }
+
+        $delta = $unit->getDelta();
+        $value = (float)$data->value + (float)$delta;
+        $nameTabValue = 'tvalue_' . $unit->getValueTable();
+        $dateValue = date('Y-m-d H:i:s',$data->date);
+
+        $query = 'INSERT INTO ' . $nameTabValue . ' VALUES (NULL, ' . "$uniteID,"." '$dateValue',"  . $value . ')';
+
+        try {
+            $con = sqlDataBase::Connect();
+            $result = queryDataBase::execute($con, $query);
+            if (!$result) {
+                logger::writeLog('Ошибка при записи в базу данных (writeValue)',
+                    loggerTypeMessage::ERROR, loggerName::ERROR);
+            }
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных',
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка при добавлении данных в базу данных',
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+        }
+
+        unset($con);
 
     }
 

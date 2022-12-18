@@ -10,8 +10,8 @@ require_once(dirname(__FILE__) . '/globalConst.interface.php');
 interface iGraphUnitValues
 {
 
-    const WIDTH = 160;
-    const HEIGHT = 410;
+    const WIDTH = 150;
+    const HEIGHT = 100;
 
     public function getGraph64();
 
@@ -29,13 +29,12 @@ class graphUnitValues implements iGraphUnitValues
     private $count;
     private $minDelta;
 
-    public function __construct($label, $type = graphType::LINE, $variant = graphVariant::VAR1,
+    public function __construct($unit, $type = graphType::LINE, $variant = graphVariant::VAR1,
                                 $width = iGraphUnitValues::WIDTH, $height = iGraphUnitValues::HEIGHT,
                                 $date_from = null, $date_to = null,
                                 $count = 6, $minDelta = 10)
     {
-        if (!empty($label))
-            $this->unit = managerUnits::getUnitLabel($label);
+        $this->unit = $unit;
         $this->type = $type;
         $this->variant = $variant;
         $this->height = $height;
@@ -51,14 +50,16 @@ class graphUnitValues implements iGraphUnitValues
         if (!is_null($this->unit)) {
             return $this->drawGraph();
         } else {
-            return $this->noData();
+            return static::noData($this->width, $this->height);
         }
     }
 
-    private function noData()
+    public static function noData($width = null, $height = null)
     {
+        if (empty($width)) { $width = iGraphUnitValues::WIDTH;}
+        if (empty($height)) { $height = iGraphUnitValues::HEIGHT;}
         $Title = 'NO DATA';
-        $image = imagecreatetruecolor($this->width, $this->height);
+        $image = imagecreatetruecolor($width, $height);
         $blueColor = imagecolorallocate($image, 0, 0, 255);
         $transparentColor = imagecolorallocate($image, 0, 0, 0); //черный цвет будет прозрачным
         imagecolortransparent($image, $transparentColor);
@@ -68,7 +69,6 @@ class graphUnitValues implements iGraphUnitValues
         $y = $bbox[1] + (imagesy($image) / 2) - ($bbox[5] / 2) - 5;
         imagettftext($image, 14, 45, $x, $y, $blueColor, $font, $Title);
         ob_start();
-//        header('Content-Type: image/png');
         imagepng($image);
         $buffer = ob_get_contents();
         ob_end_clean();
@@ -185,7 +185,7 @@ class graphUnitValues implements iGraphUnitValues
     {
 
         if (is_null($this->unit)) {
-            return $this->noData();
+            return static::noData($this->width, $this->height);
         }
 
         $y_data = [];
@@ -273,7 +273,7 @@ class graphUnitValues implements iGraphUnitValues
             return base64_encode($buffer);
 
         } else {
-            return $this->noData();
+            return static::noData($this->width, $this->height);
         }
 
     }

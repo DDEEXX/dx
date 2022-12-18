@@ -24,7 +24,18 @@
   "widget": {
     "home_temperature_out_click": {
       "label": "temp_out_1",
-      "image": "img2/icon_small/thermometer.png",
+      "icon" : {
+        "image": "img2/icon_medium/thermometer.png",
+        "width": 24,
+        "height": 24
+      },
+      "currentValue" : {
+        "show": true,
+        "top": "35px",
+        "left": "5px",
+        "precision": 1,
+        "postfix": "&deg"
+      },
       "graph": {
         "type": 0,
         "variant": 0,
@@ -35,7 +46,16 @@
     },
     "home_pressure_click": {
       "label": "pressure",
-      "image": "img2/icon_small/barometer.png",
+      "icon" : {
+        "image": "img2/icon_medium/barometer.png",
+        "width": 24,
+        "height": 24
+      },
+      "currentValue" : {
+        "show": true,
+        "top": "35px",
+        "left": "5px"
+      },
       "graph": {
         "type": 3,
         "variant": 0,
@@ -47,7 +67,17 @@
     },
     "home_humidity_out_click": {
       "label": "bathroom_humidity",
-      "image": "img2/icon_small/humidity.png",
+      "icon" : {
+        "image": "img2/icon_medium/humidity.png",
+        "width": 24,
+        "height": 24
+      },
+      "currentValue" : {
+        "show": true,
+        "top": "5px",
+        "left": "40px",
+        "postfix": "%"
+      },
       "graph": {
         "type": 0,
         "variant": 0,
@@ -58,7 +88,11 @@
     },
     "home_wind_click": {
       "label": "wind",
-      "image": "img2/icon_small/wind.png",
+      "icon" : {
+        "image": "img2/icon_medium/wind.png",
+        "width": 24,
+        "height": 24
+      },
       "graph": {
         "type": 1,
         "variant": 1,

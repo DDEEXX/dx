@@ -174,9 +174,9 @@ if ($p == 'home' || empty($p)) {
         </div>
         <div class="grid_3">.</div>
         <div class="grid_4 omega">
-            <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 154px">
+            <div class="ui-corner-all ui-state-default" style="display: flex; flex-direction: column; height: 154px">
                 <h2 class="title_sensor">На улице</h2>
-                <div id="block_home_outdoor"></div>
+                <div id="block_home_outdoor" style="align-self: stretch; flex-grow: 1; overflow: auto"></div>
             </div>
         </div>
         <div class="clear"></div>

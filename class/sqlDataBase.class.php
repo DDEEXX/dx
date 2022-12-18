@@ -212,7 +212,7 @@ class DB
      */
     static public function getListDevices(Iterator $sel = null)
     {
-        $query = "SELECT * FROM tdevice left join tdevicemodel ON tdevice.modelID = tdevicemodel.modelID";
+        $query = 'SELECT * FROM tdevice';
         return self::getListBD($query, $sel);
     }
 
@@ -229,7 +229,7 @@ class DB
             return null;
         }
         $deviceID = $con->getConnect()->real_escape_string($id);
-        $query = "SELECT * FROM tdevice left join tdevicemodel ON tdevice.modelID = tdevicemodel.modelID WHERE DeviceID=".$deviceID;
+        $query = 'SELECT * FROM tdevice WHERE DeviceID=' .$deviceID;
         try {
             $result = queryDataBase::getOne($con, $query);
         } catch (querySelectDBException $e) {
@@ -249,16 +249,6 @@ class DB
     {
         $query = 'SELECT *, a.Note NoteU, b.Note NoteD FROM tunits a LEFT JOIN tdevice b ON a.DeviceID = b.DeviceID LEFT JOIN tunitetype c ON a.UniteTypeID = c.UniteTypeID';
         return self::getListBD($query, $sel);
-    }
-
-    /**
-     * Получить список символов "ProjID" привязанных к типам модулей, символы не повторяются и не "пустые"
-     * @return array
-     */
-    static public function getProjectIDUnits()
-    {
-        $query = 'SELECT ProjID FROM tunitetype WHERE LENGTH(TRIM(ProjID)) > 0 GROUP BY ProjID';
-        return self::getListBD($query);
     }
 
     /**
@@ -312,7 +302,7 @@ class DB
         } catch (querySelectDBException $e) {
             logger::writeLog('Ошибка при выполнение запроса в DB::getListBD. ' . $query . '. ' . $e->getMessage(),
                 loggerTypeMessage::ERROR, loggerName::ERROR);
-            return array();
+            return [];
         }
 
         return $aDevices;

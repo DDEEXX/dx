@@ -15,6 +15,8 @@
  */
 
 require_once(dirname(__FILE__) . '/globalConst.interface.php');
+require_once(dirname(__FILE__) . '/managerUnits.class.php');
+require_once(dirname(__FILE__) . '/managerDevices.class.php');
 require_once(dirname(__FILE__) . '/logger.class.php');
 
 class shareMemoryInitUnitException extends Exception
@@ -26,6 +28,15 @@ class shareMemoryInitUnitException extends Exception
             loggerTypeMessage::ERROR,
             loggerName::ERROR);
     }
+}
+
+class sharedMemoryDeviceData {
+
+    static public function set($idDevice, $data) {
+        $sm = sharedMemoryUnits::getInstance(sharedMemory::PROJECT_LETTER_DATA_DEVICE, sharedMemory::SIZE_MEMORY_DATA_DEVICE);
+        return $sm->set($idDevice, $data);
+    }
+
 }
 
 class sharedMemoryUnit
@@ -67,7 +78,7 @@ class sharedMemoryUnits
     protected $shmID;       //идентификатор, для доступа к разделяемой памяти
     protected $semID;       //идентификатор, для доступа к семафору
 
-    private static $instance = array(); //массив объектов sharedMemoryUnits
+    private static $instance = []; //массив объектов sharedMemoryUnits
 
     /** Получить числовой идентификатор сегмента разделяемой памяти
      * @return int
@@ -133,72 +144,9 @@ class sharedMemoryUnits
     public function get($key)
     {
         sem_acquire($this->semID);
-        $value = @shm_get_var($this->shmID, $key);
+        $value = shm_has_var($this->shmID, $key) ? @shm_get_var($this->shmID, $key) : null;
         sem_release($this->semID);
-
         return $value;
-    }
-
-    static public function getListUnits($unitType, $deviceDisables)
-    {
-
-        //Определяем указатель на сегмент распределяемой памяти (точнее символ проекта) в котором хранятся
-        //модуля с типом $sensorTypeID
-        $arrProjectID = array();
-        try {
-            $sm = self::getInstance(sharedMemory::PROJECT_LETTER_KEY);
-        } catch (shareMemoryInitUnitException $e) {
-            return new listUnits();
-        }
-
-        //Получаем массив с указателями на сегменты распределяемой памяти, ключ - тип модуля
-        $arrTypeUniteID = $sm->get(sharedMemory::KEY_UNIT_TYPE);
-        foreach ($arrTypeUniteID as $key => $value) {
-            if (is_null($unitType)) {   //Если нет отбора по типу модуля, то берем все сегменты
-                $arrProjectID[] = $value;
-            }
-            else {
-                if ($key == $unitType) {
-                    $arrProjectID[] = $value; //Указатель на распределяемую память, где хранятся модули
-                    break;
-                }
-            }
-        }
-
-        $list = new listUnits();
-        foreach ($arrProjectID as $keyP => $valueP) {
-            try {
-                $sm = self::getInstance($valueP);
-            } catch (shareMemoryInitUnitException $e) {
-                return new listUnits();
-            }
-            $unitsID = $sm->get(sharedMemory::KEY_UNIT_ID); //массив с key на модули
-            foreach ($unitsID as $key => $value) {
-                $unit = $sm->get($value);
-                $disabled = $unit->checkDeviceDisabled();
-
-                if (is_null($disabled)) {
-                    continue;
-                }
-                elseif (!is_null($deviceDisables)){
-                    if ($disabled!=$deviceDisables) {
-                        continue;
-                    }
-                }
-
-                if (is_null($unitType)) {  // если нет отбора, то добавляем все
-                    $list->append($unit);
-                }
-                else {
-                    //Т.к. в одном сегменте могут храниться несколько типов модулей, то еще проверяем тип
-                    if ($unit->getType() == $unitType) {
-                        $list->append($unit);
-                    }
-                }
-            }
-        }
-
-        return $list;
     }
 
     /**
@@ -208,63 +156,67 @@ class sharedMemoryUnits
      */
     static public function getUnitLabel($label) {
 
-        try {
-            $sm = self::getInstance(sharedMemory::PROJECT_LETTER_KEY);
-        } catch (shareMemoryInitUnitException $e) {
-            return null;
-        }
+//        try {
+//            $sm = self::getInstance(sharedMemory::PROJECT_LETTER_KEY);
+//        } catch (shareMemoryInitUnitException $e) {
+//            return null;
+//        }
+//
+//        $unitsLabels = $sm->get(sharedMemory::KEY_LABEL_MODULE);
+//        if (array_key_exists($label, $unitsLabels)) {
+//            $idModule = $unitsLabels[$label]['id_module'];
+//            $projectID = $unitsLabels[$label]['project_id'];
+//        }
+//        else {
+//            return null;
+//        }
+//
+//        if (is_null($idModule) || is_null($projectID)) {
+//            return null;
+//        }
+//
+//        try {
+//            $sm = self::getInstance($projectID);
+//        } catch (shareMemoryInitUnitException $e) {
+//            return null;
+//        }
+//
+//        return $sm->get($idModule);
 
-        $unitsLabels = $sm->get(sharedMemory::KEY_LABEL_MODULE);
-        if (array_key_exists($label, $unitsLabels)) {
-            $idModule = $unitsLabels[$label]['id_module'];
-            $projectID = $unitsLabels[$label]['project_id'];
-        }
-        else {
             return null;
-        }
-
-        if (is_null($idModule) || is_null($projectID)) {
-            return null;
-        }
-
-        try {
-            $sm = self::getInstance($projectID);
-        } catch (shareMemoryInitUnitException $e) {
-            return null;
-        }
-
-        return $sm->get($idModule);
 
     }
 
     static public function getUnitID($id) {
 
-        try {
-            $sm = self::getInstance(sharedMemory::PROJECT_LETTER_KEY);
-        } catch (shareMemoryInitUnitException $e) {
-            return null;
-        }
+//        try {
+//            $sm = self::getInstance(sharedMemory::PROJECT_LETTER_KEY);
+//        } catch (shareMemoryInitUnitException $e) {
+//            return null;
+//        }
+//
+//        $unitsID = $sm->get(sharedMemory::KEY_ID_MODULE);
+//        if (array_key_exists($id, $unitsID)) {
+//            $idModule = $id;
+//            $projectID = $unitsID[$id];
+//        }
+//        else {
+//            return null;
+//        }
+//
+//        if (is_null($idModule) || is_null($projectID)) {
+//            return null;
+//        }
+//
+//        try {
+//            $sm = self::getInstance($projectID);
+//        } catch (shareMemoryInitUnitException $e) {
+//            return null;
+//        }
+//
+//        return $sm->get($idModule);
 
-        $unitsID = $sm->get(sharedMemory::KEY_ID_MODULE);
-        if (array_key_exists($id, $unitsID)) {
-            $idModule = $id;
-            $projectID = $unitsID[$id];
-        }
-        else {
             return null;
-        }
-
-        if (is_null($idModule) || is_null($projectID)) {
-            return null;
-        }
-
-        try {
-            $sm = self::getInstance($projectID);
-        } catch (shareMemoryInitUnitException $e) {
-            return null;
-        }
-
-        return $sm->get($idModule);
 
     }
 
@@ -289,3 +241,49 @@ class sharedMemoryUnits
 
 }
 
+class managerSharedMemory {
+
+    /**
+     * Инициализация всех модулей.
+     * Метод должен выполнятся самым первым, перед работой всех остальных модулей.
+     * Помещает данные модулей в распределяемую память.
+     * @return bool
+     */
+    public static function init() {
+        try {
+            $sm = sharedMemoryUnits::getInstance(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::SIZE_MEMORY_KEY);
+        } catch (shareMemoryInitUnitException $e) {
+            return false;
+        }
+        if (!$sm->set(sharedMemory::KEY_1WARE_PATH, DB::getConst('OWNETDir'))) {return false;}
+        if (!$sm->set(sharedMemory::KEY_1WARE_ADDRESS, DB::getConst('OWNetAddress'))) {return false;}
+
+        try {
+            $sm = sharedMemoryUnits::getInstance(sharedMemory::PROJECT_LETTER_UNITS, sharedMemory::SIZE_MEMORY_UNITS);
+        } catch (shareMemoryInitUnitException $e) {
+            return false;
+        }
+        $listUnit = managerUnits::getListUnits();
+        $smUnits = [];
+        foreach ($listUnit as $tekUnit) {
+            $device = $tekUnit->getDevice();
+            $idDevice = null;
+            if (!is_null($device)) {
+                $idDevice = $device->getDeviceID();
+            }
+            $smUnits[$tekUnit->getLabel()] = ['idUnit'=>$tekUnit->getId(), 'idDevice'=>$idDevice];
+        }
+        if (!$sm->set(0, $smUnits)) {return false;}
+
+        $listDevice = managerDevices::getListDevices();
+        foreach ($listDevice as $device) {
+            $idDevice = $device->getDeviceID();
+            $dataDevice = new deviceData($idDevice);
+            if (!$dataDevice->setData()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+}

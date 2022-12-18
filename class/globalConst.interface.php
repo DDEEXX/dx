@@ -22,7 +22,6 @@ interface typeDevice{
     const POWER_KEY         = 3; //Силовой ключ (коммутирует высокое напряжение)
     const KEY_IN            = 4; //Входящий ключ (сухой контакт и т.д.)
     const KEY_OUT           = 5; //Выходной ключ - коммутирует маленькие токи
-    const VOLTAGE           = 6; //Датчик наличия напряжения
     const PRESSURE          = 7; //Датчик атмосферного давления
     const HUMIDITY          = 8; //Датчик влажности
 }
@@ -34,7 +33,6 @@ interface typeUnit{
     const POWER_KEY         = 3; //Силовой ключ (коммутирует высокое напряжение)
     const KEY_IN            = 4; //Входящий ключ (сухой контакт и т.д.)
     const KEY_OUT           = 5; //Выходной ключ - коммутирует маленькие токи
-    const VOLTAGE           = 6; //Датчик наличия напряжения
     const PRESSURE          = 7; //Датчик атмосферного давления
     const HUMIDITY          = 8; //Датчик влажности
 }
@@ -67,15 +65,14 @@ interface modeUnit {
 
 interface sharedMemory
 {
-    const SIZE_MEMORY_UNIT = 10000;
+    const SIZE_MEMORY_KEY = 10000;
+    const SIZE_MEMORY_UNITS = 20000;
+    const SIZE_MEMORY_DATA_DEVICE = 30000;
     const PROJECT_LETTER_KEY = 'A';
-    const MEMORY_SIZE_KEY = 10000;
-    const KEY_UNIT_ID = 0;
-    const KEY_UNIT_TYPE = 0;
-    const KEY_ID_MODULE = 1;
-    const KEY_LABEL_MODULE = 2;
-    const KEY_1WARE_PATH = 3;
-    const KEY_1WARE_ADDRESS = 4;
+    const PROJECT_LETTER_UNITS = 'B';
+    const PROJECT_LETTER_DATA_DEVICE = 'C';
+    const KEY_1WARE_PATH = 0;
+    const KEY_1WARE_ADDRESS = 1;
 }
 
 interface modeDeviceValue {
@@ -93,3 +90,16 @@ interface testUnitCode {
 }
 
 const MQTT_CODE_SEPARATOR = ';';
+
+interface valuePrecision {
+    const TEMPERATURE = 2;
+}
+
+interface formatValueDevice {
+    const NO_FORMAT = 0;
+    const MQTT_TEMPERATURE = 1;
+    const MQTT_HUMIDITY = 2;
+    const MQTT_PRESSURE = 3;
+    const MQTT_KEY_IN = 4;
+    const MQTT_KEY_OUT = 5;
+}

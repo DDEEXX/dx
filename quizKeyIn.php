@@ -14,6 +14,6 @@ $sel = new selectOption();
 $sel->set('DeviceTypeID', typeDevice::KEY_IN);
 $sel->set('Disabled', 0);
 
-$keyInUnits = managerUnits::getListUnitsDB($sel);
+$keyInUnits = managerUnits::getListUnits($sel);
 
 unset($keyInUnits);
