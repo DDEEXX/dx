@@ -25,6 +25,8 @@ interface iUnit
      */
     function getLabel();
 
+    function getDevice();
+
     function test();
 
     function getData();
@@ -89,7 +91,7 @@ abstract class unit implements iUnit
      * Получить физическое устройство модуля
      * @return iDevice|null
      */
-    protected function getDevice() {
+    public function getDevice() {
         if (is_a($this->device, 'aDevice')) {
             return $this->device;
         }
