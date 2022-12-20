@@ -55,7 +55,7 @@ class move_bathroom
 
         if ($keyPress) { //Прикоснулись к кнопке выключения
             $deviceLight = managerDevices::getDevice($idDeviceUnitLight);
-            $data = json_encode(['value'=>0, 'status'=>statusKeyData::OFF, 'pause'=>self::TIME_OFF_LIGHT]);
+            $data = json_encode(['value'=>0, 'status'=>statusKey::OFF, 'pause'=>self::TIME_OFF_LIGHT]);
             $deviceLight->setData($data);
             unset($deviceLight);
         }
@@ -71,7 +71,7 @@ class move_bathroom
                     if ($sunInfo == dayPart::NIGHT && ($hours>=23 || ($weekends && $hours<8) || (!$weekends && $hours<7))) {
                         // включает, записываем что от датчика
                         $deviceLight = managerDevices::getDevice($idDeviceUnitLight);
-                        $data = json_encode(['value'=>1, 'status'=>statusKeyData::MOVE]);
+                        $data = json_encode(['value'=>1, 'status'=>statusKey::MOVE]);
                         $deviceLight->setData($data);
                         unset($deviceLight);
                     }
@@ -88,14 +88,14 @@ class move_bathroom
                     if ($statusKey == statusKeyData::MOVE) { // включился от датчика движения
                         if ($moveTime > self::MOVE_TIME) { // время вышло с последнего отсутствия движения
                             $deviceLight = managerDevices::getDevice($idDeviceUnitLight);
-                            $data = json_encode(['value' => 0, 'status' => statusKeyData::OFF]);
+                            $data = json_encode(['value' => 0, 'status' => statusKey::OFF]);
                             $deviceLight->setData($data);
                             unset($deviceLight);
                         }
                     } else { // свет включили вручную (через сайт) ???
                         if ($outTime > self::MOVE_TIME_GLOBAL) { // время вышло с последней активности подсветки
                             $deviceLight = managerDevices::getDevice($idDeviceUnitLight);
-                            $data = json_encode(['value' => 0, 'status' => statusKeyData::OFF]);
+                            $data = json_encode(['value' => 0, 'status' => statusKey::OFF]);
                             $deviceLight->setData($data);
                             unset($deviceLight);
                         }

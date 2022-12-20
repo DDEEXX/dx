@@ -33,7 +33,7 @@ class move_under_stair
         $lightData = json_decode(managerDevices::getDevicePhysicData($idDeviceUnitLight), true);
         $isLight = $lightData['valueNull'] ? 0 : $lightData['value']; //Свет горит
         $timeKey = $lightData['date']; //Когда это было
-        $statusKey = $lightData['status'];   //Статус ключа - каким образом включилась подсветка или вообще выключена
+        $statusKey = $lightData['status']; //Статус ключа - каким образом включилась подсветка или вообще выключена
 
         $now = time();
         $outTime = 99999; //Прошло секунд с момента последней записи состояния подсветки
@@ -42,12 +42,12 @@ class move_under_stair
         }
 
         //для отладки
-        //echo 'Move '.$isMove.', Light '.$isLight.' Status '.$statusKey.' Sun '.$sunInfo.' Time '.date("Y-m-d H:i:s", $timeNoMove).PHP_EOL;
+        echo 'Move '.$isMove.', Light '.$isLight.' Status '.$statusKey.' Time '.date('Y-m-d H:i:s', $timeNoMove).PHP_EOL;
 
         if ($isMove) { // есть движение
             if (!$isLight) { // свет не горит
                 $deviceLight = managerDevices::getDevice($idDeviceUnitLight);
-                $data = json_encode(['value' => 1, 'status' => statusKeyData::MOVE]);
+                $data = json_encode(['value' => 1, 'status' => statusKey::MOVE]);
                 $deviceLight->setData($data);
                 unset($deviceLight);
             }
@@ -63,14 +63,14 @@ class move_under_stair
                 if ($statusKey == statusKeyData::MOVE) { // включился датчиком движения
                     if ($moveTime > self::MOVE_TIME) { // время вышло с последнего отсутствия движения
                         $deviceLight = managerDevices::getDevice($idDeviceUnitLight);
-                        $data = json_encode(['value' => 0, 'status' => statusKeyData::OFF]);
+                        $data = json_encode(['value' => 0, 'status' => statusKey::OFF]);
                         $deviceLight->setData($data);
                         unset($deviceLight);
                     }
                 } else { // свет включили вручную (через сайт) ???
                     if ($outTime > self::MOVE_TIME_GLOBAL) { // время вышло с последней активности подсветки
                         $deviceLight = managerDevices::getDevice($idDeviceUnitLight);
-                        $data = json_encode(['value' => 0, 'status' => statusKeyData::OFF]);
+                        $data = json_encode(['value' => 0, 'status' => statusKey::OFF]);
                         $deviceLight->setData($data);
                         unset($deviceLight);
                     }

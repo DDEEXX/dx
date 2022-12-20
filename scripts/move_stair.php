@@ -40,14 +40,14 @@ class move_stair
         if ($sunInfo == dayPart::NIGHT) { // ночь
             if ($isMoveDown) { // есть движение
                 $deviceLight = managerDevices::getDevice($idDeviceUnitLight);
-                $data = json_encode(['value' => 'on_up', 'status' => statusKeyData::MOVE]);
+                $data = json_encode(['value' => 'on_up', 'status' => statusKey::MOVE]);
                 $deviceLight->setData($data);
                 unset($deviceLight);
             }
 
             if ($isMoveUp) { // есть движение
                 $deviceLight = managerDevices::getDevice($idDeviceUnitLight);
-                $data = json_encode(['value' => 'on_down', 'status' => statusKeyData::MOVE]);
+                $data = json_encode(['value' => 'on_down', 'status' => statusKey::MOVE]);
                 $deviceLight->setData($data);
                 unset($deviceLight);
             }

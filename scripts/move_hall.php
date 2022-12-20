@@ -53,7 +53,7 @@ class move_hall
             if ($isMove) { // есть движение
                 if (!$isLight) { // свет не горит
                     $deviceLight = managerDevices::getDevice($idDeviceUnitNightLight);
-                    $data = json_encode(['value' => 1, 'status' => statusKeyData::MOVE]);
+                    $data = json_encode(['value' => 1, 'status' => statusKey::MOVE]);
                     $deviceLight->setData($data);
                     unset($deviceLight);
                 }
@@ -69,14 +69,14 @@ class move_hall
                     if ($statusKey == statusKeyData::MOVE) { // включился датчиком движения
                         if ($moveTime > self::MOVE_TIME_N) { // время вышло с последнего отсутствия движения
                             $deviceLight = managerDevices::getDevice($idDeviceUnitNightLight);
-                            $data = json_encode(['value' => 0, 'status' => statusKeyData::OFF]);
+                            $data = json_encode(['value' => 0, 'status' => statusKey::OFF]);
                             $deviceLight->setData($data);
                             unset($deviceLight);
                         }
                     } else { // свет включили вручную (через сайт) ???
                         if ($outTime > self::MOVE_TIME_GLOBAL) { // время вышло с последней активности подсветки
                             $deviceLight = managerDevices::getDevice($idDeviceUnitNightLight);
-                            $data = json_encode(['value' => 0, 'status' => statusKeyData::OFF]);
+                            $data = json_encode(['value' => 0, 'status' => statusKey::OFF]);
                             $deviceLight->setData($data);
                             unset($deviceLight);
                         }
@@ -87,13 +87,13 @@ class move_hall
             if ($isLight) { // горит свет
                 if ($statusKey == statusKeyData::MOVE) { // включился датчиком движения
                     $deviceLight = managerDevices::getDevice($idDeviceUnitNightLight);
-                    $data = json_encode(['value' => 0, 'status' => statusKeyData::OFF]);
+                    $data = json_encode(['value' => 0, 'status' => statusKey::OFF]);
                     $deviceLight->setData($data);
                     unset($deviceLight);
                 } else { // свет включили вручную (через сайт) ???
                     if ($outTime > self::MOVE_TIME_GLOBAL) { // время вышло с последней активности подсветки
                         $deviceLight = managerDevices::getDevice($idDeviceUnitNightLight);
-                        $data = json_encode(['value' => 0, 'status' => statusKeyData::OFF]);
+                        $data = json_encode(['value' => 0, 'status' => statusKey::OFF]);
                         $deviceLight->setData($data);
                         unset($deviceLight);
                     }
