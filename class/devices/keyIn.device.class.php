@@ -6,9 +6,9 @@
 
 class keyInSensorPhysicMQQT extends aDeviceSensorPhysicMQTT
 {
-    public function __construct($topic)
+    public function __construct($topicCmnd, $topicStat)
     {
-        parent::__construct($topic, 'status', formatValueDevice::MQTT_KEY_IN);
+        parent::__construct($topicCmnd, $topicStat, 'status', formatValueDevice::MQTT_KEY_IN);
     }
 }
 
@@ -31,11 +31,11 @@ class keyInSensorPhysicOWire extends aDeviceSensorPhysicOWire {
 
 class keyInSensorFactory
 {
-    static public function create($net, $address, $ow_alarm, $topicCmnd)
+    static public function create($net, $address, $ow_alarm, $topicCmnd, $topicStat)
     {
         switch ($net) {
             case netDevice::ETHERNET_MQTT:
-                return new keyInSensorPhysicMQQT($topicCmnd);
+                return new keyInSensorPhysicMQQT($topicCmnd, $topicStat);
             case netDevice::ONE_WIRE:
                 return new keyInSensorPhysicOWire($address, $ow_alarm);
             default :
@@ -53,7 +53,8 @@ class keyInSensorDevice extends aSensorDevice
         $address = $options['Address'];
         $ow_alarm = $options['OW_alarm'];
         $topicCmnd = $options['topic_cmnd'];
-        $this->devicePhysic = keyInSensorFactory::create($this->getNet(), $address, $ow_alarm, $topicCmnd);
+        $topicStat = $options['topic_stat'];
+        $this->devicePhysic = keyInSensorFactory::create($this->getNet(), $address, $ow_alarm, $topicCmnd, $topicStat);
     }
 
     function requestData()

@@ -1,16 +1,10 @@
 <?php
-/* Структура данных хранимых в разделяемой памяти
+/**
+ *  Структура данных хранимых в разделяемой памяти
  * В сегменте с ключом, созданному по идентификатору проект PROJECT_LETTER_KEY = 'A' хранятся:
- * - ключ переменной KEY_UNIT_TYPE = 0 : массив [uniteType=>projID]
- * - ключ переменной KEY_ID_MODULE = 1 : массив [uniteID=>projID]
- * - ключ переменной KEY_LABEL_MODULE = 2 : массив [uniteLabel=>['id_module'=>UniteID, 'project_id'=>projID]]
  * - ключ переменной KEY_1WARE_PATH = 3 : константа OWNETDir
  * - ключ переменной KEY_1WARE_ADDRESS = 4 : константа OWNetAddress
  *
- * В сегменте с ключом, созданному по идентификатору проект projID [B..Z] хранятся:
- * - ключ переменной 0 : массив [uniteID1, uniteID2, ...]
- * - ключ переменной uniteID1 - объект модуля
- * - ключ переменной uniteID2 - объект модуля
  *
  */
 
@@ -52,11 +46,11 @@ class sharedMemoryUnit
         $semID = sem_get($smKey);
         $idUnit = $unit->getId();
         if ($shmID === false) {
-            logger::writeLog("При инициализации модуля с id ".$idUnit." ошибка в shm_attach()", loggerTypeMessage::ERROR, loggerName::ERROR);
+            logger::writeLog('При инициализации модуля с id ' .$idUnit. ' ошибка в shm_attach()', loggerTypeMessage::ERROR, loggerName::ERROR);
             return null;
         }
         if ($semID === false) {
-            logger::writeLog("При инициализации модуля с id ".$idUnit." ошибка в sem_get()", loggerTypeMessage::ERROR, loggerName::ERROR);
+            logger::writeLog('При инициализации модуля с id ' .$idUnit. ' ошибка в sem_get()', loggerTypeMessage::ERROR, loggerName::ERROR);
             return null;
         }
         $error = false;
@@ -64,7 +58,7 @@ class sharedMemoryUnit
         if (!shm_put_var($shmID, $idUnit, $unit)) $error = true;
         if (!sem_release($semID)) $error = true;
         if ($error) {
-            logger::writeLog("ошибка записи модуля с id ".$idUnit." в распределяемую память", loggerTypeMessage::ERROR, loggerName::ERROR);
+            logger::writeLog('ошибка записи модуля с id ' .$idUnit. ' в распределяемую память', loggerTypeMessage::ERROR, loggerName::ERROR);
             return null;
         }
         return $idUnit;
@@ -115,13 +109,16 @@ class sharedMemoryUnits
      * Создание или получает объект по идентификатору для работы с разделяемой памятью
      * @param string $projectID
      * @param int $size
-     * @return sharedMemoryUnits
-     * @throws shareMemoryInitUnitException
+     * @return null|sharedMemoryUnits
      */
     public static function getInstance($projectID, $size = 12000)
     {
         if (!array_key_exists($projectID, self::$instance)) { //если еще не выделена память
-            self::$instance[$projectID] = new sharedMemoryUnits($projectID, $size);
+            try {
+                self::$instance[$projectID] = new sharedMemoryUnits($projectID, $size);
+            } catch (shareMemoryInitUnitException $e) {
+                self::$instance[$projectID] = null;
+            }
         }
         return self::$instance[$projectID];
     }
@@ -150,42 +147,34 @@ class sharedMemoryUnits
     }
 
     /**
-     * Возвращает из распределяемой памяти модуль по имени
-     * @param $label - имя модуля
-     * @return mixed|null
+     * Получить ID устройства модуля (из sm)
+     * @param $label - метка модуля
+     * @return int|null - id устройства
      */
-    static public function getUnitLabel($label) {
-
-//        try {
-//            $sm = self::getInstance(sharedMemory::PROJECT_LETTER_KEY);
-//        } catch (shareMemoryInitUnitException $e) {
-//            return null;
-//        }
-//
-//        $unitsLabels = $sm->get(sharedMemory::KEY_LABEL_MODULE);
-//        if (array_key_exists($label, $unitsLabels)) {
-//            $idModule = $unitsLabels[$label]['id_module'];
-//            $projectID = $unitsLabels[$label]['project_id'];
-//        }
-//        else {
-//            return null;
-//        }
-//
-//        if (is_null($idModule) || is_null($projectID)) {
-//            return null;
-//        }
-//
-//        try {
-//            $sm = self::getInstance($projectID);
-//        } catch (shareMemoryInitUnitException $e) {
-//            return null;
-//        }
-//
-//        return $sm->get($idModule);
-
+    static public function getDeviceID($label) {
+        $sm = self::getInstance(sharedMemory::PROJECT_LETTER_UNITS);
+        if (is_null($sm)) {
             return null;
-
+        }
+        $listUnit = $sm->get(0);
+        if (!is_array($listUnit)) {
+            return null;
+        }
+        if (array_key_exists($label, $listUnit)) {
+            $dataID = $listUnit[$label];
+            if (is_array($dataID)) {
+                if (array_key_exists('idDevice', $dataID)) {
+                    return (int)$dataID['idDevice'];
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        }
+        return null;
     }
+
 
     static public function getUnitID($id) {
 
@@ -227,16 +216,11 @@ class sharedMemoryUnits
      * @return mixed|null
      */
     static public function getValue($projectID, $key) {
-
-        try {
-            $sm = self::getInstance($projectID);
-        } catch (shareMemoryInitUnitException $e) {
+        $sm = self::getInstance($projectID);
+        if (is_null($sm)) {
             return null;
         }
-
-        //Получаем массив с указателями на сегменты распределяемой памяти, ключ - тип модуля
         return $sm->get($key);
-
     }
 
 }

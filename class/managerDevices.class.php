@@ -87,7 +87,7 @@ class managerDevices
      * @param array $value
      * @return iDevice|null
      */
-    public static function createDevice(array $value)
+    private static function createDevice(array $value)
     {
         //Здесь создаём продукт с помощью Фабричного метода
         try {
@@ -99,31 +99,22 @@ class managerDevices
     }
 
     /**
-     * Добавляет в базу данных новое физ. устройство
-     * @param iDevice $device
-     * @return bool
-     */
-    public static function addDevice(iDevice $device)
-    {
-        return $device->addInBD();
-    }
-
-    /**
-     * Возвращает объект физ. устройства по его ID либо вызывает исключение
+     * Возвращает объект устройства по его ID
      * @param $idDevice
-     * @return mixed
-     * @throws Exception
-     * @throws connectDBException
-     * @throws managerException
-     * @throws querySelectDBException
+     * @return iSensorDevice|iMakerDevice|null
      */
     public static function getDevice($idDevice)
     {
-        $conn = sqlDataBase::Connect();
+        try {
+            $conn = sqlDataBase::Connect();
+        } catch (connectDBException $e) {
+            return null;
+        }
         $query = 'SELECT * FROM tdevice  WHERE DeviceID = ' . $idDevice;
-        $arDevice = queryDataBase::getOne($conn, $query);
-        if (is_null($arDevice)) {
-            throw new managerException('не могу создать объект физ. устройства по его ID');
+        try {
+            $arDevice = queryDataBase::getOne($conn, $query);
+        } catch (querySelectDBException $e) {
+            return null;
         }
         return self::createDevice($arDevice);
     }
@@ -195,4 +186,9 @@ class managerDevices
         return is_dir($fullPath);
     }
 
+    public static function getDevicePhysicData($idDevice) {
+        $deviceData = new deviceData($idDevice);
+        $data = $deviceData->getData();
+        return $data->getDataJSON();
+    }
 }

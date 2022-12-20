@@ -24,31 +24,27 @@ class move_hall
 
     static function start()
     {
-
-        $unitMove = managerUnits::getUnitLabel(self::NAME_MOVE);
-        $unitNightLight = managerUnits::getUnitLabel(self::NAME_LIGHT_N);
-
-        if (is_null($unitMove) || is_null($unitNightLight)) {
-            unset($unitMove);
-            unset($unitNightLight);
+        $idDeviceUnitMove = managerUnits::getIdDevice(self::NAME_MOVE);
+        $idDeviceUnitNightLight = managerUnits::getIdDevice(self::NAME_LIGHT_N);
+        if (is_null($idDeviceUnitMove) || is_null($idDeviceUnitNightLight)) {
             return;
         }
 
-        $moveData = json_decode($unitMove->getValues(), true);
+        $moveData = json_decode(managerDevices::getDevicePhysicData($idDeviceUnitMove), true);
         //Есть движение
-        $isMove = $moveData['value'];
-        //Время когда состояние датчика изменилось
-        $timeNoMove = $moveData['dataValue'];
+        $isMove = $moveData['valueNull'] ? 0 : $moveData['value'];
+        //Время изменения состояния датчика
+        $timeNoMove = $moveData['date'];
 
         //Получить данные с подсветки
-        $nightLightData = json_decode($unitNightLight->getValues(), true);
-        $isLight = $nightLightData['value'];     //Свет горит
-        $statusKey = $nightLightData['status'];     //Статус ключа - каким образом включилась подсветка или вообще выключена
-        $timeKey = $nightLightData['dataStatus']; //Когда это было
+        $nightLightData = json_decode(managerDevices::getDevicePhysicData($idDeviceUnitNightLight), true);
+        $isLight = $nightLightData['valueNull'] ? 0 : $nightLightData['value']; //Свет горит
+        $timeKey = $nightLightData['date']; //Когда это было
+        $statusKey = $nightLightData['status'];   //Статус ключа - каким образом включилась подсветка или вообще выключена
 
-        $outTime = 99999; //Прошло секунд с момента последней записи состояния подсветки
         $now = time();
-        if (!is_null($timeKey)) {
+        $outTime = 99999; //Прошло секунд с момента последней записи состояния подсветки
+        if ($timeKey > 0) {
             $outTime = $now - $timeKey;
         }
 
@@ -58,42 +54,54 @@ class move_hall
         if ($sunInfo == dayPart::NIGHT) { // ночь
             if ($isMove) { // есть движение
                 if (!$isLight) { // свет не горит
-                    $unitNightLight->updateValue(1, statusKey::MOVE); // включает, записываем что от датчика
+                    $deviceLight = managerDevices::getDevice($idDeviceUnitNightLight);
+                    $data = json_encode(['value' => 1, 'status' => statusKeyData::MOVE]);
+                    $deviceLight->setData($data);
+                    unset($deviceLight);
                 }
             } else { // нет движения
                 if ($isLight) { // горит свет
 
                     //Определяем сколько секунд прошло после отключения датчика движения
                     $moveTime = 99999; // если не известно когда изменилось состояние датчика движения
-                    if (!is_null($timeNoMove)) {
+                    if ($timeNoMove>0) {
                         $moveTime = $now - $timeNoMove;
                     }
 
-                    if ($statusKey == statusKey::MOVE) { // включился датчиком движения
+                    if ($statusKey == statusKeyData::MOVE) { // включился датчиком движения
                         if ($moveTime > self::MOVE_TIME_N) { // время вышло с последнего отсутствия движения
-                            $unitNightLight->updateValue(0, statusKey::OFF); //гасим
+                            $deviceLight = managerDevices::getDevice($idDeviceUnitNightLight);
+                            $data = json_encode(['value' => 0, 'status' => statusKeyData::OFF]);
+                            $deviceLight->setData($data);
+                            unset($deviceLight);
                         }
                     } else { // свет включили вручную (через сайт) ???
                         if ($outTime > self::MOVE_TIME_GLOBAL) { // время вышло с последней активности подсветки
-                            $unitNightLight->updateValue(0, statusKey::OFF); //гасим
+                            $deviceLight = managerDevices::getDevice($idDeviceUnitNightLight);
+                            $data = json_encode(['value' => 0, 'status' => statusKeyData::OFF]);
+                            $deviceLight->setData($data);
+                            unset($deviceLight);
                         }
                     }
                 }
             }
         } else { // светло
             if ($isLight) { // горит свет
-                if ($statusKey == statusKey::MOVE) { // включился датчиком движения
-                    $unitNightLight->updateValue(0, statusKey::OFF); //гасим
+                if ($statusKey == statusKeyData::MOVE) { // включился датчиком движения
+                    $deviceLight = managerDevices::getDevice($idDeviceUnitNightLight);
+                    $data = json_encode(['value' => 0, 'status' => statusKeyData::OFF]);
+                    $deviceLight->setData($data);
+                    unset($deviceLight);
                 } else { // свет включили вручную (через сайт) ???
                     if ($outTime > self::MOVE_TIME_GLOBAL) { // время вышло с последней активности подсветки
-                        $unitNightLight->updateValue(0, statusKey::OFF); //гасим
+                        $deviceLight = managerDevices::getDevice($idDeviceUnitNightLight);
+                        $data = json_encode(['value' => 0, 'status' => statusKeyData::OFF]);
+                        $deviceLight->setData($data);
+                        unset($deviceLight);
                     }
                 }
             }
         }
-
-        unset($unitMove);
-        unset($unitNightLight);
     }
 
 }

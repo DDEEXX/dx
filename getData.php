@@ -5,16 +5,14 @@ require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
 if ($_REQUEST['dev'] == 'temp') { //получаем температуру
 
     $label = $_GET['label']; //значение поля "UnitLabel" в таблице "tunits";
-    $unit = managerUnits::getUnitLabel($label);
 
     $temperatureClass = 'unActualDataSensor';
     $temperature = '--';
 
+    $unit = managerUnits::getUnitLabel($label);
     if (is_null($unit)) {
         logger::writeLog('Модуль с именем :: ' . $label . ' :: не найден',
             loggerTypeMessage::ERROR, loggerName::ERROR);
-        /*        echo '--'; //пока так
-                exit(); //тут надо подумать что возвращать*/
     } else {
 
         $classPlus = 'temperature_weather_plus';
@@ -25,16 +23,19 @@ if ($_REQUEST['dev'] == 'temp') { //получаем температуру
             $classMinus = 'temperature_weather_minus_plan';
         }
 
-        $value = $unit->readValue();
-        if (!is_null($value)) {
-            $temperaturePrecision = DB::getConst('TemperaturePrecision');
-            $temperature = (double)$value['Value'];
-            $temperature = round($temperature, $temperaturePrecision);
-            // время с последнего измерения в течение которого температура считается еще актуальной
-            $actualTimeTemperature = DB::getConst('ActualTimeTemperature');
-            $actualTemp = ((time() - strtotime($value['Date'])) < $actualTimeTemperature);
-            if ($actualTemp) {
-                $temperatureClass = $temperature < 0 ? $classMinus : $classPlus;
+        $valueData = json_decode($unit->getData(), true);
+        if (!is_null($valueData)) {
+            $valueNull = $valueData['valueNull'];
+            if (!$valueNull) {
+                $temperaturePrecision = DB::getConst('TemperaturePrecision');
+                $temperature = (double)$valueData['value'];
+                $temperature = round($temperature, $temperaturePrecision);
+                // время с последнего измерения в течение которого температура считается еще актуальной
+                $actualTimeTemperature = DB::getConst('ActualTimeTemperature');
+                $actualTemp = (time() - $valueData['date']) < $actualTimeTemperature;
+                if ($actualTemp) {
+                    $temperatureClass = $temperature < 0 ? $classMinus : $classPlus;
+                }
             }
         }
     }
@@ -47,7 +48,7 @@ if ($_REQUEST['dev'] == 'temp') { //получаем температуру
     unset($unit);
 }
 
-if ($_REQUEST['dev'] == 'temp_delta') { //получаем температуру
+elseif ($_REQUEST['dev'] == 'temp_delta') { //получаем температуру
 
     $label1 = $_GET['label1']; //значение поля "UnitLabel" в таблице "tunits";
     $unit1 = managerUnits::getUnitLabel($label1);
@@ -66,10 +67,11 @@ if ($_REQUEST['dev'] == 'temp_delta') { //получаем температур�
             loggerTypeMessage::ERROR, loggerName::ERROR);
     }
     else {
-        $value1 = $unit1->readValue();
-        $temp1 = $value1['Value'];
-        $value2 = $unit2->readValue();
-        $temp2 = $value2['Value'];
+        $valueData = json_decode($unit1->getData(), true);
+        $temp1 = $valueData['valueNull'] ? null : (double)$valueData['value'];
+
+        $valueData = json_decode($unit2->getData(), true);
+        $temp2 = $valueData['valueNull'] ? null : (double)$valueData['value'];
 
         if (is_numeric($temp1) && is_numeric($temp2)) {
             $temperaturePrecision = DB::getConst('TemperaturePrecision');
@@ -83,7 +85,7 @@ if ($_REQUEST['dev'] == 'temp_delta') { //получаем температур�
     unset($unit2);
 }
 
-if ($_REQUEST['dev'] == 'pressure') { //получаем атмосферное давление
+elseif ($_REQUEST['dev'] == 'pressure') { //получаем атмосферное давление
 
     $label = $_GET['label']; //значение поля "UnitLabel" в таблице "tunits";
     $unit = managerUnits::getUnitLabel($label);
@@ -94,17 +96,18 @@ if ($_REQUEST['dev'] == 'pressure') { //получаем атмосферное 
     if (is_null($unit)) {
         logger::writeLog('Модуль с именем :: ' . $label . ' :: не найден',
             loggerTypeMessage::ERROR, loggerName::ERROR);
-        /*        echo '--'; //пока так
-                exit(); //тут надо подумать что возвращать*/
     } else {
-        $value = $unit->readValue();
-        if (!is_null($value)) {
-            $pressure = (double)$value['Value'];
-            // время с последнего измерения в течение которого давление считается еще актуальной
-            $actualTimePressure = DB::getConst('ActualTimePressure');
-            $actualPressure = ((time() - strtotime($value['Date'])) < $actualTimePressure);
-            $actualPressureClass = $actualPressure ? 'actualPressure' : 'unActualDataSensor';
-            $pressure = round($pressure);
+        $valueData = json_decode($unit->getData(), true);
+        if (!is_null($valueData)) {
+            $valueNull = $valueData['valueNull'];
+            if (!$valueNull) {
+                $pressure = (double)$valueData['value'];
+                // время с последнего измерения в течение которого давление считается еще актуальной
+                $actualTimePressure = DB::getConst('ActualTimePressure');
+                $actualPressure = (time() - $valueData['date']) < $actualTimePressure;
+                $actualPressureClass = $actualPressure ? 'actualPressure' : 'unActualDataSensor';
+                $pressure = round($pressure);
+            }
         }
     }
 
@@ -115,7 +118,7 @@ if ($_REQUEST['dev'] == 'pressure') { //получаем атмосферное 
     unset($unit);
 }
 
-if ($_REQUEST['dev'] == 'humidity') { //получаем влажность
+elseif ($_REQUEST['dev'] == 'humidity') { //получаем влажность
 
     $label = $_GET['label']; //значение поля "UnitLabel" в таблице "tunits";
     $unit = managerUnits::getUnitLabel($label);
@@ -129,14 +132,17 @@ if ($_REQUEST['dev'] == 'humidity') { //получаем влажность
         /*        echo '--'; //пока так
                 exit(); //тут надо подумать что возвращать*/
     } else {
-        $value = $unit->readValue();
-        if (!is_null($value)) {
-            $humidity = (double)$value['Value'];
-            // время с последнего измерения в течение которого влажность считается еще актуальной
-            $actualTimeHumidity = DB::getConst('ActualTimePressure'); //совпадает с давлением
-            $actualHumidity = ((time() - strtotime($value['Date'])) < $actualTimeHumidity);
-            $actualHumidityClass = $actualHumidity ? 'actualHumidity' : 'unActualDataSensor';
-            $humidity = round($humidity);
+        $valueData = json_decode($unit->getData(), true);
+        if (!is_null($valueData)) {
+            $valueNull = $valueData['valueNull'];
+            if (!$valueNull) {
+                $humidity = (double)$valueData['value'];
+                // время с последнего измерения в течение которого влажность считается еще актуальной
+                $actualTimeHumidity = DB::getConst('ActualTimePressure'); //совпадает с давлением
+                $actualHumidity = (time() - $valueData['date']) < $actualTimeHumidity;
+                $actualHumidityClass = $actualHumidity ? 'actualHumidity' : 'unActualDataSensor';
+                $humidity = round($humidity);
+            }
         }
     }
 
@@ -147,7 +153,7 @@ if ($_REQUEST['dev'] == 'humidity') { //получаем влажность
     unset($unit);
 }
 
-if ($_REQUEST['dev'] == 'wind') { //получаем влажность
+elseif ($_REQUEST['dev'] == 'wind') { //получаем влажность
 
     $wind = '--';
     $actualHumidityClass = 'unActualDataSensor';
@@ -158,7 +164,7 @@ if ($_REQUEST['dev'] == 'wind') { //получаем влажность
 
 }
 
-if ($_REQUEST['dev'] == 'light') { //получаем значение освещения
+elseif ($_REQUEST['dev'] == 'light') { //получаем значение освещения
 
     $label = $_GET['label'];
 
@@ -167,8 +173,13 @@ if ($_REQUEST['dev'] == 'light') { //получаем значение осве�
     $keyStatus = 'off';
 
     if (!is_null($unit)) {
-        $isLight = $unit->getValue();
-        $keyStatus = $isLight ? 'on' : 'off';
+        $valueData = json_decode($unit->getData(), true);
+        if (!is_null($valueData)) {
+            $valueNull = $valueData['valueNull'];
+            if (!$valueNull) {
+                $keyStatus = (int)$valueData['value'] > 0 ? 'on' : 'off';
+            }
+        }
     } else {
         $keyStatus = 'empty';
     }
@@ -188,12 +199,4 @@ if ($_REQUEST['dev'] == 'light') { //получаем значение осве�
     echo '<img class="' . $keyStatus . '_light" src="' . $nameImgFile . '">';
     echo '</div>';
     echo '</div>';
-}
-
-if ($_REQUEST['dev'] == 'cam') { //камеры
-
-    $Monitor = $_GET['monitor'];
-
-    echo '<img img id="monitor1" style="margin-top:5px;height:225px;width:400px" src="cam2\Monitor' . $Monitor . '.jpg">';
-
 }

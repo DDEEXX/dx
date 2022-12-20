@@ -70,6 +70,8 @@ class mqttLoop
     private $subscribeDevice;
     // массив: индекс - id устройства, значения - формат преобразования входящих сообщений
     private $deviceFormatPayload;
+    // массив: индекс - id устройства, значения - истина - обновляем данные, ложь - записываем
+    private $deviceDataUpdate;
 
     public function __construct($subscibe, $logger = false)
     {
@@ -90,13 +92,26 @@ class mqttLoop
     private function updateSubscribeUnite() {
         $this->subscribeDevice = [];
         $this->deviceFormatPayload = [];
-        $devices = managerDevices::getListDevices();
+        $this->deviceDataUpdate = [];
+
+        $sel = new selectOption();
+        $sel->set('Disabled', 0);
+        $sel->set('NetTypeID', netDevice::ETHERNET_MQTT);
+        $devices = managerDevices::getListDevices($sel);
         foreach ($devices as $device) {
-            if ($device->getNet()!=netDevice::ETHERNET_MQTT) continue;
-            $topicStatus = $device->getTopicStat();
-            if (empty($topicStatus)) continue;
-            $this->subscribeDevice[$device->getDeviceID()] = $topicStatus;
-            $this->deviceFormatPayload[$device->getDeviceID()] = $device->getDeviceFormatValue();
+            $devicePhysic = $device->getDevicePhysic();
+            if ($devicePhysic instanceof iDevicePhysic && $devicePhysic instanceof iDevicePhysicMQTT) {
+                $topicStatus = $devicePhysic->getTopicStat();
+                if (empty($topicStatus)) continue;
+                $this->subscribeDevice[$device->getDeviceID()] = $topicStatus;
+                $this->deviceFormatPayload[$device->getDeviceID()] = $devicePhysic->getFormatValue();
+                //Для входящих ключей значения обновляем, для всех остальных сенсоров записываем
+                if (is_a($device, 'keyInSensorDevice')) {
+                    $this->deviceDataUpdate[$device->getDeviceID()] = true;
+                } else {
+                    $this->deviceDataUpdate[$device->getDeviceID()] = false;
+                }
+            }
         }
     }
 
@@ -127,9 +142,9 @@ class mqttLoop
 
     public function onDisconnect($rc)
     {
-        if ($this->logger) {
-            //logger::writeLog('Отключение от брокера. Код '.$rc, loggerTypeMessage::WARNING, loggerName::MQTT);
-        }
+//        if ($this->logger) {
+//            //logger::writeLog('Отключение от брокера. Код '.$rc, loggerTypeMessage::WARNING, loggerName::MQTT);
+//        }
     }
 
     private function Subscribe()
@@ -168,9 +183,18 @@ class mqttLoop
                 loggerName::MQTT);
             }
 
+            $updateData = false;
+            if (array_key_exists($idDevice, $this->deviceDataUpdate)) {
+                $updateData = $this->deviceDataUpdate[$idDevice];
+            }
+
             $deviceDataValue = $this->convertPayload($message->payload, $formatValueDevice);
             $deviceData = new deviceData($idDevice);
-            $deviceData->setData($deviceDataValue['value'], time(), $deviceDataValue['valueNull'], $deviceDataValue['status']);
+            if ($updateData === true) {
+                $deviceData->updateData($deviceDataValue['value'], time(), $deviceDataValue['valueNull'], $deviceDataValue['status']);
+            } else {
+                $deviceData->setData($deviceDataValue['value'], time(), $deviceDataValue['valueNull'], $deviceDataValue['status']);
+            }
         }
     }
 
@@ -183,8 +207,10 @@ class mqttLoop
             case formatValueDevice::MQTT_TEMPERATURE :
             case formatValueDevice::MQTT_PRESSURE :
             case formatValueDevice::MQTT_HUMIDITY :
-                $result['value'] = $payload;
-                $result['valueNull'] = false;
+                if (!is_null($payload) && $payload!=='NULL') {
+                    $result['value'] = $payload;
+                    $result['valueNull'] = false;
+                }
                 break;
             case formatValueDevice::MQTT_KEY_IN :
                 $value = null;
@@ -203,9 +229,45 @@ class mqttLoop
                     $result['valueNull'] = false;
                 }
                 break;
+            case formatValueDevice::MQTT_KEY_OUT :
+                $value = null;
+                $status = null;
+                if (is_string($payload)) { //может прийти команда и статус
+                    $p = explode(MQTT_CODE_SEPARATOR, $payload);
+                    if (strtoupper($p[0]) == 'OFF' || strtoupper($p[0]) == 'FALSE' || $p[0] == '0') {$value = 0;}
+                    elseif (strtoupper($p[0]) == 'ON' || strtoupper($p[0]) == 'TRUE' || $p[0] == '1') {$value = 1;}
+                    if (count($p) > 1) {
+                        $status = $p[1];
+                    }
+                } elseif (is_int($payload)) {
+                    $value = $payload == 0 ? 0 : 1;
+                } elseif (is_bool($payload)) {
+                    $value = $payload? 1 : 0;
+                }
+                if (!is_null($value)) {
+                    $result['value'] = $value;
+                    $result['valueNull'] = false;
+                    if (!is_null($status)) {
+                        $result['status'] = $this->convertStatus($status);
+                    }
+                }
+                break;
         }
-
         return $result;
+    }
+
+    /** Преобразует строковое представление статуса в его числовое значение
+     * @param $status
+     * @return int
+     */
+    private function convertStatus($status) {
+        if (!is_string($status)) {
+            return 0;
+        }
+        if (array_key_exists($status, statusKeyData::status)) {
+            return statusKeyData::status[$status];
+        }
+        return 0;
     }
 
     public function loop()

@@ -26,9 +26,13 @@ class deviceDataValue implements iDeviceDataValue
     public $date;
     public $status;
 
+    /** Вернуть данные в виде JSON строки
+     * @return false|string
+     */
     public function getDataJSON()
     {
-        return json_encode(['value' => $this->value,
+        return json_encode(
+            ['value' => $this->value,
             'valueNull' => $this->valueNull,
             'date' => $this->date,
             'status' => $this->status]);
@@ -68,7 +72,7 @@ class deviceData implements iDeviceData
      */
     public function __construct($id = null)
     {
-        $this->id = is_null($id) ? null : (int)$id;
+        $this->id = is_null($id) ? $id : (int)$id;
         $this->data = new deviceDataValue();
     }
 
@@ -77,7 +81,8 @@ class deviceData implements iDeviceData
         $this->data->setDefaultValue();
     }
 
-    /** Записать ValueNull в 9 бит status
+    /**
+     * Записать ValueNull в 9-ый бит status
      * @return int
      */
     private function getStatusSmFormat()
@@ -142,17 +147,23 @@ class deviceData implements iDeviceData
             return null;
         }
         $sm = sharedMemoryUnits::getInstance(sharedMemory::PROJECT_LETTER_DATA_DEVICE, sharedMemory::SIZE_MEMORY_DATA_DEVICE);
-        return $sm->get($this->id);
+        if (!is_null($sm)) {
+            return $sm->get($this->id);
+        } else {
+            return null;
+        }
+
     }
 
-    /** Записывает в текущие данные статус из sm. В 9 бите храниться ValueNull, в последних 8 битах status
+    /**
+     * Записывает в текущие данные статус из sm. В 9 бите храниться ValueNull, в последних 8 битах status
      * @param $smStatus - статус из sm
      * @return void
      */
     private function writeSmStatusToCurrentData($smStatus)
     {
         $this->data->valueNull = (bool)($smStatus & bindec('100000000'));
-        $this->data->status = (int)($smStatus & bindec('11111111'));
+        $this->data->status = (int)$smStatus & bindec('11111111');
     }
 
     private function extractDataFromSm()
@@ -180,8 +191,8 @@ class deviceData implements iDeviceData
         return $this->data;
     }
 
-
-    /** Обновляет данные в sm. Записывает данные в sm если они отличаются от текущего значения
+    /**
+     * Обновляет данные в sm. Записывает данные в sm если они отличаются от текущего значения
      * @return void
      */
     function updateData($value = 0.0, $date = 0, $valueNull = true, $status = 0)
@@ -200,6 +211,7 @@ interface iDevicePhysic
 {
     function test();
     function getFormatValue();
+    function getData($deviceID);
 }
 
 interface iDeviceSensorPhysic extends iDevicePhysic
@@ -208,23 +220,46 @@ interface iDeviceSensorPhysic extends iDevicePhysic
 }
 
 interface iDeviceMakerPhysic extends iDevicePhysic{
-    function getStatus();
     function setData($data);
 }
 
-interface iDeviceSensorPhysicOWire extends iDeviceSensorPhysic {
+interface iDevicePhysicMQTT {
+    function getTopicStat();
+}
+
+interface iDevicePhysicOWire {
     function getAddress();
+}
+
+interface iDeviceSensorPhysicOWire extends iDeviceSensorPhysic, iDevicePhysicOWire {
     function updateAlarm();
+}
+
+interface iDeviceMakerPhysicOWire extends iDeviceMakerPhysic, iDevicePhysicOWire {
+    function getChanel();
 }
 
 abstract class aDevicePhysic implements iDevicePhysic
 {
     protected $formatValue = formatValueDevice::NO_FORMAT;
+
     public function getFormatValue()
     {
         return $this->formatValue;
     }
     abstract function test();
+
+    /** Получает данные датчика из sm памяти
+     * @param $deviceID
+     * @return false|string - данные в виде JSON строки
+     */
+    function getData($deviceID)
+    {
+        $deviceData = new deviceData($deviceID);
+        $data = $deviceData->getData();
+        return $data->getDataJSON();
+    }
+
 }
 
 abstract class aDeviceSensorPhysic extends aDevicePhysic implements iDeviceSensorPhysic
@@ -232,23 +267,30 @@ abstract class aDeviceSensorPhysic extends aDevicePhysic implements iDeviceSenso
     abstract function requestData();
 }
 
-abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic
+abstract class aDeviceMakerPhysic extends aDevicePhysic implements iDeviceMakerPhysic
 {
-    private $topic;
+    abstract function setData($data);
+}
+
+abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iDevicePhysicMQTT
+{
+    private $topicCmnd;
+    private $topicStat;
     private $requestPayload;
 
-    public function __construct($topic, $requestPayload, $formatValue = formatValueDevice::NO_FORMAT)
+    public function __construct($topicCmnd, $topicStat, $requestPayload, $formatValue = formatValueDevice::NO_FORMAT)
     {
-        $this->topic = $topic;
+        $this->topicCmnd = $topicCmnd;
+        $this->topicStat = $topicStat;
         $this->requestPayload = $requestPayload;
         $this->formatValue = $formatValue;
     }
 
     private function publishTopic($payload)
     {
-        if (is_null($this->topic)) return;
+        if (is_null($this->topicCmnd)) return;
         $mqtt = mqttSend::connect();
-        $mqtt->publish($this->topic, $payload);
+        $mqtt->publish($this->topicCmnd, $payload);
     }
 
     function requestData()
@@ -260,6 +302,56 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic
     function test()
     {
         $this->publishTopic('test');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTopicStat()
+    {
+        return $this->topicStat;
+    }
+}
+
+abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDevicePhysicMQTT
+{
+
+    private $topicCmnd;
+    private $topicStat;
+
+    public function __construct($topicCmnd, $topicStat, $formatValue = formatValueDevice::NO_FORMAT)
+    {
+        $this->topicCmnd = $topicCmnd;
+        $this->topicStat = $topicStat;
+        $this->formatValue = $formatValue;
+    }
+
+    function test()
+    {
+        // TODO: Implement test() method.
+    }
+
+    function setData($data)
+    {
+        try {
+            if (is_string($data)) {
+                $mqtt = mqttSend::connect();
+                $mqtt->publish($this->topicCmnd, $data);
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTopicStat()
+    {
+        return $this->topicStat;
     }
 }
 
@@ -279,11 +371,15 @@ abstract class aDeviceSensorPhysicOWire extends aDeviceSensorPhysic implements i
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     function getAddress()
     {
-        return $this->address;
+        if (preg_match('/^[A-F0-9]{2,}\.[A-F0-9]{12,}/', $this->address)) {
+            return $this->address;
+        } else {
+            return '';
+        }
     }
 
     /**
@@ -327,6 +423,44 @@ abstract class aDeviceSensorPhysicOWire extends aDeviceSensorPhysic implements i
 
 }
 
+abstract class aDeviceMakerPhysicOWire extends aDeviceMakerPhysic implements iDeviceMakerPhysicOWire
+{
+
+    private $address;
+    private $chanel;
+
+    /**
+     * @param $address
+     * @param null $chanel
+     */
+    public function __construct($address, $chanel = null)
+    {
+        $this->address = $address;
+        $this->chanel = is_null($chanel)?'':$chanel;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddress()
+    {
+        if (preg_match('/^[A-F0-9]{2,}\.[A-F0-9]{12,}/', $this->address)) {
+            return $this->address;
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function getChanel()
+    {
+        return $this->chanel;
+    }
+
+}
+
 class DeviceSensorPhysicDefault extends aDeviceSensorPhysic
 {
     function requestData()
@@ -337,73 +471,7 @@ class DeviceSensorPhysicDefault extends aDeviceSensorPhysic
     function test() {}
 }
 
-abstract class aDeviceMakerPhysic extends aDevicePhysic implements iDeviceMakerPhysic {
-
-}
-
-abstract class aDeviceMakerPhysicOWire extends aDeviceMakerPhysic {
-
-    private $address;
-
-    /**
-     * @param $address
-     */
-    public function __construct($address)
-    {
-        $this->address = $address;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAddress()
-    {
-        return $this->address;
-    }
-
-}
-
-abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic {
-
-    private $topicCmnd;
-    private $topicStat;
-
-    public function __construct($topicCmnd, $topicStat, $formatValue = formatValueDevice::NO_FORMAT)
-    {
-        $this->topicCmnd = $topicCmnd;
-        $this->topicStat = $topicStat;
-        $this->formatValue = $formatValue;
-    }
-
-    function test()
-    {
-        // TODO: Implement test() method.
-    }
-
-    function setData($data)
-    {
-        $result = true;
-        try {
-            if (is_string($data)) {
-                $mqtt = mqttSend::connect();
-                $mqtt->publish($this->topicCmnd, $data);
-            } else {
-                return false;
-            }
-        } catch (Exception $e) {
-            $result = false;
-        }
-        return $result;
-    }
-}
-
 class DeviceMakerPhysicDefault extends aDeviceMakerPhysic {
-
-
-    function getStatus()
-    {
-        return true;
-    }
 
     function setData($data)
     {
@@ -431,6 +499,12 @@ interface iDevice
 
     function getDevicePhysic();
 
+    /**
+     * Получить данные датчика из sm памяти
+     * @return false|string - результат в виде JSON строки
+     */
+    function getData();
+
 }
 
 interface iSensorDevice extends iDevice {
@@ -438,7 +512,6 @@ interface iSensorDevice extends iDevice {
 }
 
 interface iMakerDevice extends iDevice {
-    function getStatus();
     function setData($data);
 }
 
@@ -457,7 +530,6 @@ abstract class aDevice implements iDevice
         $this->type = $type;
         $this->deviceID = $deviceID;
         $this->disabled = $disabled;
-        $this->devicePhysic = new DeviceSensorPhysicDefault();
     }
 
     public function getDeviceID()
@@ -480,29 +552,6 @@ abstract class aDevice implements iDevice
         return $this->disabled;
     }
 
-    public function addInBD()
-    {
-        try {
-            $conn = sqlDataBase::Connect();
-        } catch (connectDBException $e) {
-            logger::writeLog('Ошибка при подключении к базе (device.class.php) функция addInBD.' . $e->getMessage(),
-                loggerTypeMessage::ERROR, loggerName::ERROR);
-            return false;
-        }
-        $adr = $conn->getConnect()->real_escape_string($this->address);
-        $alarm = $conn->getConnect()->real_escape_string($this->alarm);
-
-        $query = "INSERT tdevice (Address, NetTypeID, DeviceTypeID, Disabled, set_alarm) VALUES ('$adr', '$this->net', '$this->type', '$this->disabled', '$alarm')";
-
-        try {
-            return queryDataBase::execute($conn, $query);
-        } catch (querySelectDBException $e) {
-            logger::writeLog('Ошибка при выполнении sql запроса (device.class.php) функция addInBD.' . $e->getMessage(),
-                loggerTypeMessage::ERROR, loggerName::ERROR);
-            return false;
-        }
-    }
-
     function getDeviceFormatValue()
     {
         return $this->devicePhysic->getFormatValue();
@@ -512,26 +561,18 @@ abstract class aDevice implements iDevice
     {
         return $this->devicePhysic;
     }
-}
 
-/** Устройство исполнитель*/
-abstract class aMakerDevice extends aDevice implements iMakerDevice
-{
-
-    /**
-     * maker constructor.
-     * @param array $options
-     * @param $typeDevice
-     */
-    public function __construct(array $options, $typeDevice)
+    function getData()
     {
-        $deviceID = intval($options['DeviceID']);
-        $net = $options['NetTypeID'];
-        $disabled = $options['Disabled'];
-        parent::__construct($deviceID, $net, $typeDevice, $disabled);
+        if ($this->devicePhysic instanceof iDevicePhysic) {
+            $data = $this->devicePhysic->getData($this->getDeviceID());
+        } else {
+            $value = new deviceDataValue();
+            $value->setDefaultValue();
+            $data = $value->getDataJSON();
+        }
+        return $data;
     }
-    abstract function getStatus();
-    abstract function setData($data);
 
 }
 
@@ -550,213 +591,38 @@ abstract class aSensorDevice extends aDevice implements iSensorDevice
         $net = $options['NetTypeID'];
         $disabled = $options['Disabled'];
         parent::__construct($deviceID, $net, $typeDevice, $disabled);
-    }
-
-    private function getValueOWNet()
-    {
-        $result = null;
-        //$OWNetAdress = DB::getConst('OWNetAddress');
-        //$OWNetDir = DB::getConst('OWNETDir');
-
-        $OWNetDir = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_PATH);
-
-        $address = $this->getAddress();
-        if (preg_match('/^28\./', $address)) { //это датчик DS18B20
-
-            /*            $ow = new OWNet($OWNetAdress);
-                        $tekValue = $ow->get('/uncached/' . $address . '/temperature12');
-
-                        if (is_null($tekValue) || $tekValue == "0") { //если датчик не сработал попробуем еще один раз
-                            sleep(1); //ждем 1 секунду
-                            $tekValue = $ow->get('/uncached/' . $address . '/temperature12');
-                        }
-                        if (!is_null($tekValue)) { //если получили температуру, то возвращаем результат
-                            $result = $tekValue;
-                        }
-                        else { //запишем в лог об ошибке
-                            logger::writeLog('Ошибка получения температуры с датчика :: ' . $address, loggerTypeMessage::ERROR);
-                        }
-
-                        if (!is_null($tekValue)) { //иногда когда датчик не срабатывает, возвращает 0
-                            if ($tekValue == 0) {
-                                //т.е. 0 датчик никогда не вернет, но это очень редкая ситуация
-                                //поэтому лучше без 0, чем провалы (т.е 15.0, 15.1, 15.2, 0 , 15.2, 15,3)
-                                $result = null;
-                            }
-                        }
-
-                        unset($ow);*/
-
-            $f = file($OWNetDir . '/' . $address . '/temperature12');
-            if ($f === false) { //попробуем еще раз
-                usleep(500000); //ждем 0.5 секунд
-                $f = file($OWNetDir . '/' . $address . '/temperature12');
-            }
-
-            if ($f === false) {
-                logger::writeLog('Ошибка получения температуры с датчика :: ' . $address, loggerTypeMessage::ERROR);
-                $result = null;
-            } else {
-                $result = $f[0];
-            }
-
-        } /*        elseif (preg_match("/^12\./", $address)) { //это датчик DS2406
-
-            $ow = new OWNet($OWNetAdress);
-
-            $tekValue = $ow->get('/uncached/' . $address . '/sensed.' . $chanel);
-            if (is_null($tekValue)) {
-                $tekValue = 1; //1 это нет
-            }
-
-            $result = $tekValue ? 0 : 1;
-
-            unset($ow);
-
-        }*/
-        else {
-            logger::writeLog('Неудачная попытка получить данные с датчика :: ' . $address, loggerTypeMessage::ERROR);
-        }
-
-        return $result;
-    }
-
-    private function getValueI2C()
-    {
-        $result = null;
-/*        $I2CBUS = DB::getConst('I2CBUS');
-        $i2c_address = $this->getAddress();
-        $model = $this->getModel();
-        if ($model == 'BMP180') { //это датчик DS18B20
-            if ($this->getType() == typeDevice::TEMPERATURE) {
-
-
-                $ac5 = i2c::readUnShort($I2CBUS, $i2c_address, 0xB2);
-                $ac6 = i2c::readUnShort($I2CBUS, $i2c_address, 0xB4);
-                $mc = i2c::readShort($I2CBUS, $i2c_address, 0xBC);
-                $md = i2c::readShort($I2CBUS, $i2c_address, 0xBE);
-
-                // reading uncompensated temperature
-                i2c::writeByte($I2CBUS, $i2c_address, 0xF4, 0x2E);
-                usleep(4600); // Should be not less than 4500
-                $msb = i2c::readByte($I2CBUS, $i2c_address, 0xF6);
-                $lsb = i2c::readByte($I2CBUS, $i2c_address, 0xF7);
-                $ut = $msb << 8 | $lsb;
-
-                // calculating true temperature
-                $x1 = (($ut - $ac6) * $ac5) / 32768;
-                $x2 = ($mc * 2048) / ($x1 + $md);
-                $b5 = $x1 + $x2;
-                $result = ($b5 + 8) / 160;
-            } elseif ($this->getType() == typeDevice::PRESSURE) {
-                $oss = 1; // oversampling setting
-                $sleep_time = array(
-                    0 => 4600, // 4.5 ms according to documentation, but let's put a little bit more
-                    1 => 7600, // 7.5 ms
-                    2 => 13600, // 13.5 ms
-                    3 => 25600 // 25.5 ms
-                );
-
-                $ac1 = i2c::readShort($I2CBUS, $i2c_address, 0xAA);
-                $ac2 = i2c::readShort($I2CBUS, $i2c_address, 0xAC);
-                $ac3 = i2c::readShort($I2CBUS, $i2c_address, 0xAE);
-                $ac4 = i2c::readUnShort($I2CBUS, $i2c_address, 0xB0);
-                $ac5 = i2c::readUnShort($I2CBUS, $i2c_address, 0xB2);
-                $ac6 = i2c::readUnShort($I2CBUS, $i2c_address, 0xB4);
-                $b1 = i2c::readShort($I2CBUS, $i2c_address, 0xB6);
-                $b2 = i2c::readShort($I2CBUS, $i2c_address, 0xB8);
-                $mc = i2c::readShort($I2CBUS, $i2c_address, 0xBC);
-                $md = i2c::readShort($I2CBUS, $i2c_address, 0xBE);
-
-                // reading uncompensated temperature
-                i2c::writeByte($I2CBUS, $i2c_address, 0xF4, 0x2E);
-                usleep(4600); // Should be not less than 4500
-                $msb = i2c::readByte($I2CBUS, $i2c_address, 0xF6);
-                $lsb = i2c::readByte($I2CBUS, $i2c_address, 0xF7);
-                $ut = $msb << 8 | $lsb;
-                // reading uncompensated pressure
-                i2c::writeByte($I2CBUS, $i2c_address, 0xF4, 0x34 + ($oss << 6));
-                usleep($sleep_time[$oss]);
-                $msb_p = i2c::readByte($I2CBUS, $i2c_address, 0xF6);
-                $lsb_p = i2c::readByte($I2CBUS, $i2c_address, 0xF7);
-                $xlsb_p = i2c::readByte($I2CBUS, $i2c_address, 0xF8);
-                $up = ($msb_p << 16 | $lsb_p << 8 | $xlsb_p) >> (8 - $oss);
-
-                $x1 = (($ut - $ac6) * $ac5) / 32768;
-                $x2 = ($mc * 2048) / ($x1 + $md);
-                $b5 = $x1 + $x2;
-                $b6 = $b5 - 4000;
-                $x1 = ($b2 * (($b6 ^ 2) >> 12)) >> 11;
-                $x2 = ($ac2 * $b6) >> 11;
-                $x3 = $x1 + $x2;
-                $b3 = ((($ac1 * 4 + $x3) << $oss) + 2) / 4;
-                $x1 = ($ac3 * $b6) >> 13;
-                $x2 = ($b1 * ($b6 ^ 2) >> 12) >> 16;
-                $x3 = (($x1 + $x2) + 2) >> 2;
-                $b4 = ($ac4 * ($x3 + 32768)) >> 15;
-                $b7 = ($up - $b3) * (50000 >> $oss);
-                if ($b7 < 0x80000000) {
-                    $p = ($b7 * 2) / $b4;
-                } else {
-                    $p = ($b7 / $b4) * 2;
-                }
-                $x1 = ($p >> 8) * ($p >> 8);
-                $x1 = ($x1 * 3038) >> 16;
-                $x2 = (-7357 * $p) >> 16;
-                $p = $p + (($x1 + $x2 + 3791) >> 4);
-                $result = $p * 0.0075;
-            } else {
-                logger::writeLog('Неудачная попытка получить значение с I2C датчика с адресом:: ' . $i2c_address, loggerTypeMessage::ERROR);
-            }
-        } elseif ($model == 'LM75') {
-            $ut = $ac1 = i2c::readUnShort($I2CBUS, $i2c_address, 0x00);
-            $ut = $ut >> 5;
-            $result = $ut * 0.125;
-        } else {
-            logger::writeLog('Неудачная попытка получить температуру с I2C датчика с адресом:: ' . $i2c_address, loggerTypeMessage::ERROR);
-        }*/
-
-        return $result;
-    }
-
-    private function getValueEthernet()
-    {
-        $result = null;
-        $address = $this->getAddress();
-
-        $json = file_get_contents($address);
-
-        if ($json) {
-            $data = json_decode($json);
-            $result = $data->return_value / 100;
-        } else {
-            logger::writeLog('Неудачная попытка получить значение с Ethernet датчика с адресом:: ' . $address, loggerTypeMessage::ERROR);
-        }
-
-        return $result;
-    }
-
-    public function getValue()
-    {
-        $result = null;
-        $disabled = $this->getDisabled();
-        if ($disabled == 0) { // датчик включен
-            switch ($this->getNet()) {
-                case netDevice::ONE_WIRE :
-                    $result = $this->getValueOWNet();
-                    break;
-                case netDevice::I2C :
-                    $result = $this->getValueI2C();
-                    break;
-                case netDevice::ETHERNET_JSON :
-                    $result = $this->getValueEthernet();
-                    break;
-            }
-        }
-        return $result;
+        $this->devicePhysic = new DeviceSensorPhysicDefault();
     }
 
     abstract function requestData();
+
+}
+
+/** Устройство исполнитель*/
+abstract class aMakerDevice extends aDevice implements iMakerDevice
+{
+
+    /**
+     * maker constructor.
+     * @param array $options
+     * @param $typeDevice
+     */
+    public function __construct(array $options, $typeDevice)
+    {
+        $deviceID = intval($options['DeviceID']);
+        $net = $options['NetTypeID'];
+        $disabled = $options['Disabled'];
+        parent::__construct($deviceID, $net, $typeDevice, $disabled);
+        $this->devicePhysic = new DeviceMakerPhysicDefault();
+    }
+
+    function setData($data)
+    {
+        if ($this->devicePhysic instanceof iDeviceMakerPhysic) {
+            return $this->devicePhysic->setData($data);
+        }
+        return false;
+    }
 
 }
 
@@ -780,102 +646,3 @@ class labelSensorDevice extends aSensorDevice
     }
 
 }
-
-class powerKeyMaker extends aMakerDevice
-{
-
-    public function __construct(array $options)
-    {
-        parent::__construct($options, typeDevice::POWER_KEY);
-    }
-
-    private function getValueOWNet($channel = null)
-    {
-        $result = null;
-        $OWNetAddress = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_ADDRESS);
-        $address = $this->getAddress();
-        if (preg_match('/^3A\./', $address)) {
-            $ow = new OWNet($OWNetAddress);
-            $result = $ow->get('/uncached/' . $address . '/PIO.' . $channel);
-            if (empty($result)) {
-                $result = 0;
-            }
-            unset($ow);
-        } else {
-            logger::writeLog('Неудачная попытка получить значение с датчика :: ' . $address, loggerTypeMessage::ERROR);
-        }
-
-        return $result;
-    }
-
-    private function setValueOWNet($value = null, $channel = null)
-    {
-        $result = null;
-        $OWNetAddress = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_ADDRESS);
-        $address = $this->getAddress();
-        if (preg_match('/^3A\./', $address)) {
-            $ow = new OWNet($OWNetAddress);
-            $result = $ow->set('/uncached/' . $address . '/PIO.' . $channel, $value);
-            unset($ow);
-        } else {
-            logger::writeLog('Неудачная попытка записать значение в датчик :: ' . $address, loggerTypeMessage::ERROR, loggerName::ERROR);
-        }
-
-        return $result;
-    }
-
-    private function setValueMQTT($value = null, $status = statusKey::UNKNOWN, $timePause = '')
-    {
-        $result = true;
-        try {
-            $payload = $value . MQTT_CODE_SEPARATOR . $status . MQTT_CODE_SEPARATOR . $timePause;
-            $mqtt = mqttSend::connect(true);
-            $mqtt->publish($this->getTopicCmnd(), $payload);
-        } catch (Exception $e) {
-            $result = false;
-        }
-        return $result;
-    }
-
-    public function getValue($channel = null)
-    {
-        $result = null;
-        $disabled = $this->getDisabled();
-        if ($disabled == 0) { // датчик включен
-            switch ($this->getNet()) {
-                case netDevice::ONE_WIRE :
-                    $result = $this->getValueOWNet($channel);
-                    break;
-            }
-        }
-        return $result;
-    }
-
-    public function setValue($value = null, $channel = null, $status = statusKey::UNKNOWN, $timePause = '')
-    {
-        $result = null;
-        $disabled = $this->getDisabled();
-        if ($disabled == 0) { // датчик включен
-            switch ($this->getNet()) {
-                case netDevice::ONE_WIRE :
-                    $result = $this->setValueOWNet($value, $channel);
-                    break;
-                case netDevice::ETHERNET_MQTT :
-                    $result = $this->setValueMQTT($value, $status, $timePause);
-                    break;
-            }
-        }
-        return $result;
-    }
-
-    function getStatus()
-    {
-        // TODO: Implement getStatus() method.
-    }
-
-    function setData($data)
-    {
-        // TODO: Implement setData() method.
-    }
-}
-

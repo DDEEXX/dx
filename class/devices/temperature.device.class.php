@@ -21,7 +21,7 @@ class temperatureSensor1Wire extends aDeviceSensorPhysicOWire
         $value = CODE_NO_TEMP;
         $OWNetDir = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_PATH);
         $address = $this->getAddress();
-        if (preg_match('/^28\./', $address)) { //это датчик DS18B20
+        if (preg_match('/^28\.[A-F0-9]{12,}/', $address)) { //это датчик DS18B20
 
             $f = file($OWNetDir . '/' . $address . '/temperature12');
             if ($f === false) { //попробуем еще раз
@@ -46,21 +46,21 @@ class temperatureSensor1Wire extends aDeviceSensorPhysicOWire
 
 class temperatureSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
 {
-    public function __construct($topic)
+    public function __construct($topicCmnd, $topicStat)
     {
-        parent::__construct($topic, 'temperature', formatValueDevice::MQTT_TEMPERATURE);
+        parent::__construct($topicCmnd, $topicStat, 'temperature', formatValueDevice::MQTT_TEMPERATURE);
     }
 }
 
 class temperatureSensorFactory
 {
-    static public function create($net, $address = '', $alarm='', $topic = null)
+    static public function create($net, $address = '', $alarm='', $topicCmnd = '', $topicStat = '')
     {
         switch ($net) {
             case netDevice::ONE_WIRE:
                 return new temperatureSensor1Wire($address, $alarm);
             case netDevice::ETHERNET_MQTT:
-                return new temperatureSensorMQQTPhysic($topic);
+                return new temperatureSensorMQQTPhysic($topicCmnd, $topicStat);
             default :
                 return new DeviceSensorPhysicDefault();
         }
@@ -72,7 +72,11 @@ class temperatureSensorDevice extends aSensorDevice
     public function __construct(array $options)
     {
         parent::__construct($options, typeDevice::TEMPERATURE);
-        $this->devicePhysic = temperatureSensorFactory::create($this->getNet(), $options['Address'], $options['OW_alarm'], $this->getTopicCmnd());
+        $address = $options['Address'];
+        $ow_alarm = $options['OW_alarm'];
+        $topicCmnd = $options['topic_cmnd'];
+        $topicStat = $options['topic_stat'];
+        $this->devicePhysic = temperatureSensorFactory::create($this->getNet(), $address, $ow_alarm, $topicCmnd, $topicStat);
     }
 
     function requestData()

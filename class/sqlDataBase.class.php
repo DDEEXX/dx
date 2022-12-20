@@ -169,17 +169,6 @@ class queryDataBase
      */
     public static function getOne(iSqlDataBase $conn, $query)
     {
-//        $row = null;
-//        if ($resQ = self::getRaw($conn, $query)) {
-//            $row = $resQ->fetch_assoc();
-//            /**
-//             * if (!is_array($row)) {
-//             * throw new otherDBException("Не могу результат запроса преобразовать в массив");
-//             * }
-//             */
-//            $resQ->free();
-//        }
-//        return $row;
         $resQ = self::getRaw($conn, $query);
         return $resQ->fetch_assoc();
     }
@@ -386,32 +375,6 @@ class DB
 
         return $result;
 
-    }
-
-    /**
-     * @param $unit
-     * @return array|null
-     */
-    static public function getLastStatusKeyJournal($unit)
-    {
-        $uniteID = $unit->getId();
-
-        $query = 'SELECT Date, Status FROM tjournalkey WHERE UnitID=' . $uniteID . ' ORDER BY JournalKeyID DESC LIMIT 1';
-
-        try {
-            $con = sqlDataBase::Connect();
-            $result = queryDataBase::getOne($con, $query);
-        } catch (connectDBException $e) {
-            logger::writeLog('Ошибка при подключении к базе данных в функции DB::getLastStatusKeyJournal. ' . $e->getMessage(),
-                loggerTypeMessage::FATAL, loggerName::ERROR);
-            $result = null;
-        } catch (querySelectDBException $e) {
-            logger::writeLog('Ошибка в функции DB::getLastStatusKeyJournal. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
-                loggerTypeMessage::FATAL, loggerName::ERROR);
-            $result = null;
-        }
-
-        return $result;
     }
 
     static public function getUserId($id) {

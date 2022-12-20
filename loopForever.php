@@ -52,7 +52,7 @@ class daemonLoopForever extends daemon
         $listDeviceSensor1Wire = managerDevices::getListDevices($sel);
         foreach ($listDeviceSensor1Wire as $device) {
             $devicePhysic = $device->getDevicePhysic();
-            if (is_a($devicePhysic, 'iDeviceSensorPhysicOWire')) {
+            if ($devicePhysic instanceof iDevicePhysicOWire) {
                 $listDevices[$device->getDeviceID()] = $devicePhysic->getAddress();
             }
         }
@@ -71,6 +71,8 @@ class daemonLoopForever extends daemon
         $listDevice1Wire = $this->getAlarmOWireSensorDevice();
 
         while (!$this->stopServer()) {
+
+            /** Модули OWire опрашиваемые через Read Conditional Search ROM*/
 
             $alarmDir = '';
             $alarmDirData = $ow->dir('/alarm');
@@ -99,9 +101,10 @@ class daemonLoopForever extends daemon
                     $value = 0;
                 }
                 $deviceData = new deviceData($deviceID);
+                //Т.к. пока только датчик //DS2406 то данные обновляем,
+                //для других датчиков возможно надо будет записывать
                 $deviceData->updateData($value, $now, false);
             }
-
 
             usleep(self::PAUSE); //ждем
 

@@ -18,43 +18,39 @@ class move_stair
     const NAME_MOVE_UP  = 'move_stair_up';
     const NAME_LIGHT = 'light_stair';
 
-
     static function start()
     {
-
-        $unitMoveDown = managerUnits::getUnitLabel(self::NAME_MOVE_DOWN);
-        $unitMoveUp   = managerUnits::getUnitLabel(self::NAME_MOVE_UP);
-        $unitLight    = managerUnits::getUnitLabel(self::NAME_LIGHT);
-
-        if (is_null($unitMoveDown) || is_null($unitMoveUp) || is_null($unitLight)) {
-            unset($unitMoveDown);
-            unset($unitMoveUp);
-            unset($unitLight);
+        $idDeviceUnitMoveDown = managerUnits::getIdDevice(self::NAME_MOVE_DOWN);
+        $idDeviceUnitMoveUp = managerUnits::getIdDevice(self::NAME_MOVE_UP);
+        $idDeviceUnitLight = managerUnits::getIdDevice(self::NAME_LIGHT);
+        if (is_null($idDeviceUnitMoveDown) || is_null($idDeviceUnitMoveUp) || is_null($idDeviceUnitLight)) {
             return;
         }
 
-        $moveDataDown = json_decode($unitMoveDown->getValues(), true);
-        $moveDataUp = json_decode($unitMoveUp->getValues(), true);
-        //Есть движение
-        $isMoveDown = $moveDataDown['value'];
-        $isMoveUp = $moveDataUp['value'];
-        //Время когда состояние датчика изменилось
+        $moveDataDown = json_decode(managerDevices::getDevicePhysicData($idDeviceUnitMoveDown), true);
+        $isMoveDown = $moveDataDown['valueNull'] ? 0 : $moveDataDown['value'];
+
+        $moveDataUp = json_decode(managerDevices::getDevicePhysicData($idDeviceUnitMoveUp), true);
+        $isMoveUp = $moveDataUp['valueNull'] ? 0 : $moveDataUp['value'];
 
         //Часть дня - ночь/утро/день/вечер
         $sunInfo = sunInfo::getSunInfo(mktime());
 
         if ($sunInfo == dayPart::NIGHT) { // ночь
             if ($isMoveDown) { // есть движение
-                $unitLight->updateValue('on_up', statusKey::MOVE); // включает, записываем что от датчика
+                $deviceLight = managerDevices::getDevice($idDeviceUnitLight);
+                $data = json_encode(['value' => 'on_up', 'status' => statusKeyData::MOVE]);
+                $deviceLight->setData($data);
+                unset($deviceLight);
             }
 
             if ($isMoveUp) { // есть движение
-                $unitLight->updateValue('on_down', statusKey::MOVE); // включает, записываем что от датчика
+                $deviceLight = managerDevices::getDevice($idDeviceUnitLight);
+                $data = json_encode(['value' => 'on_down', 'status' => statusKeyData::MOVE]);
+                $deviceLight->setData($data);
+                unset($deviceLight);
             }
         }
-
-        unset($unitMoveDown);
-        unset($unitMoveUp);
     }
 
 }

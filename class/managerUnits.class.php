@@ -32,7 +32,8 @@ class unitFactory
                 $className = 'keyInUnit';
                 break;
             case typeUnit::POWER_KEY :
-                $className = 'powerKeyUnit';
+            case typeUnit::KEY_OUT :
+                $className = 'KeyOutUnit';
                 break;
             case typeUnit::PRESSURE :
                 $className = 'pressureUnit';
@@ -61,13 +62,30 @@ class managerUnits
 {
 
     /**
-     * Ищет модуль по имени в распределенной памяти. Если модуля с таким именем нет, то возвращает null
+     * Получить ID устройства по метке модуля
+     * @param $label - метка модуля
+     * @return int|null - ID устройства
+     */
+    public static function getIdDevice($label) {
+        return sharedMemoryUnits::getDeviceID($label);
+    }
+
+    /**
+     * Ищет модуль по имени в базе данных. Если модуля с таким именем нет, то возвращает null
      * @param $label
      * @return iUnit|null
      */
     public static function getUnitLabel($label)
     {
-        return sharedMemoryUnits::getUnitLabel($label);
+        $result = null;
+        $sel = new selectOption();
+        $sel->set('UnitLabel', $label);
+        $listUnits = self::getListUnits($sel);
+        foreach ($listUnits as $tekUnit) {
+            $result = $tekUnit;
+        }
+        unset($listUnits);
+        return $result;
     }
 
     /**
@@ -84,7 +102,7 @@ class managerUnits
      * @param array $value
      * @return |humidityUnit|keyInUnit|mixed|powerKeyUnit|pressureUnit|temperatureUnit|null
      */
-    public static function createUniteDB(array $value)
+    private static function createUnite(array $value)
     {
         // Здесь создаём продукт с помощью Фабричного метода
         try {
@@ -106,7 +124,7 @@ class managerUnits
         $list = new listUnits();
         $arr = DB::getListUnits($sel);
         foreach ($arr as $value) {
-            $unit = self::createUniteDB($value);
+            $unit = self::createUnite($value);
             if (!is_null($unit)) {
                 $list->append($unit);
             }

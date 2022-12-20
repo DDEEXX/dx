@@ -23,43 +23,40 @@ class move_bathroom
 
     static function start()
     {
-
-        $unitMove = managerUnits::getUnitLabel(self::NAME_MOVE);
-        $unitLight = managerUnits::getUnitLabel(self::NAME_LIGHT);
-        $unitTouchKey = managerUnits::getUnitLabel(self::NAME_TOUCH_KEY);
-
-        if (is_null($unitMove) || is_null($unitLight) || is_null($unitTouchKey)) {
-            unset($unitMove);
-            unset($unitLight);
-            unset($unitTouchKey);
+        $idDeviceUnitMove = managerUnits::getIdDevice(self::NAME_MOVE);
+        $idDeviceUnitLight = managerUnits::getIdDevice(self::NAME_LIGHT);
+        $idDeviceUitTouchKey = managerUnits::getIdDevice(self::NAME_TOUCH_KEY);
+        if (is_null($idDeviceUnitMove) || is_null($idDeviceUnitLight) || is_null($idDeviceUitTouchKey)) {
             return;
         }
 
-        $moveData = json_decode($unitMove->getValues(), true);
+        $moveData = json_decode(managerDevices::getDevicePhysicData($idDeviceUnitMove), true);
         //Есть движение
-        $isMove = $moveData['value'];
-        //Время когда состояние датчика изменилось
-        $timeNoMove = $moveData['dataValue'];
+        $isMove = $moveData['valueNull'] ? 0 : $moveData['value'];
+        //Время изменения состояния датчика
+        $timeNoMove = $moveData['date'];
 
         //Получить данные кнопки
-        $keyData = json_decode($unitTouchKey->getValues(), true);
-        $keyPress = $keyData['value'];
+        $keyData = json_decode(managerDevices::getDevicePhysicData($idDeviceUnitMove), true);
+        $keyPress = $keyData['valueNull'] ? 0 : $keyData['value'];
 
         //Получить данные с подсветки
-        $nightLightData = json_decode($unitLight->getValues(), true);
-        $isLight = $nightLightData['value'];      //Свет горит
+        $nightLightData = json_decode(managerDevices::getDevicePhysicData($idDeviceUnitLight), true);
+        $isLight = $nightLightData['valueNull'] ? 0 : $nightLightData['value']; //Свет горит
+        $timeKey = $nightLightData['date']; //Когда это было
         $statusKey = $nightLightData['status'];   //Статус ключа - каким образом включилась подсветка или вообще выключена
-        $timeKey = $nightLightData['dataStatus']; //Когда это было
 
         $now = time();
         $outTime = 99999; //Прошло секунд с момента последней записи состояния подсветки
-        if (!is_null($timeKey)) {
+        if ($timeKey > 0) {
             $outTime = $now - $timeKey;
         }
 
-
         if ($keyPress) { //Прикоснулись к кнопке выключения
-            $unitLight->updateValue(0, statusKey::OFF, self::TIME_OFF_LIGHT); //гасим
+            $deviceLight = managerDevices::getDevice($idDeviceUnitLight);
+            $data = json_encode(['value'=>0, 'status'=>statusKeyData::OFF, 'pause'=>self::TIME_OFF_LIGHT]);
+            $deviceLight->setData($data);
+            unset($deviceLight);
         }
         else {
             if ($isMove) { // есть движение
@@ -71,7 +68,11 @@ class move_bathroom
                     $hours = $today['hours'];
                     $weekends = $today['wday'] == 0 || $today['wday'] == 6;
                     if ($sunInfo == dayPart::NIGHT && ($hours>=23 || ($weekends && $hours<8) || (!$weekends && $hours<7))) {
-                        $unitLight->updateValue(1, statusKey::MOVE); // включает, записываем что от датчика
+                        // включает, записываем что от датчика
+                        $deviceLight = managerDevices::getDevice($idDeviceUnitLight);
+                        $data = json_encode(['value'=>1, 'status'=>statusKeyData::MOVE]);
+                        $deviceLight->setData($data);
+                        unset($deviceLight);
                     }
                 }
             } else { // нет движения
@@ -79,27 +80,28 @@ class move_bathroom
 
                     //Определяем сколько секунд прошло после отключения датчика движения
                     $moveTime = 99999; // если не известно когда изменилось состояние датчика движения
-                    if (!is_null($timeNoMove)) {
+                    if ($timeNoMove>0) {
                         $moveTime = $now - $timeNoMove;
                     }
 
-                    if ($statusKey == statusKey::MOVE) { // включился от датчика движения
+                    if ($statusKey == statusKeyData::MOVE) { // включился от датчика движения
                         if ($moveTime > self::MOVE_TIME) { // время вышло с последнего отсутствия движения
-                            $unitLight->updateValue(0, statusKey::OFF); //гасим
+                            $deviceLight = managerDevices::getDevice($idDeviceUnitLight);
+                            $data = json_encode(['value' => 0, 'status' => statusKeyData::OFF]);
+                            $deviceLight->setData($data);
+                            unset($deviceLight);
                         }
                     } else { // свет включили вручную (через сайт) ???
                         if ($outTime > self::MOVE_TIME_GLOBAL) { // время вышло с последней активности подсветки
-                            $unitLight->updateValue(0, statusKey::OFF); //гасим
+                            $deviceLight = managerDevices::getDevice($idDeviceUnitLight);
+                            $data = json_encode(['value' => 0, 'status' => statusKeyData::OFF]);
+                            $deviceLight->setData($data);
+                            unset($deviceLight);
                         }
                     }
                 }
             }
         }
-
-        unset($unitMove);
-        unset($unitNightLight);
-        unset($unitTouchKey);
-
     }
 
 }

@@ -57,6 +57,25 @@ interface statusKey {
     const DEVICE    = 'device';     //на самом модуле
 }
 
+/** Каким способом включился модуль - числовой код */
+interface statusKeyData {
+
+    const status = ['none'=>0,
+        'move'=>1,
+        'web'=>2,
+        'off'=>3,
+        'unknown'=>4,
+        'device'=>5];
+
+    const NONE      = 0;  //нет статуса
+    const MOVE      = 1;  //от датчика движения
+    const WEB       = 2;  //через сайт или приложение
+    const OFF       = 3;  //выключен
+    const UNKNOWN   = 4;  //неизвестно, скорее всего через выключатель не связанный с сервером
+    const DEVICE    = 5;  //на самом модуле
+
+}
+
 interface modeUnit {
     const OFF  = 0;
     const ON   = 1;

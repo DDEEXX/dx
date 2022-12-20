@@ -1,7 +1,16 @@
 <?php
 /** Выходящий ключ
  * Силовой ключ, реле, коммутация низких токов и т.д.
-  */
+ */
+
+function checkKeyOutDataValue($nameValue, $arr)
+{
+    if (is_array($arr)) {
+        return array_key_exists($nameValue, $arr) ? $arr[$nameValue] : null;
+    } else {
+        return null;
+    }
+}
 
 class KeyOutOWire extends aDeviceMakerPhysicOWire
 {
@@ -9,20 +18,31 @@ class KeyOutOWire extends aDeviceMakerPhysicOWire
     /**
      * @param $address - 1wire address
      */
-    public function __construct($address)
+    public function __construct($address, $chanel)
     {
-        parent::__construct($address);
-    }
-
-
-    function getStatus()
-    {
-        // TODO: Implement getStatus() method.
+        parent::__construct($address, $chanel);
     }
 
     function setData($data)
     {
-        // TODO: Implement setData() method.
+        $dataDecode = json_decode($data, true);
+        if (!is_null($dataDecode)) {
+            return false;
+        }
+        $value = checkKeyOutDataValue('value', $dataDecode);
+        $channel = $this->getChanel();
+        $address = $this->getAddress();
+
+        $result = false;
+        $OWNetAddress = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_ADDRESS);
+        if (preg_match('/^3A\.[A-F0-9]{12,}/', $address)) { //DS2413
+            $ow = new OWNet($OWNetAddress);
+            $result = $ow->set('/uncached/' . $address . '/PIO.' . $channel, $value);
+            unset($ow);
+        } else {
+            logger::writeLog('Неудачная попытка записать значение в датчик :: ' . $address, loggerTypeMessage::ERROR, loggerName::ERROR);
+        }
+        return $result;
     }
 
     function test()
@@ -38,50 +58,41 @@ class KeyOutMQQT extends aDeviceMakerPhysicMQTT
         parent::__construct($topicCmnd, $topicStat, formatValueDevice::MQTT_KEY_OUT);
     }
 
-    function getStatus()
-    {
-        // TODO: Implement getStatus() method.
-    }
-
-    private function checkValue($nameValue, $arr) {
-        if (is_array($arr)) {
-            return array_key_exists($nameValue, $arr)?$arr[$nameValue]:null;
-        } else {
-            return null;
-        }
-    }
-
     function setData($data)
     {
         $dataDecode = json_decode($data, true);
-        $value = $this->checkValue('value', $dataDecode);
-        $status = $this->checkValue('status', $dataDecode);
-        $timePause = $this->checkValue('pause', $dataDecode);
+        if (!is_null($dataDecode)) {
+            return false;
+        }
+        $value = checkKeyOutDataValue('value', $dataDecode);
+        $status = checkKeyOutDataValue('status', $dataDecode);
+        $timePause = checkKeyOutDataValue('pause', $dataDecode);
         if (!is_null($value)) {
             $payload = $value;
             if (!is_null($status)) {
-                $payload = $payload . MQTT_CODE_SEPARATOR. $status;
+                $payload = $payload . MQTT_CODE_SEPARATOR . $status;
                 if (is_int($timePause)) {
-                    $payload = $payload . MQTT_CODE_SEPARATOR. $status;
+                    $payload = $payload . MQTT_CODE_SEPARATOR . $timePause;
                 }
             }
-            parent::setData($payload);
+            return parent::setData($payload);
         } else {
             return false;
         }
+
     }
 
 }
 
 class KeyOutFactory
 {
-    static public function create($net, $address, $topicCmnd, $topicStat)
+    static public function create($net, $address, $chanel, $topicCmnd, $topicStat)
     {
         switch ($net) {
             case netDevice::ETHERNET_MQTT:
                 return new KeyOutMQQT($topicCmnd, $topicStat);
             case netDevice::ONE_WIRE:
-                return new KeyOutOWire($address);
+                return new KeyOutOWire($address, $chanel);
             default :
                 return new DeviceMakerPhysicDefault();
         }
@@ -95,19 +106,44 @@ class KeyOutMakerDevice extends aMakerDevice
     {
         parent::__construct($options, typeDevice::KEY_OUT);
         $address = $options['Address'];
+        $chanel = $options['OW_Chanel'];
         $topicCmnd = $options['topic_cmnd'];
         $topicStat = $options['topic_stat'];
-        $this->devicePhysic = KeyOutFactory::create($this->getNet(), $address, $topicCmnd, $topicStat);
+        $this->devicePhysic = KeyOutFactory::create($this->getNet(), $address, $chanel, $topicCmnd, $topicStat);
     }
 
-    function getStatus()
+    private function convertStatus($status)
     {
-        return $this->devicePhysic->getStatus();
+        if (!is_string($status)) {
+            return 0;
+        }
+        if (array_key_exists($status, statusKeyData::status)) {
+            return statusKeyData::status[$status];
+        }
+        return 0;
     }
 
-    function setData($data)
+    public function setData($data)
     {
-        $this->devicePhysic->setData($data);
+
+        $result = parent::setData($data);
+        if ($result) {
+            $devicePhysic = $this->getDevicePhysic();
+            if ($devicePhysic instanceof KeyOutOWire) {
+                $dataDecode = json_decode($data, true);
+                if (!is_null($dataDecode)) {
+                    $dataValue = time();
+                    $value = checkKeyOutDataValue('value', $dataDecode);
+                    $status = checkKeyOutDataValue('status', $dataDecode);
+                    if (!is_null($status)) {
+                        $status = $this->convertStatus($status);
+                        if (is_null($status)) $status = 0;
+                    }
+                    $dataDevice = new deviceData($this->getDeviceID());
+                    $dataDevice->setData($value, $dataValue, false, $status);
+                }
+            }
+        }
     }
 
 }
