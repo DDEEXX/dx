@@ -5,6 +5,7 @@
 
 require_once(dirname(__FILE__) . '/../class/globalConst.interface.php');
 require_once(dirname(__FILE__) . '/../class/lists.class.php');
+require_once(dirname(__FILE__) . '/../class/managerDevices.class.php');
 require_once(dirname(__FILE__) . '/../class/managerUnits.class.php');
 
 class move_under_stair
