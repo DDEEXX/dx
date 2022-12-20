@@ -191,8 +191,18 @@ class mqttLoop
             $deviceDataValue = $this->convertPayload($message->payload, $formatValueDevice);
             $deviceData = new deviceData($idDevice);
             if ($updateData === true) {
+                if ($this->logger) {
+                    logger::writeLog('update '.json_encode($deviceDataValue),
+                        loggerTypeMessage::NOTICE,
+                        loggerName::MQTT);
+                }
                 $deviceData->updateData($deviceDataValue['value'], time(), $deviceDataValue['valueNull'], $deviceDataValue['status']);
             } else {
+                if ($this->logger) {
+                    logger::writeLog('set '.json_encode($deviceDataValue),
+                        loggerTypeMessage::NOTICE,
+                        loggerName::MQTT);
+                }
                 $deviceData->setData($deviceDataValue['value'], time(), $deviceDataValue['valueNull'], $deviceDataValue['status']);
             }
         }

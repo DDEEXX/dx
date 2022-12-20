@@ -26,7 +26,7 @@ class KeyOutOWire extends aDeviceMakerPhysicOWire
     function setData($data)
     {
         $dataDecode = json_decode($data, true);
-        if (!is_null($dataDecode)) {
+        if (is_null($dataDecode)) {
             return false;
         }
         $value = checkKeyOutDataValue('value', $dataDecode);
@@ -61,7 +61,7 @@ class KeyOutMQQT extends aDeviceMakerPhysicMQTT
     function setData($data)
     {
         $dataDecode = json_decode($data, true);
-        if (!is_null($dataDecode)) {
+        if (is_null($dataDecode)) {
             return false;
         }
         $value = checkKeyOutDataValue('value', $dataDecode);
