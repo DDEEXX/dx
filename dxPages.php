@@ -228,7 +228,7 @@ if ($p == 'weather') {
                 <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 69px">
                     <div style="height: 55px; margin-top: 7px; margin-bottom: 7px">
                         <button id="weather_button_123" class="weather_button_setup"></button>
-                        <button id="weather_button_graph" class="weather_button_setup"></button>
+<!--                        <button id="weather_button_graph" class="weather_button_setup"></button>-->
                         <button id="weather_button_plan" class="weather_button_setup"></button>
                     </div>
                 </div>
