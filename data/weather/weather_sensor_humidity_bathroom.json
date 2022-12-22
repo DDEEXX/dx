@@ -1,0 +1,36 @@
+{
+  "data": {
+    "id": "weather_sensor_humidity_bathroom",
+    "html": "data/sensor_humidity.html",
+    "expand": true,
+    "value": {
+      "classDigit": "sensor_data",
+      "label": "bathroom_humidity",
+      "dev": "humidity"
+    }
+  },
+  "widget": {
+    "id": "block_weather_bathroom",
+    "properties": {
+      "label": "bathroom_humidity",
+      "icon": {
+        "image": "img2/icon_medium/humidity.png",
+        "width": 24,
+        "height": 24
+      },
+      "currentValue": {
+        "show": true,
+        "top": "5px",
+        "left": "40px",
+        "postfix": "%"
+      },
+      "graph": {
+        "type": 0,
+        "variant": 0,
+        "width": 247,
+        "height": 101,
+        "count": 6
+      }
+    }
+  }
+}

@@ -185,7 +185,6 @@ if ($p == 'home' || empty($p)) {
                         <div id="home_sensor_humidity_out" class="home_weather_sensor short sensor_block"></div>
                         <div id="home_sensor_wind" class="home_weather_sensor long sensor_block"></div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -238,7 +237,16 @@ if ($p == 'weather') {
         <div class="grid_4 omega">
             <div class="ui-corner-all ui-state-default" style="margin-top:5px; height: 154px">
                 <h2 class="title_sensor">На улице</h2>
-                <div id="block_weather_outdoor"></div>
+                <div id="weather_outdoor_sensors">
+                    <div class="block_sensor_data" style="margin-top: 20px">
+                        <div id="weather_sensor_temperature_out" class="weather_sensor short sensor_block"></div>
+                        <div id="weather_sensor_pressure" class="weather_sensor long sensor_block"></div>
+                    </div>
+                    <div class="block_sensor_data" style="margin-top: 20px">
+                        <div id="weather_sensor_humidity_out" class="weather_sensor short sensor_block"></div>
+                        <div id="weather_sensor_wind" class="weather_sensor long sensor_block"></div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="clear"></div>
@@ -387,6 +395,7 @@ if ($p == 'power') {
 
 if ($p == 'heater') {
     ?>
+    <link rel="stylesheet" type="text/css" href="css2/style_heater.css">
     <script src="js2/heater.js"></script>
 
     <div id="page_heater" class="grid_12" style="display: flex; flex-direction: column; align-content: flex-start; height: 790px">
@@ -465,8 +474,8 @@ if ($p == 'heater') {
                             <span style="margin-left: 2px">&deg</span>
                         </div>
                     </div>
-                    <div id="heater_widget" class="ui-corner-all ui-state-default ui-widget-content"
-                         style="position:absolute; left:250px; top:10px; height:130px; width:300px; display: flex; flex-direction: column; padding: 5px">
+                    <div id="heater_widget"
+                         style="position:absolute; left:270px; top:5px; width:300px; height:130px;">
                     </div>
                 </div>
             </div>

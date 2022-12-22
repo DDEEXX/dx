@@ -1,0 +1,37 @@
+{
+  "data": {
+    "id": "weather_sensor_temperature_bedroom_Lera",
+    "html": "data/sensor_temperature.html",
+    "expand": true,
+    "value": {
+      "classDigit": "sensor_data",
+      "label": "temp_bedroom_Lera",
+      "dev": "temp"
+    }
+  },
+  "widget": {
+    "id": "block_weather_bedroom_Lera",
+    "properties": {
+      "label": "temp_bedroom_Lera",
+      "icon": {
+        "image": "img2/icon_medium/thermometer.png",
+        "width": 24,
+        "height": 24
+      },
+      "currentValue": {
+        "show": true,
+        "top": "35px",
+        "left": "5px",
+        "precision": 1,
+        "postfix": "&deg"
+      },
+      "graph": {
+        "type": 0,
+        "variant": 0,
+        "width": 247,
+        "height": 101,
+        "count": 6
+      }
+    }
+  }
+}

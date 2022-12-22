@@ -1,0 +1,12 @@
+{
+  "data": {
+    "id": "weather_sensor_wind",
+    "html": "data/sensor_wind.html",
+    "expand": false,
+    "value": {
+      "classDigit": "sensor_data",
+      "label": "wind",
+      "dev": "wind"
+    }
+  }
+}

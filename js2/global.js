@@ -3,46 +3,9 @@ function getWaitElement() {
     return $('<span class="weather_widget_wait"></span>');
 }
 
-/*
-Вывести числовые данные датчиков, параметры для отображения показаний из json файла
- url - имя json файла с параметрами датчиков
-*/
-function getDataSensor(url) {
-    $.getJSON(url, function (data) {
-        data.data.forEach(function (item) {
-            /* dev - тип событие */
-            /* label - имя датчика в базе */
-            $.get("getData.php?dev=" + item["dev"] + "&label=" + item["label"], function (data) {
-                $("#" + item["id"]).html(data);
-            });
-        });
-    });
-}
-
-/*
- Вывести виджет датчика
-*/
-function getWidgetSensor(idBlock, idBlockClick, url) {
-    var selector = '#' + idBlock;
-    $(selector).html(getWaitElement());
-    $.getJSON(url, function (data) {
-        var widgetParam = data['widget'][idBlockClick];
-        // $.get("graphWidget.php", widgetParam, function (data) {
-        //     $(selector).html(data);
-        // });
-        $.post("graphWidget.php", widgetParam, function (data) {
-            $(selector).html(data);
-        }, "html");
-    })
-}
-
-/**
- * NEW
- * */
-
 function _clickOnWidget(event) {
     var selector = event.data.selector;
-    $(selector).off('click');
+    $(selector).off('click').css('cursor', '');
     $(selector).children().each(function () {
         var currentEl = $(this);
         if (currentEl.is(":visible")) {
@@ -71,7 +34,7 @@ function _getWidgetSensor(widgetData) {
     });
     $(selector).append(getWaitElement());
 
-    $(selector).off('click');
+    $(selector).off('click').css('cursor', '');
     var widgetParam = widgetData.properties;
     $.post("graphWidget.php", widgetParam, function (data) {
         //удаляем иконку "ready"
@@ -82,8 +45,7 @@ function _getWidgetSensor(widgetData) {
             }
         });
         //вставляем график
-        $(selector).append(data);
-        $(selector).on('click', null, {selector: selector}, _clickOnWidget);
+        $(selector).append(data).on('click', null, {selector: selector}, _clickOnWidget).css('cursor', 'pointer');
     }, "html");
 }
 
@@ -93,8 +55,7 @@ function _clickOnDataSensor(event) {
 }
 
 function _setClickEventSensorData(selector, widget) {
-    $(selector).off('click');
-    $(selector).on('click', null, widget, _clickOnDataSensor);
+    $(selector).off('click').on('click', null, widget, _clickOnDataSensor).css('cursor', 'pointer');
 }
 
 function _loadSensorHtmlData(data, classData) {

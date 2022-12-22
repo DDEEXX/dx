@@ -1,0 +1,37 @@
+{
+  "data": {
+    "id": "weather_sensor_temperature_bathroom",
+    "html": "data/sensor_temperature.html",
+    "expand": true,
+    "value": {
+      "classDigit": "sensor_data",
+      "label": "temp_bathroom",
+      "dev": "temp"
+    }
+  },
+  "widget": {
+    "id": "block_weather_bathroom",
+    "properties": {
+      "label": "temp_bathroom",
+      "icon": {
+        "image": "img2/icon_medium/thermometer.png",
+        "width": 24,
+        "height": 24
+      },
+      "currentValue": {
+        "show": true,
+        "top": "35px",
+        "left": "5px",
+        "precision": 1,
+        "postfix": "&deg"
+      },
+      "graph": {
+        "type": 0,
+        "variant": 0,
+        "width": 247,
+        "height": 101,
+        "count": 6
+      }
+    }
+  }
+}

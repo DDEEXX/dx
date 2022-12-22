@@ -1,6 +1,5 @@
 /*область для вывода датчиков (иконка, показания, единицы и т.д.)*/
 .weather_sensor {
-    cursor: pointer;
     display: flex;
     align-items: flex-end
 }
