@@ -174,9 +174,19 @@ if ($p == 'home' || empty($p)) {
         </div>
         <div class="grid_3">.</div>
         <div class="grid_4 omega">
-            <div class="ui-corner-all ui-state-default" style="display: flex; flex-direction: column; height: 154px">
+            <div id="home_outdoor_sensors_block" class="ui-corner-all ui-state-default" style="display: flex; flex-direction: column; height: 154px">
                 <h2 class="title_sensor">На улице</h2>
-                <div id="block_home_outdoor" style="align-self: stretch; flex-grow: 1; overflow: auto"></div>
+                <div id="home_outdoor_sensors" style="align-self: stretch; flex-grow: 1; overflow: auto">
+                    <div class="block_sensor_data" style="margin-top: 20px">
+                        <div id="home_sensor_temperature_out" class="home_weather_sensor short sensor_block"></div>
+                        <div id="home_sensor_pressure" class="home_weather_sensor long sensor_block"></div>
+                    </div>
+                    <div class="block_sensor_data" style="margin-top: 20px">
+                        <div id="home_sensor_humidity_out" class="home_weather_sensor short sensor_block"></div>
+                        <div id="home_sensor_wind" class="home_weather_sensor long sensor_block"></div>
+                    </div>
+
+                </div>
             </div>
         </div>
         <div class="clear"></div>
@@ -397,12 +407,12 @@ if ($p == 'heater') {
                 <div class="ui-corner-all ui-state-default ui-widget-content" style="height: 100%">
                     <div><img src="img2/heater.png" style="position: absolute; margin-left: 15px;margin-top: 30px"></div>
 
-                    <div id="heater_temp_boiler_out" class="temp_scheme ui-corner-all ui-state-default ui-widget-content"
+                    <div id="heater_temp_boiler_out" class="sensor_block temp_scheme ui-corner-all ui-state-default ui-widget-content"
                          style="position:absolute; left:8px; top:335px; display: flex; align-items: flex-end; padding: 5px">
                         <div id="heater_temp_boiler_out_data"></div>
                         <span style="margin-left: 2px">&deg</span>
                     </div>
-                    <div id="heater_temp_boiler_in" class="temp_scheme ui-corner-all ui-state-default ui-widget-content"
+                    <div id="heater_temp_boiler_in" class="sensor_block temp_scheme ui-corner-all ui-state-default ui-widget-content"
                          style="position:absolute; left:85px; top:335px; display: flex; align-items: flex-end; padding: 5px">
                         <div id="heater_temp_boiler_in_data"></div>
                         <span style="margin-left: 2px">&deg</span>
@@ -414,12 +424,12 @@ if ($p == 'heater') {
                         <span style="margin-left: 2px">&deg</span>
                     </div>
 
-                    <div id="heater_temp_floor_in" class="temp_scheme ui-corner-all ui-state-default ui-widget-content"
+                    <div id="heater_temp_floor_in" class="sensor_block temp_scheme ui-corner-all ui-state-default ui-widget-content"
                          style="position:absolute; left:320px; top:330px; display: flex; align-items: flex-end; padding: 5px">
                         <div id="heater_temp_floor_in_data"></div>
                         <span style="margin-left: 2px">&deg</span>
                     </div>
-                    <div id="heater_temp_floor_out" class="temp_scheme ui-corner-all ui-state-default ui-widget-content"
+                    <div id="heater_temp_floor_out" class="sensor_block temp_scheme ui-corner-all ui-state-default ui-widget-content"
                          style="position:absolute; left:320px; top:420px; display: flex; align-items: flex-end; padding: 5px">
                         <div id="heater_temp_floor_out_data"></div>
                         <span style="margin-left: 2px">&deg</span>
@@ -431,7 +441,7 @@ if ($p == 'heater') {
                         <span style="margin-left: 2px">&deg</span>
                     </div>
 
-                    <div id="heater_temp_sauna_out" class="temp_scheme ui-corner-all ui-state-default ui-widget-content"
+                    <div id="heater_temp_sauna_out" class="sensor_block temp_scheme ui-corner-all ui-state-default ui-widget-content"
                          style="position:absolute; left:150px; top:125px; display: flex; flex-direction: column; padding: 5px">
                             <div>Баня</div>
                             <div style="display: flex; align-items: flex-end">
@@ -439,7 +449,7 @@ if ($p == 'heater') {
                                 <span style="margin-left: 2px">&deg</span>
                             </div>
                     </div>
-                    <div id="heater_temp_floor1_out" class="temp_scheme ui-corner-all ui-state-default ui-widget-content"
+                    <div id="heater_temp_floor1_out" class="sensor_block temp_scheme ui-corner-all ui-state-default ui-widget-content"
                          style="position:absolute; left:210px; top:195px; display: flex; flex-direction: column; padding: 5px">
                         <div>1 этаж</div>
                         <div style="display: flex; align-items: flex-end">
@@ -447,13 +457,16 @@ if ($p == 'heater') {
                             <span style="margin-left: 2px">&deg</span>
                         </div>
                     </div>
-                    <div id="heater_temp_floor2_out" class="temp_scheme ui-corner-all ui-state-default ui-widget-content"
+                    <div id="heater_temp_floor2_out" class="sensor_block temp_scheme ui-corner-all ui-state-default ui-widget-content"
                          style="position:absolute; left:270px; top:265px; display: flex; flex-direction: column; padding: 5px">
                         <div>2 этаж</div>
                         <div style="display: flex; align-items: flex-end">
                             <div id="heater_temp_floor2_out_data"></div>
                             <span style="margin-left: 2px">&deg</span>
                         </div>
+                    </div>
+                    <div id="heater_widget" class="ui-corner-all ui-state-default ui-widget-content"
+                         style="position:absolute; left:250px; top:10px; height:130px; width:300px; display: flex; flex-direction: column; padding: 5px">
                     </div>
                 </div>
             </div>

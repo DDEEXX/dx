@@ -1,106 +1,97 @@
-Date.prototype.getMonthName = function() {
-	var month = ['января', 'февраля', 'марта', 'апреля', 'майя', 'июня',
-		'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
-	return month[this.getMonth()];
+Date.prototype.getMonthName = function () {
+    var month = ['января', 'февраля', 'марта', 'апреля', 'майя', 'июня',
+        'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+    return month[this.getMonth()];
 }
 
-Date.prototype.getDayName = function() {
-	var day = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
-	return day[this.getDay()];
+Date.prototype.getDayName = function () {
+    var day = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+    return day[this.getDay()];
 }
 
-function date()	{
-	var Data = new Date();
-	return Data.getDayName()+' '+Data.getDate()+' '+Data.getMonthName();
+function date() {
+    var Data = new Date();
+    return Data.getDayName() + ' ' + Data.getDate() + ' ' + Data.getMonthName();
 }
 
 function clock() {
-	var d = new Date();
-	var h = d.getHours();
-	var m = d.getMinutes();
+    var d = new Date();
+    var h = d.getHours();
+    var m = d.getMinutes();
 
-	if (h <= 9) h="0" + h;
-	if (m <=9 ) m="0" + m;
+    if (h <= 9) h = "0" + h;
+    if (m <= 9) m = "0" + m;
 
-	return h + ":" + m;
+    return h + ":" + m;
 }
 
-function home_clickOnDataSensor() {
-	/*параметры виджетов в виде JSON хранятся в файле, имя файла совпадает с id*/
-	var idBlock = $(this).parent().parent().parent().attr('id');
-	var idBlockClick = $(this).attr('id');
-	var url = 'data/home/widget/' + idBlock + '.json';
-	var selector = "#"+idBlock;
-	$(selector).off('click');
-	getWidgetSensor(idBlock, idBlockClick, url);
-	$(selector).on('click', function () {
-		home_loadOutdoorData(idBlock);
-	});
+/**
+ *  NEW
+ * */
+
+function home_loadSensors() {
+
+    // класс для стиля показаний датчиков
+    var classData =  'home_sensor_data';
+
+    $('.sensor_block').each(function () {
+        var id = $(this).attr('id');
+        var url = 'data/home/' + id + '.json';
+        _getSensorProperties(url, classData);
+    });
+
 }
 
-function home_loadOutdoorData() {
-	var idBlock = "block_home_outdoor";
-	var selector = "#"+idBlock;
-	$(selector).off('click');
-	$(selector).load('data/home/load/block_home_outdoor.html', function (response, status) {
-		if (status === 'success') {
-			$(selector).on('click', '.expand', home_clickOnDataSensor);
-			var url = 'data/home/widget/' + idBlock + '.json';
-			getDataSensor(url); //функция для обновления показаний датчиков
-		}
-	});
-}
+$(document).ready(function () {
 
-$(document).ready( function() {
+    /*
+        var $alarmKey = $('#alarm_key');
+        $alarmKey.button();
+        $alarmKey.click(function () {
+            $.get("alarm.php?p=on", function(data){});
+            console.info("123");
+            location.reload(true);
+        });
+    */
 
-/*
-	var $alarmKey = $('#alarm_key');
-	$alarmKey.button();
-	$alarmKey.click(function () {
-		$.get("alarm.php?p=on", function(data){});
-		console.info("123");
-		location.reload(true);
-	});
-*/
+    $(".TekDate").html(date());
+    $(".TekTime").html(clock());
 
-	$(".TekDate").html(date());		
-	$(".TekTime").html(clock());
+    $("#home_cameraFullSize").html('<img src="http://192.168.1.4:8081/" alt="http://192.168.1.4:8081/">');
 
-	$("#home_cameraFullSize").html('<img src="http://192.168.1.4:8081/" alt="http://192.168.1.4:8081/">');
-
-	home_loadOutdoorData();
+    home_loadSensors();
 
 });
 
-$(document).everyTime("1s", function() {
-	$(".TekDate").html(date());		
-	$(".TekTime").html(clock());		
+$(document).everyTime("1s", function () {
+    $(".TekDate").html(date());
+    $(".TekTime").html(clock());
 });
 
 //Обновление показания температуры каждые 5 минут
 $(document).everyTime("300s", function () {
-	home_loadOutdoorData();
+//    home_loadOutdoorData();
 });
 
 $(function () {
 
-	var home_cam_dialog = "#home_cameraFullSize";
-	$(home_cam_dialog).dialog({
-		autoOpen: false,
-		draggable: false,
-		position: { my: "center", at: "center", of: "#page_home" },
-		resizable: false,
-		title: "Камера",
-		height: "auto",
-		width: 962
-	});
+    var home_cam_dialog = "#home_cameraFullSize";
+    $(home_cam_dialog).dialog({
+        autoOpen: false,
+        draggable: false,
+        position: {my: "center", at: "center", of: "#page_home"},
+        resizable: false,
+        title: "Камера",
+        height: "auto",
+        width: 962
+    });
 
-	$(home_cam_dialog).on( "click", function() {
-		$("#home_cameraFullSize").dialog("close");
-	});
+    $(home_cam_dialog).on("click", function () {
+        $("#home_cameraFullSize").dialog("close");
+    });
 
-	$("#home_cam").on( "click", function() {
-		$("#home_cameraFullSize").dialog("open");
-	});
+    $("#home_cam").on("click", function () {
+        $("#home_cameraFullSize").dialog("open");
+    });
 
 })

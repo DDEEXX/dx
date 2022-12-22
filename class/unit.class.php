@@ -250,7 +250,7 @@ abstract class sensorUnit extends unit implements iSensorUnite
         }
 
         $id = $this->getId();
-        $nameTabValue = 'tvalue_' . $this->valueTable;
+        $nameTabValue = 'tvalue_' . $this->getValueTable();
 
         /** @noinspection SqlResolve */
         $query = 'SELECT avg(Value) AS Value FROM '.$nameTabValue.' WHERE UnitID='.$id.' AND Date>='.$dateFrom.' AND Date<='.$dateTo;

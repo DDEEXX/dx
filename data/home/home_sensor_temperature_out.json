@@ -1,0 +1,37 @@
+{
+  "data": {
+    "id": "home_sensor_temperature_out",
+    "html": "data/sensor_temperature.html",
+    "expand": true,
+    "value": {
+      "classDigit": "sensor_data",
+      "label": "temp_out_1",
+      "dev": "temp"
+    }
+  },
+  "widget": {
+    "id": "home_outdoor_sensors",
+    "properties": {
+      "label": "temp_out_1",
+      "icon": {
+        "image": "img2/icon_medium/thermometer.png",
+        "width": 24,
+        "height": 24
+      },
+      "currentValue": {
+        "show": true,
+        "top": "35px",
+        "left": "5px",
+        "precision": 1,
+        "postfix": "&deg"
+      },
+      "graph": {
+        "type": 0,
+        "variant": 0,
+        "width": 344,
+        "height": 126,
+        "count": 6
+      }
+    }
+  }
+}

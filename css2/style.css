@@ -152,6 +152,13 @@ body {
     font-size: 20px;
 }
 
+.weather_widget_wait {
+    background: url('../img2/wait.png') no-repeat center center;
+    display: inline-block;
+    width: 270px;
+    height: 100px;
+}
+
 
 /*
 .ui-accordion .dx.ui-accordion-header {

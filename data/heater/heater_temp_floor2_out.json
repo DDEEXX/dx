@@ -1,0 +1,32 @@
+{
+  "data": {
+    "id": "heater_temp_floor2_out",
+    "expand": true
+  },
+  "widget": {
+    "id": "heater_widget",
+    "clear": true,
+    "properties": {
+      "label": "temp_heater_floor2_out",
+      "icon": {
+        "image": "img2/icon_medium/thermometer.png",
+        "width": 24,
+        "height": 24
+      },
+      "currentValue": {
+        "show": true,
+        "top": "35px",
+        "left": "5px",
+        "precision": 1,
+        "postfix": "&deg"
+      },
+      "graph": {
+        "type": 0,
+        "variant": 0,
+        "width": 266,
+        "height": 126,
+        "count": 6
+      }
+    }
+  }
+}

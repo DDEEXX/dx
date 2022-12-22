@@ -43,10 +43,3 @@
 #weather_button_plan {
     background: url('../img2/icon_big/plan.png') no-repeat center center;
 }
-
-.weather_widget_wait {
-    background: url('../img2/wait.png') no-repeat center center;
-    display: inline-block;
-    width: 270px;
-    height: 100px;
-}

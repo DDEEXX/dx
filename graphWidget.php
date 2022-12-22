@@ -37,10 +37,10 @@ if (isset($label)) {
         $graphWidget = new graphUnitValues($unit, $type, $variant, $width, $height,null, null, $count, $minDelta);
         $imageGraph64 = $graphWidget->getGraph64();
         if ($curValueShow == 'true') {
-            $value = $unit->readValue();
-            if (!is_null($value)) {
+            $data = json_decode($unit->getData(), true);
+            if (!$data['valueNull']) {
                 $precision = (int)$curValuePrecision;
-                $curValueNumeric = round( (double)$value['Value'], $precision );
+                $curValueNumeric = round( (double)$data['value'], $precision);
             }
         }
     }

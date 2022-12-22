@@ -1,0 +1,36 @@
+{
+  "data": {
+    "id": "home_sensor_pressure",
+    "html": "data/sensor_pressure.html",
+    "expand": true,
+    "value": {
+      "classDigit": "sensor_data",
+      "label": "pressure",
+      "dev": "pressure"
+    }
+  },
+  "widget": {
+    "id":"home_outdoor_sensors",
+    "properties": {
+      "label": "pressure",
+      "icon": {
+        "image": "img2/icon_medium/barometer.png",
+        "width": 24,
+        "height": 24
+      },
+      "currentValue": {
+        "show": true,
+        "top": "35px",
+        "left": "5px"
+      },
+      "graph": {
+        "type": 3,
+        "variant": 0,
+        "width": 344,
+        "height": 126,
+        "count": 6,
+        "min_delta": 5
+      }
+    }
+  }
+}

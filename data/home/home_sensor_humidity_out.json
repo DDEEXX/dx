@@ -1,0 +1,36 @@
+{
+  "data": {
+    "id": "home_sensor_humidity_out",
+    "html": "data/sensor_humidity.html",
+    "expand": true,
+    "value": {
+      "classDigit": "sensor_data",
+      "label": "bathroom_humidity",
+      "dev": "humidity"
+    }
+  },
+  "widget": {
+    "id":"home_outdoor_sensors",
+    "properties": {
+      "label": "bathroom_humidity",
+      "icon": {
+        "image": "img2/icon_medium/humidity.png",
+        "width": 24,
+        "height": 24
+      },
+      "currentValue": {
+        "show": true,
+        "top": "5px",
+        "left": "40px",
+        "postfix": "%"
+      },
+      "graph": {
+        "type": 0,
+        "variant": 0,
+        "width": 344,
+        "height": 126,
+        "count": 6
+      }
+    }
+  }
+}
