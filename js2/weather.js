@@ -58,10 +58,10 @@ function weather_loadSensorsOut() {
     // класс для стиля показаний датчиков
     const classData = 'weather_outdoor_sensor_data';
 
-    // $('.sensor_block').each(function () {
-    //     const url = 'data/weather/' + $(this).attr('id') + '.json';
-    //     _getSensorProperties(url, classData);
-    // });
+    $('.sensor_block').each(function () {
+        const url = 'data/weather/' + $(this).attr('id') + '.json';
+        _getSensorProperties(url, classData);
+    });
 }
 
 $(document).ready(function () {
