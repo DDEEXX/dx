@@ -1,37 +1,36 @@
 {
   "data": {
-    "id": "heater_sensor_temp_floor1_out",
-    "idClick": "heater_temp_floor1_out",
-    "html": "data/sensor_temperature_heater_plan.html",
+    "id": "weather_sensor_temperature_bedroom_Lera_plan",
+    "html": "data/sensor_temperature_small.html",
     "expand": true,
     "value": {
       "classDigit": "sensor_data",
-      "label": "temp_heater_floor1_out",
+      "label": "temp_bedroom_Lera",
       "dev": "temp"
     }
   },
   "widget": {
-    "id": "heater_widget",
+    "id": "weather_plan_widget",
     "clear": true,
     "properties": {
-      "label": "temp_heater_floor1_out",
+      "label": "temp_bedroom_Lera",
       "icon": {
         "image": "img2/icon_medium/thermometer.png",
         "width": 24,
         "height": 24
       },
-      "currentValue": {
+      "caption": {
         "show": true,
-        "top": "35px",
-        "left": "5px",
-        "precision": 1,
-        "postfix": "&deg"
+        "text": "Спальня Леры",
+        "top": "0px",
+        "left": "35px"
       },
       "graph": {
         "type": 0,
         "variant": 0,
-        "width": 266,
-        "height": 126,
+        "top" : "20px",
+        "width": 315,
+        "height": 100,
         "count": 6
       }
     }

@@ -1,7 +1,14 @@
 {
   "data": {
-    "id": "heater_temp_boiler_in",
-    "expand": true
+    "id": "heater_sensor_temp_boiler_in",
+    "idClick": "heater_temp_boiler_in",
+    "html": "data/sensor_temperature_heater_plan.html",
+    "expand": true,
+    "value": {
+      "classDigit": "sensor_data",
+      "label": "temp_heater_boiler_in",
+      "dev": "temp"
+    }
   },
   "widget": {
     "id": "heater_widget",

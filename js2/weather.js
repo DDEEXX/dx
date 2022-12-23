@@ -44,19 +44,24 @@ function weather_loadDigitalData() {
 
 function weather_loadPlan() {
     $("#weather_content").load('data/weather/weather_plan.html', function (){
-        weather_updateTemperaturePlan();
+
+        $('.sensor_block_plan').each(function () {
+            const url = 'data/weather/' + $(this).attr('id') + '.json';
+            _getSensorProperties(url);
+        });
+
+        //weather_updateTemperaturePlan();
     });
 }
 
 function weather_loadSensorsOut() {
     // класс для стиля показаний датчиков
-    var classData =  'weather_outdoor_sensor_data';
+    const classData = 'weather_outdoor_sensor_data';
 
-    $('.sensor_block').each(function () {
-        var id = $(this).attr('id');
-        var url = 'data/weather/' + id + '.json';
-        _getSensorProperties(url, classData);
-    });
+    // $('.sensor_block').each(function () {
+    //     const url = 'data/weather/' + $(this).attr('id') + '.json';
+    //     _getSensorProperties(url, classData);
+    // });
 }
 
 $(document).ready(function () {

@@ -17,62 +17,50 @@ function getDataSchemeSensor(item) {
     });
 }
 
-function heater_updateDataScheme() {
-    arrBlockHeaterSchemeID.forEach(function (item) {
-        getDataSchemeSensor(item);
-    })
-
+function heater_updateSchemeDelta() {
     $.get("getData.php?dev=temp_delta&label1=temp_heater_boiler_out&label2=temp_heater_boiler_in", function (data) {
         $("#heater_temp_boiler_delta_data").html(data);
     });
     $.get("getData.php?dev=temp_delta&label1=temp_heater_floor_in&label2=temp_heater_floor_out", function (data) {
         $("#heater_temp_floor_delta_data").html(data);
     });
+}
 
+function heater_updateDataScheme() {
+
+    $('.sensor_block').each(function () {
+        var url = 'data/heater/' + $(this).attr('id') + '.json';
+        $.getJSON(url, function (data) {
+            var sensorData = data.data;
+            var selector = '#' + sensorData.id;
+            var value = data.data.value;
+            var sensorDigit = $(selector).find("." + value["classDigit"]);
+            /* dev - тип событие, label - имя датчика в базе */
+            $.get("getData.php?dev=" + value["dev"] + "&label=" + value["label"], function (data) {
+                $(sensorDigit).html(data);
+            });
+        });
+    });
+
+    heater_updateSchemeDelta();
 }
 
 function heater_updateDataAll() {
     heater_updateDataScheme();
 }
 
-function getClickSensors(data) {
-    //назначим подписку на клик для формирования графика
-    var widget = data.widget;
-    arrBlockHeaterSchemeID.forEach(function (item) {
-        var selector = "#"+item[2];
-        $(selector).off('click');
-        widget.properties.label = item[0];
-        $(selector).on('click', null, widget, _clickOnDataSensor);
-    })
-}
-
-function setClickEvent(url) {
-    $.getJSON(url, function (data) {
-        var sensorData = data.data;
-        var selector = '#' + sensorData.id;
-        _setClickEventSensorData(selector, data.widget);
-    });
-
-}
-
 $(document).ready(function () {
-    heater_updateDataAll();
 
+    // класс для стиля показаний датчиков
     $('.sensor_block').each(function () {
-        var id = $(this).attr('id');
-        var url = 'data/heater/' + id + '.json';
-        setClickEvent(url);
+        const url = 'data/heater/' + $(this).attr('id') + '.json';
+        _getSensorProperties(url);
     });
-
-
-    $.getJSON("data/heater/heater_sensors_widget.json", function (data) {
-        getClickSensors(data);
-    });
-
+    heater_updateSchemeDelta();
 
 });
 
 //Обновление показания температуры каждые 5 минут
-$(document).everyTime("300s", function () {
+$(document).everyTime("60s", function () {
     heater_updateDataAll();
 });

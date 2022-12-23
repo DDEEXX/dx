@@ -14,14 +14,22 @@ $options = [
     'curValuePostfix'=>'',
     'type'=>0,
     'variant'=>0,
+    'top'=> '0px',
     'width'=>100,
     'height'=>100,
     'count'=>6,
-    'minDelta'=>4
+    'minDelta'=>4,
+    'caption'=>[
+        'show'=>false,
+        'text'=>'Сервер',
+        'top'=> '0px',
+        'left'=> '0px'
+    ]
 ];
 
-if (isset($_POST['label'])) { $options['label'] = $_POST['label'];};
+$curValueNumeric = '--';
 
+if (isset($_POST['label'])) { $options['label'] = $_POST['label'];}
 if (!is_null($options['label'])) {
 
     if (isset($_POST['icon']['image'])) { $options['iconURL'] = $_POST['icon']['image']; }
@@ -34,12 +42,18 @@ if (!is_null($options['label'])) {
     if (isset($_POST['graph']['height'])) { $options['height'] = $_POST['graph']['height']; }
     if (isset($_POST['graph']['count'])) { $options['count'] = $_POST['graph']['count']; }
     if (isset($_POST['graph']['min_delta'])) { $options['minDelta'] = $_POST['graph']['min_delta']; }
+    if (isset($_POST['graph']['top'])) { $options['top'] = $_POST['graph']['top']; }
+    if (isset($_POST['graph']['left'])) { $options['left'] = $_POST['graph']['left']; }
 
     if (isset($_POST['currentValue']['show'])) { $options['curValueShow'] = (bool)$_POST['currentValue']['show']; }
     if (isset($_POST['currentValue']['top'])) { $options['curValueTop'] = $_POST['currentValue']['top']; }
-    if (isset($_POST['currentValue']['left'])) { $options['curValueLeft'] = $_POST['currentValue']['left']; }
     if (isset($_POST['currentValue']['precision'])) { $options['curValuePrecision'] = $_POST['currentValue']['precision']; }
     if (isset($_POST['currentValue']['postfix'])) { $options['curValuePostfix'] = $_POST['currentValue']['postfix']; }
+
+    if (isset($_POST['caption']['show'])) { $options['caption']['show'] = $_POST['caption']['show']; }
+    if (isset($_POST['caption']['text'])) { $options['caption']['text'] = $_POST['caption']['text']; }
+    if (isset($_POST['caption']['top'])) { $options['caption']['top'] = $_POST['caption']['top']; }
+    if (isset($_POST['caption']['left'])) { $options['caption']['left'] = $_POST['caption']['left']; }
 
     $unit = managerUnits::getUnitLabel($options['label']);
     if (is_null($unit)) {
@@ -60,8 +74,6 @@ if (!is_null($options['label'])) {
             if (!$data['valueNull']) {
                 $precision = (int)$options['curValuePrecision'];
                 $curValueNumeric = round( (double)$data['value'], $precision);
-            } else {
-                $curValueNumeric = '--';
             }
         }
     }
@@ -77,11 +89,18 @@ echo
     '<div style="float: left">' .
         '<img src="'.$options['iconURL'].'" alt="i" ' .$iconHeight_ . $iconWidth_ . '>'.
     '</div>'.
-    '<div style="margin-left: 5px; float: left">'.
+    '<div style="margin-left: 5px; float: left; margin-top: '.$options['top'].'">'.
         '<img src="data:image/png;base64,'.$imageGraph64.'" alt="no data">'.
     '</div>';
+
 if ($options['curValueShow']) {
-echo '<div style="position: absolute; margin-top: '.$options['curValueTop'].'; margin-left: '.$options['curValueLeft'].'">'.
-    $options['curValueNumeric'].$options['curValuePostfix'].'</div>';
+echo '<div style="position: absolute; top: '.$options['curValueTop'].'; left: '.$options['curValueLeft'].'">'.
+    $curValueNumeric.$options['curValuePostfix'].'</div>';
+}
+echo '</div>';
+
+if ($options['caption']['show']) {
+    echo '<div style="position: absolute; top: '.$options['caption']['top'].'; left: '.$options['caption']['left'].'">'.
+    $options['caption']['text'].'</div>';
 }
 echo '</div>';

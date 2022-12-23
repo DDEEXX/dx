@@ -4,26 +4,22 @@ function getWaitElement() {
 }
 
 function _clickOnWidget(event) {
-    var selector = event.data.selector;
+    const selector = event.data.selector;
     $(selector).off('click').css('cursor', '');
-    $(selector).children().each(function () {
-        var currentEl = $(this);
-        if (currentEl.is(":visible")) {
-            currentEl.detach();
-        }
+    $(selector).children(':visible').each(function () {
+        $(this).detach();
     });
-    $(selector).children().each(function () {
-        var currentEl = $(this);
-        if (currentEl.is(":hidden")) {
-            currentEl.show();
-        }
+    $(selector).children(':hidden').each(function () {
+        $(this).show();
     });
 }
 
 function _getWidgetSensor(widgetData) {
-    var selector = '#' + widgetData.id;
+    const selector = '#' + widgetData.id;
+    const clear = widgetData.clear;
 
-    var clear = widgetData.clear;
+    $(selector).off('click').css('cursor', '');
+
     //скрываем/удаляем все элементы и добавляем иконку "ready"
     $(selector).children().each(function () {
         if (clear) {
@@ -34,15 +30,11 @@ function _getWidgetSensor(widgetData) {
     });
     $(selector).append(getWaitElement());
 
-    $(selector).off('click').css('cursor', '');
-    var widgetParam = widgetData.properties;
+    const widgetParam = widgetData.properties;
     $.post("graphWidget.php", widgetParam, function (data) {
         //удаляем иконку "ready"
-        $(selector).children().each(function () {
-            var currentEl = $(this);
-            if (currentEl.is(":visible")) {
-                currentEl.detach();
-            }
+        $(selector).children(":visible").each(function () {
+            $(this).detach();
         });
         //вставляем график
         $(selector).append(data).on('click', null, {selector: selector}, _clickOnWidget).css('cursor', 'pointer');
@@ -50,7 +42,7 @@ function _getWidgetSensor(widgetData) {
 }
 
 function _clickOnDataSensor(event) {
-    var widgetData = event.data;
+    const widgetData = event.data;
     _getWidgetSensor(widgetData);
 }
 
@@ -59,25 +51,29 @@ function _setClickEventSensorData(selector, widget) {
 }
 
 function _loadSensorHtmlData(data, classData) {
-    var sensorData = data.data;
-    var selector = '#' + sensorData.id;
+    const sensorData = data.data;
+    const selector = '#' + sensorData.id;
     $(selector).load(sensorData.html, function (response, status) {
         if (status === 'success') {
-            var value = sensorData.value;
-            var sensorDigit = $(selector).find("." + value["classDigit"]);
+            const value = sensorData.value;
+            const sensorDigit = $(selector).find("." + value["classDigit"]);
             sensorDigit.addClass(classData);
             /* dev - тип событие, label - имя датчика в базе */
             $.get("getData.php?dev=" + value["dev"] + "&label=" + value["label"], function (data) {
                 $(sensorDigit).html(data);
             });
             if (sensorData.expand) {
-                _setClickEventSensorData(selector, data.widget);
+                let selectorClick = selector;
+                if (sensorData.idClick) {
+                    selectorClick = '#'+sensorData.idClick;
+                }
+                _setClickEventSensorData(selectorClick, data.widget);
             }
         }
     });
 }
 
-function _getSensorProperties(url, classData) {
+function _getSensorProperties(url, classData = "") {
     $.getJSON(url, function (data) {
         _loadSensorHtmlData(data, classData);
     });
