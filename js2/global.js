@@ -3,6 +3,25 @@ function getWaitElement() {
     return $('<span class="weather_widget_wait"></span>');
 }
 
+function _updateSensorsData(selectorClass, urlJson) {
+
+    $('.'+selectorClass).each(function () {
+        const url = urlJson + $(this).attr('id') + '.json';
+        $.getJSON(url, function (data) {
+            const sensorData = data.data;
+            const selector = '#' + sensorData.id;
+            const value = data.data.value;
+            const sensorDigit = $(selector).children("." + value["classDigit"]);
+            if (sensorDigit.length>0) {
+                /* dev - тип событие, label - имя датчика в базе */
+                $.get("getData.php?dev=" + value["dev"] + "&label=" + value["label"], function (data) {
+                    $(sensorDigit[0]).html(data);
+                });
+            }
+        });
+    });
+}
+
 function _clickOnWidget(event) {
     const selector = event.data.selector;
     $(selector).off('click').css('cursor', '');

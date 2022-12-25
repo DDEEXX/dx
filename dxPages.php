@@ -239,12 +239,12 @@ if ($p == 'weather') {
                 <h2 class="title_sensor">На улице</h2>
                 <div id="weather_outdoor_sensors">
                     <div class="block_sensor_data" style="margin-top: 20px">
-                        <div id="weather_sensor_temperature_out" class="weather_sensor short sensor_block"></div>
-                        <div id="weather_sensor_pressure" class="weather_sensor long sensor_block"></div>
+                        <div id="weather_sensor_temperature_out" class="weather_sensor short sensor_block_out"></div>
+                        <div id="weather_sensor_pressure" class="weather_sensor long sensor_block_out"></div>
                     </div>
                     <div class="block_sensor_data" style="margin-top: 20px">
-                        <div id="weather_sensor_humidity_out" class="weather_sensor short sensor_block"></div>
-                        <div id="weather_sensor_wind" class="weather_sensor long sensor_block"></div>
+                        <div id="weather_sensor_humidity_out" class="weather_sensor short sensor_block_out"></div>
+                        <div id="weather_sensor_wind" class="weather_sensor long sensor_block_out"></div>
                     </div>
                 </div>
             </div>
@@ -280,7 +280,7 @@ if ($p == 'light') {
             <div class="clear"></div>
 
             <div id="accordion_light">
-                <h3 class='dx'>План</h3>
+                <h3>План</h3>
                 <div style="padding:0;border:0;overflow:visible">
                     <div class="grid_11 alpha">
                         <div class="ui-corner-all ui-state-default ui-widget-content"
@@ -297,7 +297,7 @@ if ($p == 'light') {
                     </div>
                     <div class="clear"></div>
                 </div>
-                <h3 class='dx'>Управление</h3>
+                <h3>Управление</h3>
                 <div style="padding:0;border:0;overflow:visible">
                     <div class="grid_11 alpha">
                         <div class="ui-corner-all ui-state-default" style="margin-top:5px;height:50px">

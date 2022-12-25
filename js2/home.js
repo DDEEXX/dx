@@ -1,23 +1,23 @@
 Date.prototype.getMonthName = function () {
-    var month = ['января', 'февраля', 'марта', 'апреля', 'майя', 'июня',
+    const month = ['января', 'февраля', 'марта', 'апреля', 'майя', 'июня',
         'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
     return month[this.getMonth()];
 }
 
 Date.prototype.getDayName = function () {
-    var day = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+    const day = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
     return day[this.getDay()];
 }
 
 function date() {
-    var Data = new Date();
+    const Data = new Date();
     return Data.getDayName() + ' ' + Data.getDate() + ' ' + Data.getMonthName();
 }
 
 function clock() {
-    var d = new Date();
-    var h = d.getHours();
-    var m = d.getMinutes();
+    const d = new Date();
+    let h = d.getHours();
+    let m = d.getMinutes();
 
     if (h <= 9) h = "0" + h;
     if (m <= 9) m = "0" + m;
@@ -25,21 +25,20 @@ function clock() {
     return h + ":" + m;
 }
 
-/**
- *  NEW
- * */
-
 function home_loadSensors() {
 
     // класс для стиля показаний датчиков
-    var classData =  'home_sensor_data';
+    const classData = 'home_sensor_data';
 
     $('.sensor_block').each(function () {
-        var id = $(this).attr('id');
-        var url = 'data/home/' + id + '.json';
+        const url = 'data/home/' + $(this).attr('id') + '.json';
         _getSensorProperties(url, classData);
     });
 
+}
+
+function home_updateSensorsOutData() {
+    _updateSensorsData('sensor_block', 'data/home/');
 }
 
 $(document).ready(function () {
@@ -68,14 +67,14 @@ $(document).everyTime("1s", function () {
     $(".TekTime").html(clock());
 });
 
-//Обновление показания температуры каждые 5 минут
-$(document).everyTime("300s", function () {
-//    home_loadOutdoorData();
+//Обновление показания датчиков
+$(document).everyTime("60s", function () {
+    home_updateSensorsOutData();
 });
 
 $(function () {
 
-    var home_cam_dialog = "#home_cameraFullSize";
+    const home_cam_dialog = "#home_cameraFullSize";
     $(home_cam_dialog).dialog({
         autoOpen: false,
         draggable: false,

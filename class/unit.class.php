@@ -402,7 +402,6 @@ class KeyOutUnit extends moduleUnit
     function setData($data)
     {
         $device = $this->getDevice();
-        $data = json_encode(['value' => 0, 'status' => statusKeyData::OFF]);
         if ($device instanceof iMakerDevice) {
             $device->setData($data);
         }

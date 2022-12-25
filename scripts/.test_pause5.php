@@ -1,7 +1,7 @@
 <?php
 
 require_once(dirname(__FILE__). '/../class/logger.class.php');
-require_once(dirname(__FILE__). 'move_hall.php');
+require_once(dirname(__FILE__). 'move_hall_2.php');
 require_once(dirname(__FILE__). 'move_under_stair.php');
 
 class test_pause5
@@ -13,8 +13,8 @@ class test_pause5
     }
 }
 
-move_hall::start();
-move_under_stair::start();
-test_pause5::start();
-move_stair::start();
-move_bathroom::start();
+//move_hall2::start();
+//move_under_stair::start();
+//test_pause5::start();
+//move_stair::start();
+//move_bathroom::start();

@@ -12,10 +12,10 @@ require_once(dirname(__FILE__) . '/../class/managerDevices.class.php');
 require_once(dirname(__FILE__) . '/../class/managerUnits.class.php');
 require_once(dirname(__FILE__) . '/../class/sunInfo.class.php');
 
-class move_hall
+class move_hall_2
 {
 
-    const NAME_MOVE = 'move_1';
+    const NAME_MOVE = 'move_hall_2';
     const NAME_LIGHT_N = 'light_hol_2_n';
     const MOVE_TIME_N = 6; //через сколько секунд выключится подсветка после отсутствия движения при включении от датчика движения
     const MOVE_TIME_GLOBAL = 1200; //через сколько секунд выключится подсветка независимо каким образом она была включена

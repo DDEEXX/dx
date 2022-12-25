@@ -18,7 +18,7 @@ function key_d($label) {
         return;
     }
 
-    $isLight = $unit->getValue();
+    $isLight = $unit->getData();
 
     $value = $isLight ? 0 : 1;
     $statusKey = $isLight ? statusKey::OFF : statusKey::WEB;
@@ -43,14 +43,10 @@ function keyCode ($label, $code) {
         return;
     }
 
-    $topicPublish = $unit->checkMqttTopicPublish();
-    if (is_null($topicPublish)) {
-        return;
+    if ($unit instanceof iModuleUnite) {
+        $data = json_encode(['value' => $code]);
+        $unit->setData($data);
     }
-
-    $mqtt = mqttSend::Connect();
-    $mqtt->publish($topicPublish, $code);
-    unset($mqtt);
 
 }
 
