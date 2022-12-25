@@ -9,14 +9,7 @@ require_once(dirname(__FILE__) . '/class/logger.class.php');
  * Событие на "нажатие" на модуль с именем $label
  * @param $label
  */
-function key_d($label) {
-    $unit = managerUnits::getUnitLabel($label);
-
-    if (is_null($unit)) {
-        logger::writeLog('Не могу создать объект по метке :: ' . $label,
-            loggerTypeMessage::ERROR, loggerName::ERROR);
-        return;
-    }
+function key_d($unit) {
 
     $isLight = $unit->getData();
 
@@ -33,28 +26,33 @@ function key_d($label) {
     unset($unit);
 }
 
-function keyCode ($label, $code) {
+$label = null;
+$value = null;
+$status = null;
+
+if (isset($_REQUEST['label'])) { $label = $_REQUEST['label'];}
+
+if (!is_null($label)) {
+
+    if ($_REQUEST['value']) {$value = $_REQUEST['value']; }
+    if ($_REQUEST['status']) {$status = $_REQUEST['status']; }
 
     $unit = managerUnits::getUnitLabel($label);
-
     if (is_null($unit)) {
         logger::writeLog('Не могу создать объект по метке :: ' . $label,
             loggerTypeMessage::ERROR, loggerName::ERROR);
         return;
     }
 
+    if (is_null($value)) {$value = 0;}
+    $data['value'] = $value;
+    if (!is_null($status)) {
+        $data['status'] = $status;
+    }
+
     if ($unit instanceof iModuleUnite) {
-        $data = json_encode(['value' => $code]);
+        $data = json_encode($data);
         $unit->setData($data);
     }
 
-}
-
-if (!empty($_REQUEST['label'])) {
-    if (!empty($_REQUEST['code'])) {
-        keyCode($_REQUEST['label'], $_REQUEST['code']);
-    }
-    else {
-        key_d($_REQUEST['label']);
-    }
 }

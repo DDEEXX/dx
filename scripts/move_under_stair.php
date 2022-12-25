@@ -42,7 +42,7 @@ class move_under_stair
         }
 
         //для отладки
-        echo 'Move '.$isMove.', Light '.$isLight.' Status '.$statusKey.' Time '.date('Y-m-d H:i:s', $timeNoMove).PHP_EOL;
+        //echo 'Move '.$isMove.', Light '.$isLight.' Status '.$statusKey.' Time '.date('Y-m-d H:i:s', $timeNoMove).PHP_EOL;
 
         if ($isMove) { // есть движение
             if (!$isLight) { // свет не горит

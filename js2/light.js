@@ -11,22 +11,9 @@ $(document).ready(function () {
         });
     });
 
-    $.get("getData.php?dev=light&label=light_hol_2_n&type=last&place=250;635&img=backlight", function (data) {
-        $("#light_lamp2").html(data);
-    });
-
-    $.get("getData.php?dev=light&label=light_stairs_3&type=last&place=220;685&img=backlight", function (data) {
-        $("#light_lamp3").html(data);
-    });
-
-    $.get("getData.php?dev=light&label=bathroom_mirror_light&type=last&place=295;735&img=backlight", function (data) {
-        $("#light_lamp10").html(data);
-    });
-
     $('#backlight_first_floor .button').click(function () {
-        const lamp = $(this);
-        const code = lamp.attr("mqtt");
-        $.get("powerKey.php?label=backlight_first_floor&code=" + code, function () {
+        const value = $(this).attr("value_mqtt");
+        $.get("powerKey.php?label=backlight_first_floor&value=" + value, function () {
         });
     });
 
