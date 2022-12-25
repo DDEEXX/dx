@@ -6,6 +6,6 @@
  * Time: 17:14
  */
 
-require(dirname(__FILE__) . '/class/cameras.class.php');
+require(dirname(__FILE__) . '/../class/cameras.class.php');
 
 managerCameras::runJobCreateArchive();

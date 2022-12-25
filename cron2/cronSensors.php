@@ -7,8 +7,8 @@
  * 2. датчики, на которые подается запрос, а ответ приходит через некоторое время (mqqt).
  */
 
-require_once(dirname(__FILE__) . '/class/globalConst.interface.php');
-require_once(dirname(__FILE__) . '/class/managerDevices.class.php');
+require_once(dirname(__FILE__) . '/../class/globalConst.interface.php');
+require_once(dirname(__FILE__) . '/../class/managerDevices.class.php');
 
 $sel = new selectOption();
 $sel->set('Disabled', 0);
