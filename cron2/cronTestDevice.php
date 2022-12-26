@@ -43,6 +43,15 @@ $now = time();
 
 foreach ($devices as $device) {
     $deviceId = $device->getDeviceID();
+    $devicePhysic = $device->getDevicePhysic();
+    if ($devicePhysic instanceof iDevicePhysicMQTT ) {
+        $topicTest = $devicePhysic->getTopicTest();
+        if (empty($topicTest)) { //топика для тестирования нет, считаем условно рабочий
+            managerDevices::updateTestCode($device, testDeviceCode::NO_TEST, $now);
+            continue;
+        }
+    }
+
     if (array_key_exists($deviceId, $codeDevices)) {
         managerDevices::updateTestCode($device, $codeDevices[$deviceId], $now);
     }

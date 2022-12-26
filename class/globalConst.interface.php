@@ -108,6 +108,7 @@ interface testDeviceCode {
     const ONE_WIRE_ADDRESS = 4;
     const ONE_WIRE_ALARM = 5;
     const IS_MQTT_DEVICE = 10;
+    const NO_TEST = 11;
 }
 
 const MQTT_CODE_SEPARATOR = ';';
