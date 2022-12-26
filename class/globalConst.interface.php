@@ -107,6 +107,7 @@ interface testDeviceCode {
     const DISABLED = 3;
     const ONE_WIRE_ADDRESS = 4;
     const ONE_WIRE_ALARM = 5;
+    const NO_VALUE = 6;
     const IS_MQTT_DEVICE = 10;
     const NO_TEST = 11;
 }
