@@ -133,34 +133,6 @@ class managerUnits
         return $list;
     }
 
-    public static function testUnits() {
-
-        //Получаем список всех включенных модулей
-        $Units = managerUnits::getListUnits(null, 0);
-
-        $result = array();
-
-        foreach ($Units as $unit) {
-
-            if (is_null($unit)) continue;
-
-            if (!is_null($unit->getDevice())) {
-                $testCode = $unit->test();
-            }
-            else {
-                $testCode = testUnitCode::NO_DEVICE;
-            }
-
-            $result[$unit->getId()] = $testCode;
-
-        }
-
-        unset($Units);
-
-        return $result;
-
-    }
-
 }
 
 class unitsValuesHistory {

@@ -47,15 +47,30 @@ class KeyOutOWire extends aDeviceMakerPhysicOWire
 
     function test()
     {
-        // TODO: Implement test() method.
+        $result = testDeviceCode::NO_CONNECTION;
+        $OWNetDir = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_PATH);
+        $channel = $this->getChanel();
+        $address = $this->getAddress();
+        if (preg_match('/^3A\.[A-F0-9]{12,}/', $address)) { //это датчик OWire
+            $fileName = $OWNetDir . '/' . $address . '/PIO.' . $channel;
+            if (file_exists($fileName)) {
+                $f = file($fileName);
+                if ($f !== false) {
+                    $result = testDeviceCode::WORKING;
+                }
+            }
+        } else {
+            $result = testDeviceCode::ONE_WIRE_ADDRESS;
+        }
+        return $result;
     }
 }
 
 class KeyOutMQQT extends aDeviceMakerPhysicMQTT
 {
-    public function __construct($topicCmnd, $topicStat)
+    public function __construct($topicCmnd, $topicStat, $topicTest)
     {
-        parent::__construct($topicCmnd, $topicStat, formatValueDevice::MQTT_KEY_OUT);
+        parent::__construct($topicCmnd, $topicStat, $topicTest, formatValueDevice::MQTT_KEY_OUT);
     }
 
     function setData($data)
@@ -81,16 +96,15 @@ class KeyOutMQQT extends aDeviceMakerPhysicMQTT
         }
 
     }
-
 }
 
 class KeyOutFactory
 {
-    static public function create($net, $address, $chanel, $topicCmnd, $topicStat)
+    static public function create($net, $address, $chanel, $topicCmnd, $topicStat, $topicTest)
     {
         switch ($net) {
             case netDevice::ETHERNET_MQTT:
-                return new KeyOutMQQT($topicCmnd, $topicStat);
+                return new KeyOutMQQT($topicCmnd, $topicStat, $topicTest);
             case netDevice::ONE_WIRE:
                 return new KeyOutOWire($address, $chanel);
             default :
@@ -109,7 +123,8 @@ class KeyOutMakerDevice extends aMakerDevice
         $chanel = $options['OW_Chanel'];
         $topicCmnd = $options['topic_cmnd'];
         $topicStat = $options['topic_stat'];
-        $this->devicePhysic = KeyOutFactory::create($this->getNet(), $address, $chanel, $topicCmnd, $topicStat);
+        $topicTest = $options['topic_test'];
+        $this->devicePhysic = KeyOutFactory::create($this->getNet(), $address, $chanel, $topicCmnd, $topicStat, $topicTest);
     }
 
     private function convertStatus($status)

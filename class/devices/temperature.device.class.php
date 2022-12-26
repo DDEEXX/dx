@@ -42,25 +42,45 @@ class temperatureSensor1Wire extends aDeviceSensorPhysicOWire
         return $value;
     }
 
+    function test()
+    {
+        $result = testDeviceCode::NO_CONNECTION;
+        $OWNetDir = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_PATH);
+        $address = $this->getAddress();
+        if (preg_match('/^28\.[A-F0-9]{12,}/', $address)) { //это датчик OWire
+            $f = file($OWNetDir . '/' . $address . '/temperature12');
+            if ($f === false) { //попробуем еще раз
+                usleep(50000); //ждем 0.05 секунд
+                $f = file($OWNetDir . '/' . $address . '/temperature12');
+            }
+            if ($f !== false) {
+                $result = testDeviceCode::WORKING;
+            }
+        } else {
+            $result = testDeviceCode::ONE_WIRE_ADDRESS;
+        }
+        return $result;
+    }
+
 }
 
 class temperatureSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
 {
-    public function __construct($topicCmnd, $topicStat)
+    public function __construct($topicCmnd, $topicStat, $topicTest)
     {
-        parent::__construct($topicCmnd, $topicStat, 'temperature', formatValueDevice::MQTT_TEMPERATURE);
+        parent::__construct($topicCmnd, $topicStat, $topicTest, 'temperature', formatValueDevice::MQTT_TEMPERATURE);
     }
 }
 
 class temperatureSensorFactory
 {
-    static public function create($net, $address = '', $alarm='', $topicCmnd = '', $topicStat = '')
+    static public function create($net, $address = '', $alarm='', $topicCmnd = '', $topicStat = '', $topicTest='')
     {
         switch ($net) {
             case netDevice::ONE_WIRE:
                 return new temperatureSensor1Wire($address, $alarm);
             case netDevice::ETHERNET_MQTT:
-                return new temperatureSensorMQQTPhysic($topicCmnd, $topicStat);
+                return new temperatureSensorMQQTPhysic($topicCmnd, $topicStat, $topicTest);
             default :
                 return new DeviceSensorPhysicDefault();
         }
@@ -76,7 +96,8 @@ class temperatureSensorDevice extends aSensorDevice
         $ow_alarm = $options['OW_alarm'];
         $topicCmnd = $options['topic_cmnd'];
         $topicStat = $options['topic_stat'];
-        $this->devicePhysic = temperatureSensorFactory::create($this->getNet(), $address, $ow_alarm, $topicCmnd, $topicStat);
+        $topicTest = $options['topic_test'];
+        $this->devicePhysic = temperatureSensorFactory::create($this->getNet(), $address, $ow_alarm, $topicCmnd, $topicStat, $topicTest);
     }
 
     function requestData()

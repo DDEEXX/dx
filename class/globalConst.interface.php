@@ -100,12 +100,14 @@ interface modeDeviceValue {
     const LOOP_VALUE = 1; //надо постоянно слушать, данные датчик отправляет сам
 }
 
-interface testUnitCode {
+interface testDeviceCode {
     const WORKING = 0;
     const NO_CONNECTION = 1;
     const NO_DEVICE = 2;
     const DISABLED = 3;
     const ONE_WIRE_ADDRESS = 4;
+    const ONE_WIRE_ALARM = 5;
+    const IS_MQTT_DEVICE = 10;
 }
 
 const MQTT_CODE_SEPARATOR = ';';

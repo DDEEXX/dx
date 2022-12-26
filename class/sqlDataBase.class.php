@@ -459,6 +459,55 @@ class DB
         return self::getListBD($query, $sel);
     }
 
+    static public function updateTestDeviceCode(iDevice $device, $code, $updateTime) {
+        try {
+            $con = sqlDataBase::Connect();
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции DB::updateTestDeviceCode. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return;
+        }
+
+        $deviceID = $device->getDeviceID();
+        $query = "SELECT MAX(Date) m_date FROM tdevicetest WHERE DeviceID = $deviceID";
+        try {
+            $maxDate = queryDataBase::getOne($con, $query);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка в функции DB::getUserId. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return;
+        }
+        if (!is_null($maxDate['m_date'])) {
+            $query = sprintf('SELECT * FROM tdevicetest WHERE DeviceID = %s AND Date = \'%s\'',
+                $deviceID, $maxDate['m_date']);
+            try {
+                $testCode = queryDataBase::getOne($con, $query);
+            } catch (querySelectDBException $e) {
+                logger::writeLog('Ошибка в функции DB::getUserId. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
+                    loggerTypeMessage::FATAL, loggerName::ERROR);
+                return;
+            }
+            $currentTimeTestCode = strtotime($testCode['Date']);
+            if ($currentTimeTestCode>=$updateTime) { return; }
+            $currentTestCode = (int)$testCode['Code'];
+            if ($currentTestCode == $code) { return; }
+        }
+
+        $dateTestCode = date('Y-m-d H:i:s', $updateTime);
+        $query = sprintf('INSERT INTO tdevicetest (Date, DeviceID, Code) VALUES (\'%s\', %s, %s)',
+            $dateTestCode, $deviceID, $code);
+        try {
+            $result = queryDataBase::execute($con, $query);
+            if (!$result) {
+                logger::writeLog('Ошибка при записи в базу данных (writeValue)',
+                    loggerTypeMessage::ERROR, loggerName::ERROR);
+            }
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка при добавлении данных в базу данных. '.$e->getMessage(),
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+        }
+
+    }
 
 }
 

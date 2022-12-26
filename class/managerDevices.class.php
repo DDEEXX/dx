@@ -191,4 +191,12 @@ class managerDevices
         $data = $deviceData->getData();
         return $data->getDataJSON();
     }
+
+    public static function updateTestCode($device, $code, $updateTime = null) {
+        if (is_null($updateTime)) { $updateTime = time(); }
+        if (is_a($device, 'aDevice') && is_numeric($code)) {
+            DB::updateTestDeviceCode($device, $code, $updateTime);
+        }
+    }
+
 }

@@ -27,8 +27,6 @@ interface iUnit
 
     function getDevice();
 
-    function test();
-
     function getData();
 
 }
@@ -96,14 +94,6 @@ abstract class unit implements iUnit
             return $this->device;
         }
         return null;
-    }
-
-    public function test() {
-        $device = $this->getDevice();
-        if (is_null($device)) {
-            return testUnitCode::NO_DEVICE;
-        }
-        return testUnitCode::WORKING;
     }
 
     public function getData()

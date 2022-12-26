@@ -287,7 +287,121 @@ class mqttLoop
 
 }
 
-class mqttTest extends mqttLoop
+class mqttTest
 {
+    private static $clientMQTT = null;
+    private $client;
+    //Если true - вести лог, критические события в лог попадают всегда
+    private $logger;
+    // массив: индекс - id устройства, значения - топики
+    private $subscribeDevice;
+    //массив с кодами ответивших устройств
+    private $testCodeDevice;
+
+    private function __construct($logger = false)
+    {
+        $this->logger = $logger;
+        $this->testCodeDevice = [];
+        $this->updateSubscribeDevice();
+
+        $config = new mqttConfig();
+        $this->client = new Mosquitto\Client($config->getID(). '_' .rand(0,9).rand(0,9).rand(0,9).rand(0,9).rand(0,9).rand(0,9));
+
+        $this->client->onConnect([$this, 'onConnect']);
+        $this->client->onMessage([$this, 'onMessage']);
+
+        $this->client->setCredentials($config->getUser(), $config->getPassword());
+        $this->client->connect($config->getHost(), $config->getPort());
+    }
+
+    /**
+     * Подключение к брокеру
+     * @param false $logger
+     * @return mqttTest|null
+     */
+    public static function connect($logger = false)
+    {
+        if (self::$clientMQTT == null) {
+            $config = new mqttConfig();
+            self::$clientMQTT = new mqttTest($logger);
+            unset($config);
+        }
+        return self::$clientMQTT;
+    }
+
+    public function onConnect($rc, $message)
+    {
+        if ($this->logger) {
+            logger::writeLog('Тестирование устройств. Подключился к MQTT брокеру. Код '.$rc.' - '.$message,
+                loggerTypeMessage::NOTICE, loggerName::MQTT);
+        }
+        if (!$rc) {
+            $this->Subscribe();
+        }
+    }
+
+    public function onMessage($message) {
+        if ($this->logger) {
+            logger::writeLog(sprintf('Пришло сообщение от mqtt: topic: %s, payload: %s', $message->topic, $message->payload),
+                loggerTypeMessage::NOTICE,
+                loggerName::MQTT);
+        }
+        $topic = trim($message->topic);
+        if (empty($topic)) {
+            logger::writeLog('Пришло пустое сообщение от mqtt', loggerTypeMessage::WARNING,loggerName::MQTT);
+        }
+
+        $idDevices = array_keys($this->subscribeDevice, $topic, true); //список id всех устройств с подпиской topic
+        foreach ($idDevices as $idDevice) {
+            if ($this->logger) {
+                logger::writeLog(sprintf('По топику: %s, найдено устройство с ID: %s', $topic, $idDevice),
+                    loggerTypeMessage::NOTICE,
+                    loggerName::MQTT);
+            }
+            $testCode = (int)$message->payload;
+            $this->testCodeDevice[$idDevice] = $testCode;
+        }
+    }
+
+    private function updateSubscribeDevice() {
+        $this->subscribeDevice = [];
+        $sel = new selectOption();
+        $sel->set('NetTypeID', netDevice::ETHERNET_MQTT);
+        $devices = managerDevices::getListDevices($sel);
+        foreach ($devices as $device) {
+            $devicePhysic = $device->getDevicePhysic();
+            if ($devicePhysic instanceof iDevicePhysic && $devicePhysic instanceof iDevicePhysicMQTT) {
+                $topicTest = $devicePhysic->getTopicTest();
+                if (empty($topicTest)) continue;
+                $this->subscribeDevice[$device->getDeviceID()] = $topicTest;
+            }
+        }
+    }
+
+    private function Subscribe()
+    {
+        foreach ($this->subscribeDevice as $subscribe) {
+            if ($this->logger) {
+                logger::writeLog('Подключение подписки '.$subscribe,
+                    loggerTypeMessage::NOTICE, loggerName::MQTT);
+            }
+            $this->client->subscribe($subscribe, 0);
+        }
+    }
+
+    public function loop()
+    {
+        $this->client->loop();
+    }
+
+    /**
+     * Получить коды ответивших устройств
+     * @return array - массив в индексах ID устройства, в значениях код ответа
+     */
+    public function getTestCodes()
+    {
+        return $this->testCodeDevice;
+    }
+
 
 }

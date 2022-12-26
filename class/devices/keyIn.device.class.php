@@ -6,9 +6,9 @@
 
 class keyInSensorPhysicMQQT extends aDeviceSensorPhysicMQTT
 {
-    public function __construct($topicCmnd, $topicStat)
+    public function __construct($topicCmnd, $topicStat, $topicTest)
     {
-        parent::__construct($topicCmnd, $topicStat, 'status', formatValueDevice::MQTT_KEY_IN);
+        parent::__construct($topicCmnd, $topicStat, $topicTest, 'status', formatValueDevice::MQTT_KEY_IN);
     }
 }
 
@@ -23,19 +23,42 @@ class keyInSensorPhysicOWire extends aDeviceSensorPhysicOWire {
         parent::__construct($address, $alarm);
     }
 
-    function requestData()
-    {
+    function requestData() { }
 
+    function test()
+    {
+        $result = testDeviceCode::NO_CONNECTION;
+        $OWNetDir = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_PATH);
+        $address = $this->getAddress();
+        if (preg_match('/^12\.[A-F0-9]{12,}/', $address)) { //это датчик OWire
+            $fileName = $OWNetDir . '/' . $address . '/set_alarm';
+            if (file_exists($fileName)) {
+                $f = file($fileName);
+                if ($f !== false) {
+                    $result = testDeviceCode::WORKING;
+                    if (count($f) > 0) {
+                        if ($f[0] != $this->getAlarm()) {
+                            $result = testDeviceCode::ONE_WIRE_ALARM;
+                        }
+                    } else {
+                        $result = testDeviceCode::ONE_WIRE_ALARM;
+                    }
+                }
+            }
+        } else {
+            $result = testDeviceCode::ONE_WIRE_ADDRESS;
+        }
+        return $result;
     }
 }
 
 class keyInSensorFactory
 {
-    static public function create($net, $address, $ow_alarm, $topicCmnd, $topicStat)
+    static public function create($net, $address, $ow_alarm, $topicCmnd, $topicStat, $topicTest)
     {
         switch ($net) {
             case netDevice::ETHERNET_MQTT:
-                return new keyInSensorPhysicMQQT($topicCmnd, $topicStat);
+                return new keyInSensorPhysicMQQT($topicCmnd, $topicStat, $topicTest);
             case netDevice::ONE_WIRE:
                 return new keyInSensorPhysicOWire($address, $ow_alarm);
             default :
@@ -54,7 +77,8 @@ class keyInSensorDevice extends aSensorDevice
         $ow_alarm = $options['OW_alarm'];
         $topicCmnd = $options['topic_cmnd'];
         $topicStat = $options['topic_stat'];
-        $this->devicePhysic = keyInSensorFactory::create($this->getNet(), $address, $ow_alarm, $topicCmnd, $topicStat);
+        $topicTest = $options['topic_test'];
+        $this->devicePhysic = keyInSensorFactory::create($this->getNet(), $address, $ow_alarm, $topicCmnd, $topicStat, $topicTest);
     }
 
     function requestData()

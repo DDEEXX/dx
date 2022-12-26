@@ -224,7 +224,9 @@ interface iDeviceMakerPhysic extends iDevicePhysic{
 }
 
 interface iDevicePhysicMQTT {
+    const PAYLOAD_TEST = 'test';
     function getTopicStat();
+    function getTopicTest();
 }
 
 interface iDevicePhysicOWire {
@@ -232,6 +234,7 @@ interface iDevicePhysicOWire {
 }
 
 interface iDeviceSensorPhysicOWire extends iDeviceSensorPhysic, iDevicePhysicOWire {
+    function getAlarm();
     function updateAlarm();
 }
 
@@ -247,7 +250,6 @@ abstract class aDevicePhysic implements iDevicePhysic
     {
         return $this->formatValue;
     }
-    abstract function test();
 
     /** Получает данные датчика из sm памяти
      * @param $deviceID
@@ -276,12 +278,14 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
 {
     private $topicCmnd;
     private $topicStat;
+    private $topicTest;
     private $requestPayload;
 
-    public function __construct($topicCmnd, $topicStat, $requestPayload, $formatValue = formatValueDevice::NO_FORMAT)
+    public function __construct($topicCmnd, $topicStat, $topicTest, $requestPayload, $formatValue = formatValueDevice::NO_FORMAT)
     {
         $this->topicCmnd = $topicCmnd;
         $this->topicStat = $topicStat;
+        $this->topicTest = $topicTest;
         $this->requestPayload = $requestPayload;
         $this->formatValue = $formatValue;
     }
@@ -299,17 +303,26 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
         return null;
     }
 
-    function test()
-    {
-        $this->publishTopic('test');
-    }
-
     /**
      * @return mixed
      */
     public function getTopicStat()
     {
         return $this->topicStat;
+    }
+
+    public function test()
+    {
+        $mqtt = mqttSend::connect();
+        if (!empty($this->topicCmnd)) {
+            $mqtt->publish($this->topicCmnd, iDevicePhysicMQTT::PAYLOAD_TEST);
+        }
+        return testDeviceCode::IS_MQTT_DEVICE;
+    }
+
+    function getTopicTest()
+    {
+        return trim($this->topicTest);
     }
 }
 
@@ -318,17 +331,14 @@ abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDev
 
     private $topicCmnd;
     private $topicStat;
+    private $topicTest;
 
-    public function __construct($topicCmnd, $topicStat, $formatValue = formatValueDevice::NO_FORMAT)
+    public function __construct($topicCmnd, $topicStat, $topicTest, $formatValue = formatValueDevice::NO_FORMAT)
     {
         $this->topicCmnd = $topicCmnd;
         $this->topicStat = $topicStat;
+        $this->topicTest = $topicTest;
         $this->formatValue = $formatValue;
-    }
-
-    function test()
-    {
-        // TODO: Implement test() method.
     }
 
     function setData($data)
@@ -352,6 +362,20 @@ abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDev
     public function getTopicStat()
     {
         return $this->topicStat;
+    }
+
+    public function test()
+    {
+        $mqtt = mqttSend::connect();
+        if (!empty($this->topicCmnd)) {
+            $mqtt->publish($this->topicCmnd, iDevicePhysicMQTT::PAYLOAD_TEST);
+        }
+        return testDeviceCode::IS_MQTT_DEVICE;
+    }
+
+    function getTopicTest()
+    {
+        return trim($this->topicTest);
     }
 }
 
@@ -401,24 +425,12 @@ abstract class aDeviceSensorPhysicOWire extends aDeviceSensorPhysic implements i
         }
     }
 
-    function test()
+    /**
+     * @return mixed
+     */
+    public function getAlarm()
     {
-        $result = testUnitCode::NO_CONNECTION;
-        $OWNetAddress = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_ADDRESS);
-        $address = $this->getAddress();
-        if (preg_match('/^[A-F0-9]{2,}\.[A-F0-9]{12,}/', $address)) { //это датчик OWire
-            $ow = new OWNet($OWNetAddress);
-            for ($i = 0; $i < 5; $i++) {
-                $temperature = $ow->get($address . '/temperature12');
-                if (!is_null($temperature)) {
-                    $result = testUnitCode::WORKING;
-                    break;
-                }
-            }
-        } else {
-            $result = testUnitCode::ONE_WIRE_ADDRESS;
-        }
-        return $result;
+        return $this->alarm;
     }
 
 }
@@ -468,17 +480,17 @@ class DeviceSensorPhysicDefault extends aDeviceSensorPhysic
         // TODO: Implement requestData() method.
     }
 
-    function test() {}
+    function test() { return; }
 }
 
-class DeviceMakerPhysicDefault extends aDeviceMakerPhysic {
-
+class DeviceMakerPhysicDefault extends aDeviceMakerPhysic
+{
     function setData($data)
     {
         return true;
     }
 
-    function test() {}
+    function test() { return 0; }
 }
 
 /**
@@ -504,6 +516,8 @@ interface iDevice
      * @return false|string - результат в виде JSON строки
      */
     function getData();
+
+    function test();
 
 }
 
@@ -574,6 +588,17 @@ abstract class aDevice implements iDevice
         return $data;
     }
 
+    function test()
+    {
+        $result = testDeviceCode::NO_DEVICE;
+        if ($this->devicePhysic instanceof iDevicePhysic) {
+            if ($this->getDisabled()) {
+                return testDeviceCode::DISABLED;
+            }
+            $result = $this->devicePhysic->test();
+        }
+        return $result;
+    }
 }
 
 /** Устройство датчик*/
