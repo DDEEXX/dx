@@ -1,0 +1,18 @@
+#button_test_status #status_test_green {
+    background-color: #003200
+}
+#button_test_status #status_test_green.this_status {
+    background-color: #00ff00
+}
+#button_test_status #status_test_yellow {
+    background-color: #323200
+}
+#button_test_status #status_test_yellow.this_status {
+    background-color: #ffff00
+}
+#button_test_status #status_test_red {
+    background-color: #320000
+}
+#button_test_status #status_test_red.this_status {
+    background-color: #ff0000
+}

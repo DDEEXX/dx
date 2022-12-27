@@ -542,4 +542,34 @@ if ($p == 'properties') {
 </div>
     <?php
 }
+if ($p == 'setup') {
+?>
+
+    <link rel="stylesheet" type="text/css" href="css2/style_setup.css">
+    <script src="js2/setup.js"></script>
+
+    <div id="page_heater" class="grid_12">
+        <div class="grid_12 alpha omega" style="margin-bottom: 5px">
+            <div class="title_page ui-corner-all ui-widget-header">
+                <h2 style="margin-left:5px;font-size:150%;">Настройки</h2>
+            </div>
+        </div>
+        <div class="clear"></div>
+
+        <div class="grid_3 alpha">
+            <div class="ui-corner-all ui-state-default ui-widget-content" style="height: 100px">
+                <h2 style="margin-left:5px; margin-bottom: 5px">Устройства</h2>
+                <div id="button_test_status" style="margin-left: 5px">
+                    <span style="float: left">Состояние</span>
+                    <div style="float: left; margin-left: 15px; display: flex; flex-direction: column; align-content: flex-start">
+                        <div id="status_test_green"style="margin: 2px; width: 15px; height: 7px"></div>
+                        <div id="status_test_yellow" style="margin: 2px; width: 15px; height: 7px"></div>
+                        <div id="status_test_red" style="margin: 2px; width: 15px; height: 7px"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php
+}
 ?>

@@ -107,9 +107,11 @@ if (!$UID) {
                 </li>
                 <li><a href="dxMainPage.php?p=n7"><span class="ui-icon ui-icon-mmkey">7</span></a>
                 </li>
-                <li><a href="dxMainPage.php?p=properties"><span
-                                class="ui-icon ui-icon-mmpref">8</span></a>
+                <li><a href="dxMainPage.php?p=setup">
+                        <span class="ui-icon ui-icon-mm_setup" title="Настройки">.</span>
+                    </a>
                 </li>
+                <li><a href="dxMainPage.php?p=properties"><span class="ui-icon ui-icon-mmpref">8</span></a></li>
             </ul>
         </div>
 

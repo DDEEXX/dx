@@ -200,3 +200,29 @@ elseif ($_REQUEST['dev'] == 'light') { //получаем значение ос�
     echo '</div>';
     echo '</div>';
 }
+
+elseif ($_REQUEST['dev'] == 'test_status') {
+    $result = ['red'=>false, 'yellow'=>false, 'green'=>false];
+    $devicesTestCode = managerDevices::getLastTestCode();
+    foreach ($devicesTestCode as $testCode) {
+        switch ($testCode['Code']) {
+            case testDeviceCode::WORKING :
+            case testDeviceCode::NO_TEST :
+            case testDeviceCode::IS_MQTT_DEVICE :
+            case testDeviceCode::DISABLED :
+                $result['green'] = true;
+                break;
+            case testDeviceCode::NO_DEVICE :
+            case testDeviceCode::NO_VALUE :
+            case testDeviceCode::ONE_WIRE_ALARM :
+                $result['yellow'] = true;
+                break;
+            case testDeviceCode::NO_CONNECTION :
+            case testDeviceCode::ONE_WIRE_ADDRESS :
+                $result['red'] = true;
+                break;
+        }
+    }
+    header('Content-Type: application/json');
+    echo json_encode($result);
+}

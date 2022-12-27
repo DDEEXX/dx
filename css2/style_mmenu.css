@@ -104,3 +104,11 @@
 #mainMenu.ui-menu .ui-menu-item-selected .ui-icon-mmpref{
 	background-image: url(../img2/main-menu/power_button_sel.png);
 }
+
+#mainMenu.ui-menu .ui-icon-mm_setup{
+	background-image: url(../img2/main-menu/setup_.png);
+}
+
+#mainMenu.ui-menu .ui-menu-item-selected .ui-icon-mm_setup{
+	background-image: url(../img2/main-menu/setup_sel.png);
+}

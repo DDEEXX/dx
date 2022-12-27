@@ -199,4 +199,8 @@ class managerDevices
         }
     }
 
+    public static function getLastTestCode() {
+        return DB::getLastTestCode();
+    }
+
 }

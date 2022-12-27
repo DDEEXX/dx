@@ -1,7 +1,7 @@
 <?php
 
-require_once(dirname(__FILE__) . "/config.class.php");
-require_once(dirname(__FILE__) . "/lists.class.php");
+require_once(dirname(__FILE__) . '/config.class.php');
+require_once(dirname(__FILE__) . '/lists.class.php');
 require_once(dirname(__FILE__) . '/logger.class.php');
 
 interface iSqlDataBase
@@ -19,7 +19,7 @@ class DBException extends Exception
     public function __construct($mess)
     {
         parent::__construct($mess);
-        error_log($this->__toString(), 0);
+        error_log($this->__toString());
     }
 }
 
@@ -32,9 +32,9 @@ class connectDBException extends DBException implements iDBException
      */
     public function getErrorInfoHTML()
     {
-        $txt = "<h1>Сайт " . $_SERVER['SERVER_NAME'] . "</h1>";
-        $txt .= "<h2>Не могу подключиться к базе даных.</h2>";
-        $txt .= "<h3>" . $this->GetMessage() . "</h3>";
+        $txt = '<h1>Сайт ' . $_SERVER['SERVER_NAME'] . '</h1>';
+        $txt .= '<h2>Не могу подключиться к базе данных.</h2>';
+        $txt .= '<h3>' . $this->getMessage() . '</h3>';
         return $txt;
     }
 }
@@ -47,25 +47,25 @@ class querySelectDBException extends DBException implements iDBException
      */
     public function getErrorInfoHTML()
     {
-        $txt = "<h1>Не могу получить данные из таблиц базы данных.</h1>";
-        $txt .= "<h2>" . $this->GetMessage() . "</h2>";
+        $txt = '<h1>Не могу получить данные из таблиц базы данных.</h1>';
+        $txt .= '<h2>' . $this->getMessage() . '</h2>';
         return $txt;
     }
 }
 
-class otherDBException extends DBException implements iDBException
-{
-    /**
-     * Возвращает описание прочих ошибок виде html для вывода на странице
-     * @return string
-     */
-    public function getErrorInfoHTML()
-    {
-        $txt = "<h1>Ошибка при работе с базой данных</h1>";
-        $txt .= "<h2>" . $this->GetMessage() . "</h2>";
-        return $txt;
-    }
-}
+//class otherDBException extends DBException implements iDBException
+//{
+//    /**
+//     * Возвращает описание прочих ошибок в виде html для вывода на странице
+//     * @return string
+//     */
+//    public function getErrorInfoHTML()
+//    {
+//        $txt = '<h1>Ошибка при работе с базой данных</h1>';
+//        $txt .= '<h2>' . $this->getMessage() . '</h2>';
+//        return $txt;
+//    }
+//}
 
 class sqlDataBase implements iSqlDataBase
 {
@@ -93,7 +93,7 @@ class sqlDataBase implements iSqlDataBase
 
     /**
      * Получить соединение mysqli
-     * @return mixed|mysqli
+     * @return mysqli
      */
     public function getConnect()
     {
@@ -150,7 +150,7 @@ class queryDataBase
      */
     public static function getAll(iSqlDataBase $conn, $query)
     {
-        $res = array();
+        $res = [];
         if ($resQ = self::getRaw($conn, $query)) {
             while ($row = $resQ->fetch_assoc()) {
                 $res[] = $row;
@@ -161,7 +161,7 @@ class queryDataBase
     }
 
     /**
-     * возвращает первую строку результата запроса в виде ассоциативного массива или null если ничего не выбрано
+     * Возвращает первую строку результата запроса в виде ассоциативного массива или null если ничего не выбрано
      * @param iSqlDataBase $conn
      * @param $query
      * @return array|null
@@ -174,7 +174,7 @@ class queryDataBase
     }
 
     /**
-     * Возразает "сырой" результат запроса SELECT
+     * Возвращает "сырой" результат запроса SELECT
      * @param iSqlDataBase $conn
      * @param $query
      * @return mixed
@@ -230,7 +230,7 @@ class DB
     }
 
     /**
-     * Получить список модулей (лигических устройств) в виде ассоциативного массива в соответствии с отбором
+     * Получить список модулей (логических устройств) в виде ассоциативного массива в соответствии с отбором
      * @param Iterator|null $sel - отбор
      * @return array
      */
@@ -259,7 +259,6 @@ class DB
 
         $query = $con->getConnect()->real_escape_string($titleQuery);
 
-        if (!is_null($sel)) {
             if ($sel instanceof selectOption) {
 
                 $w = '';
@@ -284,7 +283,6 @@ class DB
                     $query = $query . ' WHERE' . $w;
                 }
             }
-        }
 
         try {
             $aDevices = queryDataBase::getAll($con, $query);
@@ -341,42 +339,6 @@ class DB
         return $result;
     }
 
-    /**
-     * Получить последнне записсаное в базе значение $value
-     * @param sensorUnit $unit
-     * @param null $value
-     * @return array|null
-     */
-    static public function getLastValueUnit(sensorUnit $unit, $value = null)
-    {
-
-        $uniteID = $unit->getId();
-        $valueTable = $unit->getValueTable();
-        $nameTabValue = 'tvalue_' . $valueTable;
-        if (is_null($value)) {
-            $query = 'SELECT Date, Value FROM ' . $nameTabValue . ' WHERE UnitID="' . $uniteID . '" ORDER BY ValueID DESC LIMIT 1';
-        }
-        else {
-            $query = 'SELECT Date, Value FROM ' . $nameTabValue . ' WHERE UnitID="' . $uniteID . '" AND Value ="' . $value . '" ORDER BY ValueID DESC LIMIT 1';
-        }
-
-        try {
-            $con = sqlDataBase::Connect();
-            $result = queryDataBase::getOne($con, $query);
-        } catch (connectDBException $e) {
-            logger::writeLog('Ошибка при подключении к базе данных в функции DB::getLastValueUnit. ' . $e->getMessage(),
-                loggerTypeMessage::FATAL, loggerName::ERROR);
-            $result = null;
-        } catch (querySelectDBException $e) {
-            logger::writeLog('Ошибка в функции DB::getLastValueUnit. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
-                loggerTypeMessage::FATAL, loggerName::ERROR);
-            $result = null;
-        }
-
-        return $result;
-
-    }
-
     static public function getUserId($id) {
         try {
             $con = sqlDataBase::Connect();
@@ -407,7 +369,7 @@ class DB
                 loggerTypeMessage::FATAL, loggerName::ERROR);
             return null;
         }
-        $query = "SELECT * FROM tusers";
+        $query = 'SELECT * FROM tusers';
         try {
             $result = queryDataBase::getAll($con, $query);
         } catch (querySelectDBException $e) {
@@ -507,6 +469,45 @@ class DB
                 loggerTypeMessage::ERROR, loggerName::ERROR);
         }
 
+    }
+
+    public static function getLastTestCode()
+    {
+        $query = '
+            SELECT
+                d.DeviceID,
+                d.Note,
+                test_code.Date,
+                test_code.Code
+            FROM
+                tdevice d
+            LEFT JOIN(
+                SELECT
+                    test.Date,
+                    test.DeviceID,
+                    test.Code
+                FROM
+                    tdevicetest test
+                JOIN(
+                    SELECT
+                        DeviceID,
+                        MAX(DATE) AS max_date
+                    FROM
+                        tdevicetest
+                    GROUP BY
+                        DeviceID
+                ) tmax_date
+            ON
+                test.DeviceID = tmax_date.DeviceID AND test.Date = tmax_date.max_date
+            ) test_code
+            ON
+                d.DeviceID = test_code.DeviceID
+            ORDER BY
+                d.DeviceID';
+
+        $query = str_replace(PHP_EOL,'',$query);
+
+        return self::getListBD($query);
     }
 
 }
