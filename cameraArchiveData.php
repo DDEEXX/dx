@@ -87,10 +87,11 @@ if ($dev == 'image') {
         $imageShots = $cam->getArchiveImageShots($curYear, $curMonth, $curDay);
         echo '<div style="display: grid; grid-template-columns: repeat(4, max-content); grid-gap: 1px">';
         foreach ($imageShots as $key=>$nameShot) {
-            echo '<div> 
-              <img src='.$cam->getArchiveImageLocalFileName($curYear, $curMonth, $curDay, $nameShot)
-                .' onclick="openModal();currentSlide('.($key+1).')" alt="img2/frame.png" style="width:280px;height:159px">
-              </div>';
+            echo '
+                <div class="archiveShotPreview"> 
+                  <img src='.$cam->getArchiveImageLocalFileName($curYear, $curMonth, $curDay, $nameShot)
+                    .' onclick="openModal();currentSlide('.($key+1).')" alt="img2/frame.png" style="width:280px;height:159px">
+                </div>';
         }
         echo '</div>';
 
@@ -112,11 +113,12 @@ if ($dev == 'image') {
                 <a class="archiveShotNext" onclick="plusSlides(1)">&#10095;</a>
     
                 <!-- Caption text -->
-                <div class="caption-container">
-                  <p id="caption"></p>
-                </div>';
+                <!-- <div class="caption-container"> -->
+                <!--   <p id="caption"></p> -->
+                <!-- </div> -->
+                ';
 
-        echo '<div style="display: flex; flex-wrap : wrap; background: rgb(0, 0, 0) ">';
+        echo '<div style="display: flex; flex-wrap : wrap; background: rgb(0, 0, 0); padding-top: 5px">';
 
         $widthSlide = 100/($countShots>0?(100/$countShots):1);
         foreach ($imageShots as $key=>$nameShot) {

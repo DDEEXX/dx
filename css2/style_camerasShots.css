@@ -1,14 +1,16 @@
-/* Create four equal columns that floats next to eachother */
+.archiveShotPreview {
+    cursor: pointer;
+}
+
 .column {
     width: 120px
 }
 
-/* The Modal (background) */
 .modalArchiveShot {
     display: none;
     position: fixed;
     z-index: 1;
-    padding-top: 50px;
+    padding-top: 10px;
     left: 0;
     top: 0;
     width: 100%;
@@ -17,7 +19,6 @@
     background-color: black;
 }
 
-/* Modal Content */
 .modalArchiveShotContent {
     position: relative;
     background-color: #fefefe;
@@ -27,7 +28,6 @@
     max-width: 960px;
 }
 
-/* The Close Button */
 .modalShotsClose {
     color: white;
     position: absolute;
@@ -44,12 +44,10 @@
     cursor: pointer;
 }
 
-/* Hide the slides by default */
 .archiveShotSlides {
     display: none;
 }
 
-/* Next & previous buttons */
 .archiveShotPrev,
 .archiveShotNext {
     cursor: pointer;
@@ -67,19 +65,16 @@
     -webkit-user-select: none;
 }
 
-/* Position the "next button" to the right */
 .archiveShotNext {
     right: 0;
     border-radius: 3px 0 0 3px;
 }
 
-/* On hover, add a black background color with a little bit see-through */
 .archiveShotPrev:hover,
 .archiveShotNext:hover {
     background-color: rgba(0, 0, 0, 0.8);
 }
 
-/* Number text (1/3 etc) */
 .shotNumberText {
     color: #f2f2f2;
     font-size: 12px;
@@ -88,7 +83,6 @@
     top: 0;
 }
 
-/* Caption text */
 .caption-container {
     text-align: center;
     background-color: black;
