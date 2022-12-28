@@ -17,7 +17,7 @@ $(function () {
         $("#cam_Monitor_1_full_size").dialog("open");
     });
 
-    var cam_monitor_1_dialog = "#cam_Monitor_1_full_size";
+    const cam_monitor_1_dialog = "#cam_Monitor_1_full_size";
     $(cam_monitor_1_dialog).dialog({
         autoOpen: false,
         draggable: false,

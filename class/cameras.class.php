@@ -14,15 +14,14 @@ interface iCamera
 {
     const MONTH = [1=>'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
         'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь' ];
-    const DIR_ARCHIVE = 'cam2/archive';
     function checkCameraDir();
     function getArchiveImageDirStructureYearMonth();
     function getArchiveImageDays($year, $month);
     function getArchiveImageShots($year, $month, $day);
     function getArchiveImageShotFullFileName($nameFileArchive);
-    function getArchiveTimelapse();
+    function getListArchiveTimelapseFiles();
     function getArchiveTimelapseLocalFileName($nameFileArchive);
-    function getArchiveVideo();
+    function getListArchiveVideoFiles();
     function getArchiveVideoLocalFileName($nameFileArchive);
 }
 
@@ -125,12 +124,9 @@ class camera implements iCamera
     {
         $this->id = $options['ID'];
         $this->title = $options['Title'];
-        if (is_dir($options['Target'])) {
-            $this->targetDir = $options['Target'];
-        }
-        $archiveDir = $options['Archive'];
-        $this->archiveDirLocal = iCamera::DIR_ARCHIVE . ($archiveDir[0] === DIRECTORY_SEPARATOR ? $archiveDir : (DIRECTORY_SEPARATOR . $archiveDir));
-        $this->archiveDir = __DIR__ .'/../'.$this->archiveDirLocal;
+        $this->targetDir = $options['Target'];
+        $this->archiveDir = $options['Archive'];
+        $this->archiveDirLocal = $options['LinkArchive'];
     }
 
     /**
@@ -683,8 +679,11 @@ class camera implements iCamera
     /**
      * @return string
      */
-    private function getImageDir()
+    private function getImageDir($local = false)
     {
+        if ($local) {
+            return $this->archiveDirLocal . '/' . $this->videoDir;
+        }
         return $this->archiveDir . '/' . $this->imageDir;
     }
 
@@ -747,7 +746,19 @@ class camera implements iCamera
         return $result;
     }
 
+    /**
+     * Callback функция для сортировки файлов по дате
+     * @param $a
+     * @param $b
+     * @return int
+     */
+    private function sortNameFileOnDate($a, $b) {
+        if ($a['date'] == $b['date']){ return 0; }
+        return ($a['date']<$b['date']) ? -1 : 1;
+    }
+
     function getArchiveImageShots($year, $month, $day) {
+
         $result = [];
         $path = $this->getImageDir().'/'.$year.'/'.$month.'/'.$day;
         if (!is_dir($path)) {
@@ -762,13 +773,15 @@ class camera implements iCamera
                 $image_name = $path . '/' . $file;
                 $ext = strtolower(pathinfo($image_name, PATHINFO_EXTENSION));
                 if ($ext == 'jpg') {
-                    $result[] = $file;
+                    $fileTime = filemtime($image_name);
+                    $fileTime = !$fileTime ? 0 : $fileTime;
+                    $result[] = ['file'=>$file, 'date'=>$fileTime];
                 }
             }
             closedir($handle);
         }
-        sort($result,  SORT_NATURAL );
-        return $result;
+        usort($result, [$this, 'sortNameFileOnDate']);
+        return array_column($result, 'file');
     }
 
     function getArchiveImageShotFullFileName($nameFileArchive) {
@@ -779,7 +792,11 @@ class camera implements iCamera
         return '';
     }
 
-    function getArchiveTimelapse() {
+    /**
+     * Получить список архивных timelapse файлов, список отсортирован по имени файлов (по дате)ю
+     * @return array
+     */
+    function getListArchiveTimelapseFiles() {
         $result = [];
         $path = $this->getTimelapseDir();
         if (!is_dir($path)) {
@@ -818,7 +835,11 @@ class camera implements iCamera
         return '';
     }
 
-    function getArchiveVideo()
+    /**
+     * Получить список архивных видео файлов, список отсортирован по имени файлов (по дате)ю
+     * @return array
+     */
+    function getListArchiveVideoFiles()
     {
         $result = [];
         $path = $this->getVideoDir(true);

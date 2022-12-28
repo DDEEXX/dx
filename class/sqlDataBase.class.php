@@ -491,7 +491,7 @@ class DB
                 JOIN(
                     SELECT
                         DeviceID,
-                        MAX(DATE) AS max_date
+                        MAX(Date) AS max_date
                     FROM
                         tdevicetest
                     GROUP BY

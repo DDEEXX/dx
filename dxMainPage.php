@@ -82,12 +82,12 @@ if (!$UID) {
             <ul id="mainMenu" class="navigation">
                 <li>
                     <a href="dxMainPage.php?p=home">
-                        <span class="ui-icon ui-icon-mmhome">1</span>
+                        <span class="ui-icon ui-icon-mmhome" title="Главная страница">1</span>
                     </a>
                 </li>
                 <li>
                     <a href="dxMainPage.php?p=weather">
-                        <span class="ui-icon ui-icon-mmtemp">2</span>
+                        <span class="ui-icon ui-icon-mmtemp" title="Погода и температура">2</span>
                     </a>
                 </li>
                 <li>
@@ -95,23 +95,35 @@ if (!$UID) {
                         <span class="ui-icon ui-icon-mmbulb" title="Освещение">3</span>
                     </a>
                 </li>
-                <li><a href="dxMainPage.php?p=power">
-                        <span class="ui-icon ui-icon-mmpower" title="Управление">4</span></a>
-                </li>
-                <li><a href="dxMainPage.php?p=heater"><span
-                                class="ui-icon ui-icon-mmheater"
-                                title="Климат и отопление">5</span></a>
-                </li>
-                <li><a href="dxMainPage.php?p=cam"><span
-                                class="ui-icon ui-icon-mmip_camera">6</span></a>
-                </li>
-                <li><a href="dxMainPage.php?p=n7"><span class="ui-icon ui-icon-mmkey">7</span></a>
-                </li>
-                <li><a href="dxMainPage.php?p=setup">
-                        <span class="ui-icon ui-icon-mm_setup" title="Настройки">.</span>
+                <li>
+                    <a href="dxMainPage.php?p=power">
+                        <span class="ui-icon ui-icon-mmpower" title="Управление">4</span>
                     </a>
                 </li>
-                <li><a href="dxMainPage.php?p=properties"><span class="ui-icon ui-icon-mmpref">8</span></a></li>
+                <li>
+                    <a href="dxMainPage.php?p=heater">
+                        <span class="ui-icon ui-icon-mmheater" title="Климат и отопление">5</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="dxMainPage.php?p=cam">
+                        <span class="ui-icon ui-icon-mmip_camera"  title="Видео наблюдение">6</span></a>
+                </li>
+                <li>
+                    <a href="dxMainPage.php?p=n7">
+                        <span class="ui-icon ui-icon-mmkey" title="Доступ">7</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="dxMainPage.php?p=setup">
+                        <span class="ui-icon ui-icon-mm_setup" title="Настройки">8</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="dxMainPage.php?p=properties">
+                        <span class="ui-icon ui-icon-mmpref" title="Прочее">9</span>
+                    </a>
+                </li>
             </ul>
         </div>
 

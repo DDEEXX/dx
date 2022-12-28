@@ -506,12 +506,12 @@ if ($p == 'cam') {
                 </div>
             </div>
             <div class="grid_4">
-                <div class="ui-corner-all ui-state-default ui-widget-content">
+                <div class="ui-corner-all ui-state-default ui-widget-content" style="min-height: 255px">
                 --
                 </div>
             </div>
             <div class="grid_4 omega">
-                <div class="ui-corner-all ui-state-default ui-widget-content">
+                <div class="ui-corner-all ui-state-default ui-widget-content" style="min-height: 255px">
                 --
                 </div>
             </div>

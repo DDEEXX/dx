@@ -95,7 +95,7 @@ elseif ($dev == 'timelapse') {
 
         echo '<script src="js2/cameraArchiveData.js"></script>';
 
-        $timeLapses = $cam->getArchiveTimelapse();
+        $timeLapses = $cam->getListArchiveTimelapseFiles();
         echo '<div id="cam_archive_timelapse" 
             style="align-self: stretch; flex-grow: 1; width: 100%; height: 1px; overflow: auto; margin-top: 5px; margin-left: 5px">';
         echo '<table>';
@@ -174,7 +174,7 @@ elseif ($dev == 'video') {
 
         echo '<script src="js2/cameraArchiveData.js"></script>';
 
-        $timeLapses = $cam->getArchiveVideo();
+        $timeLapses = $cam->getListArchiveVideoFiles();
         echo '<div id="cam_archive_video" 
             style="align-self: stretch; flex-grow: 1; width: 100%; height: 1px; overflow: auto; margin-top: 5px; margin-left: 5px">';
         echo '<table>';

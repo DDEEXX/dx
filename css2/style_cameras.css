@@ -71,7 +71,8 @@
     background-color: #336699
 }
 
-#cam_archive_timelapse tbody, #cam_archive_video tbody {
+#cam_archive_timelapse tbody, #cam_archive_video tbody,
+#cam_monitor_1, #cam_Monitor_1_full_size {
     cursor: pointer;
 }
 

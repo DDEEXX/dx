@@ -140,13 +140,12 @@ class KeyOutMakerDevice extends aMakerDevice
 
     public function setData($data)
     {
-
         $result = parent::setData($data);
         if ($result) {
             $devicePhysic = $this->getDevicePhysic();
             if ($devicePhysic instanceof KeyOutOWire) {
                 $dataDecode = json_decode($data, true);
-                if (!is_null($dataDecode)) {
+                if (!is_null($dataDecode)) { //если выходной ключ сразу вернул свое состояние, запишем его
                     $dataValue = time();
                     $value = checkKeyOutDataValue('value', $dataDecode);
                     $status = checkKeyOutDataValue('status', $dataDecode);

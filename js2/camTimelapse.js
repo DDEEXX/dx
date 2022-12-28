@@ -1,7 +1,7 @@
 $(document).ready(function(){
 
-    var selector_video_player = "#cam_video_player";
-    var fileName = $(selector_video_player).attr('tl_name');
+    const selector_video_player = "#cam_video_player";
+    const fileName = $(selector_video_player).attr('tl_name');
 
     $(selector_video_player).jPlayer({
         ready: function () {
