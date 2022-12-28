@@ -1,8 +1,6 @@
 /* Create four equal columns that floats next to eachother */
 .column {
-    /*float: left;*/
-    /*width: 4%;*/
-    flex-basis: 120px
+    width: 120px
 }
 
 /* The Modal (background) */
