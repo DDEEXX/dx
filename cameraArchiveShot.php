@@ -12,7 +12,6 @@ header('Pragma: cache');
 header('Expires: ' . date(DATE_RFC2822, time() + 86400));
 
 $fileLocation = $cam->getArchiveImageShotFullFileName($path);
-$image = imagecreatefromstring($fileLocation);
 $fileHeader = fopen($fileLocation, 'r', false);
 $response = '';  //тут можно отдать картинку заглушку, если картинка не найдена по запросу.
 if ($fileHeader) {

@@ -83,9 +83,16 @@ if ($dev == 'image') {
         $imageShots = $cam->getArchiveImageShots($curYear, $curMonth, $curDay);
         echo '<div style="display: grid; grid-template-columns: repeat(4, max-content); grid-gap: 1px">';
         foreach ($imageShots as $nameShot) {
+//            echo '<div>
+//              <img src=cameraArchiveShot.php?cam='.$numCamera.'&path='.$path.'/'.$nameShot .' alt="img2/frame.png" style="width:280px;height:159px">
+//              </div>';
             echo '<div> 
-              <img src=cameraArchiveShot.php?cam='.$numCamera.'&path='.$path.'/'.$nameShot .' alt="img2/frame.png" style="width:280px;height:159px">
+              <img src='.$cam->getArchiveImageLocalFileName($curYear, $curMonth, $curDay, $nameShot).' alt="img2/frame.png" style="width:280px;height:159px">
               </div>';
+
+
+
+
         }
         echo '</div>';
     }

@@ -23,6 +23,7 @@ interface iCamera
     function getArchiveTimelapseLocalFileName($nameFileArchive);
     function getListArchiveVideoFiles();
     function getArchiveVideoLocalFileName($nameFileArchive);
+    function getArchiveImageLocalFileName($year, $month, $day, $nameFileArchive);
 }
 
 class managerCameras
@@ -682,7 +683,7 @@ class camera implements iCamera
     private function getImageDir($local = false)
     {
         if ($local) {
-            return $this->archiveDirLocal . '/' . $this->videoDir;
+            return $this->archiveDirLocal . '/' . $this->imageDir;
         }
         return $this->archiveDir . '/' . $this->imageDir;
     }
@@ -877,5 +878,19 @@ class camera implements iCamera
             return $fullNameFile;
         }
         return '';
+    }
+
+    /**
+     * Получает полное имя файла изображения на сервере
+     * @param $year
+     * @param $month
+     * @param $day
+     * @param $nameFileArchive
+     * @return string
+     */
+    function getArchiveImageLocalFileName($year, $month, $day, $nameFileArchive)
+    {
+        $path = $this->getImageDir(true).'/'.$year.'/'.$month.'/'.$day;
+        return $path.'/'.$nameFileArchive;
     }
 }
