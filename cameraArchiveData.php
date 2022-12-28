@@ -20,12 +20,12 @@ if ($dev == 'image') {
 
     if ($dataType == 'year_month' || $dataType == 'day') {
 
+        echo '<link rel="stylesheet" type="text/css" href="css2/style_camerasShots.css">';
         echo '<script src="js2/cameraArchiveData.js"></script>';
 
         echo '
         <div id="cam_archive_path" style="width: 100%; align-self: flex-start">
             <div style="margin-top:5px">
-                <button class="camera_nav_image_path">/</button>
                 <button class="camera_nav_image_path" cam="<?php echo $numCamera ?>">Image</button>';
 
                 if ($dataType == 'day') {
@@ -75,25 +75,55 @@ if ($dev == 'image') {
         <div id="cam_archive_shots" style="align-self: stretch; flex-grow: 1; width: 100%; height: 1px; overflow: auto">
         </div>';
 
-    } elseif ($dataType == 'shots') {
+    }
+    elseif ($dataType == 'shots') {
+
+        echo '<script src="js2/cameraArchiveShots.js"></script>';
+
         $partsData = getPartsDataFromPath($path);
         $curYear = $partsData[0];
         $curMonth = $partsData[1];
         $curDay = $partsData[2];
         $imageShots = $cam->getArchiveImageShots($curYear, $curMonth, $curDay);
         echo '<div style="display: grid; grid-template-columns: repeat(4, max-content); grid-gap: 1px">';
-        foreach ($imageShots as $nameShot) {
-//            echo '<div>
-//              <img src=cameraArchiveShot.php?cam='.$numCamera.'&path='.$path.'/'.$nameShot .' alt="img2/frame.png" style="width:280px;height:159px">
-//              </div>';
+        foreach ($imageShots as $key=>$nameShot) {
             echo '<div> 
-              <img src='.$cam->getArchiveImageLocalFileName($curYear, $curMonth, $curDay, $nameShot).' alt="img2/frame.png" style="width:280px;height:159px">
+              <img src='.$cam->getArchiveImageLocalFileName($curYear, $curMonth, $curDay, $nameShot)
+                .' onclick="openModal();currentSlide('.($key+1).')" alt="img2/frame.png" style="width:280px;height:159px">
               </div>';
-
-
-
-
         }
+        echo '</div>';
+
+        echo '<div id="modalShots" class="modalArchiveShot">
+                <span class="modalShotsClose" onclick="closeModal()">&times;</span>
+                <div class="modalArchiveShotContent">';
+
+        $countShots = count($imageShots);
+        foreach ($imageShots as $key=>$nameShot) {
+            echo '<div class="archiveShotSlides">
+                    <div class="shotNumberText">' .($key+1).' / '.$countShots.'</div>
+                    <img src="'.$cam->getArchiveImageLocalFileName($curYear, $curMonth, $curDay, $nameShot).'" style="width: 100%">
+                  </div>';
+        }
+
+        echo '
+                <!-- Next/previous controls -->
+                <a class="archiveShotPrev" onclick="plusSlides(-1)">&#10094;</a>
+                <a class="archiveShotNext" onclick="plusSlides(1)">&#10095;</a>
+    
+                <!-- Caption text -->
+                <div class="caption-container">
+                  <p id="caption"></p>
+                </div>';
+
+        echo '<div style="display: flex; flex-wrap : wrap; background: rgb(0, 0, 0) ">';
+
+        $widthSlide = 100/($countShots>0?(100/$countShots):1);
+        foreach ($imageShots as $key=>$nameShot) {
+            echo '<img class="column demo" src="'.$cam->getArchiveImageLocalFileName($curYear, $curMonth, $curDay, $nameShot)
+                .'" onclick="currentSlide('.($key+1).')" alt="Nature">';
+        }
+        echo '</div>';
         echo '</div>';
     }
 }
@@ -101,6 +131,7 @@ elseif ($dev == 'timelapse') {
     if ($dataType == 'list') {
 
         echo '<script src="js2/cameraArchiveData.js"></script>';
+        echo '<h2>TIMELAPSE FILES</h2>';
 
         $timeLapses = $cam->getListArchiveTimelapseFiles();
         echo '<div id="cam_archive_timelapse" 
@@ -180,6 +211,7 @@ elseif ($dev == 'video') {
     if ($dataType == 'list') {
 
         echo '<script src="js2/cameraArchiveData.js"></script>';
+        echo '<h2>VIDEO FILES</h2>';
 
         $timeLapses = $cam->getListArchiveVideoFiles();
         echo '<div id="cam_archive_video" 

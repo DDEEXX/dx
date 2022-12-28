@@ -70,7 +70,7 @@ session_start();
 
 <?php
 
-$UID = $_SESSION['idUser'];
+$UID = isset($_SESSION['idUser']) ? $_SESSION['idUser'] : false;
 
 if (!$UID) {
     include_once 'login.php';
