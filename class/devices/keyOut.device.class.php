@@ -86,7 +86,7 @@ class KeyOutMQQT extends aDeviceMakerPhysicMQTT
             $payload = $value;
             if (!is_null($status)) {
                 $payload = $payload . MQTT_CODE_SEPARATOR . $status;
-                if (is_int($timePause)) {
+                if (is_numeric($timePause)) {
                     $payload = $payload . MQTT_CODE_SEPARATOR . $timePause;
                 }
             }
