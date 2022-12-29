@@ -38,7 +38,7 @@ class move_bathroom
         $timeNoMove = $moveData['date'];
 
         //Получить данные кнопки
-        $keyData = json_decode(managerDevices::getDevicePhysicData($idDeviceUnitMove), true);
+        $keyData = json_decode(managerDevices::getDevicePhysicData($idDeviceUitTouchKey), true);
         $keyPress = $keyData['valueNull'] ? 0 : $keyData['value'];
 
         //Получить данные с подсветки
