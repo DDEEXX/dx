@@ -5,7 +5,7 @@
     "expand": true,
     "value": {
       "classDigit": "sensor_data",
-      "label": "temp_bedroom_Nima",
+      "label": "temp_bedroom_Тima",
       "dev": "temp"
     }
   },
