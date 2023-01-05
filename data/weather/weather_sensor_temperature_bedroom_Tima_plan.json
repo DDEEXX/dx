@@ -1,0 +1,38 @@
+{
+  "data": {
+    "id": "weather_sensor_temperature_bedroom_Tima_plan",
+    "html": "data/sensor_temperature_small.html",
+    "expand": true,
+    "value": {
+      "classDigit": "sensor_data",
+      "label": "temp_bedroom_Tima",
+      "dev": "temp"
+    }
+  },
+  "widget": {
+    "id": "weather_plan_widget",
+    "clear": true,
+    "properties": {
+      "label": "temp_bedroom_Tima",
+      "icon": {
+        "image": "img2/icon_medium/thermometer.png",
+        "width": 24,
+        "height": 24
+      },
+      "caption": {
+        "show": true,
+        "text": "Спальня Тимофея",
+        "top": "0px",
+        "left": "35px"
+      },
+      "graph": {
+        "type": 0,
+        "variant": 0,
+        "top" : "20px",
+        "width": 315,
+        "height": 100,
+        "count": 6
+      }
+    }
+  }
+}
