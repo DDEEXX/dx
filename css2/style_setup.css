@@ -16,3 +16,27 @@
 #button_test_status #status_test_red.this_status {
     background-color: #ff0000
 }
+
+td>.test_status_code_0 {
+    background-color: #00ff00
+}
+
+td>.test_status_code_3,
+td>.test_status_code_11 {
+    background-color: #545454
+}
+
+td>.test_status_code_2,
+td>.test_status_code_5,
+td>.test_status_code_6 {
+    background-color: #ffff00
+}
+
+td>.test_status_code_1,
+td>.test_status_code_4 {
+    background-color: #ff0000
+}
+
+tr:nth-child(even) {
+    background-color: rgba(51, 102, 153, 0.3)
+}

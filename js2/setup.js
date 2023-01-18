@@ -23,6 +23,16 @@ function updateTestStatus() {
 
 $(function () {
     $("#button_test_status").button();
+
+    $(".test_status").tooltip({
+        classes: {
+            "ui-tooltip": "ui-corner-all ui-widget-shadow ui-widget-header"
+        },
+        open: function (event, ui) {
+            ui.tooltip.css("max-width", "500px");
+        }
+    });
+
     updateTestStatus();
 })
 

@@ -200,7 +200,9 @@ class managerDevices
     }
 
     public static function getLastTestCode() {
-        return DB::getLastTestCode();
+        $arrValue = DB::getLastTestCode();
+        $arrKey = array_column($arrValue, 'DeviceID', 'DeviceID');
+        return array_combine($arrKey, $arrValue);
     }
 
 }

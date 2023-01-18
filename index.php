@@ -19,7 +19,7 @@ else {
         if (isset($_POST['log_in'])) {
             $error = auth::enter(); //функция входа на сайт
 
-            if (count($error) == 0) //если ошибки отсутствуют, авторизируем пользователя
+            if (count($error) == 0) //если ошибки отсутствуют, авторизуем пользователя
             {
                 $UID = $_SESSION['idUser'];
                 $admin = auth::is_admin($UID);
@@ -28,5 +28,5 @@ else {
     }
 }
 
-include_once ("dxMainPage.php");
+include_once ('dxMainPage.php');
 

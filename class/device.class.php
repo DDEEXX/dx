@@ -536,14 +536,16 @@ abstract class aDevice implements iDevice
     private $type;
     private $deviceID;
     private $disabled;
+    private $note;
     protected $devicePhysic;
 
-    public function __construct($deviceID, $net, $type, $disabled)
+    public function __construct($deviceID, $net, $type, $disabled, $note)
     {
         $this->net = $net;
         $this->type = $type;
         $this->deviceID = $deviceID;
         $this->disabled = $disabled;
+        $this->note = $note;
     }
 
     public function getDeviceID()
@@ -599,6 +601,14 @@ abstract class aDevice implements iDevice
         }
         return $result;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getNote()
+    {
+        return $this->note;
+    }
 }
 
 /** Устройство датчик*/
@@ -615,7 +625,8 @@ abstract class aSensorDevice extends aDevice implements iSensorDevice
         $deviceID = intval($options['DeviceID']);
         $net = $options['NetTypeID'];
         $disabled = $options['Disabled'];
-        parent::__construct($deviceID, $net, $typeDevice, $disabled);
+        $note = $options['Note'];
+        parent::__construct($deviceID, $net, $typeDevice, $disabled, $note);
         $this->devicePhysic = new DeviceSensorPhysicDefault();
     }
 
@@ -637,7 +648,8 @@ abstract class aMakerDevice extends aDevice implements iMakerDevice
         $deviceID = intval($options['DeviceID']);
         $net = $options['NetTypeID'];
         $disabled = $options['Disabled'];
-        parent::__construct($deviceID, $net, $typeDevice, $disabled);
+        $note = $options['Note'];
+        parent::__construct($deviceID, $net, $typeDevice, $disabled, $note);
         $this->devicePhysic = new DeviceMakerPhysicDefault();
     }
 

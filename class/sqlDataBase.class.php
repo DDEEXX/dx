@@ -87,6 +87,7 @@ class sqlDataBase implements iSqlDataBase
             $configDB->getPassword(),
             $configDB->getNameDB(),
             $configDB->getPort());
+        $this->dbConnect->set_charset('utf8');
         if ($this->dbConnect->connect_errno)
             throw new connectDBException($this->dbConnect->connect_error);
     }
