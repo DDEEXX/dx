@@ -1,17 +1,18 @@
-<div class="grid_12 alpha omega">
-    <div class="ui-corner-all ui-state-default ui-widget-content" style="height: 735px">
+<div class="grid_12 alpha omega ui-corner-all ui-state-default ui-widget-content"
+     style="align-self: stretch; flex-grow: 1">
+<!--    <div class="ui-corner-all ui-state-default ui-widget-content">-->
         <h2 style="margin-left:5px; margin-bottom: 5px">Состояние устройств</h2>
-
+        <div style="display: flex; flex-direction: column; align-content: flex-start; max-height: 720px; overflow: auto; margin-right: 5px">
         <table style="margin-left: 5px">
             <thead class="ui-widget-header">
-                <tr'>
-                    <th style="width: 20px"></th>
-                    <th>ID</th>
-                    <th>Наименование</th>
-                    <th>Сеть</th>
-                    <th>Тип</th>
-                    <th>Данные</th>
-                </tr>
+            <tr>
+                <th style="width: 20px"></th>
+                <th>ID</th>
+                <th>Наименование</th>
+                <th>Сеть</th>
+                <th>Тип</th>
+                <th>Данные</th>
+            </tr>
             </thead>
             <tbody>
 
@@ -19,21 +20,96 @@
 
             include_once 'class/managerDevices.class.php';
 
-            function getTitleTestStatus($status, $date) {
+            function getTitleTestStatus($status, $date)
+            {
                 switch ($status) {
-                    case testDeviceCode::WORKING : $result = 'WORKING'; break;
-                    case testDeviceCode::NO_CONNECTION : $result = 'NO CONNECTION'; break;
-                    case testDeviceCode::NO_DEVICE : $result = 'NO DEVICE'; break;
-                    case testDeviceCode::DISABLED : $result = 'DISABLED'; break;
-                    case testDeviceCode::ONE_WIRE_ADDRESS : $result = 'ERROR 1WIRE ADDRESS'; break;
-                    case testDeviceCode::ONE_WIRE_ALARM : $result = 'ERROR 1WIRE ALARM'; break;
-                    case testDeviceCode::NO_VALUE : $result = 'NO VALUE'; break;
-                    case testDeviceCode::IS_MQTT_DEVICE : $result = 'IS MQTT DEVICE'; break;
-                    case testDeviceCode::NO_TEST : $result = 'NO TEST'; break;
-                    default  : $result = '';
+                    case testDeviceCode::WORKING :
+                        $result = 'WORKING';
+                        break;
+                    case testDeviceCode::NO_CONNECTION :
+                        $result = 'NO CONNECTION';
+                        break;
+                    case testDeviceCode::NO_DEVICE :
+                        $result = 'NO DEVICE';
+                        break;
+                    case testDeviceCode::DISABLED :
+                        $result = 'DISABLED';
+                        break;
+                    case testDeviceCode::ONE_WIRE_ADDRESS :
+                        $result = 'ERROR 1WIRE ADDRESS';
+                        break;
+                    case testDeviceCode::ONE_WIRE_ALARM :
+                        $result = 'ERROR 1WIRE ALARM';
+                        break;
+                    case testDeviceCode::NO_VALUE :
+                        $result = 'NO VALUE';
+                        break;
+                    case testDeviceCode::IS_MQTT_DEVICE :
+                        $result = 'IS MQTT DEVICE';
+                        break;
+                    case testDeviceCode::NO_TEST :
+                        $result = 'NO TEST';
+                        break;
+                    default  :
+                        $result = '';
                 }
                 if (!is_null($date)) {
-                    $result = $result. ' (' .$date.')';
+                    $result = $result . ' (' . $date . ')';
+                }
+                return $result;
+            }
+
+            function getNetTitle($netCode)
+            {
+                switch ($netCode) {
+                    case netDevice::NONE :
+                        $result = '--';
+                        break;
+                    case netDevice::ONE_WIRE :
+                        $result = '1 wire';
+                        break;
+                    case netDevice::ETHERNET_JSON :
+                        $result = 'ethernet';
+                        break;
+                    case netDevice::PIO :
+                        $result = 'pio';
+                        break;
+                    case netDevice::I2C :
+                        $result = 'i2c';
+                        break;
+                    case netDevice::ETHERNET_MQTT :
+                        $result = 'mqtt';
+                        break;
+                    default  :
+                        $result = '';
+                }
+                return $result;
+            }
+
+            function getImageDevice($deviceType)
+            {
+                switch ($deviceType) {
+                    case typeDevice::TEMPERATURE :
+                        $result = 'img2/icon_small/thermometer.png';
+                        break;
+                    case typeDevice::LABEL :
+                        $result = '';
+                        break;
+                    case typeDevice::POWER_KEY :
+                    case typeDevice::KEY_OUT :
+                        $result = 'img2/icon_small/power.png';
+                        break;
+                    case typeDevice::KEY_IN :
+                        $result = 'img2/icon_small/keyin.png';
+                        break;
+                    case typeDevice::PRESSURE :
+                        $result = 'img2/icon_small/barometer.png';
+                        break;
+                    case typeDevice::HUMIDITY :
+                        $result = 'img2/icon_small/humidity.png';
+                        break;
+                    default  :
+                        $result = '';
                 }
                 return $result;
             }
@@ -45,8 +121,8 @@
             foreach ($listDevices as $key => $device) {
 
                 $deviceID = $device->getDeviceID();
-                $netTitle = $device->getNet();
-                $deviceType = $device->getType();
+                $netTitle = getNetTitle($device->getNet());
+                $deviceImage = getImageDevice($device->getType());
                 $deviceData = $device->getData();
                 $deviceNote = $device->getNote();
                 $deviceStatus = testDeviceCode::NO_TEST;
@@ -55,21 +131,23 @@
                     $deviceStatus = $devicesTestCode[$deviceID]['Code'];
                     $deviceStatusDate = $devicesTestCode[$deviceID]['Date'];
                 }
-                if (is_null($deviceStatus)) {$deviceStatus = testDeviceCode::NO_TEST;}
+                if (is_null($deviceStatus)) {
+                    $deviceStatus = testDeviceCode::NO_TEST;
+                }
 
                 $title = getTitleTestStatus($deviceStatus, $deviceStatusDate);
 
                 echo '<tr>';
                 echo '<td style="padding-left: 5px; padding-top: 5px">
-                        <div class="test_status test_status_code_'.$deviceStatus.'" title="'.$title.'" style="width: 10px; height: 10px; border-radius: 5px"></div>
+                        <div class="test_status test_status_code_' . $deviceStatus . '" title="' . $title . '" style="width: 10px; height: 10px; border-radius: 5px"></div>
                         </td>';
-                echo '<td style="padding-left: 5px; padding-right: 10px">',$deviceID,'</td>';
-                echo '<td>',$deviceNote,'</td>';
-                echo '<td>',$netTitle,'</td>';
-                echo '<td>',$deviceType,'</td>';
-                echo '<td>',$deviceData,'</td>';
+                echo '<td style="padding-left: 5px; padding-right: 5px">', $deviceID, '</td>';
+                echo '<td style="padding-left: 5px; padding-right: 5px">', $deviceNote, '</td>';
+                echo '<td style="padding-left: 5px; padding-right: 5px">', $netTitle, '</td>';
+                echo '<td><img src="' . $deviceImage . '" alt=""></td>';
+                echo '<td>', $deviceData, '</td>';
                 echo '</tr>';
-
+//break;
             }
 
             unset($listDevices); //!!! наверное надо освобождать каждый объект в массиве, а не массив целиком
@@ -78,6 +156,6 @@
 
             </tbody>
         </table>
-
-    </div>
+        </div>
+<!--    </div>-->
 </div>

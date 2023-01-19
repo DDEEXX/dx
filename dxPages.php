@@ -575,7 +575,8 @@ if ($p == 'setup') {
     <link rel="stylesheet" type="text/css" href="css2/style_setup.css">
     <script src="js2/setup.js"></script>
 
-    <div id="page_heater" class="grid_12">
+    <div id="page_heater" class="grid_12"
+         style="display: flex; flex-direction: column; align-content: flex-start; height: 790px">
         <div class="grid_12 alpha omega" style="margin-bottom: 5px">
             <div class="title_page ui-corner-all ui-widget-header">
                 <h2 style="margin-left:5px;font-size:150%;">Настройки</h2>

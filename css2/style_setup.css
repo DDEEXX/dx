@@ -38,5 +38,5 @@ td>.test_status_code_4 {
 }
 
 tr:nth-child(even) {
-    background-color: rgba(51, 102, 153, 0.3)
+    background-color: rgba(51, 102, 153, 0.4)
 }
