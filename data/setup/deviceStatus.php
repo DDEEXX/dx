@@ -1,8 +1,9 @@
-<div class="grid_12 alpha omega ui-corner-all ui-state-default ui-widget-content"
-     style="align-self: stretch; flex-grow: 1">
-<!--    <div class="ui-corner-all ui-state-default ui-widget-content">-->
+<div class="grid_12 alpha omega"
+     style="display: flex; flex-direction: column; align-content: flex-start; align-self: stretch; flex-grow: 1">
+    <div class="ui-corner-all ui-state-default ui-widget-content"
+         style="align-self: stretch; flex-grow: 1">
         <h2 style="margin-left:5px; margin-bottom: 5px">Состояние устройств</h2>
-        <div style="display: flex; flex-direction: column; align-content: flex-start; max-height: 720px; overflow: auto; margin-right: 5px">
+        <div style="display: flex; flex-direction: column; align-content: flex-start; max-height: 715px; overflow: auto; margin-right: 5px">
         <table style="margin-left: 5px">
             <thead class="ui-widget-header">
             <tr>
@@ -11,7 +12,7 @@
                 <th>Наименование</th>
                 <th>Сеть</th>
                 <th>Тип</th>
-                <th>Данные</th>
+                <th style="padding-left: 5px">Данные</th>
             </tr>
             </thead>
             <tbody>
@@ -114,6 +115,14 @@
                 return $result;
             }
 
+            function getStatus($status) {
+                $result = array_search($status, statusKeyData::status);
+                if ($result === false) {
+                    $result = '';
+                }
+                return $result;
+            }
+
             /**Получить список всех физ. устройств*/
             $listDevices = managerDevices::getListDevices();
             $devicesTestCode = managerDevices::getLastTestCode();
@@ -123,7 +132,7 @@
                 $deviceID = $device->getDeviceID();
                 $netTitle = getNetTitle($device->getNet());
                 $deviceImage = getImageDevice($device->getType());
-                $deviceData = $device->getData();
+                $deviceData = json_decode($device->getData(), true);
                 $deviceNote = $device->getNote();
                 $deviceStatus = testDeviceCode::NO_TEST;
                 $deviceStatusDate = null;
@@ -134,8 +143,10 @@
                 if (is_null($deviceStatus)) {
                     $deviceStatus = testDeviceCode::NO_TEST;
                 }
-
                 $title = getTitleTestStatus($deviceStatus, $deviceStatusDate);
+                $value = 'v: '.($deviceData['valueNull']?'null': $deviceData['value']).
+                    ', d: '.date('H:i:s d-m-Y', $deviceData['date']).
+                    ', s: '.getStatus($deviceData['status']);
 
                 echo '<tr>';
                 echo '<td style="padding-left: 5px; padding-top: 5px">
@@ -145,7 +156,7 @@
                 echo '<td style="padding-left: 5px; padding-right: 5px">', $deviceNote, '</td>';
                 echo '<td style="padding-left: 5px; padding-right: 5px">', $netTitle, '</td>';
                 echo '<td><img src="' . $deviceImage . '" alt=""></td>';
-                echo '<td>', $deviceData, '</td>';
+                echo '<td style="padding-left: 5px">', $value, '</td>';
                 echo '</tr>';
 //break;
             }
@@ -157,5 +168,5 @@
             </tbody>
         </table>
         </div>
-<!--    </div>-->
+    </div>
 </div>
