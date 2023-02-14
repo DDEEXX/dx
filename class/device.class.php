@@ -317,6 +317,7 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
         if (!empty($this->topicCmnd)) {
             $mqtt->publish($this->topicCmnd, iDevicePhysicMQTT::PAYLOAD_TEST);
         }
+        unset($mqtt);
         return testDeviceCode::IS_MQTT_DEVICE;
     }
 

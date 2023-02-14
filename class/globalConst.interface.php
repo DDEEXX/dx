@@ -50,11 +50,12 @@ interface graphVariant {
 
 //Каким способом включился модуль
 interface statusKey {
-    const MOVE      = 'move';       //от датчика движения
-    const WEB       = 'web';        //через сайт или приложение
-    const OFF       = 'off';        //выключен
-    const UNKNOWN   = 'unknown';    //неизвестно, скорее всего через выключатель не связанный с сервером
-    const DEVICE    = 'device';     //на самом модуле
+    const MOVE        = 'move';       //от датчика движения
+    const WEB         = 'web';        //через сайт или приложение
+    const OFF         = 'off';        //выключен
+    const UNKNOWN     = 'unknown';    //неизвестно, скорее всего через выключатель не связанный с сервером
+    const DEVICE      = 'device';     //на самом модуле
+    const REED_SWITCH = 'reedSwitch'; //от геркона (сухой контакт)
 }
 
 /** Каким способом включился модуль - числовой код */
@@ -65,15 +66,16 @@ interface statusKeyData {
         'web'=>2,
         'off'=>3,
         'unknown'=>4,
-        'device'=>5];
+        'device'=>5,
+        'reedswitch'=>6];
 
-    const NONE      = 0;  //нет статуса
-    const MOVE      = 1;  //от датчика движения
-    const WEB       = 2;  //через сайт или приложение
-    const OFF       = 3;  //выключен
-    const UNKNOWN   = 4;  //неизвестно, скорее всего через выключатель не связанный с сервером
-    const DEVICE    = 5;  //на самом модуле
-
+    const NONE        = 0;  //нет статуса
+    const MOVE        = 1;  //от датчика движения
+    const WEB         = 2;  //через сайт или приложение
+    const OFF         = 3;  //выключен
+    const UNKNOWN     = 4;  //неизвестно, скорее всего через выключатель не связанный с сервером
+    const DEVICE      = 5;  //на самом модуле
+    const REED_SWITCH = 6;  //от геркона (сухой контакт)
 }
 
 interface modeUnit {
