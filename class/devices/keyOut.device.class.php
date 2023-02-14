@@ -68,9 +68,9 @@ class KeyOutOWire extends aDeviceMakerPhysicOWire
 
 class KeyOutMQQT extends aDeviceMakerPhysicMQTT
 {
-    public function __construct($topicCmnd, $topicStat, $topicTest)
+    public function __construct($mqttParameters)
     {
-        parent::__construct($topicCmnd, $topicStat, $topicTest, formatValueDevice::MQTT_KEY_OUT);
+        parent::__construct($mqttParameters, formatValueDevice::MQTT_KEY_OUT);
     }
 
     function setData($data)
@@ -100,11 +100,11 @@ class KeyOutMQQT extends aDeviceMakerPhysicMQTT
 
 class KeyOutFactory
 {
-    static public function create($net, $address, $chanel, $topicCmnd, $topicStat, $topicTest)
+    static public function create($net, $address, $chanel, $mqttParameters)
     {
         switch ($net) {
             case netDevice::ETHERNET_MQTT:
-                return new KeyOutMQQT($topicCmnd, $topicStat, $topicTest);
+                return new KeyOutMQQT($mqttParameters);
             case netDevice::ONE_WIRE:
                 return new KeyOutOWire($address, $chanel);
             default :
@@ -121,10 +121,10 @@ class KeyOutMakerDevice extends aMakerDevice
         parent::__construct($options, typeDevice::KEY_OUT);
         $address = $options['Address'];
         $chanel = $options['OW_Chanel'];
-        $topicCmnd = $options['topic_cmnd'];
-        $topicStat = $options['topic_stat'];
-        $topicTest = $options['topic_test'];
-        $this->devicePhysic = KeyOutFactory::create($this->getNet(), $address, $chanel, $topicCmnd, $topicStat, $topicTest);
+        $mqttParameters = ['topicCmnd' => $options['topic_cmnd'],
+            'topicStat' => $options['topic_stat'],
+            'topicTest' => $options['topic_test']];
+        $this->devicePhysic = KeyOutFactory::create($this->getNet(), $address, $chanel, $mqttParameters);
     }
 
     private function convertStatus($status)

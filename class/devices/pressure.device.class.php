@@ -4,19 +4,24 @@
 
 class pressureSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
 {
-    public function __construct($topicCmnd, $topicStat, $topicTest)
+    const DEFAULT_PAYLOAD = 'pressure';
+
+    public function __construct($mqttParameters)
     {
-        parent::__construct($topicCmnd, $topicStat, $topicTest,'pressure', formatValueDevice::MQTT_PRESSURE);
+        if (empty($mqttParameters['payload'])) {
+            $mqttParameters['payload'] = self::DEFAULT_PAYLOAD;
+        }
+        parent::__construct($mqttParameters, formatValueDevice::MQTT_PRESSURE);
     }
 }
 
 class pressureSensorFactory
 {
-    static public function create($net, $topicCmnd, $topicStat, $topicTest)
+    static public function create($net, $mqttParameters)
     {
         switch ($net) {
             case netDevice::ETHERNET_MQTT:
-                return new pressureSensorMQQTPhysic($topicCmnd, $topicStat, $topicTest);
+                return new pressureSensorMQQTPhysic($mqttParameters);
             default :
                 return new DeviceSensorPhysicDefault();
         }
@@ -29,10 +34,11 @@ class pressureSensorDevice extends aSensorDevice
     public function __construct(array $options)
     {
         parent::__construct($options, typeDevice::PRESSURE);
-        $topicCmnd = $options['topic_cmnd'];
-        $topicStat = $options['topic_stat'];
-        $topicTest = $options['topic_test'];
-        $this->devicePhysic = pressureSensorFactory::create($this->getNet(), $topicCmnd, $topicStat, $topicTest);
+        $mqttParameters = ['topicCmnd' => $options['topic_cmnd'],
+            'topicStat' => $options['topic_stat'],
+            'topicTest' => $options['topic_test'],
+            'payload' => $options['payload_cmnd']];
+        $this->devicePhysic = pressureSensorFactory::create($this->getNet(), $mqttParameters);
     }
 
     function requestData()

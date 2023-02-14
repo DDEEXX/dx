@@ -281,12 +281,12 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
     private $topicTest;
     private $requestPayload;
 
-    public function __construct($topicCmnd, $topicStat, $topicTest, $requestPayload, $formatValue = formatValueDevice::NO_FORMAT)
+    public function __construct($mqttParameters, $formatValue = formatValueDevice::NO_FORMAT)
     {
-        $this->topicCmnd = $topicCmnd;
-        $this->topicStat = $topicStat;
-        $this->topicTest = $topicTest;
-        $this->requestPayload = $requestPayload;
+        $this->topicCmnd = $mqttParameters['topicCmnd'];
+        $this->topicStat = $mqttParameters['topicStat'];
+        $this->topicTest = $mqttParameters['topicTest'];
+        $this->requestPayload = $mqttParameters['payload'];
         $this->formatValue = $formatValue;
     }
 
@@ -334,11 +334,11 @@ abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDev
     private $topicStat;
     private $topicTest;
 
-    public function __construct($topicCmnd, $topicStat, $topicTest, $formatValue = formatValueDevice::NO_FORMAT)
+    public function __construct($mqttParameters, $formatValue = formatValueDevice::NO_FORMAT)
     {
-        $this->topicCmnd = $topicCmnd;
-        $this->topicStat = $topicStat;
-        $this->topicTest = $topicTest;
+        $this->topicCmnd = $mqttParameters['topicCmnd'];
+        $this->topicStat = $mqttParameters['topicStat'];
+        $this->topicTest = $mqttParameters['topicTest'];
         $this->formatValue = $formatValue;
     }
 
@@ -481,7 +481,9 @@ class DeviceSensorPhysicDefault extends aDeviceSensorPhysic
         // TODO: Implement requestData() method.
     }
 
-    function test() { return; }
+    function test() {
+        // TODO: Implement test() method.
+    }
 }
 
 class DeviceMakerPhysicDefault extends aDeviceMakerPhysic

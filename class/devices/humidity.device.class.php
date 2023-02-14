@@ -4,19 +4,24 @@
 
 class humiditySensorMQQTPhysic extends aDeviceSensorPhysicMQTT
 {
-    public function __construct($topicCmnd, $topicStat, $topicTest)
+    const DEFAULT_PAYLOAD = 'humidity';
+
+    public function __construct($mqttParameters)
     {
-        parent::__construct($topicCmnd, $topicStat, $topicTest,'humidity', formatValueDevice::MQTT_HUMIDITY);
+        if (empty($mqttParameters['payload'])) {
+            $mqttParameters['payload'] = self::DEFAULT_PAYLOAD;
+        }
+        parent::__construct($mqttParameters, formatValueDevice::MQTT_HUMIDITY);
     }
 }
 
 class humiditySensorFactory
 {
-    static public function create($net, $topicCmnd, $topicStat, $topicTest)
+    static public function create($net, $mqttParameters)
     {
         switch ($net) {
             case netDevice::ETHERNET_MQTT:
-                return new humiditySensorMQQTPhysic($topicCmnd, $topicStat, $topicTest);
+                return new humiditySensorMQQTPhysic($mqttParameters);
             default :
                 return new DeviceSensorPhysicDefault();
         }
@@ -29,10 +34,11 @@ class humiditySensorDevice extends aSensorDevice
     public function __construct(array $options)
     {
         parent::__construct($options, typeDevice::HUMIDITY);
-        $topicCmnd = $options['topic_cmnd'];
-        $topicStat = $options['topic_stat'];
-        $topicTest = $options['topic_test'];
-        $this->devicePhysic = humiditySensorFactory::create($this->getNet(), $topicCmnd, $topicStat, $topicTest);
+        $mqttParameters = ['topicCmnd' => $options['topic_cmnd'],
+            'topicStat' => $options['topic_stat'],
+            'topicTest' => $options['topic_test'],
+            'payload' => $options['payload_cmnd']];
+        $this->devicePhysic = humiditySensorFactory::create($this->getNet(), $mqttParameters);
     }
 
     function requestData()

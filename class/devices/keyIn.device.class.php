@@ -6,9 +6,15 @@
 
 class keyInSensorPhysicMQQT extends aDeviceSensorPhysicMQTT
 {
-    public function __construct($topicCmnd, $topicStat, $topicTest)
+
+    const DEFAULT_PAYLOAD = 'status';
+
+    public function __construct($mqttParameters)
     {
-        parent::__construct($topicCmnd, $topicStat, $topicTest, 'status', formatValueDevice::MQTT_KEY_IN);
+        if (empty($mqttParameters['payload'])) {
+            $mqttParameters['payload'] = self::DEFAULT_PAYLOAD;
+        }
+        parent::__construct($mqttParameters, formatValueDevice::MQTT_KEY_IN);
     }
 }
 
@@ -54,11 +60,11 @@ class keyInSensorPhysicOWire extends aDeviceSensorPhysicOWire {
 
 class keyInSensorFactory
 {
-    static public function create($net, $address, $ow_alarm, $topicCmnd, $topicStat, $topicTest)
+    static public function create($net, $address, $ow_alarm, $mqttParameters)
     {
         switch ($net) {
             case netDevice::ETHERNET_MQTT:
-                return new keyInSensorPhysicMQQT($topicCmnd, $topicStat, $topicTest);
+                return new keyInSensorPhysicMQQT($mqttParameters);
             case netDevice::ONE_WIRE:
                 return new keyInSensorPhysicOWire($address, $ow_alarm);
             default :
@@ -75,10 +81,11 @@ class keyInSensorDevice extends aSensorDevice
         parent::__construct($options, typeDevice::KEY_IN);
         $address = $options['Address'];
         $ow_alarm = $options['OW_alarm'];
-        $topicCmnd = $options['topic_cmnd'];
-        $topicStat = $options['topic_stat'];
-        $topicTest = $options['topic_test'];
-        $this->devicePhysic = keyInSensorFactory::create($this->getNet(), $address, $ow_alarm, $topicCmnd, $topicStat, $topicTest);
+        $mqttParameters = ['topicCmnd' => $options['topic_cmnd'],
+            'topicStat' => $options['topic_stat'],
+            'topicTest' => $options['topic_test'],
+            'payload' => $options['payload_cmnd']];
+        $this->devicePhysic = keyInSensorFactory::create($this->getNet(), $address, $ow_alarm, $mqttParameters);
     }
 
     function requestData()

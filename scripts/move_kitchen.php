@@ -49,18 +49,17 @@ class move_kitchen
         if ($isMove) { // есть движение
             if (!$isLight) { // свет не горит
                 //Включение от датчика только
-                // если (ночь) И (время больше 23 часов ИЛИ время меньше (в будние 7 утра, в выходные 8 утра)
+                // если (ночь) И (время больше 23 часов ИЛИ время меньше 8 утра)
                 $sunInfo = sunInfo::getSunInfo(mktime());
                 $today = getdate();
                 $hours = $today['hours'];
-                $weekends = $today['wday'] == 0 || $today['wday'] == 6;
-                //if ($sunInfo == dayPart::NIGHT && ($hours >= 23 || ($weekends && $hours < 8) || (!$weekends && $hours < 7))) {
+                if ($sunInfo == dayPart::NIGHT && ($hours >= 23 || $hours < 8)) {
                     // включает, записываем что от датчика
                     $deviceLight = managerDevices::getDevice($idDeviceUnitLight);
                     $data = json_encode(['value' => 1, 'status' => statusKey::MOVE]);
                     $deviceLight->setData($data);
                     unset($deviceLight);
-                //}
+                }
             }
         } else { // нет движения
             if ($isLight) { // горит свет
