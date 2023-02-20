@@ -4,7 +4,7 @@ function light_tile_setEvent() {
         const lamp = $(this);
         const label = lamp.attr("label");
         let value = lamp.attr("value");
-        value = value == "on" ? "off" : "on";
+        value = value == "on" ? "0" : "1";
         $.get("powerKey.php?label="+label+"&value="+value+"&status=web", function () {});
     });
 
