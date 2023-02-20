@@ -1,0 +1,30 @@
+.light_tile {
+    margin-top:5px;
+    height: 100px;
+}
+
+.light_button_setup {
+    margin-left: 8px;
+    height: 55px;
+    width: 128px;
+}
+
+#light_button_tile {
+    background: url('../img2/icon_big/123.png') no-repeat center center;
+}
+
+#light_button_plan {
+    background: url('../img2/icon_big/plan.png') no-repeat center center;
+}
+
+.light_tile_lamp_on{
+    height: 72px;
+    width: 72px;
+    background: url('../img2/lamp_on.png') no-repeat center center;
+}
+
+.light_tile_lamp_off{
+    height: 72px;
+    width: 72px;
+    background: url('../img2/lamp_off.png') no-repeat center center;
+}

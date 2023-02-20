@@ -67,7 +67,8 @@ interface statusKeyData {
         'off'=>3,
         'unknown'=>4,
         'device'=>5,
-        'reedswitch'=>6];
+        'reedswitch'=>6,
+        'touch'=>7];
 
     const NONE        = 0;  //нет статуса
     const MOVE        = 1;  //от датчика движения
@@ -76,6 +77,7 @@ interface statusKeyData {
     const UNKNOWN     = 4;  //неизвестно, скорее всего через выключатель не связанный с сервером
     const DEVICE      = 5;  //на самом модуле
     const REED_SWITCH = 6;  //от геркона (сухой контакт)
+    const TOUCH       = 7;  //сенсорный датчик (кнопка)
 }
 
 interface modeUnit {

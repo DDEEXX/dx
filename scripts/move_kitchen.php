@@ -17,7 +17,7 @@ class move_kitchen
 
     const NAME_MOVE = 'move_kitchen';
     const NAME_LIGHT = 'light_kitchen_vent';
-    const MOVE_TIME = 120;         //через сколько секунд выключится подсветка после отсутствия движения при включении от датчика движения
+    const MOVE_TIME = 60;         //через сколько секунд выключится подсветка после отсутствия движения при включении от датчика движения
     const MOVE_TIME_GLOBAL = 1800; //через сколько секунд выключится подсветка независимо каким образом она была включена
 
     static function start()

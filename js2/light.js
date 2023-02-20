@@ -1,8 +1,16 @@
+function ligth_tile_updateAll() {
+
+    $.get("getData.php?dev=light_tile&label=backlight_cabinet_table", function (data) {
+        $("#light_tile_cabinet_table").html(data);
+    })
+
+}
+
 $(document).ready(function () {
 
-    $("#accordion_light").accordion();
     $("#backlight_first_floor .button").button( {showLabel: false} );
 
+    ligth_tile_updateAll();
 
     $('.lampkey').click(function () {
         const lamp = $(this);
@@ -25,6 +33,8 @@ $(document).everyTime("1s", function () {
     // 	$("#light_lamp1").html(data);
     // });
 
+    ligth_tile_updateAll();
+
     $.get("getData.php?dev=light&label=light_hol_2_n&type=last&place=250;635&img=backlight", function (data) {
         $("#light_lamp2").html(data);
     });
@@ -38,3 +48,7 @@ $(document).everyTime("1s", function () {
     });
 
 });
+
+$(function () {
+    $(".light_button_setup").button();
+})

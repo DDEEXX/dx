@@ -35,9 +35,9 @@
     background: url('../img2/icon_big/123.png') no-repeat center center;
 }
 
-#weather_button_graph  {
-    background: url('../img2/icon_big/graph.png') no-repeat center center;
-}
+/*#weather_button_graph  {*/
+/*    background: url('../img2/icon_big/graph.png') no-repeat center center;*/
+/*}*/
 
 #weather_button_plan {
     background: url('../img2/icon_big/plan.png') no-repeat center center;

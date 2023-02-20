@@ -2,6 +2,16 @@
 
 require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
 
+const statusKeyData = ['', 'движение', 'web', '', 'неизвестно', 'модуль', 'датчик', 'сенсор'];
+
+//получить статус состояния по числовому коду в виде строки
+function getTitleStatus($status) {
+    if (array_key_exists($status, statusKeyData)) {
+        return statusKeyData[$status];
+    }
+    return '';
+}
+
 if ($_REQUEST['dev'] == 'temp') { //получаем температуру
 
     $label = $_GET['label']; //значение поля "UnitLabel" в таблице "tunits";
@@ -165,11 +175,8 @@ elseif ($_REQUEST['dev'] == 'wind') { //получаем влажность
 }
 
 elseif ($_REQUEST['dev'] == 'light') { //получаем значение освещения
-
     $label = $_GET['label'];
-
     $unit = managerUnits::getUnitLabel($label);
-
     $keyStatus = 'off';
 
     if (!is_null($unit)) {
@@ -199,6 +206,29 @@ elseif ($_REQUEST['dev'] == 'light') { //получаем значение ос�
     echo '<img class="' . $keyStatus . '_light" src="' . $nameImgFile . '">';
     echo '</div>';
     echo '</div>';
+}
+
+elseif ($_REQUEST['dev'] == 'light_tile') {
+    $label = $_GET['label'];
+    $unit = managerUnits::getUnitLabel($label);
+    $keyStatus = 'off';
+    $status = 0;
+    if (!is_null($unit)) {
+        $valueData = json_decode($unit->getData(), true);
+        if (!is_null($valueData)) {
+            $valueNull = $valueData['valueNull'];
+            $status = $valueData['status'];
+            if (!$valueNull) {
+                $keyStatus = (int)$valueData['value'] > 0 ? 'on' : 'off';
+            }
+        }
+    }
+
+    echo '<div  style="display: flex; align-items:flex-end">';
+    echo '    <div class="light_tile_lamp_'.$keyStatus.'"></div>';
+    echo '    <div class="light_tile_lamp_status">'.getTitleStatus($status).'</div>';
+    echo '</div>';
+
 }
 
 elseif ($_REQUEST['dev'] == 'test_status') {
