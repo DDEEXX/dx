@@ -32,3 +32,8 @@
     width: 72px;
     background: url('../img2/lamp_off.png') no-repeat center center;
 }
+
+#backlight_hall .button {
+    padding: 0px;
+    height:30px;
+}

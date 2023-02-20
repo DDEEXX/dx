@@ -23,30 +23,28 @@ function light_tile_updateAll() {
 
 $(document).ready(function () {
 
-    $("#backlight_first_floor .button").button( {showLabel: false} );
-
     light_tile_updateAll();
 
-    $('.lampkey').click(function () {
-        const lamp = $(this);
-        const label = lamp.attr("label");
-        $.get("powerKey.php?label=" + label, function () {
-        });
+    $("#backlight_hall .button").button( {showLabel: false} );
+    $('#backlight_hall .button').click(function () {
+        const value = $(this).attr("value");
+        $.get("powerKey.php?label=backlight_first_floor&value=" + value, function () {});
     });
+    $( "#backlight_hall_slider" ).slider({
+        min: 0,
+        max: 8,
+        slide: function( event, ui ) {
+            let value = ui.value;
+            if (value == 0) {value = 8} //min
+            else if (value == 8) {value = 9}; //max
+            $.get("powerKey.php?label=backlight_first_floor&value=" + value, function () {});
 
-    $('#backlight_first_floor .button').click(function () {
-        const value = $(this).attr("value_mqtt");
-        $.get("powerKey.php?label=backlight_first_floor&value=" + value, function () {
-        });
+        }
     });
 
 });
 
 $(document).everyTime("1s", function () {
-
-    // $.get("getData.php?dev=light&label=light_hol_2&type=last&is_light=is_light_hol_2&place=220;685", function(data)	{
-    // 	$("#light_lamp1").html(data);
-    // });
 
     light_tile_updateAll();
 
