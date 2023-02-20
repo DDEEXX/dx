@@ -225,7 +225,7 @@ elseif ($_REQUEST['dev'] == 'light_tile') {
     }
 
     echo '<div  style="display: flex; align-items:flex-end">';
-    echo '    <div class="light_tile_lamp_'.$keyStatus.'"></div>';
+    echo '    <div class="light_tile_lamp_'.$keyStatus.' light_tile_lamp_click" label="'.$label.'" value="'.$keyStatus.'"></div>';
     echo '    <div class="light_tile_lamp_status">'.getTitleStatus($status).'</div>';
     echo '</div>';
 

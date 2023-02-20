@@ -17,6 +17,10 @@
     background: url('../img2/icon_big/plan.png') no-repeat center center;
 }
 
+.light_tile_lamp_click {
+    cursor: pointer;
+}
+
 .light_tile_lamp_on{
     height: 72px;
     width: 72px;

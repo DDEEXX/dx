@@ -1,6 +1,18 @@
-function ligth_tile_updateAll() {
+function light_tile_setEvent() {
 
-    $.get("getData.php?dev=light_tile&label=backlight_cabinet_table", function (data) {
+    $(".light_tile_click_on_off").on("click", ".light_tile_lamp_click", function () {
+        const lamp = $(this);
+        const label = lamp.attr("label");
+        let value = lamp.attr("value");
+        value = value == "on" ? "off" : "on";
+        $.get("powerKey.php?label="+label+"&value="+value+"&status=web", function () {});
+    });
+
+}
+
+function light_tile_updateAll() {
+
+    $.get("getData.php?dev=light_tile&label=backlight_cabinet_table&mqtt", function (data) {
         $("#light_tile_cabinet_table").html(data);
     })
 
@@ -10,7 +22,7 @@ $(document).ready(function () {
 
     $("#backlight_first_floor .button").button( {showLabel: false} );
 
-    ligth_tile_updateAll();
+    light_tile_updateAll();
 
     $('.lampkey').click(function () {
         const lamp = $(this);
@@ -33,7 +45,7 @@ $(document).everyTime("1s", function () {
     // 	$("#light_lamp1").html(data);
     // });
 
-    ligth_tile_updateAll();
+    light_tile_updateAll();
 
     $.get("getData.php?dev=light&label=light_hol_2_n&type=last&place=250;635&img=backlight", function (data) {
         $("#light_lamp2").html(data);
@@ -51,4 +63,5 @@ $(document).everyTime("1s", function () {
 
 $(function () {
     $(".light_button_setup").button();
+    light_tile_setEvent();
 })
