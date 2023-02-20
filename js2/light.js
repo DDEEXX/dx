@@ -12,8 +12,11 @@ function light_tile_setEvent() {
 
 function light_tile_updateAll() {
 
-    $.get("getData.php?dev=light_tile&label=backlight_cabinet_table&mqtt", function (data) {
+    $.get("getData.php?dev=light_tile&label=backlight_cabinet_table", function (data) {
         $("#light_tile_cabinet_table").html(data);
+    })
+    $.get("getData.php?dev=light_tile&label=light_hol_2_n", function (data) {
+        $("#light_tile_floor_2_backlight").html(data);
     })
 
 }
