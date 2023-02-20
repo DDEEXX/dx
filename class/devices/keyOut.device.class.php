@@ -141,7 +141,7 @@ class KeyOutMakerDevice extends aMakerDevice
     public function setData($data)
     {
         $result = parent::setData($data);
-        if (!$result) {
+        if ($result) {
             $devicePhysic = $this->getDevicePhysic();
             if ($devicePhysic instanceof KeyOutOWire) {
                 $dataDecode = json_decode($data, true);
