@@ -18,6 +18,27 @@ function light_tile_updateAll() {
     $.get("getData.php?dev=light_tile&label=light_hol_2_n", function (data) {
         $("#light_tile_floor_2_backlight").html(data);
     })
+    $.get("getData.php?dev=light_tile&label=light_under_stair", function (data) {
+        $("#light_tile_under_stair").html(data);
+    })
+    $.get("getData.php?dev=light_tile&label=light_stair", function (data) {
+        $("#light_tile_stair").html(data);
+    })
+    $.get("getData.php?dev=light_tile&label=backlight_bathroom", function (data) {
+        $("#light_tile_backlight_bathroom").html(data);
+    })
+    $.get("getData.php?dev=light_tile&label=backlight_understair", function (data) {
+        $("#light_tile_backlight_understair").html(data);
+    })
+    $.get("getData.php?dev=light_tile&label=backlight_kitchen", function (data) {
+        $("#light_tile_backlight_kitchen").html(data);
+    })
+    $.get("getData.php?dev=light_tile&label=light_kitchen_vent", function (data) {
+        $("#light_tile_light_kitchen_vent").html(data);
+    })
+
+
+
 
 }
 

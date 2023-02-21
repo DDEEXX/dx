@@ -59,14 +59,12 @@ class move_hall_2
                 }
             } else { // нет движения
                 if ($isLight) { // горит свет
-
-                    //Определяем сколько секунд прошло после отключения датчика движения
-                    $moveTime = 99999; // если не известно когда изменилось состояние датчика движения
-                    if ($timeNoMove>0) {
-                        $moveTime = $now - $timeNoMove;
-                    }
-
                     if ($statusKey == statusKeyData::MOVE) { // включился датчиком движения
+                        //определяем сколько секунд прошло после отключения датчика движения
+                        $moveTime = 99999; // если не известно когда изменилось состояние датчика движения
+                        if ($timeNoMove>0) {
+                            $moveTime = $now - $timeNoMove;
+                        }
                         if ($moveTime > self::MOVE_TIME_N) { // время вышло с последнего отсутствия движения
                             $deviceLight = managerDevices::getDevice($idDeviceUnitNightLight);
                             $data = json_encode(['value' => 0, 'status' => statusKey::OFF]);
