@@ -211,21 +211,28 @@ elseif ($_REQUEST['dev'] == 'light') { //получаем значение ос�
 elseif ($_REQUEST['dev'] == 'light_tile') {
     $label = $_GET['label'];
     $unit = managerUnits::getUnitLabel($label);
-    $keyStatus = 'off';
+    $value = 'off';
     $status = 0;
+    $payload = 'on';
     if (!is_null($unit)) {
         $valueData = json_decode($unit->getData(), true);
         if (!is_null($valueData)) {
             $valueNull = $valueData['valueNull'];
             $status = $valueData['status'];
             if (!$valueNull) {
-                $keyStatus = (int)$valueData['value'] > 0 ? 'on' : 'off';
+                $value = (int)$valueData['value'] > 0 ? 'on' : 'off';
+                //определим действие для нажатия по текущему состоянию, на случай отсутствия фиксированного действия
+                $payload = (int)$valueData['value'] > 0 ? 'off' : 'on';
             }
+        }
+        if (isset($_REQUEST['payload'])) { //действие по нажатию из конкретного значения
+            $payload = $_REQUEST['payload'];
         }
     }
 
     echo '<div  style="display: flex; align-items:flex-end">';
-    echo '    <div class="light_tile_lamp_'.$keyStatus.' light_tile_lamp_click" label="'.$label.'" value="'.$keyStatus.'"></div>';
+    echo '    <div class="light_tile_lamp_'.$value.' light_tile_lamp_click" label="'.$label.'" value="'.$value.
+          '" payload="'.$payload.'"></div>';
     echo '    <div class="light_tile_lamp_status">'.getTitleStatus($status).'</div>';
     echo '</div>';
 

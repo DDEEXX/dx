@@ -3,8 +3,7 @@ function light_tile_setEvent() {
     $(".light_tile_click_on_off").on("click", ".light_tile_lamp_click", function () {
         const lamp = $(this);
         const label = lamp.attr("label");
-        let value = lamp.attr("value");
-        value = value == "on" ? "0" : "1";
+        const value = lamp.attr("payload");
         $.get("powerKey.php?label="+label+"&value="+value+"&status=web", function () {});
     });
 
@@ -12,8 +11,14 @@ function light_tile_setEvent() {
 
 function light_tile_updateAll() {
 
+    $.get("getData.php?dev=light_tile&label=light_cabinet&payload=pulse", function (data) {
+        $("#light_tile_light_cabinet").html(data);
+    })
     $.get("getData.php?dev=light_tile&label=backlight_cabinet_table", function (data) {
         $("#light_tile_cabinet_table").html(data);
+    })
+    $.get("getData.php?dev=light_tile&label=light_dining&payload=pulse", function (data) {
+        $("#light_tile_light_dining").html(data);
     })
     $.get("getData.php?dev=light_tile&label=light_hol_2_n", function (data) {
         $("#light_tile_floor_2_backlight").html(data);
@@ -27,6 +32,9 @@ function light_tile_updateAll() {
     $.get("getData.php?dev=light_tile&label=backlight_bathroom", function (data) {
         $("#light_tile_backlight_bathroom").html(data);
     })
+    $.get("getData.php?dev=light_tile&label=light_floor_2&payload=pulse", function (data) {
+        $("#light_tile_light_floor_2").html(data);
+    })
     $.get("getData.php?dev=light_tile&label=backlight_understair", function (data) {
         $("#light_tile_backlight_understair").html(data);
     })
@@ -36,9 +44,6 @@ function light_tile_updateAll() {
     $.get("getData.php?dev=light_tile&label=light_kitchen_vent", function (data) {
         $("#light_tile_light_kitchen_vent").html(data);
     })
-
-
-
 
 }
 
