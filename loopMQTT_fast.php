@@ -1,6 +1,7 @@
 <?php
 /**
- * MQTT клиент, реагирует на сообщения, на которые подписан
+ * MQTT клиент, реагирует на сообщения, на которые подписан.
+ * Для сообщений критичных к скорости
  * Created by PhpStorm.
  */
 
@@ -27,11 +28,11 @@ $STDIN = fopen('/dev/null', 'r');
 $STDOUT = fopen($fileDir.'/logs/application.log', 'ab');
 $STDERR = fopen($fileDir.'/logs/daemonLoopMQTT.log', 'ab');
 
-class daemonLoopMQTT extends daemon
+class daemonLoopMQTTfast extends daemon
 {
 
-    const NAME_PID_FILE = 'loopMQTT.pid';
-    const PAUSE = 100000; //Пауза в основном цикле, в микросекундах (0.1 сек)
+    const NAME_PID_FILE = 'loopMQTTfast.pid';
+    const PAUSE = 10000; //Пауза в основном цикле, в микросекундах (0.01 сек)
 
     public function __construct($dirPidFile)
     {
@@ -42,7 +43,7 @@ class daemonLoopMQTT extends daemon
     {
         parent::run();
 
-        $mqtt = new mqttLoop(true, 0);
+        $mqtt = new mqttLoop(true, 1);
         $mqtt->connect();
 
         while (!$this->stopServer()) {
@@ -60,7 +61,7 @@ class daemonLoopMQTT extends daemon
 
 }
 
-$daemon = new daemonLoopMQTT( $fileDir.'/tmp');
+$daemon = new daemonLoopMQTTfast( $fileDir.'/tmp');
 if ($daemon->isDaemonActive()) {
     exit();
 }

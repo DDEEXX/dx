@@ -73,11 +73,11 @@ class mqttLoop
     // массив: индекс - id устройства, значения - истина - обновляем данные, ложь - записываем
     private $deviceDataUpdate;
 
-    public function __construct($subscibe, $logger = false)
+    public function __construct($subscibe, $mqttGroup, $logger = false)
     {
         $this->subscibe = $subscibe;
         $this->logger = $logger;
-        $this->updateSubscribeUnite();
+        $this->updateSubscribeUnite($mqttGroup);
 
         $config = new mqttConfig();
         $this->client = new Mosquitto\Client($config->getID(). '_' .rand(0,9).rand(0,9).rand(0,9).rand(0,9).rand(0,9).rand(0,9));
@@ -89,7 +89,7 @@ class mqttLoop
         $this->client->setCredentials($config->getUser(), $config->getPassword());
     }
 
-    private function updateSubscribeUnite() {
+    private function updateSubscribeUnite($mqttGroup) {
         $this->subscribeDevice = [];
         $this->deviceFormatPayload = [];
         $this->deviceDataUpdate = [];
@@ -97,6 +97,7 @@ class mqttLoop
         $sel = new selectOption();
         $sel->set('Disabled', 0);
         $sel->set('NetTypeID', netDevice::ETHERNET_MQTT);
+        $sel->set('mqtt_group', $mqttGroup);
         $devices = managerDevices::getListDevices($sel);
         foreach ($devices as $device) {
             $devicePhysic = $device->getDevicePhysic();
