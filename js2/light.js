@@ -44,6 +44,9 @@ function light_tile_updateAll() {
     $.get("getData.php?dev=light_tile&label=light_kitchen_vent", function (data) {
         $("#light_tile_light_kitchen_vent").html(data);
     })
+    $.get("getData.php?dev=light_tile&label=light_kitchen&payload=pulse", function (data) {
+        $("#light_tile_light_kitchen").html(data);
+    })
 
 }
 
