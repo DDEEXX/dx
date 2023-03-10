@@ -50,7 +50,10 @@ function light_tile_checkLampStatus() {
     let arLabels = [];
 
     $('#light_tile').find('.light_tile_lamp_click').each(function () {
-        const curLabel = $(this).attr("label");
+        let curLabel = $(this).attr("label");
+        if ($(this).attr("labelSensor")) {
+            curLabel = $(this).attr("labelSensor");
+        }
         arLabels.push(curLabel);
     });
 
@@ -58,12 +61,18 @@ function light_tile_checkLampStatus() {
         $('#light_tile').find('.light_tile_lamp_click').each(function (i, el) {
             const lamp = $(el);
             const label = lamp.attr("label");
+            const labelSensor = lamp.attr("labelSensor");
             const value = lamp.attr("value");
             const lampData = lampsData.find(i=>i.label === label);
             if (lampData) {
                 const id = lampData.id;
                 const payload = lampData.payload === "" ? "" : ("&payload=" + lampData.payload);
-                const res = jsonData.find(i => i.label === label);
+                let res;
+                if (labelSensor) {
+                    res = jsonData.find(i => i.label === labelSensor);
+                } else {
+                    res = jsonData.find(i => i.label === label);
+                }
                 if (res) {
                     if ((value === 'on' && res.value !== 1) ||
                         (value === 'off' && res.value === 1)) {

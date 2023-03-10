@@ -211,10 +211,11 @@ elseif ($_REQUEST['dev'] == 'light') { //получаем значение ос�
 elseif ($_REQUEST['dev'] == 'light_tile') {
     $label = $_GET['label'];
     $unit = managerUnits::getUnitLabel($label);
-    $labelSensor = $_GET['labelSensor'];
+    $labelSensor = '';
     $unitSensor = null;
-    if (!empty($labelSensor)) {
-        $unitSensor = managerUnits::getUnitLabel($labelSensor);
+    if (!empty($_GET['labelSensor'])) {
+        $unitSensor = managerUnits::getUnitLabel($_GET['labelSensor']);
+        $labelSensor = ' labelSensor = "'.$_GET['labelSensor'].'"';
     }
     $value = 'off';
     $status = 0;
@@ -240,8 +241,8 @@ elseif ($_REQUEST['dev'] == 'light_tile') {
     }
 
     echo '<div  style="display: flex; align-items:flex-end">';
-    echo '    <div class="light_tile_lamp_'.$value.' light_tile_lamp_click" label="'.$label.'" value="'.$value.
-          '" payload="'.$payload.'"></div>';
+    echo '    <div class="light_tile_lamp_'.$value.' light_tile_lamp_click" label="'.$label.'"'.$labelSensor.
+        ' value="'.$value.'" payload="'.$payload.'"></div>';
     echo '    <div class="light_tile_lamp_status">'.getTitleStatus($status).'</div>';
     echo '</div>';
 
