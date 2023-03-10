@@ -37,7 +37,7 @@ class KeyOutOWire extends aDeviceMakerPhysicOWire
         if (is_null($dataDecode)) {
             return false;
         }
-        $value = valueToNumeric(checkKeyOutDataValue('value', $dataDecode));
+        $value = checkKeyOutDataValue('value', $dataDecode);
         $channel = $this->getChanel();
         $address = $this->getAddress();
 
@@ -45,7 +45,14 @@ class KeyOutOWire extends aDeviceMakerPhysicOWire
         $OWNetAddress = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_ADDRESS);
         if (preg_match('/^3A\.[A-F0-9]{12,}/', $address)) { //DS2413
             $ow = new OWNet($OWNetAddress);
-            $result = $ow->set('/uncached/' . $address . '/PIO.' . $channel, $value);
+            if (strtolower($value) == 'pulse') {
+                $ow->set('/uncached/' . $address . '/PIO.' . $channel, 1);
+                usleep(500000);
+                $ow->set('/uncached/' . $address . '/PIO.' . $channel, 0);
+            } else {
+                $value = valueToNumeric($value);
+                $result = $ow->set('/uncached/' . $address . '/PIO.' . $channel, $value);
+            }
             unset($ow);
         } else {
             logger::writeLog('Неудачная попытка записать значение в датчик :: ' . $address, loggerTypeMessage::ERROR, loggerName::ERROR);
