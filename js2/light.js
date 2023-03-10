@@ -1,9 +1,9 @@
 const lampsData = [
     {"id": "light_tile_light_cabinet", "label": "light_cabinet", "payload": "pulse"},
     {"id": "light_tile_cabinet_table", "label": "backlight_cabinet_table", "payload": ""},
-    {"id": "light_tile_light_dining", "label": "light_cabinet", "payload": "pulse"},
+    {"id": "light_tile_light_dining", "label": "light_dining", "payload": "pulse"},
     {"id": "light_tile_floor_2_backlight", "label": "light_hol_2_n", "payload": ""},
-    {"id": "light_tile_under_stair", "label": "light_cabinet", "payload": ""},
+    {"id": "light_tile_under_stair", "label": "light_under_stair", "payload": ""},
     {"id": "light_tile_stair", "label": "light_stair", "payload": ""},
     {"id": "light_tile_backlight_bathroom", "label": "backlight_bathroom", "payload": ""},
     {"id": "light_tile_light_floor_2", "label": "light_floor_2", "payload": "pulse"},
