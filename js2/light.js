@@ -37,19 +37,20 @@ function light_tile_updateAll() {
 }
 
 function light_tile_checkLampStatus() {
-    let labels = [];
+
+    let arLabels = [];
 
     $('#light_tile').find('.light_tile_lamp_click').each(function () {
-        const label = $(this).attr("label");
-        labels.push(label);
+        const curLabel = $(this).attr("label");
+        arLabels.push(curLabel);
     });
 
-    $.post("getData.php", {dev: "check_value", 'labels[]': labels}, function (jsonData) {
+    $.post("getData.php", {dev: "check_value", 'labels[]': arLabels}, function (jsonData) {
         $('#light_tile').find('.light_tile_lamp_click').each(function (i, el) {
             const lamp = $(el);
             const label = lamp.attr("label");
             const value = lamp.attr("value");
-            const lampData = lampsData.find(i=>i.label = label);
+            const lampData = lampsData.find(i=>i.label === label);
             if (lampData) {
                 const id = lampData.id;
                 const payload = lampData.payload === "" ? "" : ("&payload=" + lampData.payload);
