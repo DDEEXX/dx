@@ -10,7 +10,11 @@ const lampsData = [
     {"id": "light_tile_backlight_understair", "label": "backlight_understair", "payload": ""},
     {"id": "light_tile_backlight_kitchen", "label": "backlight_kitchen", "payload": ""},
     {"id": "light_tile_light_kitchen_vent", "label": "light_kitchen_vent", "payload": ""},
-    {"id": "light_tile_light_kitchen", "label": "light_kitchen", "payload": "pulse"}
+    {"id": "light_tile_light_kitchen", "label": "light_kitchen", "payload": "pulse"},
+    {"id": "light_tile_light_hallway", "label": "light_hallway", "payload": "pulse"},
+    {"id": "light_tile_light_heater", "label": "light_heater", "payload": "pulse"},
+    {"id": "light_tile_light_toilet", "label": "light_toilet", "payload": "pulse"},
+    {"id": "light_tile_light_garage", "label": "light_garage", "payload": "pulse"}
 ]
 
 function light_tile_setEvent() {
