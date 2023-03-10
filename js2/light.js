@@ -67,7 +67,8 @@ function light_tile_checkLampStatus() {
                 if (res) {
                     if ((value === 'on' && res.value !== 1) ||
                         (value === 'off' && res.value === 1)) {
-                        $.get("getData.php?dev=light_tile&label=" + label + payload, function (data) {
+                        const sensor = lampData.labelSensor?("&labelSensor="+lampData.labelSensor):"";
+                        $.get("getData.php?dev=light_tile&label=" + label + payload + sensor, function (data) {
                             $("#" + id).html(data);
                         })
                     }
