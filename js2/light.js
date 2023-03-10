@@ -45,16 +45,15 @@ function light_tile_checkLampStatus() {
     });
 
     $.post("getData.php", {dev: "check_value", 'labels[]': labels}, function (jsonData) {
-        const data = jsonData;
-        $('#light_tile').find('.light_tile_lamp_click').each(function () {
-            const lamp = $(this);
+        $('#light_tile').find('.light_tile_lamp_click').each(function (i, el) {
+            const lamp = $(el);
             const label = lamp.attr("label");
             const value = lamp.attr("value");
             const lampData = lampsData.find(i=>i.label = label);
             if (lampData) {
                 const id = lampData.id;
                 const payload = lampData.payload === "" ? "" : ("&payload=" + lampData.payload);
-                const res = data.find(i => i.label === label);
+                const res = jsonData.find(i => i.label === label);
                 if (res) {
                     if ((value === 'on' && res.value !== 1) ||
                         (value === 'off' && res.value === 1)) {
