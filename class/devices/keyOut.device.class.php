@@ -12,6 +12,14 @@ function checkKeyOutDataValue($nameValue, $arr)
     }
 }
 
+function valueToNumeric($value) {
+    $result = 0;
+    if (strtolower($value) == 'on' || $value === '1') {
+        $result = 1;
+    }
+    return $result;
+}
+
 class KeyOutOWire extends aDeviceMakerPhysicOWire
 {
 
@@ -29,7 +37,7 @@ class KeyOutOWire extends aDeviceMakerPhysicOWire
         if (is_null($dataDecode)) {
             return false;
         }
-        $value = checkKeyOutDataValue('value', $dataDecode);
+        $value = valueToNumeric(checkKeyOutDataValue('value', $dataDecode));
         $channel = $this->getChanel();
         $address = $this->getAddress();
 
@@ -147,7 +155,7 @@ class KeyOutMakerDevice extends aMakerDevice
                 $dataDecode = json_decode($data, true);
                 if (!is_null($dataDecode)) { //если выходной ключ сразу вернул свое состояние, запишем его
                     $dataValue = time();
-                    $value = checkKeyOutDataValue('value', $dataDecode);
+                    $value = valueToNumeric(checkKeyOutDataValue('value', $dataDecode));
                     $status = checkKeyOutDataValue('status', $dataDecode);
                     if (!is_null($status)) {
                         $status = $this->convertStatus($status);
