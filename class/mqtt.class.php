@@ -96,7 +96,7 @@ class mqttLoop
 
         $sel = new selectOption();
         $sel->set('Disabled', 0);
-        //$sel->set('NetTypeID', netDevice::ETHERNET_MQTT);
+        $sel->set('NetTypeID', netDevice::ETHERNET_MQTT);
         $sel->set('mqtt_group', $mqttGroup);
         $devices = managerDevices::getListDevices($sel);
         foreach ($devices as $device) {

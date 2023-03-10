@@ -18,7 +18,7 @@ const lampsData = [
     {"id": "light_tile_light_hall_1", "label": "light_hall_1", "payload": "pulse"},
     {"id": "light_tile_light_bedroom_Tima", "label": "light_bedroom_Tima", "payload": "pulse"},
     {"id": "light_tile_light_bedroom", "label": "light_bedroom", "payload": "pulse"},
-    {"id": "light_tile_light_bedroom_Lera", "label": "light_bedroom_Lera", "payload": "pulse"}
+    {"id": "light_tile_light_bedroom_Lera", "label": "light_bedroom_Lera", "payload": "pulse", "labelSensor": "sensor_light_bedroom_Lera"}
 ]
 
 function light_tile_setEvent() {
@@ -36,7 +36,8 @@ function light_tile_updateAll() {
 
     $.each(lampsData,function(index, val) {
         const payload = val['payload']===""?"":("&payload="+val['payload']);
-        const path = "getData.php?dev=light_tile&label="+val['label']+payload;
+        const sensor = val['labelSensor']?("&labelSensor="+val['labelSensor']):"";
+        const path = "getData.php?dev=light_tile&label="+val['label']+payload+sensor;
         $.get(path, function (data) {
             $("#"+val['id']).html(data);
         })

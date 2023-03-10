@@ -211,11 +211,20 @@ elseif ($_REQUEST['dev'] == 'light') { //получаем значение ос�
 elseif ($_REQUEST['dev'] == 'light_tile') {
     $label = $_GET['label'];
     $unit = managerUnits::getUnitLabel($label);
+    $labelSensor = $_GET['labelSensor'];
+    $unitSensor = null;
+    if (!empty($labelSensor)) {
+        $unitSensor = managerUnits::getUnitLabel($labelSensor);
+    }
     $value = 'off';
     $status = 0;
     $payload = 'on';
     if (!is_null($unit)) {
-        $valueData = json_decode($unit->getData(), true);
+        if (!is_null($unitSensor)) {
+            $valueData = json_decode($unitSensor->getData(), true);
+        } else {
+            $valueData = json_decode($unit->getData(), true);
+        }
         if (!is_null($valueData)) {
             $valueNull = $valueData['valueNull'];
             $status = $valueData['status'];
