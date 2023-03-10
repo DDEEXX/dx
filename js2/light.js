@@ -15,6 +15,7 @@ const lampsData = [
     {"id": "light_tile_light_heater", "label": "light_heater", "payload": "pulse"},
     {"id": "light_tile_light_toilet", "label": "light_toilet", "payload": "pulse"},
     {"id": "light_tile_light_garage", "label": "light_garage", "payload": "pulse"},
+    {"id": "light_tile_light_hall_1", "label": "light_hall_1", "payload": "pulse"},
     {"id": "light_tile_light_bedroom_Tima", "label": "light_bedroom_Tima", "payload": "pulse"},
     {"id": "light_tile_light_bedroom", "label": "light_bedroom", "payload": "pulse"},
     {"id": "light_tile_light_bedroom_Lera", "label": "light_bedroom_Lera", "payload": "pulse"}
