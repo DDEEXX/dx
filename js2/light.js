@@ -50,9 +50,39 @@ function light_tile_updateAll() {
 
 }
 
+function light_tile_checkLampStatus() {
+    let labels = [];
+
+    $('#light_tile').find('.light_tile_lamp_click').each(function () {
+        const label = $(this).attr("label");
+        labels.push(label);
+    });
+
+    $.post("getData.php", {dev: "check_value", 'labels[]': labels}, function (jsonData) {
+        const data = jsonData;
+        $('#light_tile').find('.light_tile_lamp_click').each(function () {
+            const lamp = $(this);
+            const label = lamp.attr("label");
+            const value = lamp.attr("value");
+            const res = data.find(i => i.label === label);
+            if (res) {
+                if ((value === 'on' && res.value !== 1) ||
+                    (value === 'off' && res.value === 1)) {
+                    $.get("getData.php?dev=light_tile&label="+label+"&payload=pulse", function (data) {
+                        $("#light_tile_light_cabinet").html(data);
+                    })
+                }
+            }
+        });
+    }, "json");
+}
+
 $(document).ready(function () {
 
     light_tile_updateAll();
+
+    $(".light_button_setup").button();
+    light_tile_setEvent();
 
     $("#backlight_hall .button").button( {showLabel: false} );
     $('#backlight_hall .button').click(function () {
@@ -64,10 +94,9 @@ $(document).ready(function () {
         max: 8,
         slide: function( event, ui ) {
             let value = ui.value;
-            if (value == 0) {value = 8} //min
-            else if (value == 8) {value = 9}; //max
+            if (value === 0) {value = 8} //min
+            else if (value === 8) {value = 9} //max
             $.get("powerKey.php?label=backlight_first_floor&value=" + value, function () {});
-
         }
     });
 
@@ -75,23 +104,22 @@ $(document).ready(function () {
 
 $(document).everyTime("1s", function () {
 
-    light_tile_updateAll();
+    light_tile_checkLampStatus();
 
-    $.get("getData.php?dev=light&label=light_hol_2_n&type=last&place=250;635&img=backlight", function (data) {
-        $("#light_lamp2").html(data);
-    });
+    //light_tile_updateAll();
 
-    $.get("getData.php?dev=light&label=light_stairs_3&type=last&place=220;685&img=backlight", function (data) {
-        $("#light_lamp3").html(data);
-    });
+    //Plan
+    // $.get("getData.php?dev=light&label=light_hol_2_n&type=last&place=250;635&img=backlight", function (data) {
+    //     $("#light_lamp2").html(data);
+    // });
+    //
+    // $.get("getData.php?dev=light&label=light_stairs_3&type=last&place=220;685&img=backlight", function (data) {
+    //     $("#light_lamp3").html(data);
+    // });
+    //
+    // $.get("getData.php?dev=light&label=bathroom_mirror_light&type=last&place=295;735&img=backlight", function (data) {
+    //     $("#light_lamp10").html(data);
+    // });
 
-    $.get("getData.php?dev=light&label=bathroom_mirror_light&type=last&place=295;735&img=backlight", function (data) {
-        $("#light_lamp10").html(data);
-    });
 
 });
-
-$(function () {
-    $(".light_button_setup").button();
-    light_tile_setEvent();
-})

@@ -263,3 +263,24 @@ elseif ($_REQUEST['dev'] == 'test_status') {
     header('Content-Type: application/json');
     echo json_encode($result);
 }
+
+elseif ($_REQUEST['dev'] == 'check_value') {
+    $result = [];
+    $labels = $_POST['labels'];
+    foreach ($labels as $label) {
+        $unit = managerUnits::getUnitLabel($label);
+        if (!is_null($unit)) {
+            $valueData = json_decode($unit->getData(), true);
+            $value = -1;
+            if (!is_null($valueData)) {
+                $valueNull = $valueData['valueNull'];
+                if (!$valueNull) {
+                    $value = (int)$valueData['value'] > 0 ? 1 : 0;
+                }
+            }
+            $result[] = ['label'=>$label, 'value'=>$value];
+        }
+    }
+    header('Content-Type: application/json');
+    echo json_encode($result);
+}
