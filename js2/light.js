@@ -1,3 +1,18 @@
+const lampsData = [
+    {"id": "light_tile_light_cabinet", "label": "light_cabinet", "payload": "pulse"},
+    {"id": "light_tile_cabinet_table", "label": "backlight_cabinet_table", "payload": ""},
+    {"id": "light_tile_light_dining", "label": "light_cabinet", "payload": "pulse"},
+    {"id": "light_tile_floor_2_backlight", "label": "light_hol_2_n", "payload": ""},
+    {"id": "light_tile_under_stair", "label": "light_cabinet", "payload": ""},
+    {"id": "light_tile_stair", "label": "light_stair", "payload": ""},
+    {"id": "light_tile_backlight_bathroom", "label": "backlight_bathroom", "payload": ""},
+    {"id": "light_tile_light_floor_2", "label": "light_floor_2", "payload": "pulse"},
+    {"id": "light_tile_backlight_understair", "label": "backlight_understair", "payload": ""},
+    {"id": "light_tile_backlight_kitchen", "label": "backlight_kitchen", "payload": ""},
+    {"id": "light_tile_light_kitchen_vent", "label": "light_kitchen_vent", "payload": ""},
+    {"id": "light_tile_light_kitchen", "label": "light_kitchen", "payload": "pulse"}
+]
+
 function light_tile_setEvent() {
 
     $(".light_tile_click_on_off").on("click", ".light_tile_lamp_click", function () {
@@ -11,41 +26,12 @@ function light_tile_setEvent() {
 
 function light_tile_updateAll() {
 
-    $.get("getData.php?dev=light_tile&label=light_cabinet&payload=pulse", function (data) {
-        $("#light_tile_light_cabinet").html(data);
-    })
-    $.get("getData.php?dev=light_tile&label=backlight_cabinet_table", function (data) {
-        $("#light_tile_cabinet_table").html(data);
-    })
-    $.get("getData.php?dev=light_tile&label=light_dining&payload=pulse", function (data) {
-        $("#light_tile_light_dining").html(data);
-    })
-    $.get("getData.php?dev=light_tile&label=light_hol_2_n", function (data) {
-        $("#light_tile_floor_2_backlight").html(data);
-    })
-    $.get("getData.php?dev=light_tile&label=light_under_stair", function (data) {
-        $("#light_tile_under_stair").html(data);
-    })
-    $.get("getData.php?dev=light_tile&label=light_stair", function (data) {
-        $("#light_tile_stair").html(data);
-    })
-    $.get("getData.php?dev=light_tile&label=backlight_bathroom", function (data) {
-        $("#light_tile_backlight_bathroom").html(data);
-    })
-    $.get("getData.php?dev=light_tile&label=light_floor_2&payload=pulse", function (data) {
-        $("#light_tile_light_floor_2").html(data);
-    })
-    $.get("getData.php?dev=light_tile&label=backlight_understair", function (data) {
-        $("#light_tile_backlight_understair").html(data);
-    })
-    $.get("getData.php?dev=light_tile&label=backlight_kitchen", function (data) {
-        $("#light_tile_backlight_kitchen").html(data);
-    })
-    $.get("getData.php?dev=light_tile&label=light_kitchen_vent", function (data) {
-        $("#light_tile_light_kitchen_vent").html(data);
-    })
-    $.get("getData.php?dev=light_tile&label=light_kitchen&payload=pulse", function (data) {
-        $("#light_tile_light_kitchen").html(data);
+    $.each(lampsData,function(index, val) {
+        const payload = val['payload']===""?"":("&payload="+val['payload']);
+        const path = "getData.php?dev=light_tile&label="+val['label']+payload;
+        $.get(path, function (data) {
+            $("#"+val['id']).html(data);
+        })
     })
 
 }
@@ -64,13 +50,18 @@ function light_tile_checkLampStatus() {
             const lamp = $(this);
             const label = lamp.attr("label");
             const value = lamp.attr("value");
-            const res = data.find(i => i.label === label);
-            if (res) {
-                if ((value === 'on' && res.value !== 1) ||
-                    (value === 'off' && res.value === 1)) {
-                    $.get("getData.php?dev=light_tile&label="+label+"&payload=pulse", function (data) {
-                        $("#light_tile_light_cabinet").html(data);
-                    })
+            const lampData = lampsData.find(i=>i.label = label);
+            if (lampData) {
+                const id = lampData.id;
+                const payload = lampData.payload === "" ? "" : ("&payload=" + lampData.payload);
+                const res = data.find(i => i.label === label);
+                if (res) {
+                    if ((value === 'on' && res.value !== 1) ||
+                        (value === 'off' && res.value === 1)) {
+                        $.get("getData.php?dev=light_tile&label=" + label + payload, function (data) {
+                            $("#" + id).html(data);
+                        })
+                    }
                 }
             }
         });
