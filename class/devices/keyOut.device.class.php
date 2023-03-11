@@ -14,7 +14,9 @@ function checkKeyOutDataValue($nameValue, $arr)
 
 function valueToNumeric($value) {
     $result = 0;
-    if (strtolower($value) == 'on' || $value === '1') {
+    if (is_numeric($value)) {
+        $result = $value;
+    } elseif (strtolower($value) == 'on' || $value === '1') {
         $result = 1;
     }
     return $result;
