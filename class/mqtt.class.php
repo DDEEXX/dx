@@ -270,8 +270,10 @@ class mqttLoop
                     if (!is_null($state)) {
                         if ($state == 'ON') {
                             $result['value'] = 1;
+                            $result['valueNull'] = false;
                         } elseif ($state == 'OFF') {
                             $result['value'] = 0;
+                            $result['valueNull'] = false;
                         }
                     }
                 }
