@@ -51,7 +51,11 @@ foreach ($devices as $device) {
             continue;
         }
     }
-
+    if (is_a($devicePhysic, 'switchWHD02_MQTT')) {
+        if (array_key_exists($deviceId, $codeDevices)) {
+            $codeDevices[$deviceId] = 0;
+        }
+    }
     if (array_key_exists($deviceId, $codeDevices)) {
         managerDevices::updateTestCode($device, $codeDevices[$deviceId], $now);
     }

@@ -374,7 +374,10 @@ class mqttTest
                     loggerTypeMessage::NOTICE,
                     loggerName::MQTT);
             }
-            $testCode = (int)$message->payload;
+            $testCode = $message->payload;
+            if (is_numeric($testCode)) {
+                $testCode = (int)$testCode;
+            }
             $this->testCodeDevice[$idDevice] = $testCode;
         }
     }

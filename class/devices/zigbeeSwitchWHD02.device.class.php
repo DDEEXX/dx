@@ -15,7 +15,6 @@ class switchWHD02_MQTT extends aDeviceMakerPhysicMQTT
             return false;
         }
         $value = managerDevices::checkDataValue('value', $dataDecode);
-        $status = managerDevices::checkDataValue('status', $dataDecode);
         if (!is_null($value)) {
             if (strtolower($value) == 'on') {
                 $payload = '{"state": "ON"}';
@@ -30,6 +29,19 @@ class switchWHD02_MQTT extends aDeviceMakerPhysicMQTT
             return false;
         }
 
+    }
+
+    /** @noinspection PhpMissingParentCallCommonInspection */
+    public function test()
+    {
+        $mqtt = mqttSend::connect();
+        $topicCmnd = $this->getTopicTest().'/get';
+        if (!empty($topicCmnd)) {
+            $payload = '{"state": ""}';
+            $mqtt->publish($topicCmnd, $payload);
+        }
+        unset($mqtt);
+        return testDeviceCode::IS_MQTT_DEVICE;
     }
 
 }
