@@ -64,6 +64,9 @@ class deviceFactory
             case typeDevice::HUMIDITY :
                 $className = 'humiditySensorDevice';
                 break;
+            case typeDevice::SWITCH_WHD02 :
+                $className = 'zigbeeSwitchWHD02';
+                break;
             default :
                 return null;
         }
@@ -203,6 +206,15 @@ class managerDevices
         $arrValue = DB::getLastTestCode();
         $arrKey = array_column($arrValue, 'DeviceID', 'DeviceID');
         return array_combine($arrKey, $arrValue);
+    }
+
+    public static function checkDataValue($nameValue, $arr)
+    {
+        if (is_array($arr)) {
+            return array_key_exists($nameValue, $arr) ? $arr[$nameValue] : null;
+        } else {
+            return null;
+        }
     }
 
 }

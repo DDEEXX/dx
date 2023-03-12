@@ -24,6 +24,7 @@ interface typeDevice{
     const KEY_OUT           = 5; //Выходной ключ - коммутирует маленькие токи
     const PRESSURE          = 7; //Датчик атмосферного давления
     const HUMIDITY          = 8; //Датчик влажности
+    const SWITCH_WHD02      = 9; //Датчик влажности
 }
 
 interface typeUnit{
@@ -129,4 +130,5 @@ interface formatValueDevice {
     const MQTT_PRESSURE = 3;
     const MQTT_KEY_IN = 4;
     const MQTT_KEY_OUT = 5;
+    const MQTT_SWITCH_WHD02 = 6;
 }

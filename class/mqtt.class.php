@@ -263,6 +263,19 @@ class mqttLoop
                     }
                 }
                 break;
+            case formatValueDevice::MQTT_SWITCH_WHD02 :
+                $dataDecode = json_decode($payload, true);
+                if (!is_null($dataDecode)) {
+                    $state = managerDevices::checkDataValue('state', $dataDecode);
+                    if (!is_null($state)) {
+                        if ($state == 'ON') {
+                            $result['value'] = 1;
+                        } elseif ($state == 'OFF') {
+                            $result['value'] = 0;
+                        }
+                    }
+                }
+                break;
         }
         return $result;
     }
