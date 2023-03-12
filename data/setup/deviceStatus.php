@@ -97,6 +97,7 @@
                         $result = '';
                         break;
                     case typeDevice::POWER_KEY :
+                    case typeDevice::SWITCH_WHD02 :
                     case typeDevice::KEY_OUT :
                         $result = 'img2/icon_small/power.png';
                         break;
