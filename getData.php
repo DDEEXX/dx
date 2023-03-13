@@ -175,35 +175,51 @@ elseif ($_REQUEST['dev'] == 'wind') { //получаем влажность
 }
 
 elseif ($_REQUEST['dev'] == 'light') { //получаем значение освещения
+
     $label = $_GET['label'];
     $unit = managerUnits::getUnitLabel($label);
-    $keyStatus = 'off';
+    $labelSensor = '';
+    $unitSensor = null;
+    if (!empty($_GET['labelSensor'])) {
+        $unitSensor = managerUnits::getUnitLabel($_GET['labelSensor']);
+        $labelSensor = ' labelSensor = "'.$_GET['labelSensor'].'"';
+    }
+    $value = 'off';
+    $status = 0;
+    $payload = 'on';
 
     if (!is_null($unit)) {
-        $valueData = json_decode($unit->getData(), true);
+        if (!is_null($unitSensor)) {
+            $valueData = json_decode($unitSensor->getData(), true);
+        } else {
+            $valueData = json_decode($unit->getData(), true);
+        }
         if (!is_null($valueData)) {
             $valueNull = $valueData['valueNull'];
             if (!$valueNull) {
-                $keyStatus = (int)$valueData['value'] > 0 ? 'on' : 'off';
+                $value = (int)$valueData['value'] > 0 ? 'on' : 'off';
+                //определим действие для нажатия по текущему состоянию, на случай отсутствия фиксированного действия
+                $payload = (int)$valueData['value'] > 0 ? 'off' : 'on';
             }
         }
-    } else {
-        $keyStatus = 'empty';
+        if (isset($_REQUEST['payload'])) { //действие по нажатию из конкретного значения
+            $payload = $_REQUEST['payload'];
+        }
     }
 
     $place = explode(';', $_GET['place']);
-
     $nameImgFile = isset($_GET['img']) ? $_GET['img'] : 'light';
-
-    if ($keyStatus == 'on') {
+    if ($value == 'on') {
         $nameImgFile = 'img2/' . $nameImgFile . '_on.png';
     } else {
         $nameImgFile = 'img2/' . $nameImgFile . '_off.png';
     }
 
-    echo '<div class="lamp light_status_' . $keyStatus . '" label="' . $label . '" style="top:' . $place[0] . 'px;left:' . $place[1] . 'px">';
-    echo '<div class="lamp_img" style="top:5px;left:10px">';
-    echo '<img class="' . $keyStatus . '_light" src="' . $nameImgFile . '">';
+    echo '<div class="light_plan_lamp_click light_plan_lamp_'.$value.'" label="'.$label.
+        '"'.$labelSensor.' value="'.$value.'" payload="'.$payload.
+        '" style="top:' . $place[0] . 'px;left:' . $place[1] . 'px">';
+    echo '<div class="light_plan_lamp_img" style="top:5px;left:10px">';
+    echo '<img class="' . $value . '_light" src="' . $nameImgFile . '">';
     echo '</div>';
     echo '</div>';
 }

@@ -83,37 +83,6 @@
     float: right
 }
 
-.lamp {
-    position: absolute;
-    height: 40px;
-    width: 40px;
-    border-radius: 50%;
-}
-
-.lampkey {
-    position: absolute;
-    height: 40px;
-    width: 40px;
-    border-radius: 50%;
-}
-
-.lamp_img {
-    position: absolute
-}
-
-.on_light {
-    box-shadow: 0px 0px 60px 60px rgba(255, 191, 0, 0.3);
-    border-radius: 100%;
-}
-
-div.lamp.light_status_on {
-    border: 1px solid #ffbf00
-}
-
-div.lamp.light_status_off {
-    border: 1px solid #86aeff
-}
-
 body {
     background-image: url(temes/dx/images/background.jpg);
 }

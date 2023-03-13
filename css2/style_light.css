@@ -37,3 +37,27 @@
     padding: 0px;
     height:30px;
 }
+.light_plan_lamp_click {
+    position: absolute;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.light_plan_lamp_img {
+    position: absolute
+}
+
+.light_plan_lamp_on {
+    border: 1px solid #ffbf00
+}
+
+.light_plan_lamp_off {
+    border: 1px solid #86aeff
+}
+
+.light_plan_lamp_img.on_light {
+    box-shadow: 0px 0px 60px 60px rgba(255, 191, 0, 0.3);
+    border-radius: 100%;
+}

@@ -91,8 +91,6 @@ function light_tile_checkLampStatus() {
 $(document).ready(function () {
 
     light_tile_updateAll();
-
-    $(".light_button_setup").button();
     light_tile_setEvent();
 
     $("#backlight_hall .button").button( {showLabel: false} );
@@ -116,21 +114,5 @@ $(document).ready(function () {
 $(document).everyTime("1s", function () {
 
     light_tile_checkLampStatus();
-
-    //light_tile_updateAll();
-
-    //Plan
-    // $.get("getData.php?dev=light&label=light_hol_2_n&type=last&place=250;635&img=backlight", function (data) {
-    //     $("#light_lamp2").html(data);
-    // });
-    //
-    // $.get("getData.php?dev=light&label=light_stairs_3&type=last&place=220;685&img=backlight", function (data) {
-    //     $("#light_lamp3").html(data);
-    // });
-    //
-    // $.get("getData.php?dev=light&label=bathroom_mirror_light&type=last&place=295;735&img=backlight", function (data) {
-    //     $("#light_lamp10").html(data);
-    // });
-
 
 });
