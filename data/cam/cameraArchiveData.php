@@ -163,7 +163,7 @@ elseif ($dev == 'timelapse') {
         <div id="jp_container_1" class="jp-video jp-video-360p" role="application" aria-label="media player">
             <div class="jp-type-single">
 
-                <div id="cam_video_player" tl_name = "<?php echo $cam->getArchiveTimelapseLocalFileName($path)?>"></div>
+                <div id="cam_video_player" tl_name = "<?php echo $cam->getArchiveTimelapseLocalFileNamePlayer($path)?>"></div>
                 <div class="jp-gui">
                     <div class="jp-video-play">
                         <button class="jp-video-play-icon" role="button" tabindex="0">play</button>
@@ -243,7 +243,7 @@ elseif ($dev == 'video') {
         <div id="jp_container_1" class="jp-video jp-video-360p" role="application" aria-label="media player">
             <div class="jp-type-single">
 
-                <div id="cam_video_player" tl_name = "<?php echo $cam->getArchiveVideoLocalFileName($path)?>"></div>
+                <div id="cam_video_player" tl_name = "<?php echo $cam->getArchiveVideoLocalFileNamePlayer($path)?>"></div>
                 <div class="jp-gui">
                     <div class="jp-video-play">
                         <button class="jp-video-play-icon" role="button" tabindex="0">play</button>

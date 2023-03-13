@@ -12,17 +12,27 @@ require_once(dirname(__FILE__) . '/logger.class.php');
 
 interface iCamera
 {
-    const MONTH = [1=>'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-        'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь' ];
+    const MONTH = [1 => 'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+        'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+
     function checkCameraDir();
+
     function getArchiveImageDirStructureYearMonth();
+
     function getArchiveImageDays($year, $month);
+
     function getArchiveImageShots($year, $month, $day);
+
     function getArchiveImageShotFullFileName($nameFileArchive);
+
     function getListArchiveTimelapseFiles();
-    function getArchiveTimelapseLocalFileName($nameFileArchive);
+
+    function getArchiveTimelapseLocalFileNamePlayer($nameFileArchive);
+
     function getListArchiveVideoFiles();
-    function getArchiveVideoLocalFileName($nameFileArchive);
+
+    function getArchiveVideoLocalFileNamePlayer($nameFileArchive);
+
     function getArchiveImageLocalFileName($year, $month, $day, $nameFileArchive);
 }
 
@@ -161,8 +171,8 @@ class camera implements iCamera
                 if ($time > $today) {
                     continue;
                 }
-                $newFilename = pathinfo($filename,  PATHINFO_FILENAME);
-                $newName = $this->getTimelapseDir() . '/' . $newFilename. '.' . $this->extensionVideoConvert;
+                $newFilename = pathinfo($filename, PATHINFO_FILENAME);
+                $newName = $this->getTimelapseDir() . '/' . $newFilename . '.' . $this->extensionVideoConvert;
                 try {
                     $command = sprintf('ffmpeg -i %s -c:v libx264 -c:a copy -y %s', $filename, $newName);
                     $output = NULL;
@@ -171,8 +181,7 @@ class camera implements iCamera
                     if ($result_code != 0) {
                         logger::writeLog($this->getInformation() . ' Ошибка при перемещении файла ' . $filename . ' в ' . $newName,
                             loggerTypeMessage::ERROR, loggerName::CAMERAS);
-                    }
-                    else {
+                    } else {
                         unlink($filename);
                         chgrp($newName, $this->wwwGroup);
                         chown($newName, $this->wwwOwner);
@@ -292,8 +301,7 @@ class camera implements iCamera
                         chgrp($newName, $this->wwwGroup);
                         chown($newName, $this->wwwOwner);
                         chmod($newName, $this->permissions);
-                    }
-                    else {
+                    } else {
                         logger::writeLog($this->getInformation() . ' Ошибка при перемещении файла ' . $nameFile . ' в ' . $newName . '. ',
                             loggerTypeMessage::ERROR, loggerName::CAMERAS);
                         return false;
@@ -493,7 +501,7 @@ class camera implements iCamera
     private function getTimelapseDir($local = false)
     {
         if ($local) {
-            return $this->archiveDirLocal . '/' . $this->timelapseDir;
+            return '../../' . $this->archiveDirLocal . '/' . $this->timelapseDir;
         }
         return $this->archiveDir . '/' . $this->timelapseDir;
     }
@@ -515,7 +523,7 @@ class camera implements iCamera
     private function getVideoDir($local = false)
     {
         if ($local) {
-            return $this->archiveDirLocal . '/' . $this->videoDir;
+            return '../../' . $this->archiveDirLocal . '/' . $this->videoDir;
         }
         return $this->archiveDir . '/' . $this->videoDir;
     }
@@ -635,8 +643,7 @@ class camera implements iCamera
             unlink($this->listVideoFiles);
             if ($result_code != 0) {
                 return false;
-            }
-            else {
+            } else {
                 chgrp($nameArchiveVideoFile, $this->wwwGroup);
                 chown($nameArchiveVideoFile, $this->wwwOwner);
                 chmod($nameArchiveVideoFile, $this->permissions);
@@ -683,7 +690,7 @@ class camera implements iCamera
     private function getImageDir($local = false)
     {
         if ($local) {
-            return $this->archiveDirLocal . '/' . $this->imageDir;
+            return '../../' . $this->archiveDirLocal . '/' . $this->imageDir;
         }
         return $this->archiveDir . '/' . $this->imageDir;
     }
@@ -691,12 +698,13 @@ class camera implements iCamera
     /** Получает структуру папок хранения архива изображений
      * @return array - индекс год, значение массив месяцев
      */
-    public function getArchiveImageDirStructureYearMonth() {
+    public function getArchiveImageDirStructureYearMonth()
+    {
 
         $result = [];
-        $imageDir = $this->getImageDir();
+        $imageDir = $this->getImageDir(true);
         if (!is_dir($imageDir)) {
-            logger::writeLog('Не удалось обратиться к архиву изображений камеры, путь='.$imageDir,
+            logger::writeLog('Не удалось обратиться к архиву изображений камеры, путь=' . $imageDir,
                 loggerTypeMessage::ERROR,
                 loggerName::CAMERAS);
             return $result;
@@ -706,12 +714,16 @@ class camera implements iCamera
                 $fullNameY = $imageDir . '/' . $fileY;
                 if (is_dir($fullNameY)) {
                     $month = [];
-                    if ($fileY == '.' || $fileY == '..') { continue; }
+                    if ($fileY == '.' || $fileY == '..') {
+                        continue;
+                    }
 
                     if ($handleM = opendir($fullNameY)) { //сканирование месяцев года
                         while (false !== ($fileM = readdir($handleM))) {
-                            $fullNameM = $fullNameY.'/'.$fileM;
-                            if ($fileM == '.' || $fileM == '..') { continue; }
+                            $fullNameM = $fullNameY . '/' . $fileM;
+                            if ($fileM == '.' || $fileM == '..') {
+                                continue;
+                            }
                             if (is_dir($fullNameM)) {
                                 $month[] = $fileM;
                             }
@@ -723,13 +735,14 @@ class camera implements iCamera
             }
             closedir($handleY);
         }
-        krsort($result,  SORT_NATURAL );
+        krsort($result, SORT_NATURAL);
         return $result;
     }
 
-    public function getArchiveImageDays($year, $month) {
+    public function getArchiveImageDays($year, $month)
+    {
         $result = [];
-        $path = $this->getImageDir().'/'.$year.'/'.$month;
+        $path = $this->getImageDir() . '/' . $year . '/' . $month;
         if (!is_dir($path)) {
             return $result;
         }
@@ -737,13 +750,15 @@ class camera implements iCamera
             while (false !== ($file = readdir($handle))) {
                 $fullName = $path . '/' . $file;
                 if (is_dir($fullName)) {
-                    if ($file == '.' || $file == '..') { continue; }
+                    if ($file == '.' || $file == '..') {
+                        continue;
+                    }
                     $result[] = $file;
                 }
             }
             closedir($handle);
         }
-        sort($result,  SORT_NATURAL );
+        sort($result, SORT_NATURAL);
         return $result;
     }
 
@@ -753,15 +768,19 @@ class camera implements iCamera
      * @param $b
      * @return int
      */
-    private function sortNameFileOnDate($a, $b) {
-        if ($a['date'] == $b['date']){ return 0; }
-        return ($a['date']<$b['date']) ? -1 : 1;
+    private function sortNameFileOnDate($a, $b)
+    {
+        if ($a['date'] == $b['date']) {
+            return 0;
+        }
+        return ($a['date'] < $b['date']) ? -1 : 1;
     }
 
-    function getArchiveImageShots($year, $month, $day) {
+    function getArchiveImageShots($year, $month, $day)
+    {
 
         $result = [];
-        $path = $this->getImageDir().'/'.$year.'/'.$month.'/'.$day;
+        $path = $this->getImageDir() . '/' . $year . '/' . $month . '/' . $day;
         if (!is_dir($path)) {
             return $result;
         }
@@ -776,7 +795,7 @@ class camera implements iCamera
                 if ($ext == 'jpg') {
                     $fileTime = filemtime($image_name);
                     $fileTime = !$fileTime ? 0 : $fileTime;
-                    $result[] = ['file'=>$file, 'date'=>$fileTime];
+                    $result[] = ['file' => $file, 'date' => $fileTime];
                 }
             }
             closedir($handle);
@@ -785,8 +804,9 @@ class camera implements iCamera
         return array_column($result, 'file');
     }
 
-    function getArchiveImageShotFullFileName($nameFileArchive) {
-        $fullNameFile = $this->getImageDir().'/'.$nameFileArchive;
+    function getArchiveImageShotFullFileName($nameFileArchive)
+    {
+        $fullNameFile = $this->getImageDir() . '/' . $nameFileArchive;
         if (is_file($fullNameFile)) {
             return $fullNameFile;
         }
@@ -797,11 +817,12 @@ class camera implements iCamera
      * Получить список архивных timelapse файлов, список отсортирован по имени файлов (по дате)ю
      * @return array
      */
-    function getListArchiveTimelapseFiles() {
+    function getListArchiveTimelapseFiles()
+    {
         $result = [];
-        $path = $this->getTimelapseDir();
+        $path = $this->getTimelapseDir(true);
         if (!is_dir($path)) {
-            logger::writeLog('Не найден каталог с timelapse камеры, путь='.$path,
+            logger::writeLog('Не найден каталог с timelapse камеры, путь=' . $path,
                 loggerTypeMessage::ERROR,
                 loggerName::CAMERAS);
             return $result;
@@ -816,22 +837,21 @@ class camera implements iCamera
                 }
             }
             closedir($handle);
-        }
-        else {
-            logger::writeLog('Не удалось прочитать содержимое каталога '.$path.
+        } else {
+            logger::writeLog('Не удалось прочитать содержимое каталога ' . $path .
                 ' при получении файлов timelapse',
                 loggerTypeMessage::ERROR,
                 loggerName::CAMERAS);
         }
-        rsort($result,  SORT_NATURAL );
+        rsort($result, SORT_NATURAL);
         return $result;
     }
 
-    function getArchiveTimelapseLocalFileName($nameFileArchive)
+    function getArchiveTimelapseLocalFileNamePlayer($nameFileArchive)
     {
-       $fullNameFile = $this->getTimelapseDir(true).'/'.$nameFileArchive;
+        $fullNameFile = $this->getTimelapseDir(true) . '/' . $nameFileArchive;
         if (is_file($fullNameFile)) {
-            return $fullNameFile;
+            return substr($fullNameFile, 6); //убираем '../../'
         }
         return '';
     }
@@ -845,7 +865,7 @@ class camera implements iCamera
         $result = [];
         $path = $this->getVideoDir(true);
         if (!is_dir($path)) {
-            logger::writeLog('Не найден каталог с timelapse камеры, путь='.$path,
+            logger::writeLog('Не найден каталог с timelapse камеры, путь=' . $path,
                 loggerTypeMessage::ERROR,
                 loggerName::CAMERAS);
             return $result;
@@ -860,22 +880,21 @@ class camera implements iCamera
                 }
             }
             closedir($handle);
-        }
-        else {
-            logger::writeLog('Не удалось прочитать содержимое каталога '.$path.
+        } else {
+            logger::writeLog('Не удалось прочитать содержимое каталога ' . $path .
                 ' при получении файлов timelapse',
                 loggerTypeMessage::ERROR,
                 loggerName::CAMERAS);
         }
-        rsort($result,  SORT_NATURAL );
+        rsort($result, SORT_NATURAL);
         return $result;
     }
 
-    function getArchiveVideoLocalFileName($nameFileArchive)
+    function getArchiveVideoLocalFileNamePlayer($nameFileArchive)
     {
-        $fullNameFile = $this->getVideoDir(true).'/'.$nameFileArchive;
+        $fullNameFile = $this->getVideoDir(true) . '/' . $nameFileArchive;
         if (is_file($fullNameFile)) {
-            return $fullNameFile;
+            return substr($fullNameFile, 6); //убираем '../../'
         }
         return '';
     }
@@ -890,7 +909,8 @@ class camera implements iCamera
      */
     function getArchiveImageLocalFileName($year, $month, $day, $nameFileArchive)
     {
-        $path = $this->getImageDir(true).'/'.$year.'/'.$month.'/'.$day;
-        return $path.'/'.$nameFileArchive;
+        $path = $this->getImageDir(true) . '/' . $year . '/' . $month . '/' . $day;
+        $path = substr($path, 6);
+        return $path . '/' . $nameFileArchive;
     }
 }
