@@ -823,7 +823,7 @@ class camera implements iCamera
                 loggerTypeMessage::ERROR,
                 loggerName::CAMERAS);
         }
-        sort($result,  SORT_NATURAL );
+        rsort($result,  SORT_NATURAL );
         return $result;
     }
 
@@ -867,7 +867,7 @@ class camera implements iCamera
                 loggerTypeMessage::ERROR,
                 loggerName::CAMERAS);
         }
-        sort($result,  SORT_NATURAL );
+        rsort($result,  SORT_NATURAL );
         return $result;
     }
 

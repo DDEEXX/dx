@@ -1,5 +1,5 @@
 <?php
-include_once(dirname(__FILE__) . '/class/cameras.class.php');
+include_once(dirname(__FILE__) . '/../../class/cameras.class.php');
 
 $numCamera = $_GET['cam'];
 $dev = $_GET['dev'];

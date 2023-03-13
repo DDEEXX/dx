@@ -25,7 +25,6 @@
     <link rel="stylesheet" type="text/css" href="css2/style.css">
     <link href="js2/jPlayer/skin/dxhome/css/jplayer.blue.monday.min.css" rel="stylesheet" type="text/css" />
 
-    <!--suppress JSJQueryEfficiency -->
     <script>
         $(function () {
             $.ajaxSetup({cache: false});
@@ -40,28 +39,15 @@
             });
             //подсвечиваем выбранный пункт меню
             $('#mainMenu').find('li:first').addClass('ui-menu-item-selected'); // при загрузке страницы сразу даем класс первой ссылке, то есть индексной странице
+            const location = window.location.href; // переменная с адресом текущей страницы
             $('#mainMenu').find('a').each(function () { // проходим по нужным нам ссылками
-                const location = window.location.href; // переменная с адресом страницы
-                const link = this.href; // переменная с url ссылки
-                if (location === link) {
+                const link = this.href; // переменная с url ссылки пункта меню
+                if (location.startsWith(link)) {
                     $('#mainMenu').find('li:first').removeClass('ui-menu-item-selected'); // сначала удаляем класс с индексной страницы
                     $(this).parent().addClass('ui-menu-item-selected'); // добавляем класс
                 }
             });
-
-            //$("button").button();
-            // $("button.upDown").button({
-            //     icons: {
-            //         primary: "ui-icon-upDown"
-            //     },
-            //     text: false
-            // });
-            // $("button").button().click(function (event) {
-            //         event.preventDefault();
-            // });
-
         });
-
     </script>
 
 </head>

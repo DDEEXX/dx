@@ -8,7 +8,7 @@ $(function () {
     $(".cam_button").button();
 
     $("#cam_archive_1").click(function () { //кнопка Архив под изображением с камеры 1
-        $.get("cameraArchive.php?cam=1", function (data) {
+        $.get("data/cam/cameraArchive.php?cam=1", function (data) {
             $("#cam_data").html(data);
         });
     });
