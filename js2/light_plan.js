@@ -63,7 +63,7 @@ function light_plan_checkLampStatus() {
     });
 
     $.post("getData.php", {dev: "check_value", 'labels[]': arLabels}, function (jsonData) {
-        $('#light_tile').find('.light_tile_lamp_click').each(function (i, el) {
+        $('#light_plan').find('.light_plan_lamp_click').each(function (i, el) {
             const lamp = $(el);
             const label = lamp.attr("label");
             const labelSensor = lamp.attr("labelSensor");
