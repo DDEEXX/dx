@@ -672,6 +672,7 @@ require_once dirname(__FILE__) . '/devices/pressure.device.class.php';
 require_once dirname(__FILE__) . '/devices/keyIn.device.class.php';
 require_once dirname(__FILE__) . '/devices/keyOut.device.class.php';
 require_once dirname(__FILE__) . '/devices/zigbeeSwitchWHD02.device.class.php';
+require_once dirname(__FILE__) . '/devices/kitchenHood.device.class.php';
 
 class labelSensorDevice extends aSensorDevice
 {

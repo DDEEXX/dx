@@ -67,6 +67,9 @@ class deviceFactory
             case typeDevice::SWITCH_WHD02 :
                 $className = 'zigbeeSwitchWHD02';
                 break;
+            case typeDevice::KITCHEN_HOOD :
+                $className = 'kitchenHood';
+                break;
             default :
                 return null;
         }
