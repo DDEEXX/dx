@@ -190,21 +190,29 @@ class mqttLoop
             }
 
             $deviceDataValue = $this->convertPayload($message->payload, $formatValueDevice);
-            $deviceData = new deviceData($idDevice);
-            if ($updateData === true) {
-                if ($this->logger) {
-                    logger::writeLog('update '.json_encode($deviceDataValue),
-                        loggerTypeMessage::NOTICE,
-                        loggerName::MQTT);
+            if ($formatValueDevice == formatValueDevice::MQTT_KITCHEN_HOOD) {
+                //Если данные пришли в формате кухонной вытяжки, то проверим что само устройство тоже кухонная вытяжка
+                $device = managerDevices::getDevice($idDevice);
+                if (is_a($device, 'kitchenHood')) {
+                    $device->saveValue($deviceDataValue);
                 }
-                $deviceData->updateData($deviceDataValue['value'], time(), $deviceDataValue['valueNull'], $deviceDataValue['status']);
             } else {
-                if ($this->logger) {
-                    logger::writeLog('set '.json_encode($deviceDataValue),
-                        loggerTypeMessage::NOTICE,
-                        loggerName::MQTT);
+                $deviceData = new deviceData($idDevice);
+                if ($updateData === true) {
+                    if ($this->logger) {
+                        logger::writeLog('update ' . json_encode($deviceDataValue),
+                            loggerTypeMessage::NOTICE,
+                            loggerName::MQTT);
+                    }
+                    $deviceData->updateData($deviceDataValue['value'], time(), $deviceDataValue['valueNull'], $deviceDataValue['status']);
+                } else {
+                    if ($this->logger) {
+                        logger::writeLog('set ' . json_encode($deviceDataValue),
+                            loggerTypeMessage::NOTICE,
+                            loggerName::MQTT);
+                    }
+                    $deviceData->setData($deviceDataValue['value'], time(), $deviceDataValue['valueNull'], $deviceDataValue['status']);
                 }
-                $deviceData->setData($deviceDataValue['value'], time(), $deviceDataValue['valueNull'], $deviceDataValue['status']);
             }
         }
     }
@@ -277,6 +285,9 @@ class mqttLoop
                         }
                     }
                 }
+                break;
+            case formatValueDevice::MQTT_KITCHEN_HOOD :
+                $result = $payload;
                 break;
         }
         return $result;

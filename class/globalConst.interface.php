@@ -25,6 +25,7 @@ interface typeDevice{
     const PRESSURE          = 7; //Датчик атмосферного давления
     const HUMIDITY          = 8; //Датчик влажности
     const SWITCH_WHD02      = 9; //Датчик влажности
+    const KITCHEN_HOOD      = 10;//Кухонная вытяжка
 }
 
 interface typeUnit{
@@ -36,6 +37,7 @@ interface typeUnit{
     const KEY_OUT           = 5; //Выходной ключ - коммутирует маленькие токи
     const PRESSURE          = 7; //Датчик атмосферного давления
     const HUMIDITY          = 8; //Датчик влажности
+    const KITCHEN_HOOD      = 9; //Кухонная вытяжка
 }
 
 interface graphType {
@@ -131,4 +133,5 @@ interface formatValueDevice {
     const MQTT_KEY_IN = 4;
     const MQTT_KEY_OUT = 5;
     const MQTT_SWITCH_WHD02 = 6;
+    const MQTT_KITCHEN_HOOD = 7;
 }

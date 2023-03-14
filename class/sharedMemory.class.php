@@ -33,38 +33,6 @@ class sharedMemoryDeviceData {
 
 }
 
-class sharedMemoryUnit
-{
-    /** Запись в разделяемую память модуля
-     * @param unit $unit
-     * @return null
-     */
-    static public function set(unit $unit)
-    {
-        $smKey = $unit->getSmKey();
-        $shmID = shm_attach($smKey);
-        $semID = sem_get($smKey);
-        $idUnit = $unit->getId();
-        if ($shmID === false) {
-            logger::writeLog('При инициализации модуля с id ' .$idUnit. ' ошибка в shm_attach()', loggerTypeMessage::ERROR, loggerName::ERROR);
-            return null;
-        }
-        if ($semID === false) {
-            logger::writeLog('При инициализации модуля с id ' .$idUnit. ' ошибка в sem_get()', loggerTypeMessage::ERROR, loggerName::ERROR);
-            return null;
-        }
-        $error = false;
-        if (!sem_acquire($semID)) $error = true;
-        if (!shm_put_var($shmID, $idUnit, $unit)) $error = true;
-        if (!sem_release($semID)) $error = true;
-        if ($error) {
-            logger::writeLog('ошибка записи модуля с id ' .$idUnit. ' в распределяемую память', loggerTypeMessage::ERROR, loggerName::ERROR);
-            return null;
-        }
-        return $idUnit;
-    }
-}
-
 class sharedMemoryUnits
 {
     const FILE_PATH = __FILE__;
@@ -83,7 +51,7 @@ class sharedMemoryUnits
     }
 
     /**
-     * sharedMemoryUnit constructor.
+     * sharedMemoryUnits constructor.
      * @param string $projectID
      * @param int $size
      * @throws shareMemoryInitUnitException
@@ -178,34 +146,7 @@ class sharedMemoryUnits
 
     static public function getUnitID($id) {
 
-//        try {
-//            $sm = self::getInstance(sharedMemory::PROJECT_LETTER_KEY);
-//        } catch (shareMemoryInitUnitException $e) {
-//            return null;
-//        }
-//
-//        $unitsID = $sm->get(sharedMemory::KEY_ID_MODULE);
-//        if (array_key_exists($id, $unitsID)) {
-//            $idModule = $id;
-//            $projectID = $unitsID[$id];
-//        }
-//        else {
-//            return null;
-//        }
-//
-//        if (is_null($idModule) || is_null($projectID)) {
-//            return null;
-//        }
-//
-//        try {
-//            $sm = self::getInstance($projectID);
-//        } catch (shareMemoryInitUnitException $e) {
-//            return null;
-//        }
-//
-//        return $sm->get($idModule);
-
-            return null;
+        return null;
 
     }
 
@@ -234,6 +175,7 @@ class managerSharedMemory {
      * @return bool
      */
     public static function init() {
+        //глобальные значения из БД
         try {
             $sm = sharedMemoryUnits::getInstance(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::SIZE_MEMORY_KEY);
         } catch (shareMemoryInitUnitException $e) {
@@ -242,6 +184,7 @@ class managerSharedMemory {
         if (!$sm->set(sharedMemory::KEY_1WARE_PATH, DB::getConst('OWNETDir'))) {return false;}
         if (!$sm->set(sharedMemory::KEY_1WARE_ADDRESS, DB::getConst('OWNetAddress'))) {return false;}
 
+        //связь между наименованием модуля и ID модуля и устройства (для быстрого поиска без обращения к БД)
         try {
             $sm = sharedMemoryUnits::getInstance(sharedMemory::PROJECT_LETTER_UNITS, sharedMemory::SIZE_MEMORY_UNITS);
         } catch (shareMemoryInitUnitException $e) {
@@ -259,6 +202,7 @@ class managerSharedMemory {
         }
         if (!$sm->set(0, $smUnits)) {return false;}
 
+        //данные устройств
         $listDevice = managerDevices::getListDevices();
         foreach ($listDevice as $device) {
             $idDevice = $device->getDeviceID();

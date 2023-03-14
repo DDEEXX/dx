@@ -397,3 +397,7 @@ class KeyOutUnit extends moduleUnit
         }
     }
 }
+
+class kitchenVentUnit extends sensorUnit {
+
+}

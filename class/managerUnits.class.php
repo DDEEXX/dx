@@ -41,6 +41,9 @@ class unitFactory
             case typeUnit::HUMIDITY :
                 $className = 'humidityUnit';
                 break;
+            case typeUnit::KITCHEN_HOOD :
+                $className = 'kitchenVentUnit';
+                break;
             default :
                 $className = '';
         }
@@ -100,7 +103,7 @@ class managerUnits
 
     /** Создает получает объект модуля по параметрам в $value
      * @param array $value
-     * @return |humidityUnit|keyInUnit|mixed|powerKeyUnit|pressureUnit|temperatureUnit|null
+     * @return |humidityUnit|keyInUnit|KeyOutUnit|kitchenVentUnit|mixed|pressureUnit|temperatureUnit|null
      */
     private static function createUnite(array $value)
     {
