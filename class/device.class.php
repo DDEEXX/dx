@@ -286,7 +286,11 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
         $this->topicCmnd = $mqttParameters['topicCmnd'];
         $this->topicStat = $mqttParameters['topicStat'];
         $this->topicTest = $mqttParameters['topicTest'];
-        $this->requestPayload = $mqttParameters['payload'];
+        if (isset($mqttParameters['payload'])) {
+            $this->requestPayload = $mqttParameters['payload'];
+        } else {
+            $this->requestPayload = '';
+        }
         $this->formatValue = $formatValue;
     }
 

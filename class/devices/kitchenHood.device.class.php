@@ -1,6 +1,6 @@
 <?php
 
-class kitchenHood_MQTT extends aDeviceMakerPhysicMQTT
+class kitchenHood_MQTT extends aDeviceSensorPhysicMQTT
 {
 
     public function __construct($mqttParameters)
@@ -8,10 +8,36 @@ class kitchenHood_MQTT extends aDeviceMakerPhysicMQTT
         parent::__construct($mqttParameters, formatValueDevice::MQTT_KITCHEN_HOOD);
     }
 
+    function getData($deviceID) {
+
+        try {
+            $con = sqlDataBase::Connect();
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции DB::getConst. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return '';
+        }
+        $deviceID = $con->getConnect()->real_escape_string($deviceID);
+        $query = 'SELECT * FROM tdevicevalue WHERE DeviceID=' .$deviceID.' Order By Date Desc LIMIT 1';
+        try {
+            $value = queryDataBase::getOne($con, $query);
+            if (is_array($value) && array_key_exists('Value', $value)) {
+                $value = $value['Value'];
+            } else {
+                $value = '';
+            }
+        } catch (querySelectDBException $e) {
+            $value = '';
+        }
+        return $value;
+    }
+
 }
 
 class kitchenHood extends aSensorDevice
 {
+    private $value;
+
     public function __construct(array $options)
     {
         parent::__construct($options, typeDevice::KITCHEN_HOOD);
@@ -26,8 +52,13 @@ class kitchenHood extends aSensorDevice
         $dateValue = date('Y-m-d H:i:s');
         $deviceID = $this->getDeviceID();
 
-        $query = sprintf('INSERT INTO tdevicevalue (ValueID, DeviceID, Date, Value) VALUES (NULL, \'%s\', \'%s\', \'%s\')',
-            $deviceID, $dateValue, $value);
+        if (parent::getData() == '') {
+            $query = sprintf('INSERT INTO tdevicevalue (DeviceID, Date, Value) VALUES (\'%s\', \'%s\', \'%s\')',
+                $deviceID, $dateValue, $value);
+        } else {
+            $template = 'UPDATE tdevicevalue SET Date = \'%s\', Value = \'%s\' WHERE DeviceID = %s';
+            $query = sprintf($template, $dateValue, $value, $deviceID);
+        }
 
         try {
             $con = sqlDataBase::Connect();

@@ -9,6 +9,10 @@ $(document).ready(function () {
         $("#label_garage_door").html(data);
     });
 
+    // $.get("getData.php?dev=kitchenHood", function (data) {
+    //     $("#power_kitchen_hood").html(data);
+    // });
+
 });
 
 $(document).everyTime("5s", function () {

@@ -400,4 +400,18 @@ class KeyOutUnit extends moduleUnit
 
 class kitchenVentUnit extends sensorUnit {
 
+    public function __construct(array $options)
+    {
+        parent::__construct($options, typeUnit::KITCHEN_HOOD);
+    }
+
+    public function getData()
+    {
+        $value = '';
+        $device = $this->getDevice();
+        if (!is_null($device)) {
+            $value = $device->getData();
+        }
+        return $value;
+    }
 }

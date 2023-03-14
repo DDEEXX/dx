@@ -261,7 +261,6 @@ if ($p == 'weather') {
     <?php
 }
 
-//Освещение
 if ($p == 'light') {
     ?>
 
@@ -312,8 +311,8 @@ if ($p == 'power') {
 
     <script src="js2/power.js"></script>
 
-    <div id="page_power" class="grid_11">
-        <div class="grid_11 alpha">
+    <div id="page_power" class="grid_12">
+        <div class="grid_12 alpha omega">
             <div class="ui-corner-all ui-widget-header" style="margin-top: 5px">
                 <h2 style="margin-left:5px;font-size:150%;">Исполнители</h2>
             </div>
@@ -321,19 +320,24 @@ if ($p == 'power') {
         <div class="clear"></div>
         <div class="grid_4 alpha">
             <div class="ui-corner-all ui-state-default ui-widget-content"
+                 style="margin-top:5px;height:120px;position:relative">
+                <h2 style="margin-left:5px">Кухонная вытяжка</h2>
+                <div id="power_kitchen_hood">
+                    <div></div>
+
+
+                </div>
+            </div>
+        </div>
+        <div class="grid_4">
+            <div class="ui-corner-all ui-state-default ui-widget-content"
                  style="margin-top:5px;height:90px;position:relative">
                 <h2 style="margin-left:5px">Гаражные ворота</h2>
                 <div id="label_garage_door" style="float:left;margin-left:8px;margin-top:2px"></div>
                 <button style="margin-left:20px;margin-top:10px;" class="upDown"></button>
             </div>
         </div>
-        <div class="grid_4">
-            <div class="ui-corner-all ui-state-default ui-widget-content"
-                 style="margin-top:5px;height:90px;position:relative">
-                <h2 style="margin-left:5px">Ворота</h2>
-            </div>
-        </div>
-        <div class="grid_3 omega">
+        <div class="grid_4 omega">
             <div class="ui-corner-all ui-state-default ui-widget-content"
                  style="margin-top:5px;height:90px;position:relative">
                 <h2 style="margin-left:5px">Калитка</h2>
@@ -529,6 +533,7 @@ if ($p == 'properties') {
     </div>
     <?php
 }
+
 if ($p == 'setup') {
     ?>
 

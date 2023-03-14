@@ -310,3 +310,7 @@ elseif ($_REQUEST['dev'] == 'check_value') {
     header('Content-Type: application/json');
     echo json_encode($result);
 }
+
+elseif ($_REQUEST['dev'] == 'kitchenHood') {
+    include 'data/power/kitchenHood.php';
+}

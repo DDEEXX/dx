@@ -118,7 +118,13 @@ class sqlDataBase implements iSqlDataBase
 
     public function __destruct()
     {
-        if ($this->dbConnect) $this->dbConnect->close();
+        if ($this->dbConnect) {
+            try {
+                $this->dbConnect->close();
+            } finally {
+
+            }
+        }
     }
 
 }
