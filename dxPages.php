@@ -323,7 +323,7 @@ if ($p == 'power') {
                  style="margin-top:5px;height:120px;position:relative">
                 <h2 style="margin-left:5px">Кухонная вытяжка</h2>
                 <div id="power_kitchen_hood"></div>
-                <div id="power_kitchen_hood_update_info" style="top: -23px; left: 125px">u</div>
+                <div id="power_kitchen_hood_update_info" style="top: -5px; left: 327px">u</div>
             </div>
         </div>
         <div class="grid_4">
