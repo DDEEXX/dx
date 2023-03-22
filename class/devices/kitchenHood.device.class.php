@@ -8,6 +8,7 @@ class kitchenHood_MQTT extends aDeviceSensorPhysicMQTT
         parent::__construct($mqttParameters, formatValueDevice::MQTT_KITCHEN_HOOD);
     }
 
+    /** @noinspection PhpMissingParentCallCommonInspection */
     function getData($deviceID) {
 
         try {
@@ -36,8 +37,6 @@ class kitchenHood_MQTT extends aDeviceSensorPhysicMQTT
 
 class kitchenHood extends aSensorDevice
 {
-    private $value;
-
     public function __construct(array $options)
     {
         parent::__construct($options, typeDevice::KITCHEN_HOOD);
