@@ -57,7 +57,9 @@ if (is_array($valueVent)) {
     echo '            </div>';
     echo '            <div style="float: right; margin-top: 5px"><p>'.$workTime.'</p></div>';
     echo '        </div>';
-    echo '        <div style="margin-left: 20px; margin-top: 5px"><img src="img2/light_'.$valueLight.'.png" alt=""></div>';
+    echo '        <div style="margin-left: 20px; margin-top: 5px">';
+    echo '          <img id="power_kitchen_hood_light" value="'.$valueLight.'" src="img2/light_'.$valueLight.'.png" alt="">';
+    echo '        </div>';
     echo '        <div style="margin-left: 5px">';
     echo '            <div style="font-size: 70%">'.$infoTemp.'</div>';
     echo '            <div style="font-size: 70%">'.$infoHum.'</div>';
