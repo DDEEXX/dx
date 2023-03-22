@@ -20,17 +20,19 @@ class kitchenHood_MQTT extends aDeviceSensorPhysicMQTT
         }
         $deviceID = $con->getConnect()->real_escape_string($deviceID);
         $query = 'SELECT * FROM tdevicevalue WHERE DeviceID=' .$deviceID.' Order By Date Desc LIMIT 1';
+        $result = [];
         try {
             $value = queryDataBase::getOne($con, $query);
             if (is_array($value) && array_key_exists('Value', $value)) {
-                $value = $value['Value'];
+                $result['date'] = strtotime($value['Date']);
+                $result['value'] = $value['Value'];
             } else {
-                $value = '';
+                $result['date'] = 0; $result['value'] = '';
             }
         } catch (querySelectDBException $e) {
-            $value = '';
+            $result['date'] = 0; $result['value'] = '';
         }
-        return $value;
+        return $result;
     }
 
 }

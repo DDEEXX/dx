@@ -1,6 +1,8 @@
 <?php
 $unit = managerUnits::getUnitLabel('kitchen_hood');
-$valueVent = json_decode($unit->getData(), true);
+$dataVent = $unit->getData();
+$valueVent = json_decode($dataVent['value'], true);
+$dateLastStatus = $dataVent['date'];
 
 $unit = managerUnits::getUnitLabel('light_kitchen_vent');
 $valueLight = 'off';
@@ -43,6 +45,7 @@ if (is_array($valueVent)) {
     $infoRun = 'Enable: '.$deltaEnable.' Disable:'.$deltaDisable;
 
     echo '<div id="kitchen_hood_mode" style="margin-left:5px;margin-top:2px">';
+    echo '    <input id="kitchen_hood_last_status" value='.$dateLastStatus.' type="hidden"/>';
     echo '    <div>';
     echo '        <p>режим: <span style="color: '.$colorMode.'">'.$mode.'</span></p>';
     echo '    </div>';

@@ -314,3 +314,19 @@ elseif ($_REQUEST['dev'] == 'check_value') {
 elseif ($_REQUEST['dev'] == 'kitchenHood') {
     include 'data/power/kitchenHood.php';
 }
+
+elseif ($_REQUEST['dev'] == 'check_ventStatus') {
+    $result = ['update' => false];
+    $dateStatus = (int)$_REQUEST['dateStatus'];
+    $unit = managerUnits::getUnitLabel('kitchen_hood');
+    if (!is_null($unit)) {
+        $unitData = $unit->getData();
+        $dateLastStatus = $unitData['date'];
+        if ($dateStatus != $dateLastStatus) {
+            $result['update'] = true;
+        }
+    }
+    header('Content-Type: application/json');
+    echo json_encode($result);
+}
+
