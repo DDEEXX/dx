@@ -60,14 +60,17 @@ $(document).ready(function () {
 });
 
 $(function () {
+
     power_updateAll();
+
+    $("#power_kitchen_hood_update_info").button().click(function () {
+        $.get("updateKitchenHoodInfo.php", function () {});
+    });
+
 });
 
-$(document).everyTime("5s", function () {
+$(document).everyTime("2s", function () {
 
     power_checkVent_Status();
 
-    // $.get("getData.php?dev=label&label=label_garage_door&type=last", function (data) {
-    //     $("#label_garage_door").html(data);
-    // });
 });

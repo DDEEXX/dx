@@ -322,29 +322,8 @@ if ($p == 'power') {
             <div class="ui-corner-all ui-state-default ui-widget-content"
                  style="margin-top:5px;height:120px;position:relative">
                 <h2 style="margin-left:5px">Кухонная вытяжка</h2>
-                <div id="power_kitchen_hood">
-<!--                    <div id="kitchen_hood_mode" style="margin-left:5px;margin-top:2px">-->
-<!--                        <div>-->
-<!--                            <p>режим: <span style="color: #00ff00">авто</span></p>-->
-<!--                        </div>-->
-<!--                        <div style="margin-top: 5px; display: flex">-->
-<!--                            <div>-->
-<!--                                <div style="display: flex">-->
-<!--                                    <div style="margin: 2px; width: 15px; height: 7px; background-color: #00ff00"></div>-->
-<!--                                    <div><img src="img2/icon_big/fan.png" alt=""></div>-->
-<!--                                </div>-->
-<!--                                <div style="margin-top: 5px"><p>1:23:15</p></div>-->
-<!--                            </div>-->
-<!--                            <div style="margin-left: 20px; margin-top: 5px"><img src="img2/light_on.png" alt=""></div>-->
-<!--                            <div style="margin-left: 5px">-->
-<!--                                <div>t:26&deg; tv:31&deg; d:5&deg</div>-->
-<!--                                <div></div>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-
-
-                </div>
+                <div id="power_kitchen_hood"></div>
+                <div id="power_kitchen_hood_update_info" style="top: -23px; left: 125px">u</div>
             </div>
         </div>
         <div class="grid_4">
