@@ -2,12 +2,10 @@
 
 class kitchenHood_MQTT extends aDeviceSensorPhysicMQTT
 {
-
     public function __construct($mqttParameters)
     {
         parent::__construct($mqttParameters, formatValueDevice::MQTT_KITCHEN_HOOD);
     }
-
 }
 
 class kitchenHood extends aSensorDevice
