@@ -44,6 +44,9 @@ class unitFactory
             case typeUnit::KITCHEN_HOOD :
                 $className = 'kitchenVentUnit';
                 break;
+            case typeUnit::GAS_SENSOR :
+                $className = 'gasSensorUnit';
+                break;
             default :
                 $className = '';
         }

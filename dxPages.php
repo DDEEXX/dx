@@ -326,7 +326,21 @@ if ($p == 'power') {
                 <div id="power_kitchen_hood_update_info" style="top: -5px; left: 327px">u</div>
             </div>
         </div>
-        <div class="grid_4">
+        <div class="grid_2">
+            <div class="ui-corner-all ui-state-default ui-widget-content"
+                 style="margin-top:5px;height:120px;position:relative">
+                <h2 style="margin-left:5px">Датчик газа кухни</h2>
+                <div id="power_kitchen_gas_sensor"></div>
+            </div>
+        </div>
+        <div class="grid_2">
+            <div class="ui-corner-all ui-state-default ui-widget-content"
+                 style="margin-top:5px;height:120px;position:relative">
+                <h2 style="margin-left:5px">Резерв</h2>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div class="grid_4 alpha">
             <div class="ui-corner-all ui-state-default ui-widget-content"
                  style="margin-top:5px;height:90px;position:relative">
                 <h2 style="margin-left:5px">Гаражные ворота</h2>

@@ -1,9 +1,11 @@
 
 function power_updateAll() {
 
-    //вытяжка
     $.get("getData.php?dev=kitchenHood", function (data) {
         $("#power_kitchen_hood").html(data);
+    });
+    $.get("getData.php?dev=gasSensor&label=gas_sensor_kitchen", function (data) {
+        $("#power_kitchen_gas_sensor").html(data);
     });
 
 }
@@ -32,8 +34,20 @@ function power_checkVent_Status() {
                     }
                 }
             }, "json");
+        }
+    }, "json");
 
+}
 
+function power_checkKitchenGasSensor_Status() {
+
+    const curDateStatus = $('#kitchen_gas_sensor_last_status').val();
+
+    $.post("getData.php", {dev: "check_gasSensorStatus", dateStatus: curDateStatus, label: 'gas_sensor_kitchen'}, function (jsonData) {
+        if (jsonData['update']) {
+            $.get("getData.php?dev=gasSensor&label=gas_sensor_kitchen", function (data) {
+                $("#power_kitchen_gas_sensor").html(data);
+            });
         }
     }, "json");
 
@@ -72,5 +86,6 @@ $(function () {
 $(document).everyTime("2s", function () {
 
     power_checkVent_Status();
+    power_checkKitchenGasSensor_Status();
 
 });

@@ -1,8 +1,12 @@
 <?php
 $unit = managerUnits::getUnitLabel('kitchen_hood');
-$dataVent = $unit->getData();
-$valueVent = json_decode($dataVent['value'], true);
-$dateLastStatus = $dataVent['date'];
+$valueVent = null;
+$dateLastStatus = '';
+if (!is_null($unit)) {
+    $dataVent = $unit->getData();
+    $valueVent = json_decode($dataVent['value'], true);
+    $dateLastStatus = $dataVent['date'];
+}
 
 $unit = managerUnits::getUnitLabel('light_kitchen_vent');
 $valueLight = 'off';

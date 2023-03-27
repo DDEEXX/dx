@@ -33,9 +33,9 @@ class deviceDataValue implements iDeviceDataValue
     {
         return json_encode(
             ['value' => $this->value,
-            'valueNull' => $this->valueNull,
-            'date' => $this->date,
-            'status' => $this->status]);
+                'valueNull' => $this->valueNull,
+                'date' => $this->date,
+                'status' => $this->status]);
     }
 
     function setDefaultValue()
@@ -173,15 +173,15 @@ class deviceData implements iDeviceData
         if (is_array($dataSm)) {
             $data = $this->data;
             if (array_key_exists('value', $dataSm)) {
-                    $data->value = (float)$dataSm['value'];
-                }
+                $data->value = (float)$dataSm['value'];
+            }
             if (array_key_exists('date', $dataSm)) {
-                    $data->date = (int)$dataSm['date'];
-                }
+                $data->date = (int)$dataSm['date'];
+            }
             if (array_key_exists('status', $dataSm)) {
-                    $status = (int)$dataSm['status'];
-                    $this->writeSmStatusToCurrentData($status);
-                }
+                $status = (int)$dataSm['status'];
+                $this->writeSmStatusToCurrentData($status);
+            }
         }
     }
 
@@ -198,7 +198,7 @@ class deviceData implements iDeviceData
     function updateData($value = 0.0, $date = 0, $valueNull = true, $status = 0)
     {
         $this->extractDataFromSm();
-        if (($this->data->value != $value) || ($this->data->valueNull!=$valueNull)) {
+        if (($this->data->value != $value) || ($this->data->valueNull != $valueNull)) {
             $this->setData($value, $date, $valueNull, $status);
         }
     }
@@ -210,7 +210,9 @@ class deviceData implements iDeviceData
 interface iDevicePhysic
 {
     function test();
+
     function getFormatValue();
+
     function getData($deviceID);
 }
 
@@ -219,26 +221,34 @@ interface iDeviceSensorPhysic extends iDevicePhysic
     function requestData();
 }
 
-interface iDeviceMakerPhysic extends iDevicePhysic{
+interface iDeviceMakerPhysic extends iDevicePhysic
+{
     function setData($data);
 }
 
-interface iDevicePhysicMQTT {
+interface iDevicePhysicMQTT
+{
     const PAYLOAD_TEST = 'test';
+
     function getTopicStat();
+
     function getTopicTest();
 }
 
-interface iDevicePhysicOWire {
+interface iDevicePhysicOWire
+{
     function getAddress();
 }
 
-interface iDeviceSensorPhysicOWire extends iDeviceSensorPhysic, iDevicePhysicOWire {
+interface iDeviceSensorPhysicOWire extends iDeviceSensorPhysic, iDevicePhysicOWire
+{
     function getAlarm();
+
     function updateAlarm();
 }
 
-interface iDeviceMakerPhysicOWire extends iDeviceMakerPhysic, iDevicePhysicOWire {
+interface iDeviceMakerPhysicOWire extends iDeviceMakerPhysic, iDevicePhysicOWire
+{
     function getChanel();
 }
 
@@ -257,9 +267,39 @@ abstract class aDevicePhysic implements iDevicePhysic
      */
     function getData($deviceID)
     {
-        $deviceData = new deviceData($deviceID);
-        $data = $deviceData->getData();
-        return $data->getDataJSON();
+        switch ($this->formatValue) {
+            case formatValueDevice::MQTT_KITCHEN_HOOD:
+            case formatValueDevice::MQTT_GAS_SENSOR:
+
+                try {
+                    $con = sqlDataBase::Connect();
+                } catch (connectDBException $e) {
+                    logger::writeLog('Ошибка при подключении к базе данных в функции DB::getConst. ' . $e->getMessage(),
+                        loggerTypeMessage::FATAL, loggerName::ERROR);
+                    return '';
+                }
+                $deviceID = $con->getConnect()->real_escape_string($deviceID);
+                $query = 'SELECT * FROM tdevicevalue WHERE DeviceID=' . $deviceID . ' Order By Date Desc LIMIT 1';
+                $result = [];
+                try {
+                    $value = queryDataBase::getOne($con, $query);
+                    if (is_array($value) && array_key_exists('Value', $value)) {
+                        $result['date'] = strtotime($value['Date']);
+                        $result['value'] = $value['Value'];
+                    } else {
+                        $result['date'] = 0;
+                        $result['value'] = '';
+                    }
+                } catch (querySelectDBException $e) {
+                    $result['date'] = 0;
+                    $result['value'] = '';
+                }
+                return $result;
+            default :
+                $deviceData = new deviceData($deviceID);
+                $data = $deviceData->getData();
+                return $data->getDataJSON();
+        }
     }
 
 }
@@ -384,7 +424,8 @@ abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDev
     }
 }
 
-abstract class aDeviceSensorPhysicOWire extends aDeviceSensorPhysic implements iDeviceSensorPhysicOWire{
+abstract class aDeviceSensorPhysicOWire extends aDeviceSensorPhysic implements iDeviceSensorPhysicOWire
+{
 
     private $address;
     private $alarm;
@@ -453,7 +494,7 @@ abstract class aDeviceMakerPhysicOWire extends aDeviceMakerPhysic implements iDe
     public function __construct($address, $chanel = null)
     {
         $this->address = $address;
-        $this->chanel = is_null($chanel)?'':$chanel;
+        $this->chanel = is_null($chanel) ? '' : $chanel;
     }
 
     /**
@@ -485,7 +526,8 @@ class DeviceSensorPhysicDefault extends aDeviceSensorPhysic
         // TODO: Implement requestData() method.
     }
 
-    function test() {
+    function test()
+    {
         // TODO: Implement test() method.
     }
 }
@@ -497,13 +539,15 @@ class DeviceMakerPhysicDefault extends aDeviceMakerPhysic
         return true;
     }
 
-    function test() { return 0; }
+    function test()
+    {
+        return 0;
+    }
 }
 
 /**
  * Устройство
  */
-
 interface iDevice
 {
     function getDeviceID();
@@ -528,11 +572,13 @@ interface iDevice
 
 }
 
-interface iSensorDevice extends iDevice {
+interface iSensorDevice extends iDevice
+{
     function requestData();
 }
 
-interface iMakerDevice extends iDevice {
+interface iMakerDevice extends iDevice
+{
     function setData($data);
 }
 
@@ -637,6 +683,45 @@ abstract class aSensorDevice extends aDevice implements iSensorDevice
         $this->devicePhysic = new DeviceSensorPhysicDefault();
     }
 
+    /**
+     * Записывает в базу данных данные с датчика (как правило, в формате json,
+     * такие данные не нужны для "быстрого" анализа).
+     * @param $value - записываемые данные
+     * @return void
+     */
+    public function saveValue($value)
+    {
+
+        $dateValue = date('Y-m-d H:i:s');
+        $deviceID = $this->getDeviceID();
+
+        if (parent::getData() == '') {
+            $query = sprintf('INSERT INTO tdevicevalue (DeviceID, Date, Value) VALUES (\'%s\', \'%s\', \'%s\')',
+                $deviceID, $dateValue, $value);
+        } else {
+            $template = 'UPDATE tdevicevalue SET Date = \'%s\', Value = \'%s\' WHERE DeviceID = %s';
+            $query = sprintf($template, $dateValue, $value, $deviceID);
+        }
+
+        try {
+            $con = sqlDataBase::Connect();
+            $result = queryDataBase::execute($con, $query);
+            if (!$result) {
+                logger::writeLog('Ошибка при записи в базу данных (writeValue)',
+                    loggerTypeMessage::ERROR, loggerName::ERROR);
+            }
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных',
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка при добавлении данных в базу данных',
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+        }
+
+        unset($con);
+
+    }
+
     abstract function requestData();
 
 }
@@ -677,6 +762,7 @@ require_once dirname(__FILE__) . '/devices/keyIn.device.class.php';
 require_once dirname(__FILE__) . '/devices/keyOut.device.class.php';
 require_once dirname(__FILE__) . '/devices/zigbeeSwitchWHD02.device.class.php';
 require_once dirname(__FILE__) . '/devices/kitchenHood.device.class.php';
+require_once dirname(__FILE__) . '/devices/gasSensor.device.class.php';
 
 class labelSensorDevice extends aSensorDevice
 {

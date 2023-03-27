@@ -330,3 +330,25 @@ elseif ($_REQUEST['dev'] == 'check_ventStatus') {
     echo json_encode($result);
 }
 
+elseif ($_REQUEST['dev'] == 'gasSensor') {
+    include 'data/power/kitchenGasSensor.php';
+}
+
+elseif ($_REQUEST['dev'] == 'check_gasSensorStatus') {
+    $result = ['update' => false];
+    $dateStatus = (int)$_REQUEST['dateStatus'];
+    $label = (int)$_REQUEST['label'];
+    $unit = managerUnits::getUnitLabel($label);
+    if (!is_null($unit)) {
+        $unitData = $unit->getData();
+        $dateLastStatus = $unitData['date'];
+        if ($dateStatus != $dateLastStatus) {
+            $result['update'] = true;
+        }
+    }
+    header('Content-Type: application/json');
+    echo json_encode($result);
+}
+
+
+

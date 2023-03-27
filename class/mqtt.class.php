@@ -14,7 +14,8 @@ require_once(dirname(__FILE__) . '/logger.class.php');
 require_once(dirname(__FILE__) . '/lists.class.php');
 require_once(dirname(__FILE__) . '/managerDevices.class.php');
 
-class mqttSend {
+class mqttSend
+{
 
     private static $clientMQTT = null;
     private $client;
@@ -25,7 +26,7 @@ class mqttSend {
     private function __construct(iConfigMQTT $configMQTT, $logger)
     {
         $this->logger = $logger;
-        $this->client = new Mosquitto\Client($configMQTT->getID(). '_' .rand(0,9).rand(0,9).rand(0,9).rand(0,9).rand(0,9).rand(0,9));
+        $this->client = new Mosquitto\Client($configMQTT->getID() . '_' . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9));
         $this->client->onConnect([$this, 'onConnect']);
         $this->client->setCredentials($configMQTT->getUser(), $configMQTT->getPassword());
         $this->client->connect($configMQTT->getHost(), $configMQTT->getPort());
@@ -49,11 +50,12 @@ class mqttSend {
     public function onConnect($rc, $message)
     {
         if ($this->logger) {
-            logger::writeLog('Подключился к MQTT брокеру. Код '.$rc.' - '.$message, loggerTypeMessage::NOTICE, loggerName::MQTT);
+            logger::writeLog('Подключился к MQTT брокеру. Код ' . $rc . ' - ' . $message, loggerTypeMessage::NOTICE, loggerName::MQTT);
         }
     }
 
-    public function publish($topic, $payload, $qos = 0, $retain = false) {
+    public function publish($topic, $payload, $qos = 0, $retain = false)
+    {
         $this->client->publish($topic, $payload, $qos, $retain);
     }
 
@@ -80,7 +82,7 @@ class mqttLoop
         $this->updateSubscribeUnite($mqttGroup);
 
         $config = new mqttConfig();
-        $this->client = new Mosquitto\Client($config->getID(). '_' .rand(0,9).rand(0,9).rand(0,9).rand(0,9).rand(0,9).rand(0,9));
+        $this->client = new Mosquitto\Client($config->getID() . '_' . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9));
 
         $this->client->onConnect([$this, 'onConnect']);
         $this->client->onDisconnect([$this, 'onDisconnect']);
@@ -89,7 +91,8 @@ class mqttLoop
         $this->client->setCredentials($config->getUser(), $config->getPassword());
     }
 
-    private function updateSubscribeUnite($mqttGroup) {
+    private function updateSubscribeUnite($mqttGroup)
+    {
         $this->subscribeDevice = [];
         $this->deviceFormatPayload = [];
         $this->deviceDataUpdate = [];
@@ -132,7 +135,7 @@ class mqttLoop
     public function onConnect($rc, $message)
     {
         if ($this->logger) {
-            logger::writeLog('Подключился к MQTT брокеру. Код '.$rc.' - '.$message, loggerTypeMessage::NOTICE, loggerName::MQTT);
+            logger::writeLog('Подключился к MQTT брокеру. Код ' . $rc . ' - ' . $message, loggerTypeMessage::NOTICE, loggerName::MQTT);
         }
 
         if (!$rc) {
@@ -153,13 +156,14 @@ class mqttLoop
         if (!$this->subscibe) return;
         foreach ($this->subscribeDevice as $subscribe) {
             if ($this->logger) {
-                logger::writeLog('Подключение подписки '.$subscribe, loggerTypeMessage::NOTICE, loggerName::MQTT);
+                logger::writeLog('Подключение подписки ' . $subscribe, loggerTypeMessage::NOTICE, loggerName::MQTT);
             }
             $this->client->subscribe($subscribe, 0);
         }
     }
 
-    public function onMessage($message) {
+    public function onMessage($message)
+    {
         if ($this->logger) {
             logger::writeLog(sprintf('Пришло сообщение от mqtt: topic: %s, payload: %s', $message->topic, $message->payload),
                 loggerTypeMessage::NOTICE,
@@ -167,7 +171,7 @@ class mqttLoop
         }
         $topic = trim($message->topic);
         if (empty($topic)) {
-            logger::writeLog('Пришло пустое сообщение от mqtt', loggerTypeMessage::WARNING,loggerName::MQTT);
+            logger::writeLog('Пришло пустое сообщение от mqtt', loggerTypeMessage::WARNING, loggerName::MQTT);
         }
 
         $idDevices = array_keys($this->subscribeDevice, $topic, true); //список id всех устройств с подпиской topic
@@ -180,8 +184,8 @@ class mqttLoop
 
             if ($this->logger) {
                 logger::writeLog(sprintf('По топику: %s, найдено устройство с ID: %s', $topic, $idDevice),
-                loggerTypeMessage::NOTICE,
-                loggerName::MQTT);
+                    loggerTypeMessage::NOTICE,
+                    loggerName::MQTT);
             }
 
             $updateData = false;
@@ -190,34 +194,37 @@ class mqttLoop
             }
 
             $deviceDataValue = $this->convertPayload($message->payload, $formatValueDevice);
-            if ($formatValueDevice == formatValueDevice::MQTT_KITCHEN_HOOD) {
-                //Если данные пришли в формате кухонной вытяжки, то проверим что само устройство тоже кухонная вытяжка
-                $device = managerDevices::getDevice($idDevice);
-                if (is_a($device, 'kitchenHood')) {
-                    $device->saveValue($deviceDataValue);
-                }
-            } else {
-                $deviceData = new deviceData($idDevice);
-                if ($updateData === true) {
-                    if ($this->logger) {
-                        logger::writeLog('update ' . json_encode($deviceDataValue),
-                            loggerTypeMessage::NOTICE,
-                            loggerName::MQTT);
+            switch ($deviceDataValue) {
+                case formatValueDevice::MQTT_KITCHEN_HOOD :
+                case formatValueDevice::MQTT_GAS_SENSOR :
+                    $device = managerDevices::getDevice($idDevice);
+                    if (is_a($device, 'aSensorDevice')) {
+                        $device->saveValue($deviceDataValue);
                     }
-                    $deviceData->updateData($deviceDataValue['value'], time(), $deviceDataValue['valueNull'], $deviceDataValue['status']);
-                } else {
-                    if ($this->logger) {
-                        logger::writeLog('set ' . json_encode($deviceDataValue),
-                            loggerTypeMessage::NOTICE,
-                            loggerName::MQTT);
+                    break;
+                default :
+                    $deviceData = new deviceData($idDevice);
+                    if ($updateData === true) {
+                        if ($this->logger) {
+                            logger::writeLog('update ' . json_encode($deviceDataValue),
+                                loggerTypeMessage::NOTICE,
+                                loggerName::MQTT);
+                        }
+                        $deviceData->updateData($deviceDataValue['value'], time(), $deviceDataValue['valueNull'], $deviceDataValue['status']);
+                    } else {
+                        if ($this->logger) {
+                            logger::writeLog('set ' . json_encode($deviceDataValue),
+                                loggerTypeMessage::NOTICE,
+                                loggerName::MQTT);
+                        }
+                        $deviceData->setData($deviceDataValue['value'], time(), $deviceDataValue['valueNull'], $deviceDataValue['status']);
                     }
-                    $deviceData->setData($deviceDataValue['value'], time(), $deviceDataValue['valueNull'], $deviceDataValue['status']);
-                }
             }
         }
     }
 
-    private function convertPayload($payload, $format = formatValueDevice::NO_FORMAT) {
+    private function convertPayload($payload, $format = formatValueDevice::NO_FORMAT)
+    {
 
         $result = ['value' => 0.0, 'valueNull' => true, 'status' => 0];
 
@@ -226,7 +233,7 @@ class mqttLoop
             case formatValueDevice::MQTT_TEMPERATURE :
             case formatValueDevice::MQTT_PRESSURE :
             case formatValueDevice::MQTT_HUMIDITY :
-                if (!is_null($payload) && $payload!=='NULL') {
+                if (!is_null($payload) && $payload !== 'NULL') {
                     $result['value'] = $payload;
                     $result['valueNull'] = false;
                 }
@@ -234,14 +241,24 @@ class mqttLoop
             case formatValueDevice::MQTT_KEY_IN :
                 $value = null;
                 if (is_string($payload)) {
-                    if (strtoupper($payload) == 'OFF' || strtoupper($payload) == 'FALSE' || $payload == '0') {$value = 0;}
-                    if (strtoupper($payload) == 'ON' || strtoupper($payload) == 'TRUE' || $payload == '1') {$value = 1;}
+                    if (strtoupper($payload) == 'OFF' || strtoupper($payload) == 'FALSE' || $payload == '0') {
+                        $value = 0;
+                    }
+                    if (strtoupper($payload) == 'ON' || strtoupper($payload) == 'TRUE' || $payload == '1') {
+                        $value = 1;
+                    }
                 } elseif (is_numeric($payload)) {
-                    if ($payload == 0) {$value = 0;}
-                    elseif ($payload > 0) {$value = 1;}
+                    if ($payload == 0) {
+                        $value = 0;
+                    } elseif ($payload > 0) {
+                        $value = 1;
+                    }
                 } elseif (is_bool($payload)) {
-                    if ($payload) {$value = 1;}
-                    else {$value = 0;}
+                    if ($payload) {
+                        $value = 1;
+                    } else {
+                        $value = 0;
+                    }
                 }
                 if (!is_null($value)) {
                     $result['value'] = $value;
@@ -253,15 +270,18 @@ class mqttLoop
                 $status = null;
                 if (is_string($payload)) { //может прийти команда и статус
                     $p = explode(MQTT_CODE_SEPARATOR, $payload);
-                    if (strtoupper($p[0]) == 'OFF' || strtoupper($p[0]) == 'FALSE' || $p[0] == '0') {$value = 0;}
-                    elseif (strtoupper($p[0]) == 'ON' || strtoupper($p[0]) == 'TRUE' || $p[0] == '1') {$value = 1;}
+                    if (strtoupper($p[0]) == 'OFF' || strtoupper($p[0]) == 'FALSE' || $p[0] == '0') {
+                        $value = 0;
+                    } elseif (strtoupper($p[0]) == 'ON' || strtoupper($p[0]) == 'TRUE' || $p[0] == '1') {
+                        $value = 1;
+                    }
                     if (count($p) > 1) {
                         $status = $p[1];
                     }
                 } elseif (is_int($payload)) {
                     $value = $payload == 0 ? 0 : 1;
                 } elseif (is_bool($payload)) {
-                    $value = $payload? 1 : 0;
+                    $value = $payload ? 1 : 0;
                 }
                 if (!is_null($value)) {
                     $result['value'] = $value;
@@ -287,6 +307,7 @@ class mqttLoop
                 }
                 break;
             case formatValueDevice::MQTT_KITCHEN_HOOD :
+            case formatValueDevice::MQTT_GAS_SENSOR :
                 $result = $payload;
                 break;
         }
@@ -297,7 +318,8 @@ class mqttLoop
      * @param $status
      * @return int
      */
-    private function convertStatus($status) {
+    private function convertStatus($status)
+    {
         if (!is_string($status)) {
             return 0;
         }
@@ -332,7 +354,7 @@ class mqttTest
         $this->updateSubscribeDevice();
 
         $config = new mqttConfig();
-        $this->client = new Mosquitto\Client($config->getID(). '_' .rand(0,9).rand(0,9).rand(0,9).rand(0,9).rand(0,9).rand(0,9));
+        $this->client = new Mosquitto\Client($config->getID() . '_' . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9));
 
         $this->client->onConnect([$this, 'onConnect']);
         $this->client->onMessage([$this, 'onMessage']);
@@ -359,7 +381,7 @@ class mqttTest
     public function onConnect($rc, $message)
     {
         if ($this->logger) {
-            logger::writeLog('Тестирование устройств. Подключился к MQTT брокеру. Код '.$rc.' - '.$message,
+            logger::writeLog('Тестирование устройств. Подключился к MQTT брокеру. Код ' . $rc . ' - ' . $message,
                 loggerTypeMessage::NOTICE, loggerName::MQTT);
         }
         if (!$rc) {
@@ -367,7 +389,8 @@ class mqttTest
         }
     }
 
-    public function onMessage($message) {
+    public function onMessage($message)
+    {
         if ($this->logger) {
             logger::writeLog(sprintf('Пришло сообщение от mqtt: topic: %s, payload: %s', $message->topic, $message->payload),
                 loggerTypeMessage::NOTICE,
@@ -375,7 +398,7 @@ class mqttTest
         }
         $topic = trim($message->topic);
         if (empty($topic)) {
-            logger::writeLog('Пришло пустое сообщение от mqtt', loggerTypeMessage::WARNING,loggerName::MQTT);
+            logger::writeLog('Пришло пустое сообщение от mqtt', loggerTypeMessage::WARNING, loggerName::MQTT);
         }
 
         $idDevices = array_keys($this->subscribeDevice, $topic, true); //список id всех устройств с подпиской topic
@@ -393,7 +416,8 @@ class mqttTest
         }
     }
 
-    private function updateSubscribeDevice() {
+    private function updateSubscribeDevice()
+    {
         $this->subscribeDevice = [];
         $sel = new selectOption();
         $sel->set('NetTypeID', netDevice::ETHERNET_MQTT);
@@ -412,7 +436,7 @@ class mqttTest
     {
         foreach ($this->subscribeDevice as $subscribe) {
             if ($this->logger) {
-                logger::writeLog('Подключение подписки '.$subscribe,
+                logger::writeLog('Подключение подписки ' . $subscribe,
                     loggerTypeMessage::NOTICE, loggerName::MQTT);
             }
             $this->client->subscribe($subscribe, 0);

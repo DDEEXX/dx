@@ -26,6 +26,7 @@ interface typeDevice{
     const HUMIDITY          = 8; //Датчик влажности
     const SWITCH_WHD02      = 9; //Датчик влажности
     const KITCHEN_HOOD      = 10;//Кухонная вытяжка
+    const GAS_SENSOR        = 11;//Датчик газа
 }
 
 interface typeUnit{
@@ -38,6 +39,7 @@ interface typeUnit{
     const PRESSURE          = 7; //Датчик атмосферного давления
     const HUMIDITY          = 8; //Датчик влажности
     const KITCHEN_HOOD      = 9; //Кухонная вытяжка
+    const GAS_SENSOR        = 10;//Датчик газа
 }
 
 interface graphType {
@@ -121,7 +123,7 @@ interface testDeviceCode {
 
 const MQTT_CODE_SEPARATOR = ';';
 
-interface valuePrecision {
+interface valuePrecision { //точность значения
     const TEMPERATURE = 2;
 }
 
@@ -134,4 +136,5 @@ interface formatValueDevice {
     const MQTT_KEY_OUT = 5;
     const MQTT_SWITCH_WHD02 = 6;
     const MQTT_KITCHEN_HOOD = 7;
+    const MQTT_GAS_SENSOR = 8;
 }

@@ -105,7 +105,6 @@ abstract class unit implements iUnit
             $dataValue = new deviceDataValue();
             $dataValue->setDefaultValue();
             $data = $dataValue->getDataJSON();
-
         }
         return $data;
     }
@@ -275,11 +274,17 @@ abstract class sensorUnit extends unit implements iSensorUnite
      */
     public function getData()
     {
-        $dataJson = parent::getData();
-        $delta = $this->getDelta();
-        $data = json_decode($dataJson, true);
-        $data['value'] = (float)$data['value'] + $delta;
-        return json_encode($data);
+        $data = parent::getData();
+
+        //TODO - надо сделать как-то по другому, с датчика данные могут приходить не только как числовое значение
+        $dataDecode = json_decode($data, true);
+        if (!is_null($dataDecode)) {
+            $delta = $this->getDelta();
+            $dataDecode['value'] = (float)$data['value'] + $delta;
+            $data = json_encode($dataDecode);
+        }
+
+        return $data;
     }
 
 }
@@ -414,4 +419,13 @@ class kitchenVentUnit extends sensorUnit {
         }
         return $value;
     }
+}
+
+class gasSensorUnit extends sensorUnit {
+
+    public function __construct(array $options)
+    {
+        parent::__construct($options, typeUnit::GAS_SENSOR);
+    }
+
 }
