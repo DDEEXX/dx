@@ -193,6 +193,12 @@ class mqttLoop
                 $updateData = $this->deviceDataUpdate[$idDevice];
             }
 
+            if ($this->logger) {
+                logger::writeLog(sprintf('$formatValueDevice $s', $formatValueDevice),
+                    loggerTypeMessage::NOTICE,
+                    loggerName::MQTT);
+            }
+
             $deviceDataValue = $this->convertPayload($message->payload, $formatValueDevice);
             switch ($formatValueDevice) {
                 case formatValueDevice::MQTT_KITCHEN_HOOD :
@@ -200,6 +206,11 @@ class mqttLoop
                     $device = managerDevices::getDevice($idDevice);
                     if (is_a($device, 'aSensorDevice')) {
                         $device->saveValue($deviceDataValue);
+                    }
+                    if ($this->logger) {
+                        logger::writeLog(sprintf('save $s', $deviceDataValue),
+                            loggerTypeMessage::NOTICE,
+                            loggerName::MQTT);
                     }
                     break;
                 default :
