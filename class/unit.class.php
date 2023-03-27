@@ -280,7 +280,7 @@ abstract class sensorUnit extends unit implements iSensorUnite
         $dataDecode = json_decode($data, true);
         if (!is_null($dataDecode)) {
             $delta = $this->getDelta();
-            $dataDecode['value'] = (float)$data['value'] + $delta;
+            $dataDecode['value'] = (float)$dataDecode['value'] + $delta;
             $data = json_encode($dataDecode);
         }
 
