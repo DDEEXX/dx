@@ -410,15 +410,15 @@ class kitchenVentUnit extends sensorUnit {
         parent::__construct($options, typeUnit::KITCHEN_HOOD);
     }
 
-    public function getData()
-    {
-        $value = '';
-        $device = $this->getDevice();
-        if (!is_null($device)) {
-            $value = $device->getData();
-        }
-        return $value;
-    }
+//    public function getData()
+//    {
+//        $value = '';
+//        $device = $this->getDevice();
+//        if (!is_null($device)) {
+//            $value = $device->getData();
+//        }
+//        return $value;
+//    }
 }
 
 class gasSensorUnit extends sensorUnit {

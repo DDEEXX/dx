@@ -194,7 +194,7 @@ class mqttLoop
             }
 
             $deviceDataValue = $this->convertPayload($message->payload, $formatValueDevice);
-            switch ($deviceDataValue) {
+            switch ($formatValueDevice) {
                 case formatValueDevice::MQTT_KITCHEN_HOOD :
                 case formatValueDevice::MQTT_GAS_SENSOR :
                     $device = managerDevices::getDevice($idDevice);
