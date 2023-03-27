@@ -14,7 +14,6 @@ class gasSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
         }
         parent::__construct($mqttParameters, formatValueDevice::MQTT_GAS_SENSOR);
     }
-
 }
 
 class gasSensorFactory
