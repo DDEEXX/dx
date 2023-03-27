@@ -194,7 +194,7 @@ class mqttLoop
             }
 
             if ($this->logger) {
-                logger::writeLog(sprintf('$formatValueDevice $s', $formatValueDevice),
+                logger::writeLog(sprintf('$formatValueDevice %s', $formatValueDevice),
                     loggerTypeMessage::NOTICE,
                     loggerName::MQTT);
             }
@@ -208,7 +208,7 @@ class mqttLoop
                         $device->saveValue($deviceDataValue);
                     }
                     if ($this->logger) {
-                        logger::writeLog(sprintf('save $s', $deviceDataValue),
+                        logger::writeLog(sprintf('save %s', $deviceDataValue),
                             loggerTypeMessage::NOTICE,
                             loggerName::MQTT);
                     }
