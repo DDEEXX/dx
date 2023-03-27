@@ -698,8 +698,8 @@ abstract class aSensorDevice extends aDevice implements iSensorDevice
         $insertData = false;
         $currentData = parent::getData();
         if (is_array($currentData)) {
-            $insertData = $currentData[$value] == '';
-        } else if ($currentData = '') {
+            $insertData = $currentData['value'] == '';
+        } else if ($currentData == '') {
             $insertData = true;
         }
 
