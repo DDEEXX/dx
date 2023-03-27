@@ -695,7 +695,15 @@ abstract class aSensorDevice extends aDevice implements iSensorDevice
         $dateValue = date('Y-m-d H:i:s');
         $deviceID = $this->getDeviceID();
 
-        if (parent::getData() == '') {
+        $insertData = false;
+        $currentData = parent::getData();
+        if (is_array($currentData)) {
+            $insertData = $currentData[$value] == '';
+        } else if ($currentData = '') {
+            $insertData = true;
+        }
+
+        if ($insertData) {
             $query = sprintf('INSERT INTO tdevicevalue (DeviceID, Date, Value) VALUES (\'%s\', \'%s\', \'%s\')',
                 $deviceID, $dateValue, $value);
         } else {
