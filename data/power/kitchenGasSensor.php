@@ -18,7 +18,7 @@ if (is_array($value)) {
     if ($value['alarm']) {
         $colorSensor = '#ff0000';
     }
-    $valueGas = $value['value'];
+    $valueGas = $value['gas'];
 }
 
 echo '<div id="kitchen_gas_sensor_mode" style="margin-top:4px">';
