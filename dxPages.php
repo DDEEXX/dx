@@ -206,6 +206,122 @@ if ($p == 'home' || empty($p)) {
     <?php
 }
 
+if ($p == 'light') {
+    ?>
+
+    <link rel="stylesheet" type="text/css" href="css2/style_light.css">
+    <script src="js2/light.js"></script>
+
+    <div id="page_light" class="grid_12">
+        <div class="grid_12 alpha">
+            <div class="ui-corner-all ui-widget-header" style="margin-top: 5px">
+                <h2 style="margin-left:5px;font-size:150%;">Освещение</h2>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div class="grid_12 alpha">
+            <div class="ui-corner-all ui-state-default" style="margin-top:5px;height:69px">
+                <div style="height: 55px; margin-top: 7px; margin-bottom: 7px">
+                    <a href="index.php?p=light&dev=plan">
+                        <button id="light_button_plan" class="light_button_setup"></button>
+                    </a>
+                    <a href="index.php?p=light&dev=tile">
+                        <button id="light_button_tile" class="light_button_setup"></button>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+
+        <?php if ( !isset($_REQUEST['dev']) ) {
+            include 'data/light/plan.html';
+        } else {
+            $dev = $_REQUEST['dev'];
+            if ($dev == 'plan') {
+                include 'data/light/plan.html';
+            }
+            if ($dev == 'tile') {
+                include 'data/light/tile.html';
+            }
+        }
+        ?>
+
+    </div>
+
+    <?php
+}
+
+if ($p == 'power') {
+    ?>
+
+    <script src="js2/power.js"></script>
+
+    <div id="page_power" class="grid_12">
+        <div class="grid_12 alpha omega">
+            <div class="ui-corner-all ui-widget-header" style="margin-top: 5px">
+                <h2 style="margin-left:5px;font-size:150%;">Исполнители</h2>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div class="grid_4 alpha">
+            <div class="ui-corner-all ui-state-default ui-widget-content" style="margin-top:5px;height:120px">
+                <h2 style="margin-left:5px">Кухонная вытяжка</h2>
+                <div id="power_kitchen_hood"></div>
+                <div id="power_kitchen_hood_update_info" style="top: -15px; left: 327px">u</div>
+            </div>
+        </div>
+        <div class="grid_2">
+            <div class="ui-corner-all ui-state-default ui-widget-content" style="margin-top:5px;height:120px">
+                <h2 style="margin-left:5px">Датчик газа кухни</h2>
+                <div id="power_kitchen_gas_sensor" style="margin-top: 5px; margin-left: 5px"></div>
+            </div>
+        </div>
+        <div class="grid_2">
+            <div class="ui-corner-all ui-state-default ui-widget-content" style="margin-top:5px;height:120px">
+                <h2 style="margin-left:5px">Резерв</h2>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div class="grid_4 alpha">
+            <div class="ui-corner-all ui-state-default ui-widget-content"
+                 style="margin-top:5px;height:90px;position:relative">
+                <h2 style="margin-left:5px">Гаражные ворота</h2>
+                <div id="label_garage_door" style="float:left;margin-left:8px;margin-top:2px"></div>
+                <button style="margin-left:20px;margin-top:10px;" class="upDown"></button>
+            </div>
+        </div>
+        <div class="grid_4 omega">
+            <div class="ui-corner-all ui-state-default ui-widget-content"
+                 style="margin-top:5px;height:90px;position:relative">
+                <h2 style="margin-left:5px">Калитка</h2>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div class="grid_4 alpha">
+            <div class="ui-corner-all ui-state-default ui-widget-content"
+                 style="margin-top:5px;height:120px;position:relative">
+                <div>
+                    <h2 style="margin-left:5px">Погреб</h2>
+                    <?php echoRadioGroup('rg_g_vault', 'vault_vent', 'vault_off', 'vault_on', 'vault_auto') ?>
+                    <!--                    <div class="rg_g_vault" style="margin-left:5px;float:left">-->
+                    <!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
+                    <!--                               id="vault_off"><label for="vault_off">выкл</label>-->
+                    <!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
+                    <!--                               id="vault_on"><label for="vault_on">вкл</label>-->
+                    <!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
+                    <!--                               id="vault_auto"><label for="vault_auto">авто</label>-->
+                    <!--                    </div>-->
+                </div>
+                <p>температура: &deg </p>
+                <p>влажность: %</p>
+                <p>вентиляция: </p>
+                <p>свет: </p>
+            </div>
+        </div>
+    </div>
+    <?php
+}
+
 if ($p == 'weather') {
     ?>
 
@@ -258,125 +374,6 @@ if ($p == 'weather') {
         </div>
     </div>
 
-    <?php
-}
-
-if ($p == 'light') {
-    ?>
-
-    <link rel="stylesheet" type="text/css" href="css2/style_light.css">
-    <script src="js2/light.js"></script>
-
-    <div id="page_light" class="grid_12">
-        <div class="grid_12 alpha">
-            <div class="ui-corner-all ui-widget-header" style="margin-top: 5px">
-                <h2 style="margin-left:5px;font-size:150%;">Освещение</h2>
-            </div>
-        </div>
-        <div class="clear"></div>
-        <div class="grid_12 alpha">
-            <div class="ui-corner-all ui-state-default" style="margin-top:5px;height:69px">
-                <div style="height: 55px; margin-top: 7px; margin-bottom: 7px">
-                    <a href="index.php?p=light&dev=tile">
-                        <button id="light_button_tile" class="light_button_setup"></button>
-                    </a>
-                    <a href="index.php?p=light&dev=plan">
-                        <button id="light_button_plan" class="light_button_setup"></button>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="clear"></div>
-
-        <?php if ( !isset($_REQUEST['dev']) ) {
-            include 'data/light/plan.html';
-        } else {
-            $dev = $_REQUEST['dev'];
-            if ($dev == 'plan') {
-                include 'data/light/plan.html';
-            }
-            if ($dev == 'tile') {
-                include 'data/light/tile.html';
-            }
-        }
-        ?>
-
-    </div>
-
-    <?php
-}
-
-if ($p == 'power') {
-    ?>
-
-    <script src="js2/power.js"></script>
-
-    <div id="page_power" class="grid_12">
-        <div class="grid_12 alpha omega">
-            <div class="ui-corner-all ui-widget-header" style="margin-top: 5px">
-                <h2 style="margin-left:5px;font-size:150%;">Исполнители</h2>
-            </div>
-        </div>
-        <div class="clear"></div>
-        <div class="grid_4 alpha">
-            <div class="ui-corner-all ui-state-default ui-widget-content"
-                 style="margin-top:5px;height:120px;position:relative">
-                <h2 style="margin-left:5px">Кухонная вытяжка</h2>
-                <div id="power_kitchen_hood"></div>
-                <div id="power_kitchen_hood_update_info" style="top: -5px; left: 327px">u</div>
-            </div>
-        </div>
-        <div class="grid_2">
-            <div class="ui-corner-all ui-state-default ui-widget-content"
-                 style="margin-top:5px;height:120px;position:relative">
-                <h2 style="margin-left:5px">Датчик газа кухни</h2>
-                <div id="power_kitchen_gas_sensor"></div>
-            </div>
-        </div>
-        <div class="grid_2">
-            <div class="ui-corner-all ui-state-default ui-widget-content"
-                 style="margin-top:5px;height:120px;position:relative">
-                <h2 style="margin-left:5px">Резерв</h2>
-            </div>
-        </div>
-        <div class="clear"></div>
-        <div class="grid_4 alpha">
-            <div class="ui-corner-all ui-state-default ui-widget-content"
-                 style="margin-top:5px;height:90px;position:relative">
-                <h2 style="margin-left:5px">Гаражные ворота</h2>
-                <div id="label_garage_door" style="float:left;margin-left:8px;margin-top:2px"></div>
-                <button style="margin-left:20px;margin-top:10px;" class="upDown"></button>
-            </div>
-        </div>
-        <div class="grid_4 omega">
-            <div class="ui-corner-all ui-state-default ui-widget-content"
-                 style="margin-top:5px;height:90px;position:relative">
-                <h2 style="margin-left:5px">Калитка</h2>
-            </div>
-        </div>
-        <div class="clear"></div>
-        <div class="grid_4 alpha">
-            <div class="ui-corner-all ui-state-default ui-widget-content"
-                 style="margin-top:5px;height:120px;position:relative">
-                <div>
-                    <h2 style="margin-left:5px">Погреб</h2>
-                    <?php echoRadioGroup('rg_g_vault', 'vault_vent', 'vault_off', 'vault_on', 'vault_auto') ?>
-                    <!--                    <div class="rg_g_vault" style="margin-left:5px;float:left">-->
-                    <!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
-                    <!--                               id="vault_off"><label for="vault_off">выкл</label>-->
-                    <!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
-                    <!--                               id="vault_on"><label for="vault_on">вкл</label>-->
-                    <!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
-                    <!--                               id="vault_auto"><label for="vault_auto">авто</label>-->
-                    <!--                    </div>-->
-                </div>
-                <p>температура: &deg </p>
-                <p>влажность: %</p>
-                <p>вентиляция: </p>
-                <p>свет: </p>
-            </div>
-        </div>
-    </div>
     <?php
 }
 

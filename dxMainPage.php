@@ -72,11 +72,6 @@ if (!$UID) {
                     </a>
                 </li>
                 <li>
-                    <a href="index.php?p=weather">
-                        <span class="ui-icon ui-icon-mmtemp" title="Погода и температура">2</span>
-                    </a>
-                </li>
-                <li>
                     <a href="index.php?p=light">
                         <span class="ui-icon ui-icon-mmbulb" title="Освещение">3</span>
                     </a>
@@ -84,6 +79,11 @@ if (!$UID) {
                 <li>
                     <a href="index.php?p=power">
                         <span class="ui-icon ui-icon-mmpower" title="Управление">4</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="index.php?p=weather">
+                        <span class="ui-icon ui-icon-mmtemp" title="Погода и температура">.</span>
                     </a>
                 </li>
                 <li>

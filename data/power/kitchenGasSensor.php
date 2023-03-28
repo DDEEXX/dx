@@ -21,7 +21,7 @@ if (is_array($value)) {
     $valueGas = $value['value'];
 }
 
-echo '<div id="kitchen_gas_sensor_mode" style="margin-left:5px;margin-top:2px">';
+echo '<div id="kitchen_gas_sensor_mode" style="margin-top:4px">';
 echo '    <div style="display: flex">';
 echo '      <div style="margin: 2px; width: 15px; height: 7px; background-color: '.$colorSensor.'"></div>';
 echo '      <div style="margin-left: 5px">'.$valueGas.'</div>';
