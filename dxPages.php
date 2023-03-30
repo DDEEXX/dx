@@ -272,7 +272,7 @@ if ($p == 'power') {
         </div>
         <div class="grid_2">
             <div class="ui-corner-all ui-state-default ui-widget-content" style="margin-top:5px;height:120px">
-                <h2 style="margin-left:5px">Датчик газа кухни</h2>
+                <h2 style="margin-left:5px">Датчики газа</h2>
                 <div id="power_kitchen_gas_sensor" style="margin-top: 5px; margin-left: 5px"></div>
             </div>
         </div>

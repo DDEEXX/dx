@@ -1,12 +1,20 @@
+const gasSensorsData = [
+    {"id": "power_kitchen_gas_sensor", "label": "gas_sensor_kitchen", "title": "Кухня"},
+]
 
 function power_updateAll() {
 
     $.get("getData.php?dev=kitchenHood", function (data) {
         $("#power_kitchen_hood").html(data);
     });
-    $.get("getData.php?dev=gasSensor&label=gas_sensor_kitchen", function (data) {
-        $("#power_kitchen_gas_sensor").html(data);
-    });
+
+    const pathConst = "getData.php?dev=gasSensor&label=";
+    $.each(gasSensorsData,function(index, val) {
+        const path = pathConst+val['label']+"&title="+val['title'];
+        $.get(path, function (data) {
+            $("#"+val['id']).html(data);
+        })
+    })
 
 }
 
@@ -41,15 +49,21 @@ function power_checkVent_Status() {
 
 function power_checkKitchenGasSensor_Status() {
 
-    const curDateStatus = $('#kitchen_gas_sensor_last_status').val();
-
-    $.post("getData.php", {dev: "check_gasSensorStatus", dateStatus: curDateStatus, label: 'gas_sensor_kitchen'}, function (jsonData) {
-        if (jsonData['update']) {
-            $.get("getData.php?dev=gasSensor&label=gas_sensor_kitchen", function (data) {
-                $("#power_kitchen_gas_sensor").html(data);
-            });
-        }
-    }, "json");
+    const pathConst = "getData.php?dev=gasSensor&label=";
+    $.each(gasSensorsData,function(index, val) {
+        const path = pathConst+val['label']+"&title="+val['title'];
+        $.get(path, function (data) {
+            //если время изменения на странице меньше чем время в пришедшем коде с сервера, обновляем
+            const dataServer = $(data);
+            const idSensor = "#"+val['id'];
+            const idUpdateSensor = "#"+val['label']+"_last_update";
+            const updateTimeClient = $(idSensor+" "+idUpdateSensor).val();
+            const updateTimeServer = dataServer.find(idUpdateSensor).val();
+            if (Number(updateTimeClient) < Number(updateTimeServer)) {
+                $("#"+val['id']).html(data);
+            }
+        })
+    })
 
 }
 
@@ -83,7 +97,7 @@ $(function () {
 
 });
 
-$(document).everyTime("2s", function () {
+$(document).everyTime("3s", function () {
 
     power_checkVent_Status();
     power_checkKitchenGasSensor_Status();

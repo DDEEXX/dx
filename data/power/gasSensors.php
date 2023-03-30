@@ -1,5 +1,6 @@
 <?php
 $label = $_GET['label'];
+$title = $_GET['title'];
 $unit = managerUnits::getUnitLabel($label);
 $value = null;
 $dateLastStatus = '';
@@ -21,11 +22,10 @@ if (is_array($value)) {
     $valueGas = $value['gas'];
 }
 
-echo '<div id="kitchen_gas_sensor_mode" style="margin-top:4px">';
-echo '    <div style="display: flex">';
-echo '      <div style="margin: 2px; width: 15px; height: 7px; background-color: '.$colorSensor.'"></div>';
-echo '      <div style="margin-left: 5px">'.$valueGas.'</div>';
-echo '      <input id="kitchen_gas_sensor_last_status" value=' . $dateLastStatus . ' type="hidden"/>';
-echo '    </div>';
+echo '<div style="display: flex">';
+echo '    <div style="width: 70px"><p>'.$title.'</p></div>';
+echo '    <div style="margin: 2px; width: 15px; height: 7px; background-color: '.$colorSensor.'"></div>';
+echo '    <div style="margin-left: 5px">'.$valueGas.'</div>';
+echo '    <input id="'.$label.'_last_update" value=' . $dateLastStatus . ' type="hidden"/>';
 echo '</div>';
 

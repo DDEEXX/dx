@@ -331,7 +331,7 @@ elseif ($_REQUEST['dev'] == 'check_ventStatus') {
 }
 
 elseif ($_REQUEST['dev'] == 'gasSensor') {
-    include 'data/power/kitchenGasSensor.php';
+    include 'data/power/gasSensors.php';
 }
 
 elseif ($_REQUEST['dev'] == 'check_gasSensorStatus') {
