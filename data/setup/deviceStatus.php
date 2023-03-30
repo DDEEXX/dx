@@ -110,6 +110,12 @@
                     case typeDevice::HUMIDITY :
                         $result = 'img2/icon_small/humidity.png';
                         break;
+                    case typeDevice::KITCHEN_HOOD :
+                        $result = 'img2/icon_small/fan.png';
+                        break;
+                    case typeDevice::GAS_SENSOR :
+                        $result = 'img2/icon_small/sirens.png';
+                        break;
                     default  :
                         $result = '';
                 }
