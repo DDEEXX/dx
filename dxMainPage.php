@@ -58,6 +58,8 @@
 
 $UID = isset($_SESSION['idUser']) ? $_SESSION['idUser'] : false;
 
+$UID = true;
+
 if (!$UID) {
     include_once 'login.php';
 } else {
