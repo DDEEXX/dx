@@ -14,9 +14,9 @@ function updateTestStatus() {
             $("#button_test_status #status_test_yellow").removeClass('this_status');
         }
         if (data.red) {
-            $("#home_status_test_red").addClass('this_status');
+            $("#button_test_status #status_test_red").addClass('this_status');
         } else {
-            $("#home_status_test_red").removeClass('this_status');
+            $("#button_test_status #status_test_red").removeClass('this_status');
         }
     }, "json");
 }

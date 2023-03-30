@@ -133,7 +133,18 @@
                 $deviceID = $device->getDeviceID();
                 $netTitle = getNetTitle($device->getNet());
                 $deviceImage = getImageDevice($device->getType());
-                $deviceData = json_decode($device->getData(), true);
+                $value = '';
+                switch ($device->getDevicePhysic()->getFormatValue()) {
+                    case formatValueDevice::MQTT_KITCHEN_HOOD:
+                    case formatValueDevice::MQTT_GAS_SENSOR:
+                        //TODO - придумать с value
+                        break;
+                    default :
+                        $deviceData = json_decode($device->getData(), true);
+                        $value = 'v: '.($deviceData['valueNull']?'null': $deviceData['value']).
+                            ', d: '.date('H:i:s d-m-Y', $deviceData['date']).
+                            ', s: '.getStatus($deviceData['status']);
+                }
                 $deviceNote = $device->getNote();
                 $deviceStatus = testDeviceCode::NO_TEST;
                 $deviceStatusDate = null;
@@ -145,9 +156,6 @@
                     $deviceStatus = testDeviceCode::NO_TEST;
                 }
                 $title = getTitleTestStatus($deviceStatus, $deviceStatusDate);
-                $value = 'v: '.($deviceData['valueNull']?'null': $deviceData['value']).
-                    ', d: '.date('H:i:s d-m-Y', $deviceData['date']).
-                    ', s: '.getStatus($deviceData['status']);
 
                 echo '<tr>';
                 echo '<td style="padding-left: 5px; padding-top: 5px">
