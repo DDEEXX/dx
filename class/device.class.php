@@ -233,6 +233,9 @@ interface iDevicePhysicMQTT
     function getTopicStat();
 
     function getTopicTest();
+
+    function getTopicAlarm();
+
 }
 
 interface iDevicePhysicOWire
@@ -319,6 +322,8 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
     private $topicCmnd;
     private $topicStat;
     private $topicTest;
+    private $topicAlarm;
+
     private $requestPayload;
 
     public function __construct($mqttParameters, $formatValue = formatValueDevice::NO_FORMAT)
@@ -326,6 +331,7 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
         $this->topicCmnd = $mqttParameters['topicCmnd'];
         $this->topicStat = $mqttParameters['topicStat'];
         $this->topicTest = $mqttParameters['topicTest'];
+        $this->topicAlarm = $mqttParameters['topicAlarm'];
         if (isset($mqttParameters['payload'])) {
             $this->requestPayload = $mqttParameters['payload'];
         } else {
@@ -347,9 +353,6 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
         return null;
     }
 
-    /**
-     * @return mixed
-     */
     public function getTopicStat()
     {
         return $this->topicStat;
@@ -369,6 +372,12 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
     {
         return trim($this->topicTest);
     }
+
+    public function getTopicAlarm()
+    {
+        return $this->topicAlarm;
+    }
+
 }
 
 abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDevicePhysicMQTT
@@ -422,6 +431,12 @@ abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDev
     {
         return trim($this->topicTest);
     }
+
+    public function getTopicAlarm()
+    {
+        return '';
+    }
+
 }
 
 abstract class aDeviceSensorPhysicOWire extends aDeviceSensorPhysic implements iDeviceSensorPhysicOWire

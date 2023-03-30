@@ -81,9 +81,11 @@ class keyInSensorDevice extends aSensorDevice
         parent::__construct($options, typeDevice::KEY_IN);
         $address = $options['Address'];
         $ow_alarm = $options['OW_alarm'];
-        $mqttParameters = ['topicCmnd' => $options['topic_cmnd'],
+        $mqttParameters = [
+            'topicCmnd' => $options['topic_cmnd'],
             'topicStat' => $options['topic_stat'],
             'topicTest' => $options['topic_test'],
+            'topicAlarm' => $options['topic_alarm'],
             'payload' => $options['payload_cmnd']];
         $this->devicePhysic = keyInSensorFactory::create($this->getNet(), $address, $ow_alarm, $mqttParameters);
     }

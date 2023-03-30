@@ -21,3 +21,28 @@
 #home_cam, #home_cameraFullSize {
     cursor: pointer;
 }
+
+.home_status_test {
+    margin-left: 4px;
+    width: 20px;
+    height: 10px
+}
+
+#home_status_test_green {
+    background-color: #003200
+}
+#home_status_test_green.this_status {
+    background-color: #00ff00
+}
+#home_status_test_yellow {
+    background-color: #323200
+}
+#home_status_test_yellow.this_status {
+    background-color: #ffff00
+}
+#home_status_test_red {
+    background-color: #320000
+}
+#home_status_test_red.this_status {
+    background-color: #ff0000
+}

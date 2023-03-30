@@ -34,9 +34,11 @@ class humiditySensorDevice extends aSensorDevice
     public function __construct(array $options)
     {
         parent::__construct($options, typeDevice::HUMIDITY);
-        $mqttParameters = ['topicCmnd' => $options['topic_cmnd'],
+        $mqttParameters = [
+            'topicCmnd' => $options['topic_cmnd'],
             'topicStat' => $options['topic_stat'],
             'topicTest' => $options['topic_test'],
+            'topicAlarm' => $options['topic_alarm'],
             'payload' => $options['payload_cmnd']];
         $this->devicePhysic = humiditySensorFactory::create($this->getNet(), $mqttParameters);
     }

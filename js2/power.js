@@ -15,13 +15,10 @@ function power_updateAll() {
             $("#"+val['id']).html(data);
         })
     })
-
 }
 
 function power_checkVent_Status() {
-
     const curDateStatus = $('#kitchen_hood_last_status').val();
-
     $.post("getData.php", {dev: "check_ventStatus", dateStatus: curDateStatus}, function (jsonData) {
         if (jsonData['update']) {
             $.get("getData.php?dev=kitchenHood", function (data) {
@@ -44,14 +41,11 @@ function power_checkVent_Status() {
             }, "json");
         }
     }, "json");
-
 }
 
 function power_checkKitchenGasSensor_Status() {
-
-    const pathConst = "getData.php?dev=gasSensor&label=";
     $.each(gasSensorsData,function(index, val) {
-        const path = pathConst+val['label']+"&title="+val['title'];
+        const path = "getData.php?dev=gasSensor&label="+val['label']+"&title="+val['title'];
         $.get(path, function (data) {
             //если время изменения на странице меньше чем время в пришедшем коде с сервера, обновляем
             const dataServer = $(data);
@@ -64,11 +58,9 @@ function power_checkKitchenGasSensor_Status() {
             }
         })
     })
-
 }
 
 $(document).ready(function () {
-
 
     // $(".rg_g_vault").buttonset();
 
@@ -82,9 +74,6 @@ $(document).ready(function () {
     // $.get("getData.php?dev=kitchenHood", function (data) {
     //     $("#power_kitchen_hood").html(data);
     // });
-
-
-
 });
 
 $(function () {
@@ -98,8 +87,6 @@ $(function () {
 });
 
 $(document).everyTime("3s", function () {
-
     power_checkVent_Status();
     power_checkKitchenGasSensor_Status();
-
 });

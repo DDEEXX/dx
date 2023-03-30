@@ -470,3 +470,162 @@ class mqttTest
 
 
 }
+
+class mqttAlarm
+{
+    private $client;
+    //Если true - вести лог, критические события в лог попадают всегда
+    private $logger;
+    // массив: индекс - id устройства, значения - топики
+    private $subscribeDevice;
+    // массив: индекс - id устройства, значения - формат преобразования входящих сообщений
+    private $deviceFormatPayload;
+
+    public function __construct($logger = false)
+    {
+        $this->logger = $logger;
+        $this->updateSubscribeUnite();
+
+        $config = new mqttConfig();
+        $this->client = new Mosquitto\Client($config->getID() . '_' . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9));
+
+        $this->client->onConnect([$this, 'onConnect']);
+        $this->client->onDisconnect([$this, 'onDisconnect']);
+        $this->client->onMessage([$this, 'onMessage']);
+
+        $this->client->setCredentials($config->getUser(), $config->getPassword());
+    }
+
+    private function updateSubscribeUnite()
+    {
+        $this->subscribeDevice = [];
+        $this->deviceFormatPayload = [];
+
+        $sel = new selectOption();
+        $sel->set('Disabled', 0);
+        $sel->set('NetTypeID', netDevice::ETHERNET_MQTT);
+        $devices = managerDevices::getListDevices($sel);
+        foreach ($devices as $device) {
+            $devicePhysic = $device->getDevicePhysic();
+            if ($devicePhysic instanceof iDevicePhysic && $devicePhysic instanceof iDevicePhysicMQTT) {
+                $topicAlarm = $devicePhysic->getTopicAlarm();
+                if (empty($topicAlarm)) continue;
+                $this->subscribeDevice[$device->getDeviceID()] = $topicAlarm;
+                $this->deviceFormatPayload[$device->getDeviceID()] = $devicePhysic->getFormatValue();
+            }
+        }
+    }
+
+    public function connect()
+    {
+        $config = new mqttConfig();
+        $this->client->connect($config->getHost(), $config->getPort());
+        unset($config);
+    }
+
+    public function disconnect()
+    {
+        if (is_null($this->client)) return;
+        $this->client->disconnect();
+    }
+
+    public function onConnect($rc, $message)
+    {
+        if ($this->logger) {
+            logger::writeLog('Подключился к MQTT брокеру. Код ' . $rc . ' - ' . $message, loggerTypeMessage::NOTICE, loggerName::MQTT);
+        }
+
+        if (!$rc) {
+            //Подписки на топики
+            $this->Subscribe();
+        }
+    }
+
+    public function onDisconnect($rc)
+    {
+//        if ($this->logger) {
+//            //logger::writeLog('Отключение от брокера. Код '.$rc, loggerTypeMessage::WARNING, loggerName::MQTT);
+//        }
+    }
+
+    private function Subscribe()
+    {
+        foreach ($this->subscribeDevice as $subscribe) {
+            if ($this->logger) {
+                logger::writeLog('Подключение подписки ' . $subscribe, loggerTypeMessage::NOTICE, loggerName::MQTT);
+            }
+            $this->client->subscribe($subscribe, 0);
+        }
+    }
+
+    public function onMessage($message)
+    {
+        if ($this->logger) {
+            logger::writeLog(sprintf('Пришло сообщение от mqtt: topic: %s, payload: %s', $message->topic, $message->payload),
+                loggerTypeMessage::NOTICE,
+                loggerName::MQTT);
+        }
+        $topic = trim($message->topic);
+        if (empty($topic)) {
+            logger::writeLog('Пришло пустое сообщение от mqtt', loggerTypeMessage::WARNING, loggerName::MQTT);
+        }
+
+        $idDevices = array_keys($this->subscribeDevice, $topic, true); //список id всех устройств с подпиской topic
+        foreach ($idDevices as $idDevice) {
+
+            $formatValueDevice = formatValueDevice::NO_FORMAT;
+            if (array_key_exists($idDevice, $this->deviceFormatPayload)) {
+                $formatValueDevice = $this->deviceFormatPayload[$idDevice];
+            }
+
+            if ($this->logger) {
+                logger::writeLog(sprintf('По топику: %s, найдено устройство с ID: %s', $topic, $idDevice),
+                    loggerTypeMessage::NOTICE,
+                    loggerName::MQTT);
+            }
+
+            if ($this->logger) {
+                logger::writeLog(sprintf('$formatValueDevice %s', $formatValueDevice),
+                    loggerTypeMessage::NOTICE,
+                    loggerName::MQTT);
+            }
+
+            $deviceDataValue = $this->convertPayload($message->payload, $formatValueDevice);
+            if ($this->logger) {
+                logger::writeLog('set ' . json_encode($deviceDataValue),
+                    loggerTypeMessage::NOTICE,
+                    loggerName::MQTT);
+                $device = managerDevices::getDevice($idDevice);
+                if (!is_null($device)) {
+                    $ttt = true;
+                }
+            }
+        }
+    }
+
+    private function convertPayload($payload, $format = formatValueDevice::NO_FORMAT)
+    {
+
+        $result = ['alarm' => false, 'value' => 0.0];
+
+        switch ($format) {
+            case formatValueDevice::MQTT_TEMPERATURE :
+                $data = json_decode($payload, true);
+                $result['alarm'] = (bool)$data['alarm'];
+                $result['value'] = $data['temperature'];
+                break;
+            case formatValueDevice::MQTT_GAS_SENSOR :
+                $data = json_decode($payload, true);
+                $result['alarm'] = (bool)$data['alarm'];
+                $result['value'] = $data['gas'];
+                break;
+        }
+        return $result;
+    }
+
+    public function loop()
+    {
+        $this->client->loop();
+    }
+
+}

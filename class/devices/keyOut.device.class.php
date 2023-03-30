@@ -138,9 +138,11 @@ class KeyOutMakerDevice extends aMakerDevice
         parent::__construct($options, typeDevice::KEY_OUT);
         $address = $options['Address'];
         $chanel = $options['OW_Chanel'];
-        $mqttParameters = ['topicCmnd' => $options['topic_cmnd'],
+        $mqttParameters = [
+            'topicCmnd' => $options['topic_cmnd'],
             'topicStat' => $options['topic_stat'],
-            'topicTest' => $options['topic_test']];
+            'topicTest' => $options['topic_test'],
+            'topicAlarm' => $options['topic_alarm']];
         $this->devicePhysic = KeyOutFactory::create($this->getNet(), $address, $chanel, $mqttParameters);
     }
 

@@ -41,6 +41,27 @@ function home_updateSensorsOutData() {
     _updateSensorsData('sensor_block', 'data/home/');
 }
 
+function home_updateTestStatusDevices() {
+    $.post("getData.php", {dev: "test_status"}, function (data) {
+        if (data.green) {
+            $("#home_status_test_green").addClass('this_status');
+        } else {
+            $("#home_status_test_green").removeClass('this_status');
+        }
+        if (data.yellow) {
+            $("#home_status_test_yellow").addClass('this_status');
+        } else {
+            $("#home_status_test_yellow").removeClass('this_status');
+        }
+        if (data.red) {
+            $("#button_test_status #status_test_red").addClass('this_status');
+        } else {
+            $("#button_test_status #status_test_red").removeClass('this_status');
+        }
+    }, "json");
+
+}
+
 $(document).ready(function () {
 
     /*
@@ -59,6 +80,7 @@ $(document).ready(function () {
     $("#home_cameraFullSize").html('<img src="http://192.168.1.4:8081/" alt="http://192.168.1.4:8081/">');
 
     home_loadSensors();
+    home_updateTestStatusDevices();
 
 });
 
@@ -70,6 +92,7 @@ $(document).everyTime("1s", function () {
 //Обновление показания датчиков
 $(document).everyTime("60s", function () {
     home_updateSensorsOutData();
+    home_updateTestStatusDevices();
 });
 
 $(function () {

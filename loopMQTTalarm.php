@@ -1,7 +1,6 @@
 <?php
 /**
- * MQTT клиент, реагирует на сообщения, на которые подписан.
- * Для сообщений критичных к скорости
+ * MQTT клиент, реагирует на сообщения, на которые подписан
  * Created by PhpStorm.
  */
 
@@ -20,19 +19,19 @@ $fileDir = dirname(__FILE__);
 require($fileDir. '/class/daemon.class.php');
 require($fileDir. '/class/mqtt.class.php');
 
-ini_set('error_log',$fileDir.'/logs/errorLoopMQTTfast.log');
+ini_set('error_log',$fileDir.'/logs/errorLoopMQTTalarm.log');
 fclose(STDIN);
 fclose(STDOUT);
 fclose(STDERR);
 $STDIN = fopen('/dev/null', 'r');
 $STDOUT = fopen($fileDir.'/logs/application.log', 'ab');
-$STDERR = fopen($fileDir.'/logs/daemonLoopMQTTfast.log', 'ab');
+$STDERR = fopen($fileDir.'/logs/daemonLoopMQTTalarm.log', 'ab');
 
-class daemonLoopMQTTfast extends daemon
+class daemonLoopMQTTalarm extends daemon
 {
 
-    const NAME_PID_FILE = 'loopMQTTfast.pid';
-    const PAUSE = 10000; //Пауза в основном цикле, в микросекундах (0.01 сек)
+    const NAME_PID_FILE = 'loopMQTTalarm.pid';
+    const PAUSE = 100000; //Пауза в основном цикле, в микросекундах (0.1 сек)
 
     public function __construct($dirPidFile)
     {
@@ -43,7 +42,7 @@ class daemonLoopMQTTfast extends daemon
     {
         parent::run();
 
-        $mqtt = new mqttLoop(true, 1);
+        $mqtt = new mqttAlarm(true);
         $mqtt->connect();
 
         while (!$this->stopServer()) {
@@ -61,14 +60,14 @@ class daemonLoopMQTTfast extends daemon
 
 }
 
-$daemon = new daemonLoopMQTTfast( $fileDir.'/tmp');
+$daemon = new daemonLoopMQTTalarm( $fileDir.'/tmp');
 if ($daemon->isDaemonActive()) {
     exit();
 }
 $flag = 1;
 $mes = '';
 while ($flag != 0) {
-    logger::writeLog('Подключение к MQTT брокеру (fast). Попытка '.$flag, loggerTypeMessage::NOTICE, loggerName::MQTT);
+    logger::writeLog('Подключение к MQTT брокеру (alarm). Попытка '.$flag, loggerTypeMessage::NOTICE, loggerName::MQTT);
     try {
         $daemon->run();
         $flag = 0;
@@ -79,7 +78,7 @@ while ($flag != 0) {
     }
     if ($flag>10) {
         $flag = 0;
-        $mes = 'Не удалось подключиться к MQTT брокеру (fast). Проверьте параметры подключения и доступность брокера.';
+        $mes = 'Не удалось подключиться к MQTT брокеру (alarm). Проверьте параметры подключения и доступность брокера.';
     }
 }
 if (strlen($mes) > 0 ) {

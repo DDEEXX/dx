@@ -189,6 +189,18 @@ if ($p == 'home' || empty($p)) {
                     </div>
                 </div>
             </div>
+            <div id="home_status_devices" class="ui-corner-all ui-state-default"
+                 style="margin-top: 5px; flex-direction: column; height: 115px">
+                <div style="margin-top: 5px; margin-left: 5px; display: flex">
+                    <p>Устройства</p>
+                    <div style="margin-top: 5px; margin-left: 5px; display: flex">
+                        <div id="home_status_test_green" class="home_status_test"></div>
+                        <div id="home_status_test_yellow" class="home_status_test"></div>
+                        <div id="home_status_test_red" class="home_status_test"></div>
+                    </div>
+                </div>
+
+            </div>
         </div>
         <div class="clear"></div>
 

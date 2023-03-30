@@ -51,9 +51,11 @@ class zigbeeSwitchWHD02 extends aMakerDevice
     public function __construct(array $options)
     {
         parent::__construct($options, typeDevice::SWITCH_WHD02);
-        $mqttParameters = ['topicCmnd' => $options['topic_cmnd'],
+        $mqttParameters = [
+            'topicCmnd' => $options['topic_cmnd'],
             'topicStat' => $options['topic_stat'],
-            'topicTest' => $options['topic_test']];
+            'topicTest' => $options['topic_test'],
+            'topicAlarm' => $options['topic_alarm']];
         $this->devicePhysic = new switchWHD02_MQTT($mqttParameters);
     }
 

@@ -35,9 +35,11 @@ class gasSensor extends aSensorDevice
     public function __construct(array $options)
     {
         parent::__construct($options, typeDevice::GAS_SENSOR);
-        $mqttParameters = ['topicCmnd' => $options['topic_cmnd'],
+        $mqttParameters = [
+            'topicCmnd' => $options['topic_cmnd'],
             'topicStat' => $options['topic_stat'],
             'topicTest' => $options['topic_test'],
+            'topicAlarm' => $options['topic_alarm'],
             'payload' => $options['payload_cmnd']];
         $this->devicePhysic = gasSensorFactory::create($this->getNet(), $mqttParameters);
     }
