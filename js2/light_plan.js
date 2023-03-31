@@ -20,6 +20,8 @@ const lampsData = [
     {"id": "light_plan_light_bedroom_Tima", "label": "light_bedroom_Tima", "payload": "pulse", "type": "light", "place": "365;640"},
     {"id": "light_plan_light_bedroom", "label": "light_bedroom", "payload": "pulse", "type": "light", "place": "255;520"},
     {"id": "light_plan_light_bathroom", "label": "light_bathroom", "payload": "pulse", "type": "light", "place": "235;755"},
+    {"id": "light_plan_light_terrace", "label": "light_terrace", "payload": "pulse", "type": "light", "place": "85;15"},
+    {"id": "light_plan_backlight_bedroom", "label": "backlight_bedroom", "payload": "", "type": "backlight", "place": "310;545"},
     {"id": "light_plan_light_bedroom_Lera", "label": "light_bedroom_Lera", "payload": "pulse", "labelSensor": "sensor_light_bedroom_Lera", "type": "light", "place": "175;600"}
 ]
 
