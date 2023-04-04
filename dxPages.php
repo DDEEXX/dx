@@ -1,4 +1,5 @@
 <script src="js2/global.js"></script>
+<link rel="stylesheet" type="text/css" href="css2/style_pages.css">
 
 <?php
 $p = isset($_REQUEST['p']) ? $_REQUEST['p'] : 'home';
@@ -276,45 +277,42 @@ if ($p == 'power') {
         </div>
         <div class="clear"></div>
         <div class="grid_4 alpha">
-            <div class="ui-corner-all ui-state-default ui-widget-content" style="margin-top:5px;height:120px">
-                <h2 style="margin-left:5px">Кухонная вытяжка</h2>
+            <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor">
+                <h2 class="title_widget_sensor_header">Кухонная вытяжка</h2>
                 <div id="power_kitchen_hood"></div>
                 <div id="power_kitchen_hood_update_info" style="top: -15px; left: 327px">u</div>
             </div>
         </div>
         <div class="grid_2">
-            <div class="ui-corner-all ui-state-default ui-widget-content" style="margin-top:5px;height:120px">
-                <h2 style="margin-left:5px">Датчики газа</h2>
-                <div id="power_kitchen_gas_sensor" style="margin-top: 5px; margin-left: 5px"></div>
+            <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor">
+                <h2 class="title_widget_sensor_header">Датчики газа</h2>
+                <div id="power_kitchen_gas_sensor" style="margin-left: 5px"></div>
             </div>
         </div>
         <div class="grid_2">
-            <div class="ui-corner-all ui-state-default ui-widget-content" style="margin-top:5px;height:120px">
+            <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor">
                 <h2 style="margin-left:5px">Резерв</h2>
             </div>
         </div>
         <div class="clear"></div>
         <div class="grid_4 alpha">
-            <div class="ui-corner-all ui-state-default ui-widget-content"
-                 style="margin-top:5px;height:90px;position:relative">
+            <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor">
                 <h2 style="margin-left:5px">Гаражные ворота</h2>
                 <div id="label_garage_door" style="float:left;margin-left:8px;margin-top:2px"></div>
                 <button style="margin-left:20px;margin-top:10px;" class="upDown"></button>
             </div>
         </div>
         <div class="grid_4 omega">
-            <div class="ui-corner-all ui-state-default ui-widget-content"
-                 style="margin-top:5px;height:90px;position:relative">
+            <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor">
                 <h2 style="margin-left:5px">Калитка</h2>
             </div>
         </div>
         <div class="clear"></div>
         <div class="grid_4 alpha">
-            <div class="ui-corner-all ui-state-default ui-widget-content"
-                 style="margin-top:5px;height:120px;position:relative">
+            <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor">
                 <div>
                     <h2 style="margin-left:5px">Погреб</h2>
-                    <?php echoRadioGroup('rg_g_vault', 'vault_vent', 'vault_off', 'vault_on', 'vault_auto') ?>
+                    <?php //echoRadioGroup('rg_g_vault', 'vault_vent', 'vault_off', 'vault_on', 'vault_auto') ?>
                     <!--                    <div class="rg_g_vault" style="margin-left:5px;float:left">-->
                     <!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
                     <!--                               id="vault_off"><label for="vault_off">выкл</label>-->
@@ -324,7 +322,7 @@ if ($p == 'power') {
                     <!--                               id="vault_auto"><label for="vault_auto">авто</label>-->
                     <!--                    </div>-->
                 </div>
-                <p>температура: &deg </p>
+                <p>температура: &deg</p>
                 <p>влажность: %</p>
                 <p>вентиляция: </p>
                 <p>свет: </p>

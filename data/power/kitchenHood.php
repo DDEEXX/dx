@@ -25,10 +25,10 @@ if (is_array($valueVent)) {
     $mode = $valueVent['mode'] == 'auto'?'авто':'ручной';
     $colorMode = $valueVent['mode'] == 'auto'?'#00ff00':'#336699';
     $colorFan = '#003200';
-    $workTime = '';
+    //$workTime = '';
     if ($valueVent['run']) {
         $colorFan = '#00ff00';
-        $workTime = date('G:i:s' , (int)$valueVent['time']);
+        //$workTime = date('G:i:s' , (int)$valueVent['time']);
     }
 
     $tempOut = $valueVent['tempOut'];
@@ -48,18 +48,18 @@ if (is_array($valueVent)) {
     $infoHum = 'h:'.$humOut.'% hv:'.$humVent.'% d:'.$deltaHum.'% dE:'.$deltaEHum.'% dD:'.$deltaDHum.'%';
     $infoRun = 'Enable: '.$deltaEnable.' Disable:'.$deltaDisable;
 
-    echo '<div id="kitchen_hood_mode" style="margin-left:5px;margin-top:2px">';
+    echo '<div id="kitchen_hood_mode" style="margin-left:5px">';
     echo '    <input id="kitchen_hood_last_status" value='.$dateLastStatus.' type="hidden"/>';
     echo '    <div>';
     echo '        <p>режим: <span style="color: '.$colorMode.'">'.$mode.'</span></p>';
     echo '    </div>';
-    echo '    <div style="margin-top: 5px; display: flex">';
+    echo '    <div style="margin-top: 10px; display: flex">';
     echo '        <div style="width: 74px">';
     echo '            <div style="display: flex">';
     echo '                <div style="margin: 2px; width: 15px; height: 7px; background-color: '.$colorFan.'"></div>';
     echo '                <div style="margin-left: 5px"><img src="img2/icon_big/fan.png" alt=""></div>';
     echo '            </div>';
-    echo '            <div style="float: right; margin-top: 5px"><p>'.$workTime.'</p></div>';
+    //echo '            <div style="float: right; margin-top: 5px"><p>'.$workTime.'</p></div>';
     echo '        </div>';
     echo '        <div style="margin-left: 20px; margin-top: 5px">';
     echo '          <img id="power_kitchen_hood_light" value="'.$valueLight.'" src="img2/light_'.$valueLight.'.png" alt="">';
