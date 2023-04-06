@@ -315,6 +315,10 @@ elseif ($_REQUEST['dev'] == 'kitchenHood') {
     include 'data/power/kitchenHood.php';
 }
 
+elseif ($_REQUEST['dev'] == 'kitchenHoodInfo') {
+    include 'data/power/kitchenHoodInfo.php';
+}
+
 elseif ($_REQUEST['dev'] == 'check_ventStatus') {
     $result = ['update' => false];
     $dateStatus = (int)$_REQUEST['dateStatus'];

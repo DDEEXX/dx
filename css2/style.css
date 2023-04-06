@@ -3,6 +3,10 @@ html {
     font-size: 12pt;
 }
 
+.ui-dialog.ui-widget-content {
+    background-color: #052f57;
+}
+
 /*группа для отображения числовых данных с датчика, средние иконки*/
 .block_sensor_data {
     margin: 5px;

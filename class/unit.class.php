@@ -277,11 +277,13 @@ abstract class sensorUnit extends unit implements iSensorUnite
         $data = parent::getData();
 
         //TODO - надо сделать как-то по другому, с датчика данные могут приходить не только как числовое значение
-        $dataDecode = json_decode($data, true);
-        if (!is_null($dataDecode)) {
-            $delta = $this->getDelta();
-            $dataDecode['value'] = (float)$dataDecode['value'] + $delta;
-            $data = json_encode($dataDecode);
+        if (is_string($data)) {
+            $dataDecode = json_decode($data, true);
+            if (!is_null($dataDecode)) {
+                $delta = $this->getDelta();
+                $dataDecode['value'] = (float)$dataDecode['value'] + $delta;
+                $data = json_encode($dataDecode);
+            }
         }
 
         return $data;

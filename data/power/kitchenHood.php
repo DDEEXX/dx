@@ -31,23 +31,6 @@ if (is_array($valueVent)) {
         //$workTime = date('G:i:s' , (int)$valueVent['time']);
     }
 
-    $tempOut = $valueVent['tempOut'];
-    $humOut = $valueVent['humOut'];
-    $tempVent = $valueVent['tempVent'];
-    $humVent = $valueVent['humVent'];
-    $deltaEnable = $valueVent['deltaEnable'];
-    $deltaETemp = $valueVent['deltaETemp'];
-    $deltaEHum = $valueVent['deltaEHum'];
-    $deltaDisable = $valueVent['deltaDisable'];
-    $deltaDTemp = $valueVent['deltaDTemp'];
-    $deltaDHum = $valueVent['deltaDHum'];
-    $deltaTemp = $tempVent - $tempOut;
-    $deltaHum = $humVent - $humOut;
-
-    $infoTemp = 't:'.$tempOut.'&deg tv:'.$tempVent.'&deg d:'.$deltaTemp.'&deg dE:'.$deltaETemp.'&deg dD:'.$deltaDTemp.'&deg';
-    $infoHum = 'h:'.$humOut.'% hv:'.$humVent.'% d:'.$deltaHum.'% dE:'.$deltaEHum.'% dD:'.$deltaDHum.'%';
-    $infoRun = 'Enable: '.$deltaEnable.' Disable:'.$deltaDisable;
-
     echo '<div id="kitchen_hood_mode" style="margin-left:5px">';
     echo '    <input id="kitchen_hood_last_status" value='.$dateLastStatus.' type="hidden"/>';
     echo '    <div>';
@@ -59,15 +42,9 @@ if (is_array($valueVent)) {
     echo '                <div style="margin: 2px; width: 15px; height: 7px; background-color: '.$colorFan.'"></div>';
     echo '                <div style="margin-left: 5px"><img src="img2/icon_big/fan.png" alt=""></div>';
     echo '            </div>';
-    //echo '            <div style="float: right; margin-top: 5px"><p>'.$workTime.'</p></div>';
     echo '        </div>';
-    echo '        <div style="margin-left: 20px; margin-top: 5px">';
+    echo '        <div style="margin-left: 15px; margin-top: 5px">';
     echo '          <img id="power_kitchen_hood_light" value="'.$valueLight.'" src="img2/light_'.$valueLight.'.png" alt="">';
-    echo '        </div>';
-    echo '        <div style="margin-left: 5px">';
-    echo '            <div style="font-size: 70%">'.$infoTemp.'</div>';
-    echo '            <div style="font-size: 70%">'.$infoHum.'</div>';
-    echo '            <div style="font-size: 70%">'.$infoRun.'</div>';
     echo '        </div>';
     echo '    </div>';
     echo '</div>';

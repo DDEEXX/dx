@@ -24,6 +24,9 @@ function power_checkVent_Status() {
             $.get("getData.php?dev=kitchenHood", function (data) {
                 $("#power_kitchen_hood").html(data);
             });
+            $.get("data/power/kitchenHoodInfo.php", function (data) {
+                $("#power_kitchen_hood_dialogSetup_content").html(data);
+            });
         } else {
             let arLabels = [];
             arLabels.push('light_kitchen_vent');
@@ -60,28 +63,30 @@ function power_checkKitchenGasSensor_Status() {
     })
 }
 
-$(document).ready(function () {
-
-    // $(".rg_g_vault").buttonset();
-
-    /* dev=label - событие = считать показания цифрового датчика */
-    /* label=label_garage_door - имя датчика в базе = label_garage_door*/
-    /* type=last - тип события = последнее показание */
-    // $.get("getData.php?dev=label&label=label_garage_door&type=last", function (data) {
-    //     $("#label_garage_door").html(data);
-    // });
-
-    // $.get("getData.php?dev=kitchenHood", function (data) {
-    //     $("#power_kitchen_hood").html(data);
-    // });
-});
-
 $(function () {
-
     power_updateAll();
 
-    $("#power_kitchen_hood_update_info").button().click(function () {
-        $.get("updateKitchenHoodInfo.php", function () {});
+    const power_kitchen_hood_dialogSetup = "#power_kitchen_hood_dialogSetup";
+    $(power_kitchen_hood_dialogSetup).dialog({
+        autoOpen: false,
+        draggable: false,
+        position: {my: "center", at: "center", of: "#page_power"},
+        resizable: false,
+        title: "Настройка вытяжки",
+        height: "auto",
+        width: 700,
+        open: function (event, ui) {
+            $.get("data/power/kitchenHoodInfo.php", function (data) {
+                $("#power_kitchen_hood_dialogSetup_content").html(data);
+            });
+        }
+    });
+
+    $("#power_kitchen_hood_setup").button({
+        icon: "ui-icon-gear",
+        showLabel: false
+    }).click(function () {
+        $(power_kitchen_hood_dialogSetup).dialog("open");
     });
 
 });

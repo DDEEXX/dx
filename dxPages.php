@@ -276,11 +276,16 @@ if ($p == 'power') {
             </div>
         </div>
         <div class="clear"></div>
-        <div class="grid_4 alpha">
+        <div class="grid_2 alpha">
             <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor">
                 <h2 class="title_widget_sensor_header">Кухонная вытяжка</h2>
-                <div id="power_kitchen_hood"></div>
-                <div id="power_kitchen_hood_update_info" style="top: -15px; left: 327px">u</div>
+                <div style="display: flex; align-items: flex-start">
+                    <div id="power_kitchen_hood"></div>
+                    <div id="power_kitchen_hood_setup" style="margin-left: 25px; height: 36px; width: 36px"></div>
+                </div>
+                <div id="power_kitchen_hood_dialogSetup">
+                    <div id="power_kitchen_hood_dialogSetup_content"></div>
+                </div>
             </div>
         </div>
         <div class="grid_2">
