@@ -267,6 +267,7 @@ if ($p == 'light') {
 if ($p == 'power') {
     ?>
 
+    <link rel="stylesheet" type="text/css" href="css2/style_power.css">
     <script src="js2/power.js"></script>
 
     <div id="page_power" class="grid_12">

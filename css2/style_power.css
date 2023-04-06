@@ -1,0 +1,23 @@
+.kh_setup_row {
+    display: flex;
+    align-items: center
+}
+
+.kh_setup_col1 {
+    width: 40%;
+    display: flex;
+    justify-content: space-between
+}
+
+.kh_setup_col2 {
+    padding-left: 25px
+}
+
+.kh_setup_col2 input {
+    width: 2em;
+}
+
+.kh_setup_col3 {
+    width: 25%;
+    padding-left: 25px
+}

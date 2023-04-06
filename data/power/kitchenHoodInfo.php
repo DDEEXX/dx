@@ -38,7 +38,7 @@ if (is_array($valueVent)) {
     }
 
     echo '<script src="js2/powerKitchenHood.js"></script>';
-    echo '            <div style="display: flex">';
+    echo '<div style="display: flex">';
     echo '                <div id="power_kitchen_hood_update_info"></div>';
     echo '                <div style="margin-left: 15px">';
     echo '                    <div>'.$infoTemp.'</div>';
@@ -54,7 +54,58 @@ if (is_array($valueVent)) {
     echo '                      <div style="margin-left: 5px">выкл</div>';
     echo '                    </div>';
     echo '                </div>';
-    echo '            </div>';
+    echo '</div>';
+    echo '<div style="margin-top: 20px">';
+    echo '    <div class="kh_setup_row">';
+    echo '        <div class="kh_setup_col1">';
+    echo '          <span>Температура включения:</span> ';
+    echo '          <span>'.$deltaETemp.'&deg</span>';
+    echo '        </div>';
+    echo '        <div class="kh_setup_col2">';
+    echo '          <input id="deltaETemp" name="value" value="'.$deltaETemp.'">';
+    echo '        </div>';
+    echo '        <div class="kh_setup_col3">';
+    echo '            <button id="btn_deltaETemp" class="btn_kitchen_hood_set">установить</button>';
+    echo '        </div>';
+    echo '    </div>';
+    echo '    <div class="kh_setup_row" style="padding-top: 5px">';
+    echo '        <div class="kh_setup_col1">';
+    echo '          <span>Температура выключения:</span> ';
+    echo '          <span>'.$deltaDTemp.'&deg</span>';
+    echo '        </div>';
+    echo '        <div class="kh_setup_col2"">';
+    echo '          <input id="deltaDTemp" name="value" value="'.$deltaDTemp.'">';
+    echo '        </div>';
+    echo '        <div class="kh_setup_col3">';
+    echo '            <button id="btn_deltaDTemp" class="btn_kitchen_hood_set">установить</button>';
+    echo '        </div>';
+    echo '    </div>';
+    echo '    <div class="kh_setup_row" style="padding-top: 5px">';
+    echo '        <div class="kh_setup_col1">';
+    echo '          <span>Влажность включения:</span> ';
+    echo '          <span>'.$deltaEHum.'%</span>';
+    echo '        </div>';
+    echo '        <div class="kh_setup_col2"">';
+    echo '          <input id="deltaEHum" name="value" value="'.$deltaEHum.'">';
+    echo '        </div>';
+    echo '        <div class="kh_setup_col3">';
+    echo '            <button id="btn_deltaEHum" class="btn_kitchen_hood_set">установить</button>';
+    echo '        </div>';
+    echo '    </div>';
+    echo '    <div class="kh_setup_row" style="padding-top: 5px">';
+    echo '        <div class="kh_setup_col1">';
+    echo '          <span>Влажность выключения:</span> ';
+    echo '          <span>'.$deltaDHum.'%</span>';
+    echo '        </div>';
+    echo '        <div class="kh_setup_col2"">';
+    echo '          <input id="deltaDHum" name="value" value="'.$deltaDHum.'">';
+    echo '        </div>';
+    echo '        <div class="kh_setup_col3">';
+    echo '            <button id="btn_deltaDHum" class="btn_kitchen_hood_set">установить</button>';
+    echo '        </div>';
+    echo '    </div>';
+    echo '</div>';
+    echo '<div style="display: flex"></div>';
 } else {
     echo '';
 }
