@@ -590,6 +590,8 @@ interface iDevice
 interface iSensorDevice extends iDevice
 {
     function requestData();
+
+    function saveAlarm($data);
 }
 
 interface iMakerDevice extends iDevice
@@ -747,6 +749,71 @@ abstract class aSensorDevice extends aDevice implements iSensorDevice
 
     abstract function requestData();
 
+    /** Получает последнюю запись из таблицы базы данных с данными Alarm
+     * @return array
+     */
+    private function getAlarmData()
+    {
+        $result = [];
+        try {
+            $con = sqlDataBase::Connect();
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции aSensorDevice::getAlarmData. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return $result;
+        }
+        $deviceID = $con->getConnect()->real_escape_string($this->getDeviceID());
+        $query = 'SELECT * FROM tdevicealarm WHERE DeviceID=' . $deviceID . ' Order By Date Desc LIMIT 1';
+        try {
+            $value = queryDataBase::getOne($con, $query);
+            if (is_array($value) && array_key_exists('Value', $value)) {
+                $result['date'] = strtotime($value['Date']);
+                $result['value'] = $value['Value'];
+            }
+        } catch (querySelectDBException $e) {
+            $result['date'] = 0;
+            $result['value'] = '';
+        }
+        return $result;
+    }
+
+    function saveAlarm($data)
+    {
+        $dateValue = date('Y-m-d H:i:s');
+        $deviceID = $this->getDeviceID();
+
+        $insertData = true; //если записи в базе нет, то вставляем, иначе обновляем старую
+        $currentData = $this->getAlarmData();
+        if (array_key_exists('value', $currentData)) {
+            $insertData = $currentData['value'] == '';
+        }
+
+        $value = json_encode($data);
+        if ($insertData) {
+            $template = 'INSERT INTO tdevicealarm (DeviceID, Date, Value) VALUES (\'%s\', \'%s\', \'%s\')';
+            $query = sprintf($template, $deviceID, $dateValue, $value);
+        } else {
+            $template = 'UPDATE tdevicealarm SET Date = \'%s\', Value = \'%s\' WHERE DeviceID = %s';
+            $query = sprintf($template, $dateValue, $value, $deviceID);
+        }
+
+        try {
+            $con = sqlDataBase::Connect();
+            $result = queryDataBase::execute($con, $query);
+            if (!$result) {
+                logger::writeLog('Ошибка при записи в базу данных (writeValue)',
+                    loggerTypeMessage::ERROR, loggerName::ERROR);
+            }
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных',
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка при добавлении данных в базу данных',
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+        }
+
+        unset($con);
+    }
 }
 
 /** Устройство исполнитель*/

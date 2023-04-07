@@ -597,7 +597,7 @@ class mqttAlarm
                     loggerName::MQTT);
                 $device = managerDevices::getDevice($idDevice);
                 if (!is_null($device)) {
-                    $ttt = true;
+                    $device->saveAlarm($deviceDataValue);
                 }
             }
         }
