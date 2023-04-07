@@ -74,7 +74,7 @@ $(function () {
         resizable: false,
         title: "Настройка вытяжки",
         height: "auto",
-        width: 700,
+        width: 800,
         open: function (event, ui) {
             $.get("data/power/kitchenHoodInfo.php", function (data) {
                 $("#power_kitchen_hood_dialogSetup_content").html(data);
