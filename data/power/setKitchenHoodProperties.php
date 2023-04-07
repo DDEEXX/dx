@@ -23,5 +23,5 @@ $value = (int)$value;
 $payload = ''.$property.';'.$value;
 
 $mqtt = mqttSend::connect();
-$mqtt->publish($this->topicCmnd, $payload);
+$mqtt->publish($topic, $payload);
 
