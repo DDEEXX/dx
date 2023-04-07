@@ -25,8 +25,6 @@ if (is_array($valueVent)) {
     $deltaTemp = $tempVent - $tempOut;
     $deltaHum = $humVent - $humOut;
 
-    $infoTemp = 'Температура: кухня '.$tempOut.'&deg, вытяжка '.$tempVent.'&deg, дельта '.$deltaTemp.'&deg';
-    $infoHum = 'Влажность: кухня '.$humOut.'%, вытяжка '.$humVent.'%, дельта '.$deltaHum.'%';
     $infoRun = 'Enable: '.$deltaEnable.' Disable:'.$deltaDisable;
     $colorEnable = '#003200';
     if ($deltaEnable) {
@@ -38,13 +36,23 @@ if (is_array($valueVent)) {
     }
 
     echo '<script src="js2/powerKitchenHood.js"></script>';
-    echo '<div style="display: flex">';
-    echo '                <div id="power_kitchen_hood_update_info"></div>';
-    echo '                <div style="margin-left: 15px">';
-    echo '                    <div>'.$infoTemp.'</div>';
-    echo '                    <div>'.$infoHum.'</div>';
-    echo '                </div>';
-    echo '                <div style="margin-left: 10px">';
+    echo '<div style="display: flex; justify-content: space-between">';
+    echo '  <div id="power_kitchen_hood_update_info" style="background: url(\'img2/icon_medium/refresh.png\') no-repeat center center; width: 1em"></div>';
+    echo '  <div style="width: 80%">';
+    echo '    <div style="display: flex; justify-content: flex-start">';
+    echo '        <p style="width: 27%">Температура</p>';
+    echo '        <p style="width: 25%">вытяжка '.$tempVent.'&deg</p>';
+    echo '        <p style="width: 25%">кухня '.$tempOut.'&deg</p>';
+    echo '        <p style="width: 25%">дельта '.$deltaTemp.'&deg</p>';
+    echo '    </div>';
+    echo '    <div style="display: flex; justify-content: flex-start">';
+    echo '        <p style="width: 27%">Влажность</p>';
+    echo '        <p style="width: 25%">вытяжка '.$humVent.'%</p>';
+    echo '        <p style="width: 25%">кухня '.$humOut.'%</p>';
+    echo '        <p style="width: 25%">дельта '.$deltaHum.'%</p>';
+    echo '    </div>';
+    echo '  </div>';
+    echo '  <div>';
     echo '                    <div style="display: flex">';
     echo '                      <div style="margin: 2px; width: 15px; height: 7px; background-color: '.$colorEnable.'"></div>';
     echo '                      <div style="margin-left: 5px">вкл</div>';
@@ -53,7 +61,7 @@ if (is_array($valueVent)) {
     echo '                      <div style="margin: 2px; width: 15px; height: 7px; background-color: '.$colorDisable.'"></div>';
     echo '                      <div style="margin-left: 5px">выкл</div>';
     echo '                    </div>';
-    echo '                </div>';
+    echo '  </div>';
     echo '</div>';
     echo '<div style="margin-top: 20px">';
     echo '    <div class="kh_setup_row">';
