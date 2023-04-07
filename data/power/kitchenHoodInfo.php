@@ -22,8 +22,8 @@ if (is_array($valueVent)) {
     $deltaDisable = $valueVent['deltaDisable'];
     $deltaDTemp = $valueVent['deltaDTemp'];
     $deltaDHum = $valueVent['deltaDHum'];
-    $deltaTemp = $tempVent - $tempOut;
-    $deltaHum = $humVent - $humOut;
+    $deltaTemp = round($tempVent - $tempOut, 1);
+    $deltaHum = round($humVent - $humOut, 1);
 
     $infoRun = 'Enable: '.$deltaEnable.' Disable:'.$deltaDisable;
     $colorEnable = '#003200';
