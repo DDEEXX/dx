@@ -14,6 +14,7 @@ class gasSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
         }
         parent::__construct($mqttParameters, formatValueDevice::MQTT_GAS_SENSOR);
     }
+
 }
 
 class gasSensorFactory
@@ -29,8 +30,20 @@ class gasSensorFactory
     }
 }
 
-class gasSensor extends aSensorDevice
+class gasSensorAlarmMQQT extends aAlarmMQTT {
+
+    public function alarm($payload)
+    {
+        $data = json_decode($payload, true);
+        $alarm = (bool)$data['alarm'];
+        $value = $data['gas'];
+
+    }
+}
+
+class gasSensor extends aSensorDevice implements iDeviceAlarm
 {
+    private $alarm; // объект отвечающий за события тревоги поступившие с датчика
 
     public function __construct(array $options)
     {
@@ -39,9 +52,9 @@ class gasSensor extends aSensorDevice
             'topicCmnd' => $options['topic_cmnd'],
             'topicStat' => $options['topic_stat'],
             'topicTest' => $options['topic_test'],
-            'topicAlarm' => $options['topic_alarm'],
             'payload' => $options['payload_cmnd']];
         $this->devicePhysic = gasSensorFactory::create($this->getNet(), $mqttParameters);
+        $this->alarm = managerAlarmDevice::createAlarm($options['topic_alarm'], $this->devicePhysic);
     }
 
     function requestData()
@@ -49,5 +62,15 @@ class gasSensor extends aSensorDevice
         if ($this->devicePhysic instanceof aDeviceSensorPhysic) {
             $this->devicePhysic->requestData();
         }
+    }
+
+    function getTopicAlarm()
+    {
+        return $this->alarm->getTopicAlarm();
+    }
+
+    function alarm($payload)
+    {
+        $this->alarm->alarm($payload);
     }
 }

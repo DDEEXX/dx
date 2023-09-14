@@ -32,6 +32,7 @@ class daemonLoopMQTTalarm extends daemon
 
     const NAME_PID_FILE = 'loopMQTTalarm.pid';
     const PAUSE = 100000; //Пауза в основном цикле, в микросекундах (0.1 сек)
+    const INTERVAL_UPDATE_SUBSCRIBE = 600; //интервал обновления подписок в секундах
 
     public function __construct($dirPidFile)
     {
@@ -45,11 +46,19 @@ class daemonLoopMQTTalarm extends daemon
         $mqtt = new mqttAlarm(true);
         $mqtt->connect();
 
+        $previousUpdateSubscibe = time();
+
         while (!$this->stopServer()) {
 
             $mqtt->loop();
 
-            usleep(self::PAUSE);
+            $now = time();
+            if ($now - $previousUpdateSubscibe > self::INTERVAL_UPDATE_SUBSCRIBE) {
+                $mqtt->updateSubscribe();
+                $previousUpdateSubscibe = $now;
+            } else {
+                usleep(self::PAUSE);
+            }
 
             pcntl_signal_dispatch(); //Вызывает обработчики для ожидающих сигналов
         }

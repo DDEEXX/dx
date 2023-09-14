@@ -224,3 +224,27 @@ class managerDevices
     }
 
 }
+
+class managerAlarmDevice {
+
+    public static function createAlarm($topic, $devicePhysic) {
+        if (!is_object($devicePhysic)) {
+            return null;
+        }
+        switch (get_class($devicePhysic)) {
+            case 'gasSensorMQQTPhysic' :
+                $className = 'gasSensorAlarmMQQT';
+                break;
+            default :
+                return null;
+        }
+
+        if (class_exists($className)) {
+            return new $className($topic);
+        }
+        else {
+            return null;
+        }
+    }
+
+}

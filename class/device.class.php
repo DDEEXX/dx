@@ -234,8 +234,41 @@ interface iDevicePhysicMQTT
 
     function getTopicTest();
 
-    function getTopicAlarm();
+    //function getTopicAlarm();
 
+}
+
+/*
+ * устройство способное отправлять по MQTT данные о "тревоге" на этом устройстве
+ */
+interface iDeviceAlarm {
+    function getTopicAlarm();
+    function alarm($payload);
+}
+
+/*
+ * класс отправляет по MQTT, сведения о "тревоге"
+ */
+interface iAlarmMQTT {
+    function getTopicAlarm();
+    function alarm($payload);
+}
+
+abstract class aAlarmMQTT implements iAlarmMQTT {
+
+    private $topicAlarm;
+
+    public function __construct($topic)
+    {
+        $this->topicAlarm = $topic;
+    }
+
+    public function getTopicAlarm()
+    {
+        return $this->topicAlarm;
+    }
+
+    abstract public function alarm($payload);
 }
 
 interface iDevicePhysicOWire
@@ -266,7 +299,7 @@ abstract class aDevicePhysic implements iDevicePhysic
 
     /** Получает данные датчика из sm памяти
      * @param $deviceID
-     * @return false|string - данные в виде JSON строки
+     * @return array|false|string
      */
     function getData($deviceID)
     {
@@ -322,7 +355,6 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
     private $topicCmnd;
     private $topicStat;
     private $topicTest;
-    private $topicAlarm;
 
     private $requestPayload;
 
@@ -331,7 +363,6 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
         $this->topicCmnd = $mqttParameters['topicCmnd'];
         $this->topicStat = $mqttParameters['topicStat'];
         $this->topicTest = $mqttParameters['topicTest'];
-        $this->topicAlarm = $mqttParameters['topicAlarm'];
         if (isset($mqttParameters['payload'])) {
             $this->requestPayload = $mqttParameters['payload'];
         } else {
@@ -371,11 +402,6 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
     function getTopicTest()
     {
         return trim($this->topicTest);
-    }
-
-    public function getTopicAlarm()
-    {
-        return $this->topicAlarm;
     }
 
 }
@@ -430,11 +456,6 @@ abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDev
     function getTopicTest()
     {
         return trim($this->topicTest);
-    }
-
-    public function getTopicAlarm()
-    {
-        return '';
     }
 
 }
@@ -560,9 +581,6 @@ class DeviceMakerPhysicDefault extends aDeviceMakerPhysic
     }
 }
 
-/**
- * Устройство
- */
 interface iDevice
 {
     function getDeviceID();
@@ -590,8 +608,6 @@ interface iDevice
 interface iSensorDevice extends iDevice
 {
     function requestData();
-
-    function saveAlarm($data);
 }
 
 interface iMakerDevice extends iDevice
@@ -599,7 +615,6 @@ interface iMakerDevice extends iDevice
     function setData($data);
 }
 
-/** Устройство */
 abstract class aDevice implements iDevice
 {
     private $net;
@@ -672,13 +687,6 @@ abstract class aDevice implements iDevice
         return $result;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getNote()
-    {
-        return $this->note;
-    }
 }
 
 /** Устройство датчик*/
