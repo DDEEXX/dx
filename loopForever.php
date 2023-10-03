@@ -103,10 +103,6 @@ class daemonLoopForever extends daemon
 
     }
 
-    private function alarmDevice() {
-
-    }
-
     public function run()
     {
         parent::run();

@@ -5,16 +5,25 @@
 class gasSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
 
 {
-    const DEFAULT_PAYLOAD = 'get';
+    const DEFAULT_PAYLOAD = '{"state": ""}';
+    const DEFAULT_TEST_PAYLOAD = '{"availability": ""}';
 
     public function __construct($mqttParameters)
     {
-        if (empty($mqttParameters['payload'])) {
-            $mqttParameters['payload'] = self::DEFAULT_PAYLOAD;
-        }
+        if (empty($mqttParameters['payload'])) $mqttParameters['payload'] = self::DEFAULT_PAYLOAD;
+        if (empty($mqttParameters['testPayload'])) $mqttParameters['testPayload'] = self::DEFAULT_TEST_PAYLOAD;
         parent::__construct($mqttParameters, formatValueDevice::MQTT_GAS_SENSOR);
     }
 
+    function formatTestPayload($testPayload)
+    {
+        $result = testDeviceCode::UNKNOWN;
+        $test = json_decode($testPayload, true);
+        if (array_key_exists('state', $test)) {
+            $result = strtolower($test['state']) === 'online' ? testDeviceCode::WORKING : testDeviceCode::UNKNOWN;
+        }
+        return parent::formatTestPayload($result);
+    }
 }
 
 class gasSensorFactory
@@ -30,14 +39,26 @@ class gasSensorFactory
     }
 }
 
-class gasSensorAlarmMQQT extends aAlarmMQTT {
+class gasSensorAlarmMQQT extends aAlarmMQTT
+{
+
+    public function saveInJournal($device, $payload, $update)
+    {
+        $formatPayload = $this->convertPayload($payload);
+        parent::saveInJournal($device, $formatPayload, $update);
+    }
 
     public function alarm($payload)
     {
-        $data = json_decode($payload, true);
-        $alarm = (bool)$data['alarm'];
-        $value = $data['gas'];
 
+    }
+
+    function convertPayload($payload)
+    {
+        $data = json_decode($payload, true);
+        $result['alarm'] = (bool)$data['alarm'];
+        $result['value'] = (int)$data['gas'];
+        return json_encode($result);
     }
 }
 
@@ -69,8 +90,8 @@ class gasSensor extends aSensorDevice implements iDeviceAlarm
         return $this->alarm->getTopicAlarm();
     }
 
-    function alarm($payload)
+    function onMessageAlarm($payload)
     {
-        $this->alarm->alarm($payload);
+        $this->alarm->saveInJournal($this, $payload, true);
     }
 }

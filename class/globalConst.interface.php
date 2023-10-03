@@ -119,6 +119,7 @@ interface testDeviceCode {
     const NO_VALUE = 6;
     const IS_MQTT_DEVICE = 10;
     const NO_TEST = 11;
+    const UNKNOWN = 99;
 }
 
 const MQTT_CODE_SEPARATOR = ';';

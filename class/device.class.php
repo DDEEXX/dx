@@ -228,33 +228,41 @@ interface iDeviceMakerPhysic extends iDevicePhysic
 
 interface iDevicePhysicMQTT
 {
-    const PAYLOAD_TEST = 'test';
+    const DEFAULT_TEST_PAYLOAD = 'test';
 
     function getTopicStat();
 
     function getTopicTest();
 
-    //function getTopicAlarm();
-
+    function formatTestPayload($testPayload);
 }
 
 /*
  * устройство способное отправлять по MQTT данные о "тревоге" на этом устройстве
  */
-interface iDeviceAlarm {
+
+interface iDeviceAlarm
+{
     function getTopicAlarm();
-    function alarm($payload);
+
+    function onMessageAlarm($payload);
 }
 
 /*
- * класс отправляет по MQTT, сведения о "тревоге"
+ * отправляет по MQTT, сведения о "тревоге"
  */
-interface iAlarmMQTT {
+
+interface iAlarmMQTT
+{
     function getTopicAlarm();
+
     function alarm($payload);
+
+    function saveInJournal($device, $payload, $update);
 }
 
-abstract class aAlarmMQTT implements iAlarmMQTT {
+abstract class aAlarmMQTT implements iAlarmMQTT
+{
 
     private $topicAlarm;
 
@@ -269,6 +277,85 @@ abstract class aAlarmMQTT implements iAlarmMQTT {
     }
 
     abstract public function alarm($payload);
+
+    abstract function convertPayload($payload);
+
+    private function getLastDataInJournal($device)
+    {
+        try {
+            $con = sqlDataBase::Connect();
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции aSensorDevice::getAlarmData. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return null;
+        }
+        $currentData = date('Y-m-d H:i:s');
+        $deviceID = $con->getConnect()->real_escape_string($device->getDeviceID());
+        $query = 'SELECT * FROM tdevicealarm WHERE DeviceID=' . $deviceID . ' AND Date < \'' . $currentData . '\' Order By Date Desc LIMIT 1';
+        $result = [];
+        try {
+            $value = queryDataBase::getOne($con, $query);
+            if (is_array($value) && array_key_exists('Value', $value)) {
+                $result['date'] = strtotime($value['Date']);
+                $result['value'] = $value['Value'];
+            }
+        } catch (querySelectDBException $e) {
+        }
+        return $result;
+    }
+
+    private function savePayloadInJournal($device, $payload)
+    {
+        $currentData = date('Y-m-d H:i:s');
+        $deviceID = $device->getDeviceID();
+
+        $template = 'INSERT INTO tdevicealarm (DeviceID, Date, Value) VALUES (\'%s\', \'%s\', \'%s\')';
+        $query = sprintf($template, $deviceID, $currentData, trim($payload));
+
+        try {
+            $con = sqlDataBase::Connect();
+            $result = queryDataBase::execute($con, $query);
+            if (!$result) {
+                logger::writeLog('Ошибка при записи в базу данных (writeValue)',
+                    loggerTypeMessage::ERROR, loggerName::ERROR);
+            }
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных',
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка при добавлении данных в базу данных',
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+        }
+    }
+
+    /** Запись в журнал срабатывания тревоги данных устройств
+     * @param $device - устройство на котором сработала тревога
+     * @param $payload - входящее сообщение
+     * @param $update - флаг, если истина, то запись в журнал происходит при несовпадении последней записи в журнале
+     * и текущем сообщением, если флаг ложь, то запись в журнал происходит всегда
+     * @return void
+     */
+    public function saveInJournal($device, $payload, $update = true)
+    {
+        if (!strlen(trim($payload))) { //если пришла пустая строка
+            return;
+        }
+        if ($update) { //проверим последнюю запись в журнале
+            $lastData = $this->getLastDataInJournal($device);
+            if (is_null($lastData)) {
+                return;
+            }
+            if (is_array($lastData) && array_key_exists('value', $lastData)) {
+                $lastPayload = $lastData['value'];
+                if (strlen($lastPayload) && $lastPayload === $payload) {
+                    //последняя запись есть и совпала с текущей
+                    return;
+                }
+            }
+        }
+        $this->savePayloadInJournal($device, $payload);
+    }
+
 }
 
 interface iDevicePhysicOWire
@@ -357,17 +444,17 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
     private $topicTest;
 
     private $requestPayload;
+    private $testPayload;
 
     public function __construct($mqttParameters, $formatValue = formatValueDevice::NO_FORMAT)
     {
         $this->topicCmnd = $mqttParameters['topicCmnd'];
         $this->topicStat = $mqttParameters['topicStat'];
         $this->topicTest = $mqttParameters['topicTest'];
-        if (isset($mqttParameters['payload'])) {
-            $this->requestPayload = $mqttParameters['payload'];
-        } else {
-            $this->requestPayload = '';
-        }
+        $this->requestPayload = isset($mqttParameters['payload']) ? $mqttParameters['payload'] : '';
+        $this->testPayload = isset($mqttParameters['testPayload']) ?
+            $mqttParameters['testPayload'] : iDevicePhysicMQTT::DEFAULT_TEST_PAYLOAD;
+
         $this->formatValue = $formatValue;
     }
 
@@ -393,7 +480,7 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
     {
         $mqtt = mqttSend::connect();
         if (!empty($this->topicCmnd)) {
-            $mqtt->publish($this->topicCmnd, iDevicePhysicMQTT::PAYLOAD_TEST);
+            $mqtt->publish($this->topicCmnd, $this->testPayload);
         }
         unset($mqtt);
         return testDeviceCode::IS_MQTT_DEVICE;
@@ -404,6 +491,10 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
         return trim($this->topicTest);
     }
 
+    public function formatTestPayload($testPayload)
+    {
+        return is_numeric($testPayload) ? (int)$testPayload : testDeviceCode::UNKNOWN ;
+    }
 }
 
 abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDevicePhysicMQTT
@@ -412,12 +503,15 @@ abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDev
     private $topicCmnd;
     private $topicStat;
     private $topicTest;
+    private $testPayload;
 
     public function __construct($mqttParameters, $formatValue = formatValueDevice::NO_FORMAT)
     {
         $this->topicCmnd = $mqttParameters['topicCmnd'];
         $this->topicStat = $mqttParameters['topicStat'];
         $this->topicTest = $mqttParameters['topicTest'];
+        $this->testPayload = isset($mqttParameters['testPayload']) ?
+            $mqttParameters['testPayload'] : iDevicePhysicMQTT::DEFAULT_TEST_PAYLOAD;
         $this->formatValue = $formatValue;
     }
 
@@ -448,7 +542,7 @@ abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDev
     {
         $mqtt = mqttSend::connect();
         if (!empty($this->topicCmnd)) {
-            $mqtt->publish($this->topicCmnd, iDevicePhysicMQTT::PAYLOAD_TEST);
+            $mqtt->publish($this->topicCmnd, $this->testPayload);
         }
         return testDeviceCode::IS_MQTT_DEVICE;
     }
@@ -458,6 +552,10 @@ abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDev
         return trim($this->topicTest);
     }
 
+    function formatTestPayload($testPayload)
+    {
+        return is_numeric($testPayload) ? (int)$testPayload : testDeviceCode::UNKNOWN ;
+    }
 }
 
 abstract class aDeviceSensorPhysicOWire extends aDeviceSensorPhysic implements iDeviceSensorPhysicOWire
@@ -757,71 +855,6 @@ abstract class aSensorDevice extends aDevice implements iSensorDevice
 
     abstract function requestData();
 
-    /** Получает последнюю запись из таблицы базы данных с данными Alarm
-     * @return array
-     */
-    private function getAlarmData()
-    {
-        $result = [];
-        try {
-            $con = sqlDataBase::Connect();
-        } catch (connectDBException $e) {
-            logger::writeLog('Ошибка при подключении к базе данных в функции aSensorDevice::getAlarmData. ' . $e->getMessage(),
-                loggerTypeMessage::FATAL, loggerName::ERROR);
-            return $result;
-        }
-        $deviceID = $con->getConnect()->real_escape_string($this->getDeviceID());
-        $query = 'SELECT * FROM tdevicealarm WHERE DeviceID=' . $deviceID . ' Order By Date Desc LIMIT 1';
-        try {
-            $value = queryDataBase::getOne($con, $query);
-            if (is_array($value) && array_key_exists('Value', $value)) {
-                $result['date'] = strtotime($value['Date']);
-                $result['value'] = $value['Value'];
-            }
-        } catch (querySelectDBException $e) {
-            $result['date'] = 0;
-            $result['value'] = '';
-        }
-        return $result;
-    }
-
-    function saveAlarm($data)
-    {
-        $dateValue = date('Y-m-d H:i:s');
-        $deviceID = $this->getDeviceID();
-
-        $insertData = true; //если записи в базе нет, то вставляем, иначе обновляем старую
-        $currentData = $this->getAlarmData();
-        if (array_key_exists('value', $currentData)) {
-            $insertData = $currentData['value'] == '';
-        }
-
-        $value = json_encode($data);
-        if ($insertData) {
-            $template = 'INSERT INTO tdevicealarm (DeviceID, Date, Value) VALUES (\'%s\', \'%s\', \'%s\')';
-            $query = sprintf($template, $deviceID, $dateValue, $value);
-        } else {
-            $template = 'UPDATE tdevicealarm SET Date = \'%s\', Value = \'%s\' WHERE DeviceID = %s';
-            $query = sprintf($template, $dateValue, $value, $deviceID);
-        }
-
-        try {
-            $con = sqlDataBase::Connect();
-            $result = queryDataBase::execute($con, $query);
-            if (!$result) {
-                logger::writeLog('Ошибка при записи в базу данных (writeValue)',
-                    loggerTypeMessage::ERROR, loggerName::ERROR);
-            }
-        } catch (connectDBException $e) {
-            logger::writeLog('Ошибка при подключении к базе данных',
-                loggerTypeMessage::ERROR, loggerName::ERROR);
-        } catch (querySelectDBException $e) {
-            logger::writeLog('Ошибка при добавлении данных в базу данных',
-                loggerTypeMessage::ERROR, loggerName::ERROR);
-        }
-
-        unset($con);
-    }
 }
 
 /** Устройство исполнитель*/

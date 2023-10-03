@@ -419,11 +419,7 @@ class mqttTest
                     loggerTypeMessage::NOTICE,
                     loggerName::MQTT);
             }
-            $testCode = $message->payload;
-            if (is_numeric($testCode)) {
-                $testCode = (int)$testCode;
-            }
-            $this->testCodeDevice[$idDevice] = $testCode;
+            $this->testCodeDevice[$idDevice] = $message->payload; //"сырой" результат тестирования
         }
     }
 
@@ -542,37 +538,17 @@ class mqttAlarm
 
             $device = managerDevices::getDevice($idDevice);
 
-            if (!($device instanceof iDeviceAlarm)) { continue; }
+            if ($device instanceof iDeviceAlarm) {
 
-//            $formatValueDevice = formatValueDevice::NO_FORMAT;
-//            if (array_key_exists($idDevice, $this->deviceFormatPayload)) {
-//                $formatValueDevice = $this->deviceFormatPayload[$idDevice];
-//            }
-//
-            if ($this->logger) {
-                logger::writeLog(sprintf('По топику: %s, найдено устройство с ID: %s', $topic, $idDevice),
-                    loggerTypeMessage::NOTICE,
-                    loggerName::MQTT);
+                if ($this->logger) {
+                    logger::writeLog(sprintf('По топику: %s, найдено устройство с ID: %s', $topic, $idDevice),
+                        loggerTypeMessage::NOTICE,
+                        loggerName::MQTT);
+                }
+
+                $device->onMessageAlarm($message->payload);
             }
-//
-            $device->alarm($message->payload);
 
-//            if ($this->logger) {
-//                logger::writeLog(sprintf('$formatValueDevice %s', $formatValueDevice),
-//                    loggerTypeMessage::NOTICE,
-//                    loggerName::MQTT);
-//            }
-//
-//            $deviceDataValue = $this->convertPayload($message->payload, $formatValueDevice);
-//            if ($this->logger) {
-//                logger::writeLog('set ' . json_encode($deviceDataValue),
-//                    loggerTypeMessage::NOTICE,
-//                    loggerName::MQTT);
-//                $device = managerDevices::getDevice($idDevice);
-//                if (!is_null($device)) {
-//                    $device->saveAlarm($deviceDataValue);
-//                }
-//            }
         }
     }
 
@@ -625,23 +601,4 @@ class mqttAlarm
         }
     }
 
-    private function convertPayload($payload, $format)
-    {
-
-        $result = ['alarm' => false, 'value' => 0.0];
-
-        switch ($format) {
-            case formatValueDevice::MQTT_TEMPERATURE :
-                $data = json_decode($payload, true);
-                $result['alarm'] = (bool)$data['alarm'];
-                $result['value'] = $data['temperature'];
-                break;
-            case formatValueDevice::MQTT_GAS_SENSOR :
-                $data = json_decode($payload, true);
-                $result['alarm'] = (bool)$data['alarm'];
-                $result['value'] = $data['gas'];
-                break;
-        }
-        return $result;
-    }
 }
