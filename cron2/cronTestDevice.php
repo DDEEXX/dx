@@ -54,11 +54,6 @@ foreach ($devices as $device) {
             continue;
         }
 
-        if (is_a($devicePhysic, 'switchWHD02_MQTT')) { //TODO - затычка всегда считается рабочим
-            if (array_key_exists($deviceId, $codeDevices)) {
-                $codeDevices[$deviceId] = 0;
-            }
-        }
         if (array_key_exists($deviceId, $codeDevices)) {
             $testDeviceCode = $devicePhysic->formatTestPayload($codeDevices[$deviceId]);
             managerDevices::updateTestCode($device, $testDeviceCode, $now);

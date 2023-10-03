@@ -503,7 +503,7 @@ abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDev
     private $topicCmnd;
     private $topicStat;
     private $topicTest;
-    private $testPayload;
+    protected $testPayload;
 
     public function __construct($mqttParameters, $formatValue = formatValueDevice::NO_FORMAT)
     {

@@ -3,8 +3,11 @@
 class switchWHD02_MQTT extends aDeviceMakerPhysicMQTT
 {
 
+    const DEFAULT_TEST_PAYLOAD = '{"state":"online"}';
+
     public function __construct($mqttParameters)
     {
+        if (empty($mqttParameters['testPayload'])) $mqttParameters['testPayload'] = self::DEFAULT_TEST_PAYLOAD;
         parent::__construct($mqttParameters, formatValueDevice::MQTT_SWITCH_WHD02);
     }
 
@@ -31,14 +34,23 @@ class switchWHD02_MQTT extends aDeviceMakerPhysicMQTT
 
     }
 
+    function formatTestPayload($testPayload)
+    {
+        $result = testDeviceCode::UNKNOWN;
+        $test = json_decode($testPayload, true);
+        if (array_key_exists('state', $test)) {
+            $result = strtolower($test['state']) === 'online' ? testDeviceCode::WORKING : testDeviceCode::UNKNOWN;
+        }
+        return parent::formatTestPayload($result);
+    }
+
     /** @noinspection PhpMissingParentCallCommonInspection */
     public function test()
     {
         $mqtt = mqttSend::connect();
-        $topicCmnd = $this->getTopicTest().'/get';
+        $topicCmnd = $this->getTopicTest();
         if (!empty($topicCmnd)) {
-            $payload = '{"state": ""}';
-            $mqtt->publish($topicCmnd, $payload);
+            $mqtt->publish($topicCmnd, $this->testPayload);
         }
         unset($mqtt);
         return testDeviceCode::IS_MQTT_DEVICE;
