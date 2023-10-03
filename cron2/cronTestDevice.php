@@ -11,10 +11,10 @@ require_once(dirname(__FILE__) . '/../class/mqtt.class.php');
 $sel = new selectOption();
 $sel->set('NetTypeID', netDevice::ONE_WIRE);
 $devices = managerDevices::getListDevices($sel);
-//foreach ($devices as $device) {
-//    $testCode = $device->test(); //запрос данных с датчика
-//    managerDevices::updateTestCode($device, $testCode);
-//}
+foreach ($devices as $device) {
+    $testCode = $device->test(); //запрос данных с датчика
+    managerDevices::updateTestCode($device, $testCode);
+}
 
 //MQTT
 $mqttTest = mqttTest::connect();
