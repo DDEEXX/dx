@@ -720,6 +720,12 @@ abstract class aDevice implements iDevice
     private $deviceID;
     private $disabled;
     private $note;
+
+    public function getNote()
+    {
+        return $this->note;
+    }
+
     protected $devicePhysic;
 
     public function __construct($deviceID, $net, $type, $disabled, $note)
