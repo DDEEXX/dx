@@ -44,16 +44,10 @@ class switchWHD02_MQTT extends aDeviceMakerPhysicMQTT
         return parent::formatTestPayload($result);
     }
 
-    /** @noinspection PhpMissingParentCallCommonInspection */
-    public function test()
+    public function test($topic = '')
     {
-        $mqtt = mqttSend::connect();
-        $topicCmnd = $this->getTopicTest();
-        if (!empty($topicCmnd)) {
-            $mqtt->publish($topicCmnd, $this->testPayload);
-        }
-        unset($mqtt);
-        return testDeviceCode::IS_MQTT_DEVICE;
+        $topic = $this->getTopicTest();
+        return parent::test($topic);
     }
 
 }

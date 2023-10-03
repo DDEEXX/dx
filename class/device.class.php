@@ -476,13 +476,14 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
         return $this->topicStat;
     }
 
-    public function test()
+    public function test($topic = '')
     {
-        $mqtt = mqttSend::connect();
-        if (!empty($this->topicCmnd)) {
-            $mqtt->publish($this->topicCmnd, $this->testPayload);
+        $testTopic = empty($topic) ? $this->topicCmnd : $topic;
+        if (!empty($testTopic)) {
+            $mqtt = mqttSend::connect();
+            $mqtt->publish($testTopic, $this->testPayload);
+            unset($mqtt);
         }
-        unset($mqtt);
         return testDeviceCode::IS_MQTT_DEVICE;
     }
 
@@ -538,11 +539,13 @@ abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDev
         return $this->topicStat;
     }
 
-    public function test()
+    public function test($topic = '')
     {
-        $mqtt = mqttSend::connect();
-        if (!empty($this->topicCmnd)) {
-            $mqtt->publish($this->topicCmnd, $this->testPayload);
+        $testTopic = empty($topic) ? $this->topicCmnd : $topic;
+        if (!empty($testTopic)) {
+            $mqtt = mqttSend::connect();
+            $mqtt->publish($testTopic, $this->testPayload);
+            unset($mqtt);
         }
         return testDeviceCode::IS_MQTT_DEVICE;
     }
@@ -683,6 +686,8 @@ interface iDevice
 {
     function getDeviceID();
 
+    function getNote();
+
     function getNet();
 
     function getType();
@@ -721,11 +726,6 @@ abstract class aDevice implements iDevice
     private $disabled;
     private $note;
 
-    public function getNote()
-    {
-        return $this->note;
-    }
-
     protected $devicePhysic;
 
     public function __construct($deviceID, $net, $type, $disabled, $note)
@@ -740,6 +740,11 @@ abstract class aDevice implements iDevice
     public function getDeviceID()
     {
         return $this->deviceID;
+    }
+
+    public function getNote()
+    {
+        return $this->note;
     }
 
     public function getNet()
