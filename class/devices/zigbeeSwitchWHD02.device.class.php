@@ -44,12 +44,6 @@ class switchWHD02_MQTT extends aDeviceMakerPhysicMQTT
         return parent::formatTestPayload($result);
     }
 
-    public function test($topic = '')
-    {
-        $topic = $this->getTopicTest();
-        return parent::test($topic);
-    }
-
 }
 
 class zigbeeSwitchWHD02 extends aMakerDevice
@@ -60,6 +54,7 @@ class zigbeeSwitchWHD02 extends aMakerDevice
         $mqttParameters = [
             'topicCmnd' => $options['topic_cmnd'],
             'topicStat' => $options['topic_stat'],
+            'topicAvailability' => $options['topic_test'],
             'topicTest' => $options['topic_test'],
             'topicAlarm' => $options['topic_alarm']];
         $this->devicePhysic = new switchWHD02_MQTT($mqttParameters);

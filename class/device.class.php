@@ -424,7 +424,6 @@ abstract class aDevicePhysic implements iDevicePhysic
                 return $data->getDataJSON();
         }
     }
-
 }
 
 abstract class aDeviceSensorPhysic extends aDevicePhysic implements iDeviceSensorPhysic
@@ -439,9 +438,10 @@ abstract class aDeviceMakerPhysic extends aDevicePhysic implements iDeviceMakerP
 
 abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iDevicePhysicMQTT
 {
-    private $topicCmnd;
-    private $topicStat;
-    private $topicTest;
+    private $topicCmnd;  //топик для подачи команд устройству
+    private $topicStat;  //топик на который приходит информация с устройства
+    private $topicAvailabilityInput; //топик для подачи команды тестирования модуля (нахождение в сети)
+    private $topicTest; //топик на который приходит информация о нахождении устройства в сети
 
     private $requestPayload;
     private $testPayload;
@@ -451,6 +451,8 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
         $this->topicCmnd = $mqttParameters['topicCmnd'];
         $this->topicStat = $mqttParameters['topicStat'];
         $this->topicTest = $mqttParameters['topicTest'];
+        $this->topicAvailabilityInput = isset($mqttParameters['topicAvailability']) ?
+            $mqttParameters['topicAvailability'] : $mqttParameters['topicCmnd'];
         $this->requestPayload = isset($mqttParameters['payload']) ? $mqttParameters['payload'] : '';
         $this->testPayload = isset($mqttParameters['testPayload']) ?
             $mqttParameters['testPayload'] : iDevicePhysicMQTT::DEFAULT_TEST_PAYLOAD;
@@ -476,12 +478,11 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
         return $this->topicStat;
     }
 
-    public function test($topic = '')
+    public function test()
     {
-        $testTopic = empty($topic) ? $this->topicCmnd : $topic;
-        if (!empty($testTopic)) {
+        if (!empty($this->topicAvailabilityInput)) {
             $mqtt = mqttSend::connect();
-            $mqtt->publish($testTopic, $this->testPayload);
+            $mqtt->publish($this->topicAvailabilityInput, $this->testPayload);
             unset($mqtt);
         }
         return testDeviceCode::IS_MQTT_DEVICE;
@@ -494,7 +495,7 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
 
     public function formatTestPayload($testPayload)
     {
-        return is_numeric($testPayload) ? (int)$testPayload : testDeviceCode::UNKNOWN ;
+        return is_numeric($testPayload) ? (int)$testPayload : testDeviceCode::UNKNOWN;
     }
 }
 
@@ -503,7 +504,9 @@ abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDev
 
     private $topicCmnd;
     private $topicStat;
+    private $topicAvailabilityInput; //топик для подачи команды тестирования модуля (нахождение в сети)
     private $topicTest;
+
     protected $testPayload;
 
     public function __construct($mqttParameters, $formatValue = formatValueDevice::NO_FORMAT)
@@ -511,6 +514,8 @@ abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDev
         $this->topicCmnd = $mqttParameters['topicCmnd'];
         $this->topicStat = $mqttParameters['topicStat'];
         $this->topicTest = $mqttParameters['topicTest'];
+        $this->topicAvailabilityInput = isset($mqttParameters['topicAvailability']) ?
+            $mqttParameters['topicAvailability'] : $mqttParameters['topicCmnd'];
         $this->testPayload = isset($mqttParameters['testPayload']) ?
             $mqttParameters['testPayload'] : iDevicePhysicMQTT::DEFAULT_TEST_PAYLOAD;
         $this->formatValue = $formatValue;
@@ -539,12 +544,11 @@ abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDev
         return $this->topicStat;
     }
 
-    public function test($topic = '')
+    public function test()
     {
-        $testTopic = empty($topic) ? $this->topicCmnd : $topic;
-        if (!empty($testTopic)) {
+        if (!empty($this->topicAvailabilityInput)) {
             $mqtt = mqttSend::connect();
-            $mqtt->publish($testTopic, $this->testPayload);
+            $mqtt->publish($this->topicAvailabilityInput, $this->testPayload);
             unset($mqtt);
         }
         return testDeviceCode::IS_MQTT_DEVICE;
@@ -557,7 +561,7 @@ abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDev
 
     function formatTestPayload($testPayload)
     {
-        return is_numeric($testPayload) ? (int)$testPayload : testDeviceCode::UNKNOWN ;
+        return is_numeric($testPayload) ? (int)$testPayload : testDeviceCode::UNKNOWN;
     }
 }
 
