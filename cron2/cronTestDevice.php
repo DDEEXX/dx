@@ -1,5 +1,6 @@
 <?php
 /**
+ * Запуск по cron раз в 5 минут
  * Тестирование физических устройств, результат тестирования записывается с таблицу deviceTest
  */
 
@@ -16,51 +17,26 @@ foreach ($devices as $device) {
     managerDevices::updateTestCode($device, $testCode);
 }
 
-//MQTT
-$mqttTest = mqttTest::connect();
+//опрос активности по MQTT
 $sel = new selectOption();
 $sel->set('NetTypeID', netDevice::ETHERNET_MQTT);
 $devices = managerDevices::getListDevices($sel);
 foreach ($devices as $device) {
-    $mqttTest->loop();
     $device->test(); //запрос данных с датчика
-    $mqttTest->loop();
 }
 
-const TIME_TEST_LOOP = 10; // время в течение которого происходит опрос по mqtt
-$timeBegin = time();
-$stop = false;
-while (!$stop) {
-    $now = time();
-    $mqttTest->loop();
-    if ($now-$timeBegin > TIME_TEST_LOOP) {
-        $stop = true;
-    }
-}
+//ждем 15 секунд, чтобы пришел и обработался ответ от всех датчиков
+sleep(15);
 
-//содержит только ответившие устройства и их "ответ", если устройство не ответило в массиве его нет.
-$codeDevices = $mqttTest->getTestCodes();
-
+//проверка - если последний отклик меньше чем 10 минут назад, то считаем что не в сети
 $now = time();
-
+const MAX_INTERVAL = 600;
 foreach ($devices as $device) {
-    $deviceId = $device->getDeviceID();
-    $devicePhysic = $device->getDevicePhysic();
-    if ($devicePhysic instanceof iDevicePhysicMQTT ) {
-        $topicTest = $devicePhysic->getTopicTest();
+    $lastAvailability = managerDevices::getLastAvailability($device);
 
-        if (empty($topicTest)) { //топика для тестирования нет, считаем условно рабочий
-            managerDevices::updateTestCode($device, testDeviceCode::NO_TEST, $now);
-            continue;
-        }
-
-        if (array_key_exists($deviceId, $codeDevices)) {
-            $testDeviceCode = $devicePhysic->formatTestPayload($codeDevices[$deviceId]);
-            managerDevices::updateTestCode($device, $testDeviceCode, $now);
-        } else {
-            managerDevices::updateTestCode($device, testDeviceCode::NO_CONNECTION, $now);
-        }
-    } else {
+    if (is_null($lastAvailability)) {
+        managerDevices::updateTestCode($device, testDeviceCode::NO_CONNECTION, $now);
+    } else if ($now - $lastAvailability >= MAX_INTERVAL) {
         managerDevices::updateTestCode($device, testDeviceCode::NO_CONNECTION, $now);
     }
 }

@@ -446,25 +446,42 @@ class DB
                 loggerTypeMessage::FATAL, loggerName::ERROR);
             return;
         }
+
+        $dateTestCode = date('Y-m-d H:i:s', $updateTime);
+
         if (!is_null($maxDate['m_date'])) {
             $query = sprintf('SELECT * FROM tdevicetest WHERE DeviceID = %s AND Date = \'%s\'',
                 $deviceID, $maxDate['m_date']);
             try {
                 $testCode = queryDataBase::getOne($con, $query);
             } catch (querySelectDBException $e) {
-                logger::writeLog('Ошибка в функции DB::getUserId. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
+                logger::writeLog('Ошибка в функции DB::updateTestDeviceCode. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
                     loggerTypeMessage::FATAL, loggerName::ERROR);
                 return;
             }
             $currentTimeTestCode = strtotime($testCode['Date']);
-            if ($currentTimeTestCode>=$updateTime) { return; }
             $currentTestCode = (int)$testCode['Code'];
-            if ($currentTestCode == $code) { return; }
+            //если совпали коды, но текущее время больше чем в базе, то обновляем только время
+            if ($currentTestCode == $code && $updateTime > $currentTimeTestCode) {
+                $query = sprintf('UPDATE tdevicetest SET Date = \'%s\' WHERE Date = \'%s\' AND DeviceID = %s',
+                    $dateTestCode, $testCode['Date'], $deviceID);
+                try {
+                    $result = queryDataBase::execute($con, $query);
+                    if (!$result) {
+                        logger::writeLog('Ошибка при записи в базу данных (writeValue)',
+                            loggerTypeMessage::ERROR, loggerName::ERROR);
+                    }
+                } catch (querySelectDBException $e) {
+                    logger::writeLog('Ошибка при добавлении данных в базу данных. '.$e->getMessage(),
+                        loggerTypeMessage::ERROR, loggerName::ERROR);
+                } finally {
+                    return;
+                }
+            }
         }
 
-        $dateTestCode = date('Y-m-d H:i:s', $updateTime);
-        $query = sprintf('INSERT INTO tdevicetest (Date, DeviceID, Code) VALUES (\'%s\', %s, %s)',
-            $dateTestCode, $deviceID, $code);
+        $query = sprintf('INSERT INTO tdevicetest (Date, DeviceID, Code, DateCreation) VALUES (\'%s\', %s, %s, \'%s\')',
+            $dateTestCode, $deviceID, $code, $dateTestCode);
         try {
             $result = queryDataBase::execute($con, $query);
             if (!$result) {
@@ -475,7 +492,28 @@ class DB
             logger::writeLog('Ошибка при добавлении данных в базу данных. '.$e->getMessage(),
                 loggerTypeMessage::ERROR, loggerName::ERROR);
         }
+    }
 
+    static public function lastDeviceAvailability(iDevice $device) {
+        try {
+            $con = sqlDataBase::Connect();
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции DB::updateTestDeviceCode. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return null;
+        }
+
+        $deviceID = $device->getDeviceID();
+        $query = "SELECT MAX(Date) m_date FROM tdevicetest WHERE DeviceID = $deviceID";
+        try {
+            $maxDate = queryDataBase::getOne($con, $query);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка в функции DB::getUserId. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return null;
+        }
+
+        return is_null($maxDate['m_date']) ? null : strtotime($maxDate['m_date']);
     }
 
     public static function getLastTestCode()

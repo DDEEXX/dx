@@ -34,14 +34,14 @@ class switchWHD02_MQTT extends aDeviceMakerPhysicMQTT
 
     }
 
-    function formatTestPayload($testPayload)
+    function formatTestPayload($testPayload, $ignoreUnknown = false)
     {
         $result = testDeviceCode::UNKNOWN;
         $test = json_decode($testPayload, true);
         if (array_key_exists('state', $test)) {
             $result = strtolower($test['state']) === 'online' ? testDeviceCode::WORKING : testDeviceCode::UNKNOWN;
         }
-        return parent::formatTestPayload($result);
+        return parent::formatTestPayload($result, $ignoreUnknown);
     }
 
 }
@@ -54,7 +54,7 @@ class zigbeeSwitchWHD02 extends aMakerDevice
         $mqttParameters = [
             'topicCmnd' => $options['topic_cmnd'],
             'topicStat' => $options['topic_stat'],
-            'topicAvailability' => $options['topic_test'],
+            'topicAvailability' => '',
             'topicTest' => $options['topic_test'],
             'topicAlarm' => $options['topic_alarm']];
         $this->devicePhysic = new switchWHD02_MQTT($mqttParameters);

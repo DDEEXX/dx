@@ -208,6 +208,13 @@ class managerDevices
         }
     }
 
+    public static function getLastAvailability(iDevice $device) {
+        if (is_a($device, 'aDevice')) {
+            return DB::lastDeviceAvailability($device);
+        }
+        return null;
+    }
+
     public static function getLastTestCode() {
         $arrValue = DB::getLastTestCode();
         $arrKey = array_column($arrValue, 'DeviceID', 'DeviceID');

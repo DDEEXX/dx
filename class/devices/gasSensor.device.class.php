@@ -15,14 +15,14 @@ class gasSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
         parent::__construct($mqttParameters, formatValueDevice::MQTT_GAS_SENSOR);
     }
 
-    function formatTestPayload($testPayload)
+    function formatTestPayload($testPayload, $ignoreUnknown = false)
     {
         $result = testDeviceCode::UNKNOWN;
         $test = json_decode($testPayload, true);
         if (array_key_exists('state', $test)) {
             $result = strtolower($test['state']) === 'online' ? testDeviceCode::WORKING : testDeviceCode::UNKNOWN;
         }
-        return parent::formatTestPayload($result);
+        return parent::formatTestPayload($result, $ignoreUnknown);
     }
 }
 

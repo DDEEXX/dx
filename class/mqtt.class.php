@@ -349,55 +349,56 @@ class mqttLoop
 
 class mqttTest
 {
-    private static $clientMQTT = null;
     private $client;
+    private $host;
+    private $port;
     //Если true - вести лог, критические события в лог попадают всегда
     private $logger;
     // массив: индекс - id устройства, значения - топики
     private $subscribeDevice;
-    //массив с кодами ответивших устройств
-    private $testCodeDevice;
 
-    private function __construct($logger = false)
+    public function __construct($logger = false)
     {
         $this->logger = $logger;
-        $this->testCodeDevice = [];
-        $this->updateSubscribeDevice();
 
         $config = new mqttConfig();
+        $this->host = $config->getHost();
+        $this->port = $config->getPort();
         $this->client = new Mosquitto\Client($config->getID() . '_' . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9));
-
-        $this->client->onConnect([$this, 'onConnect']);
-        $this->client->onMessage([$this, 'onMessage']);
-
         $this->client->setCredentials($config->getUser(), $config->getPassword());
-        $this->client->connect($config->getHost(), $config->getPort());
+        $this->client->onConnect([$this, 'onConnect']);
+        $this->client->onDisconnect([$this, 'onDisconnect']);
+        $this->client->onMessage([$this, 'onMessage']);
     }
 
-    /**
-     * Подключение к брокеру
-     * @param false $logger
-     * @return mqttTest|null
-     */
-    public static function connect($logger = false)
+    public function connect()
     {
-        if (self::$clientMQTT == null) {
-            $config = new mqttConfig();
-            self::$clientMQTT = new mqttTest($logger);
-            unset($config);
-        }
-        return self::$clientMQTT;
+        $this->client->connect($this->host, $this->port);
+    }
+
+    public function disconnect()
+    {
+        if (is_null($this->client)) return;
+        $this->client->disconnect();
     }
 
     public function onConnect($rc, $message)
     {
         if ($this->logger) {
-            logger::writeLog('Тестирование устройств. Подключился к MQTT брокеру. Код ' . $rc . ' - ' . $message,
-                loggerTypeMessage::NOTICE, loggerName::MQTT);
+            logger::writeLog('Подключился к MQTT брокеру. Код ' . $rc . ' - ' . $message, loggerTypeMessage::NOTICE, loggerName::MQTT);
         }
+
         if (!$rc) {
-            $this->Subscribe();
+            //Подписки на топики
+            $this->subscribe();
         }
+    }
+
+    public function onDisconnect($rc)
+    {
+//        if ($this->logger) {
+//            //logger::writeLog('Отключение от брокера. Код '.$rc, loggerTypeMessage::WARNING, loggerName::MQTT);
+//        }
     }
 
     public function onMessage($message)
@@ -419,34 +420,12 @@ class mqttTest
                     loggerTypeMessage::NOTICE,
                     loggerName::MQTT);
             }
-            $this->testCodeDevice[$idDevice] = $message->payload; //"сырой" результат тестирования
-        }
-    }
-
-    private function updateSubscribeDevice()
-    {
-        $this->subscribeDevice = [];
-        $sel = new selectOption();
-        $sel->set('NetTypeID', netDevice::ETHERNET_MQTT);
-        $devices = managerDevices::getListDevices($sel);
-        foreach ($devices as $device) {
+            $device = managerDevices::getDevice($idDevice);
+            if (is_null($device)) continue;
             $devicePhysic = $device->getDevicePhysic();
-            if ($devicePhysic instanceof iDevicePhysic && $devicePhysic instanceof iDevicePhysicMQTT) {
-                $topicTest = $devicePhysic->getTopicTest();
-                if (empty($topicTest)) continue;
-                $this->subscribeDevice[$device->getDeviceID()] = $topicTest;
-            }
-        }
-    }
-
-    private function Subscribe()
-    {
-        foreach ($this->subscribeDevice as $subscribe) {
-            if ($this->logger) {
-                logger::writeLog('Подключение подписки ' . $subscribe,
-                    loggerTypeMessage::NOTICE, loggerName::MQTT);
-            }
-            $this->client->subscribe($subscribe, 0);
+            //"сырой" результат тестирования -> код тестирования
+            $testDeviceCode = $devicePhysic->formatTestPayload($message->payload, true);
+            if (!is_null($testDeviceCode)) managerDevices::updateTestCode($device, $testDeviceCode, time());
         }
     }
 
@@ -455,16 +434,50 @@ class mqttTest
         $this->client->loop();
     }
 
-    /**
-     * Получить коды ответивших устройств
-     * @return array - массив в индексах ID устройства, в значениях код ответа
+    /** Обновляет подписки из базы данных
+     * @return void
      */
-    public function getTestCodes()
+    public function updateSubscribe()
     {
-        return $this->testCodeDevice;
+        foreach ($this->subscribeDevice as $subscribe) {
+            if ($this->logger) {
+                logger::writeLog('Отключение от подписки ' . $subscribe, loggerTypeMessage::NOTICE, loggerName::MQTT);
+            }
+            $this->client->unsubscribe($subscribe, 0);
+        }
+
+        $this->subscribe();
     }
 
+    private function subscribe()
+    {
+        $this->getSubscribeDevice();
 
+        foreach ($this->subscribeDevice as $subscribe) {
+            if ($this->logger) {
+                logger::writeLog('Подключение подписки ' . $subscribe, loggerTypeMessage::NOTICE, loggerName::MQTT);
+            }
+            $this->client->subscribe($subscribe, 0);
+        }
+    }
+
+    private function getSubscribeDevice()
+    {
+        $this->subscribeDevice = [];
+
+        $sel = new selectOption();
+        $sel->set('NetTypeID', netDevice::ETHERNET_MQTT);
+        $devices = managerDevices::getListDevices($sel);
+        foreach ($devices as $device) {
+            $devicePhysic = $device->getDevicePhysic();
+            if ($devicePhysic instanceof iDevicePhysic && $devicePhysic instanceof iDevicePhysicMQTT) {
+                $topicTest = $devicePhysic->getTopicTest();
+                if (strlen($topicTest)) {
+                    $this->subscribeDevice[$device->getDeviceID()] = $topicTest;
+                }
+            }
+        }
+    }
 }
 
 class mqttAlarm
@@ -572,6 +585,18 @@ class mqttAlarm
         $this->subscribe();
     }
 
+    private function subscribe()
+    {
+        $this->getSubscribeUnite();
+
+        foreach ($this->subscribeDevice as $subscribe) {
+            if ($this->logger) {
+                logger::writeLog('Подключение подписки ' . $subscribe, loggerTypeMessage::NOTICE, loggerName::MQTT);
+            }
+            $this->client->subscribe($subscribe, 0);
+        }
+    }
+
     private function getSubscribeUnite()
     {
         $this->subscribeDevice = [];
@@ -588,17 +613,4 @@ class mqttAlarm
             }
         }
     }
-
-    private function subscribe()
-    {
-        $this->getSubscribeUnite();
-
-        foreach ($this->subscribeDevice as $subscribe) {
-            if ($this->logger) {
-                logger::writeLog('Подключение подписки ' . $subscribe, loggerTypeMessage::NOTICE, loggerName::MQTT);
-            }
-            $this->client->subscribe($subscribe, 0);
-        }
-    }
-
 }

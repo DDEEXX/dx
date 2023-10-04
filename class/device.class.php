@@ -234,7 +234,7 @@ interface iDevicePhysicMQTT
 
     function getTopicTest();
 
-    function formatTestPayload($testPayload);
+    function formatTestPayload($testPayload, $ignoreUnknown = false);
 }
 
 /*
@@ -493,9 +493,10 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
         return trim($this->topicTest);
     }
 
-    public function formatTestPayload($testPayload)
+    public function formatTestPayload($testPayload, $ignoreUnknown = false)
     {
-        return is_numeric($testPayload) ? (int)$testPayload : testDeviceCode::UNKNOWN;
+        $testCode = is_numeric($testPayload) ? (int)$testPayload : testDeviceCode::UNKNOWN;
+        return ($testCode == testDeviceCode::UNKNOWN && $ignoreUnknown) ? null : $testCode;
     }
 }
 
@@ -559,9 +560,10 @@ abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDev
         return trim($this->topicTest);
     }
 
-    function formatTestPayload($testPayload)
+    public function formatTestPayload($testPayload, $ignoreUnknown = false)
     {
-        return is_numeric($testPayload) ? (int)$testPayload : testDeviceCode::UNKNOWN;
+        $testCode = is_numeric($testPayload) ? (int)$testPayload : testDeviceCode::UNKNOWN;
+        return ($testCode == testDeviceCode::UNKNOWN && $ignoreUnknown) ? null : $testCode;
     }
 }
 
