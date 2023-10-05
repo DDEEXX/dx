@@ -3,7 +3,7 @@
  * MQTT клиент, проверяет на доступность устройств в сети
  */
 
-sleep(10);
+sleep(15);
 
 //Создаем дочерний процесс весь код после pcntl_fork() будет выполняться двумя процессами: родительским и дочерним
 $child_pid = pcntl_fork();
@@ -73,6 +73,7 @@ if ($daemon->isDaemonActive()) {
 }
 $flag = 1;
 $mes = '';
+const N_CONNECT = 15;
 while ($flag != 0) {
     logger::writeLog('Подключение к MQTT брокеру (из loopMQTT_Test). Попытка '.$flag, loggerTypeMessage::NOTICE, loggerName::MQTT);
     try {
@@ -83,13 +84,12 @@ while ($flag != 0) {
         $flag++;
         sleep(2);
     }
-    if ($flag>10) {
+    if ($flag>N_CONNECT) {
         $flag = 0;
         $mes = 'Не удалось подключиться к MQTT брокеру (из loopMQTT_Test). Проверьте параметры подключения и доступность брокера.';
     }
 }
-if (strlen($mes) > 0 ) {
+if (!$flag) {
     logger::writeLog($mes, loggerTypeMessage::ERROR, loggerName::MQTT);
     logger::writeLog($mes, loggerTypeMessage::ERROR, loggerName::ERROR);
 }
-
