@@ -258,7 +258,7 @@ interface iAlarmMQTT
 
     function alarm($payload);
 
-    function saveInJournal($device, $payload, $update);
+    function saveInJournal($device, $payload);
 }
 
 abstract class aAlarmMQTT implements iAlarmMQTT
@@ -280,7 +280,7 @@ abstract class aAlarmMQTT implements iAlarmMQTT
 
     abstract function convertPayload($payload);
 
-    private function getLastDataInJournal($device)
+    private function getLastDataInJournal($device, $currentData)
     {
         try {
             $con = sqlDataBase::Connect();
@@ -289,10 +289,10 @@ abstract class aAlarmMQTT implements iAlarmMQTT
                 loggerTypeMessage::FATAL, loggerName::ERROR);
             return null;
         }
-        $currentData = date('Y-m-d H:i:s');
         $deviceID = $con->getConnect()->real_escape_string($device->getDeviceID());
-        $query = 'SELECT * FROM tdevicealarm WHERE DeviceID=' . $deviceID . ' AND Date < \'' . $currentData . '\' Order By Date Desc LIMIT 1';
-        $result = [];
+        $query = sprintf('SELECT * FROM tdevicealarm WHERE DeviceID = %s AND Date < \'%s\' Order By Date Desc LIMIT 1',
+            $deviceID, $currentData);
+        $result = null;
         try {
             $value = queryDataBase::getOne($con, $query);
             if (is_array($value) && array_key_exists('Value', $value)) {
@@ -307,21 +307,40 @@ abstract class aAlarmMQTT implements iAlarmMQTT
     private function savePayloadInJournal($device, $payload)
     {
         $currentData = date('Y-m-d H:i:s');
-        $deviceID = $device->getDeviceID();
-
-        $template = 'INSERT INTO tdevicealarm (DeviceID, Date, Value) VALUES (\'%s\', \'%s\', \'%s\')';
-        $query = sprintf($template, $deviceID, $currentData, trim($payload));
 
         try {
             $con = sqlDataBase::Connect();
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции aAlarmMQTT::savePayloadInJournal. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return;
+        }
+
+        $deviceID = $con->getConnect()->real_escape_string($device->getDeviceID());
+        $query = sprintf('SELECT * FROM tdevicealarm WHERE DeviceID = %s AND Date = \'%s\'',
+            $deviceID, $currentData);
+        try {
+            $value = queryDataBase::getOne($con, $query);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка при обращении к базе данных',
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+            return;
+        }
+
+        if (is_null($value)) {
+            $query = sprintf('INSERT INTO tdevicealarm (DeviceID, Date, Value) VALUES (%s, \'%s\', \'%s\')',
+                $deviceID, $currentData, trim($payload));
+        } else {
+            $query = sprintf('UPDATE tdevicealarm SET Value = \'%s\' WHERE Date = \'%s\' AND DeviceID = %s',
+                trim($payload), $currentData, $deviceID);
+        }
+
+        try {
             $result = queryDataBase::execute($con, $query);
             if (!$result) {
                 logger::writeLog('Ошибка при записи в базу данных (writeValue)',
                     loggerTypeMessage::ERROR, loggerName::ERROR);
             }
-        } catch (connectDBException $e) {
-            logger::writeLog('Ошибка при подключении к базе данных',
-                loggerTypeMessage::ERROR, loggerName::ERROR);
         } catch (querySelectDBException $e) {
             logger::writeLog('Ошибка при добавлении данных в базу данных',
                 loggerTypeMessage::ERROR, loggerName::ERROR);
@@ -331,27 +350,13 @@ abstract class aAlarmMQTT implements iAlarmMQTT
     /** Запись в журнал срабатывания тревоги данных устройств
      * @param $device - устройство на котором сработала тревога
      * @param $payload - входящее сообщение
-     * @param $update - флаг, если истина, то запись в журнал происходит при несовпадении последней записи в журнале
      * и текущем сообщением, если флаг ложь, то запись в журнал происходит всегда
      * @return void
      */
-    public function saveInJournal($device, $payload, $update = true)
+    public function saveInJournal($device, $payload)
     {
         if (!strlen(trim($payload))) { //если пришла пустая строка
             return;
-        }
-        if ($update) { //проверим последнюю запись в журнале
-            $lastData = $this->getLastDataInJournal($device);
-            if (is_null($lastData)) {
-                return;
-            }
-            if (is_array($lastData) && array_key_exists('value', $lastData)) {
-                $lastPayload = $lastData['value'];
-                if (strlen($lastPayload) && $lastPayload === $payload) {
-                    //последняя запись есть и совпала с текущей
-                    return;
-                }
-            }
         }
         $this->savePayloadInJournal($device, $payload);
     }

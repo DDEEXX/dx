@@ -294,7 +294,7 @@ class OWNet{
 					$read_data=fread($this->link,$msg_size);			// read with streams
 				if ($read_data==''){		// disconnected :'(
 					$this->disconnect();
-					trigger_error("Disconnected",E_USER_NOTICE);
+					//!!!trigger_error("Disconnected",E_USER_NOTICE);
 					return(false);			// return false when have error
 				}else
 					$last_read		=microtime(1);
@@ -459,7 +459,7 @@ class OWNet{
 					while(1){
 						$tmp_ret=$this->get_msg($data_len);
 						if ($tmp_ret===false){
-							trigger_error("Can't read from resource get#4",E_USER_NOTICE);	// error receiving
+							//!!!trigger_error("Can't read from resource get#4",E_USER_NOTICE);	// error receiving
 							$this->disconnect();
 							return(NULL);		// return NULL on error
 						}

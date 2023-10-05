@@ -42,10 +42,10 @@ class gasSensorFactory
 class gasSensorAlarmMQQT extends aAlarmMQTT
 {
 
-    public function saveInJournal($device, $payload, $update)
+    public function saveInJournal($device, $payload)
     {
         $formatPayload = $this->convertPayload($payload);
-        parent::saveInJournal($device, $formatPayload, $update);
+        parent::saveInJournal($device, $formatPayload);
     }
 
     public function alarm($payload)
@@ -93,6 +93,6 @@ class gasSensor extends aSensorDevice implements iDeviceAlarm
 
     function onMessageAlarm($payload)
     {
-        $this->alarm->saveInJournal($this, $payload, true);
+        $this->alarm->saveInJournal($this, $payload);
     }
 }

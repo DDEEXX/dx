@@ -480,8 +480,25 @@ class DB
             }
         }
 
-        $query = sprintf('INSERT INTO tdevicetest (Date, DeviceID, Code, DateCreation) VALUES (\'%s\', %s, %s, \'%s\')',
-            $dateTestCode, $deviceID, $code, $dateTestCode);
+        //проверим, что такой записи еще нет
+        $query = sprintf('SELECT * FROM tdevicetest WHERE DeviceID = %s AND Date = \'%s\'',
+            $deviceID, $dateTestCode);
+        try {
+            $data = queryDataBase::getOne($con, $query);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка в функции DB::updateTestDeviceCode. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return;
+        }
+
+        if (is_null($data)) {
+            $query = sprintf('INSERT INTO tdevicetest (Date, DeviceID, Code, DateCreation) VALUES (\'%s\', %s, %s, \'%s\')',
+                $dateTestCode, $deviceID, $code, $dateTestCode);
+        } else {
+            $query = sprintf('UPDATE tdevicetest SET Code = %s WHERE Date = \'%s\' AND DeviceID = %s',
+                $code, $dateTestCode, $deviceID);
+        }
+
         try {
             $result = queryDataBase::execute($con, $query);
             if (!$result) {
