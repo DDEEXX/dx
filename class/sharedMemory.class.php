@@ -18,7 +18,7 @@ class shareMemoryInitUnitException extends Exception
     public function __construct($mess)
     {
         parent::__construct($mess);
-        logger::writeLog('Ошибка при инициализации модулей в распределенную память.'.$mess,
+        logger::writeLog('Ошибка при инициализации модулей в распределенную память. '.$mess,
             loggerTypeMessage::ERROR,
             loggerName::ERROR);
     }

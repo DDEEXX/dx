@@ -6,7 +6,7 @@
  * Time: 22:45
  */
 
-sleep(5);
+sleep(10);
 
 $fileDir = dirname(__FILE__);
 

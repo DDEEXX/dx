@@ -22,23 +22,22 @@ class temperatureSensor1Wire extends aDeviceSensorPhysicOWire
         $OWNetDir = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_PATH);
         $address = $this->getAddress();
         if (preg_match('/^28\.[A-F0-9]{12,}/', $address)) { //это датчик DS18B20
-
-            $f = file($OWNetDir . '/' . $address . '/temperature12');
-            if ($f === false) { //попробуем еще раз
-                usleep(100000); //ждем 0.1 секунд
-                $f = file($OWNetDir . '/' . $address . '/temperature12');
+            $filename = $OWNetDir . '/' . $address . '/temperature12';
+            if (file_exists($filename)) {
+                $f = file($filename);
+                if ($f === false) { //попробуем еще раз
+                    usleep(100000); //ждем 0.1 секунд
+                    $f = file($filename);
+                }
+                if ($f === false) {
+                    logger::writeLog('Ошибка получения температуры с датчика :: ' . $address, loggerTypeMessage::ERROR);
+                } else {
+                    $value = $f[0];
+                }
             }
-
-            if ($f === false) {
-                logger::writeLog('Ошибка получения температуры с датчика :: ' . $address, loggerTypeMessage::ERROR);
-            } else {
-                $value = $f[0];
-            }
-
         } else {
             logger::writeLog('Неудачная попытка получить данные с датчика :: ' . $address, loggerTypeMessage::ERROR);
         }
-
         return $value;
     }
 
@@ -48,13 +47,16 @@ class temperatureSensor1Wire extends aDeviceSensorPhysicOWire
         $OWNetDir = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_PATH);
         $address = $this->getAddress();
         if (preg_match('/^28\.[A-F0-9]{12,}/', $address)) { //это датчик OWire
-            $f = file($OWNetDir . '/' . $address . '/temperature12');
-            if ($f === false) { //попробуем еще раз
-                usleep(50000); //ждем 0.05 секунд
-                $f = file($OWNetDir . '/' . $address . '/temperature12');
-            }
-            if ($f !== false) {
-                $result = testDeviceCode::WORKING;
+            $filename = $OWNetDir . '/' . $address . '/temperature12';
+            if (file_exists($filename)) {
+                $f = file($filename);
+                if ($f === false) { //попробуем еще раз
+                    usleep(50000); //ждем 0.05 секунд
+                    $f = file($filename);
+                }
+                if ($f !== false) {
+                    $result = testDeviceCode::WORKING;
+                }
             }
         } else {
             $result = testDeviceCode::ONE_WIRE_ADDRESS;

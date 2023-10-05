@@ -54,22 +54,31 @@ class managerCameras
                 break;
             }
 
+            $cameraInfo = 'camera '.$camera->getId();
+            logger::writeLog('Камера ' . $cameraInfo, loggerTypeMessage::NOTICE, loggerName::CAMERAS);
+
             //1. Перемещаем файлы timelapse.avi и с датой меньшей чем сегодня в директорию камеры timelapse
+            logger::writeLog(' - перемещаем файлы timelapse.avi и с датой меньшей чем сегодня в директорию камеры timelapse', loggerTypeMessage::NOTICE, loggerName::CAMERAS);
             $camera->moveTimelapseFileInArchive();
 
             //2. Оставляем в каталоге timelapse не больше 30 самых последних файлов
+            logger::writeLog(' - оставляем в каталоге timelapse не больше 30 самых последних файлов', loggerTypeMessage::NOTICE, loggerName::CAMERAS);
             $camera->deleteTimelapseFileInArchive();
 
             //3. Объединяем все видео файлы за день в один и удаляем исходные файлы.
+            logger::writeLog(' - объединяем все видео файлы за день в один и удаляем исходные файлы.', loggerTypeMessage::NOTICE, loggerName::CAMERAS);
             $camera->concatenationVideoFile();
 
             //4. Оставляем в каталоге video не больше 90 самых последних файлов
+            logger::writeLog(' - оставляем в каталоге video не больше 90 самых последних файлов.', loggerTypeMessage::NOTICE, loggerName::CAMERAS);
             $camera->deleteVideoFileInArchive();
 
             //5. Перемещаем стоп кадры в архив, сохраняем только один кадр за час, все исходные кадры удаляем
+            logger::writeLog(' - перемещаем стоп кадры в архив, сохраняем только один кадр за час, все исходные кадры удаляем.', loggerTypeMessage::NOTICE, loggerName::CAMERAS);
             $camera->moveImageFileInArchive();
-
         }
+
+        logger::writeLog('Завершение архивирования записей с камер', loggerTypeMessage::NOTICE, loggerName::CAMERAS);
 
     }
 
@@ -175,8 +184,8 @@ class camera implements iCamera
                 $newName = $this->getTimelapseDir() . '/' . $newFilename . '.' . $this->extensionVideoConvert;
                 try {
                     $command = sprintf('ffmpeg -i %s -c:v libx264 -c:a copy -y %s', $filename, $newName);
-                    $output = NULL;
-                    $result_code = NULL;
+                    $output = [];
+                    $result_code = '';
                     exec($command, $output, $result_code);
                     if ($result_code != 0) {
                         logger::writeLog($this->getInformation() . ' Ошибка при перемещении файла ' . $filename . ' в ' . $newName,
@@ -642,6 +651,9 @@ class camera implements iCamera
             exec($command, $output, $result_code);
             unlink($this->listVideoFiles);
             if ($result_code != 0) {
+                logger::writeLog($this->getInformation() . ' Ошибка при объединение файлов в архивный файл' .
+                    $nameArchiveVideoFile,
+                    loggerTypeMessage::ERROR, loggerName::CAMERAS);
                 return false;
             } else {
                 chgrp($nameArchiveVideoFile, $this->wwwGroup);
