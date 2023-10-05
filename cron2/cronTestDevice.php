@@ -32,11 +32,22 @@ sleep(15);
 $now = time();
 const MAX_INTERVAL = 600;
 foreach ($devices as $device) {
-    $lastAvailability = managerDevices::getLastAvailability($device);
 
-    if (is_null($lastAvailability)) {
-        managerDevices::updateTestCode($device, testDeviceCode::NO_CONNECTION, $now);
-    } else if ($now - $lastAvailability >= MAX_INTERVAL) {
-        managerDevices::updateTestCode($device, testDeviceCode::NO_CONNECTION, $now);
+    $devicePhysic = $device->getDevicePhysic();
+
+    if ($devicePhysic instanceof iDevicePhysicMQTT) {
+        if (!strlen(trim($devicePhysic->getTopicTest()))) {
+            continue;
+        }
+
+        $lastAvailability = managerDevices::getLastAvailability($device);
+
+        if (is_null($lastAvailability)) {
+            managerDevices::updateTestCode($device, testDeviceCode::NO_CONNECTION, $now);
+        } else if ($now - $lastAvailability >= MAX_INTERVAL) {
+            managerDevices::updateTestCode($device, testDeviceCode::NO_CONNECTION, $now);
+        }
+
     }
+
 }

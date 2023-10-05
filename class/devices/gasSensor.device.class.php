@@ -72,7 +72,7 @@ class gasSensor extends aSensorDevice implements iDeviceAlarm
         $mqttParameters = [
             'topicCmnd' => $options['topic_cmnd'],
             'topicStat' => $options['topic_stat'],
-            'topicAvailability' => $options['topic_test'],
+            'topicAvailability' => '',
             'topicTest' => $options['topic_test'],
             'payload' => $options['payload_cmnd']];
         $this->devicePhysic = gasSensorFactory::create($this->getNet(), $mqttParameters);

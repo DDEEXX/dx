@@ -74,7 +74,7 @@ if ($daemon->isDaemonActive()) {
 $flag = 1;
 $mes = '';
 while ($flag != 0) {
-    logger::writeLog('Подключение к MQTT брокеру. Попытка '.$flag, loggerTypeMessage::NOTICE, loggerName::MQTT);
+    logger::writeLog('Подключение к MQTT брокеру (из loopMQTT_Test). Попытка '.$flag, loggerTypeMessage::NOTICE, loggerName::MQTT);
     try {
         $daemon->run();
         $flag = 0;
@@ -85,7 +85,7 @@ while ($flag != 0) {
     }
     if ($flag>10) {
         $flag = 0;
-        $mes = 'Не удалось подключиться к MQTT брокеру. Проверьте параметры подключения и доступность брокера.';
+        $mes = 'Не удалось подключиться к MQTT брокеру (из loopMQTT_Test). Проверьте параметры подключения и доступность брокера.';
     }
 }
 if (strlen($mes) > 0 ) {
