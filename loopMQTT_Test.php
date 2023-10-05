@@ -3,7 +3,7 @@
  * MQTT клиент, проверяет на доступность устройств в сети
  */
 
-sleep(15);
+sleep(5);
 
 //Создаем дочерний процесс весь код после pcntl_fork() будет выполняться двумя процессами: родительским и дочерним
 $child_pid = pcntl_fork();
@@ -81,6 +81,8 @@ while ($flag != 0) {
         $flag = 0;
     }
     catch (Exception $e) {
+        logger::writeLog('Подключение к MQTT брокеру (из loopMQTT_Test) прервано. '.$e->getMessage(),
+        loggerTypeMessage::NOTICE, loggerName::MQTT);
         $flag++;
         sleep(2);
     }
