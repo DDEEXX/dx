@@ -341,7 +341,7 @@ elseif ($_REQUEST['dev'] == 'gasSensor') {
 elseif ($_REQUEST['dev'] == 'check_gasSensorStatus') {
     $result = ['update' => false];
     $dateStatus = (int)$_REQUEST['dateStatus'];
-    $label = (int)$_REQUEST['label'];
+    $label = $_REQUEST['label'];
     $unit = managerUnits::getUnitLabel($label);
     if (!is_null($unit)) {
         $unitData = $unit->getData();

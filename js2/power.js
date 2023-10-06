@@ -1,5 +1,5 @@
 const gasSensorsData = [
-    {"id": "power_kitchen_gas_sensor", "label": "gas_sensor_kitchen", "title": "Кухня"},
+    {"id": "power_kitchen_gas_sensor", "label": "gas_sensor_kitchen", "title": "Кухня", "dialogSetupContent": "#power_kitchen_gas_sensor_dialogSetup_content"},
 ]
 
 function power_updateAll() {
@@ -48,16 +48,26 @@ function power_checkVent_Status() {
 
 function power_checkKitchenGasSensor_Status() {
     $.each(gasSensorsData,function(index, val) {
-        const path = "getData.php?dev=gasSensor&label="+val['label']+"&title="+val['title'];
-        $.get(path, function (data) {
-            //если время изменения на странице меньше чем время в пришедшем коде с сервера, обновляем
-            const dataServer = $(data);
-            const idSensor = "#"+val['id'];
-            const idUpdateSensor = "#"+val['label']+"_last_update";
-            const updateTimeClient = $(idSensor+" "+idUpdateSensor).val();
-            const updateTimeServer = dataServer.find(idUpdateSensor).val();
-            if (Number(updateTimeClient) < Number(updateTimeServer)) {
-                $("#"+val['id']).html(data);
+        const curDateStatus = $("#" + val['label'] + "_last_update").val();
+        $.post("getData.php", {dev: "check_gasSensorStatus", dateStatus: curDateStatus, label: val['label']}, function (jsonData) {
+            if (jsonData['update']) {
+                const power_kitchen_gas_sensor_dialogSetup_content = val['dialogSetupContent'];
+                $.get("data/power/gasSensorGet.php?dev=dialogSetupContent&label="+val['label'], function (data) {
+                    $(power_kitchen_gas_sensor_dialogSetup_content).html(data);
+                });
+            } else {
+                const path = "getData.php?dev=gasSensor&label="+val['label']+"&title="+val['title'];
+                $.get(path, function (data) {
+                    //если время изменения на странице меньше чем время в пришедшем коде с сервера, обновляем
+                    const dataServer = $(data);
+                    const idSensor = "#"+val['id'];
+                    const idUpdateSensor = "#"+val['label']+"_last_update";
+                    const updateTimeClient = $(idSensor+" "+idUpdateSensor).val();
+                    const updateTimeServer = dataServer.find(idUpdateSensor).val();
+                    if (Number(updateTimeClient) < Number(updateTimeServer)) {
+                        $("#"+val['id']).html(data);
+                    }
+                })
             }
         })
     })
