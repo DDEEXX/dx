@@ -89,6 +89,33 @@ $(function () {
         $(power_kitchen_hood_dialogSetup).dialog("open");
     });
 
+    // GAS SENSOR
+    const power_kitchen_gas_sensor_dialogSetup = "#power_kitchen_gas_sensor_dialogSetup";
+    const label = "gas_sensor_kitchen";
+    const power_kitchen_gas_sensor_dialogSetup_content = "#power_kitchen_gas_sensor_dialogSetup_content";
+    const power_kitchen_gas_sensor_setup = "#power_kitchen_gas_sensor_setup"
+    $(power_kitchen_gas_sensor_dialogSetup).dialog({
+        autoOpen: false,
+        draggable: false,
+        position: {my: "center", at: "center", of: "#page_power"},
+        resizable: false,
+        title: "Настройка газового датчика на кухне",
+        height: "auto",
+        width: 800,
+        open: function (event, ui) {
+            $.get("data/power/gasSensorGet.php?dev=dialogSetupContent&label="+label, function (data) {
+                $(power_kitchen_gas_sensor_dialogSetup_content).html(data);
+            });
+        }
+    });
+
+    $(power_kitchen_gas_sensor_setup).button({
+        icon: "ui-icon-gear",
+        showLabel: false
+    }).click(function () {
+        $(power_kitchen_gas_sensor_dialogSetup).dialog("open");
+    });
+
 });
 
 $(document).everyTime("3s", function () {

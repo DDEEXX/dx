@@ -307,7 +307,13 @@ if ($p == 'power') {
         <div class="grid_2">
             <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor">
                 <h2 class="title_widget_sensor_header">Датчики газа</h2>
-                <div id="power_kitchen_gas_sensor" style="margin-left: 5px"></div>
+                <div style="display: flex; align-items: flex-start">
+                    <div id="power_kitchen_gas_sensor" style="margin-left: 5px"></div>
+                    <div id="power_kitchen_gas_sensor_setup" style="margin-left: 25px; height: 36px; width: 36px"></div>
+                </div>
+                <div id="power_kitchen_gas_sensor_dialogSetup">
+                    <div id="power_kitchen_gas_sensor_dialogSetup_content"></div>
+                </div>
             </div>
         </div>
         <div class="grid_2">

@@ -4,7 +4,7 @@
 }
 
 .kh_setup_col1 {
-    width: 40%;
+    width: 50%;
     display: flex;
     justify-content: space-between
 }
@@ -14,7 +14,7 @@
 }
 
 .kh_setup_col2 input {
-    width: 2em;
+    width: 3em;
 }
 
 .kh_setup_col3 {
