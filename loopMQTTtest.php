@@ -26,7 +26,7 @@ $STDIN = fopen('/dev/null', 'r');
 $STDOUT = fopen($fileDir.'/logs/application.log', 'ab');
 $STDERR = fopen($fileDir.'/logs/daemonLoopMQTT_Test.log', 'ab');
 
-class daemonLoopMQTT_Test extends daemon
+class daemonLoopMQTTtest extends daemon
 {
     const NAME_PID_FILE = 'loopMQTT_Test.pid';
     const PAUSE = 100000; //Пауза в основном цикле, в микросекундах (0.1 сек)
@@ -43,11 +43,9 @@ class daemonLoopMQTT_Test extends daemon
 
         $mqtt = new mqttTest();
         $mqtt->connect();
-
         $previousUpdateSubscibe = time();
 
         while (!$this->stopServer()) {
-
             $mqtt->loop();
 
             $now = time();
@@ -64,21 +62,20 @@ class daemonLoopMQTT_Test extends daemon
         $mqtt->disconnect();
         unset($mqtt);
     }
-
 }
 
-$daemon = new daemonLoopMQTT_Test( $fileDir.'/tmp');
+$daemon = new daemonLoopMQTTtest( $fileDir.'/tmp');
 if ($daemon->isDaemonActive()) {
     exit();
 }
 $flag = 1;
 $mes = '';
-const N_CONNECT = 15;
+const N_CONNECT = 10;
 while ($flag != 0) {
     logger::writeLog('Подключение к MQTT брокеру (из loopMQTT_Test). Попытка '.$flag, loggerTypeMessage::NOTICE, loggerName::MQTT);
     try {
         $daemon->run();
-        $flag = 0;
+        $flag = 0; //штатный выход
     }
     catch (Exception $e) {
         logger::writeLog('Подключение к MQTT брокеру (из loopMQTT_Test) прервано. '.$e->getMessage(),
@@ -89,9 +86,10 @@ while ($flag != 0) {
     if ($flag>N_CONNECT) {
         $flag = 0;
         $mes = 'Не удалось подключиться к MQTT брокеру (из loopMQTT_Test). Проверьте параметры подключения и доступность брокера.';
+        mail('ddeexxdima@gmail.com', 'MQTT Broker fault', $mes);
     }
 }
-if (!$flag) {
+if (!$flag && strlen($mes)) {
     logger::writeLog($mes, loggerTypeMessage::ERROR, loggerName::MQTT);
     logger::writeLog($mes, loggerTypeMessage::ERROR, loggerName::ERROR);
 }

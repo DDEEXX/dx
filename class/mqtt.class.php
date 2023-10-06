@@ -443,7 +443,7 @@ class mqttTest
             if ($this->logger) {
                 logger::writeLog('Отключение от подписки ' . $subscribe, loggerTypeMessage::NOTICE, loggerName::MQTT);
             }
-            $this->client->unsubscribe($subscribe, 0);
+            $this->client->unsubscribe($subscribe);
         }
 
         $this->subscribe();
@@ -579,7 +579,7 @@ class mqttAlarm
             if ($this->logger) {
                 logger::writeLog('Отключение от подписки ' . $subscribe, loggerTypeMessage::NOTICE, loggerName::MQTT);
             }
-            $this->client->unsubscribe($subscribe, 0);
+            $this->client->unsubscribe($subscribe);
         }
 
         $this->subscribe();
