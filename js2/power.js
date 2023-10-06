@@ -1,5 +1,10 @@
 const gasSensorsData = [
-    {"id": "power_kitchen_gas_sensor", "label": "gas_sensor_kitchen", "title": "Кухня", "dialogSetupContent": "#power_kitchen_gas_sensor_dialogSetup_content"},
+    {
+        "id": "power_kitchen_gas_sensor",
+        "label": "gas_sensor_kitchen",
+        "title": "Кухня",
+        "dialogSetupContent": "#power_kitchen_gas_sensor_dialogSetup_content"
+    },
 ]
 
 function power_updateAll() {
@@ -9,10 +14,10 @@ function power_updateAll() {
     });
 
     const pathConst = "getData.php?dev=gasSensor&label=";
-    $.each(gasSensorsData,function(index, val) {
-        const path = pathConst+val['label']+"&title="+val['title'];
+    $.each(gasSensorsData, function (index, val) {
+        const path = pathConst + val['label'] + "&title=" + val['title'];
         $.get(path, function (data) {
-            $("#"+val['id']).html(data);
+            $("#" + val['id']).html(data);
         })
     })
 }
@@ -47,25 +52,32 @@ function power_checkVent_Status() {
 }
 
 function power_checkKitchenGasSensor_Status() {
-    $.each(gasSensorsData,function(index, val) {
+    $.each(gasSensorsData, function (index, val) {
         const curDateStatus = $("#" + val['label'] + "_last_update").val();
-        $.post("getData.php", {dev: "check_gasSensorStatus", dateStatus: curDateStatus, label: val['label']}, function (jsonData) {
+        $.post("getData.php", {
+            dev: "check_gasSensorStatus",
+            dateStatus: curDateStatus,
+            label: val['label']
+        }, function (jsonData) {
             if (jsonData['update']) {
+                $.get("getData.php?dev=gasSensor&label=" + val['label'] + "&title=" + val['title'], function (data) {
+                    $("#" + val['id']).html(data);
+                })
                 const power_kitchen_gas_sensor_dialogSetup_content = val['dialogSetupContent'];
-                $.get("data/power/gasSensorGet.php?dev=dialogSetupContent&label="+val['label'], function (data) {
+                $.get("data/power/gasSensorGet.php?dev=dialogSetupContent&label=" + val['label'], function (data) {
                     $(power_kitchen_gas_sensor_dialogSetup_content).html(data);
                 });
             } else {
-                const path = "getData.php?dev=gasSensor&label="+val['label']+"&title="+val['title'];
+                const path = "getData.php?dev=gasSensor&label=" + val['label'] + "&title=" + val['title'];
                 $.get(path, function (data) {
                     //если время изменения на странице меньше чем время в пришедшем коде с сервера, обновляем
                     const dataServer = $(data);
-                    const idSensor = "#"+val['id'];
-                    const idUpdateSensor = "#"+val['label']+"_last_update";
-                    const updateTimeClient = $(idSensor+" "+idUpdateSensor).val();
+                    const idSensor = "#" + val['id'];
+                    const idUpdateSensor = "#" + val['label'] + "_last_update";
+                    const updateTimeClient = $(idSensor + " " + idUpdateSensor).val();
                     const updateTimeServer = dataServer.find(idUpdateSensor).val();
                     if (Number(updateTimeClient) < Number(updateTimeServer)) {
-                        $("#"+val['id']).html(data);
+                        $("#" + val['id']).html(data);
                     }
                 })
             }
@@ -113,7 +125,7 @@ $(function () {
         height: "auto",
         width: 800,
         open: function (event, ui) {
-            $.get("data/power/gasSensorGet.php?dev=dialogSetupContent&label="+label, function (data) {
+            $.get("data/power/gasSensorGet.php?dev=dialogSetupContent&label=" + label, function (data) {
                 $(power_kitchen_gas_sensor_dialogSetup_content).html(data);
             });
         }
