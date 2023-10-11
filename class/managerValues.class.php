@@ -30,14 +30,4 @@ class managerValues
         return true;
     }
 
-    public static function createDeviceValue($shared = 0) {
-        switch ($shared) {
-            case 0 : return new deviceValueSM();
-            case 1 : return new deviceValueDB();
-            default :
-                logger::writeLog('Ошибка при создании объекта deviceValue (managerValues.class.php). $shared = '.$shared,
-                    loggerTypeMessage::ERROR, loggerName::ERROR);
-        }
-        return null;
-    }
 }

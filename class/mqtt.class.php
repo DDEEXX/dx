@@ -74,6 +74,8 @@ class mqttLoop
     private $deviceFormatPayload;
     // массив: индекс - id устройства, значения - истина - обновляем данные, ложь - записываем
     private $deviceDataUpdate;
+    // массив: индекс - id устройства, значения - объект unit
+    private $devices;
 
     public function __construct($subscibe, $mqttGroup, $logger = false)
     {
@@ -115,6 +117,8 @@ class mqttLoop
                 } else {
                     $this->deviceDataUpdate[$device->getDeviceID()] = false;
                 }
+
+                $this->devices[$device->getDeviceID()] = $device;
             }
         }
     }
@@ -170,10 +174,6 @@ class mqttLoop
                 loggerName::MQTT);
         }
         $topic = trim($message->topic);
-        if (empty($topic)) {
-            logger::writeLog('Пришло пустое сообщение от mqtt', loggerTypeMessage::WARNING, loggerName::MQTT);
-        }
-
         $idDevices = array_keys($this->subscribeDevice, $topic, true); //список id всех устройств с подпиской topic
         foreach ($idDevices as $idDevice) {
 
@@ -188,6 +188,16 @@ class mqttLoop
                     loggerName::MQTT);
             }
 
+            //новый механизм
+            if (array_key_exists($idDevice, $this->devices)) {
+                $devicePhysic = $this->devices[$idDevice]->getDevicePhysic();
+                if ($devicePhysic->isValue()) {
+                    $devicePhysic->setValue($message->payload, $idDevice);
+                    continue;
+                }
+            }
+
+            //старый механизм
             $updateData = false;
             if (array_key_exists($idDevice, $this->deviceDataUpdate)) {
                 $updateData = $this->deviceDataUpdate[$idDevice];

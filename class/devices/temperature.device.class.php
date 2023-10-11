@@ -6,7 +6,6 @@ const CODE_NO_TEMP = -1000;
 
 class temperatureSensor1Wire extends aDeviceSensorPhysicOWire
 {
-
     /**
      * @param $address - 1wire address
      * @param $alarm
@@ -64,7 +63,6 @@ class temperatureSensor1Wire extends aDeviceSensorPhysicOWire
         }
         return $result;
     }
-
 }
 
 class temperatureSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
@@ -76,8 +74,68 @@ class temperatureSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
         if (empty($mqttParameters['payload'])) {
             $mqttParameters['payload'] = self::DEFAULT_PAYLOAD;
         }
-        //$this->value = managerValues::createDeviceValue($valueFormat);
+        $this->value = temperatureValuesFactory::createDeviceValue($valueFormat);
         parent::__construct($mqttParameters, formatValueDevice::MQTT_TEMPERATURE);
+    }
+}
+
+class deviceTemperatureValueSM extends aDeviceValueSM
+{
+    function setValue($value, $idDevice)
+    {
+        // TODO: Implement setValue() method.
+    }
+
+    function printValue($idDevice)
+    {
+        // TODO: Implement toString() method.
+    }
+}
+
+class deviceTemperatureValueDB extends aDeviceValueDB
+{
+    function setValue($value, $idDevice)
+    {
+        $dateValue = date('Y-m-d H:i:s');
+        $currentData = $this->getValue($idDevice);
+        $insertData = !is_array($currentData);
+
+        if ($insertData) {
+            $query = sprintf('INSERT INTO tdevicevalue (DeviceID, Date, Value) VALUES (\'%s\', \'%s\', \'%s\')',
+                $idDevice, $dateValue, $value);
+        } else {
+            $query = sprintf('UPDATE tdevicevalue SET Date = \'%s\', Value = \'%s\' WHERE DeviceID = %s',
+                $dateValue, $value, $idDevice);
+        }
+
+        try {
+            $con = sqlDataBase::Connect();
+            $result = queryDataBase::execute($con, $query);
+            if (!$result) {
+                logger::writeLog('Ошибка при записи в базу данных (writeValue)',
+                    loggerTypeMessage::ERROR, loggerName::ERROR);
+            }
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных',
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка при добавлении данных в базу данных',
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+        }
+
+        unset($con);
+    }
+
+    function printValue($idDevice)
+    {
+        $valueData = $this->getValue($idDevice);
+        if (!is_array($valueData)) return null;
+
+        $result = [];
+        $result['date'] = $valueData['date'];
+        $arValueData = json_decode($valueData['value'], true) ;
+        $result['value'] = $arValueData['temperature'];
+        return $result;
     }
 }
 
@@ -93,6 +151,20 @@ class temperatureSensorFactory
             default :
                 return new DeviceSensorPhysicDefault();
         }
+    }
+}
+
+class  temperatureValuesFactory
+{
+    public static function createDeviceValue($shared = 0) {
+        switch ($shared) {
+            case 0 : return new deviceTemperatureValueSM();
+            case 1 : return new deviceTemperatureValueDB();
+            default :
+                logger::writeLog('Ошибка при создании объекта deviceValue (managerValues.class.php). $shared = '.$shared,
+                    loggerTypeMessage::ERROR, loggerName::ERROR);
+        }
+        return null;
     }
 }
 

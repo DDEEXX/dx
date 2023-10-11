@@ -11,40 +11,63 @@ require_once dirname(__FILE__) . '/ownet.php';
 /*Данные физического датчика*/
 interface iDeviceValue
 {
-    function setValue($value);
+    function setValue($value, $idDevice);
 
-    function getValue();
+    function getValue($idDevice);
+
+    function printValue($idDevice); //значение для вывода на экран
 
     function getStorageValue();
 }
 
-abstract class deviceValue implements iDeviceValue
+abstract class aDeviceValue implements iDeviceValue
 {
-    function setValue($value)
-    {
-        // TODO: Implement setValue() method.
-    }
 
-    function getValue()
-    {
-        // TODO: Implement getValue() method.
-    }
 
 }
 
-class deviceValueSM extends deviceValue
+abstract class aDeviceValueSM extends aDeviceValue
 {
     function getStorageValue()
     {
         return storageValues::SHARED_MEMORY;
     }
+
+    function getValue($idDevice)
+    {
+        // TODO: Implement getValue() method.
+    }
 }
 
-class deviceValueDB extends deviceValue
+abstract class aDeviceValueDB extends aDeviceValue
 {
     function getStorageValue()
     {
         return storageValues::DATA_BASE;
+    }
+
+    function getValue($idDevice)
+    {
+        try {
+            $con = sqlDataBase::Connect();
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции DB::getConst. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return null;
+        }
+        $result = null;
+        $deviceID = $con->getConnect()->real_escape_string($idDevice);
+        $query = 'SELECT * FROM tdevicevalue WHERE DeviceID=' . $deviceID . ' Order By Date Desc LIMIT 1';
+        try {
+            $value = queryDataBase::getOne($con, $query);
+            if (is_array($value) && array_key_exists('Value', $value)) {
+                $result = [];
+                $result['date'] = strtotime($value['Date']);
+                $result['value'] = $value['Value'];
+            }
+        } catch (querySelectDBException $e) {
+        }
+        return $result;
     }
 }
 
@@ -256,6 +279,12 @@ interface iDevicePhysic
     function getData($deviceID);
 
     function getStorageValue();
+
+    function isValue();
+
+    function setValue($payload, $idDevice);
+
+    function printValue($idDevice);
 }
 
 interface iDeviceSensorPhysic extends iDevicePhysic
@@ -483,6 +512,21 @@ abstract class aDevicePhysic implements iDevicePhysic
     function getStorageValue()
     {
         return $this->value instanceof iDeviceValue ? $this->value->getStorageValue() : storageValues::SHARED_MEMORY;
+    }
+
+    public function isValue()
+    {
+        return !is_null($this->value);
+    }
+
+    function setValue($payload, $idDevice)
+    {
+        if (!is_null($this->value)) $this->value->setValue($payload, $idDevice);
+    }
+
+    function printValue($idDevice)
+    {
+        return $this->isValue() ? $this->value->printValue($idDevice) : null;
     }
 }
 
@@ -794,6 +838,8 @@ interface iDevice
      */
     function getStorageValue();
 
+    function printValue();
+
 }
 
 interface iSensorDevice extends iDevice
@@ -815,7 +861,7 @@ abstract class aDevice implements iDevice
     private $disabled;
     private $note;
 
-    protected $devicePhysic;
+    protected $devicePhysic = null;
 
     public function __construct($deviceID, $net, $type, $disabled, $note)
     {
@@ -890,6 +936,10 @@ abstract class aDevice implements iDevice
         return $this->devicePhysic->getStorageValue();
     }
 
+    function printValue()
+    {
+        return $this->devicePhysic->printValue($this->getDeviceID());
+    }
 }
 
 /** Устройство датчик*/
