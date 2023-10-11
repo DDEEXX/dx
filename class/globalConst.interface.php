@@ -101,6 +101,8 @@ interface sharedMemory
     const PROJECT_LETTER_DATA_DEVICE = 'C';
     const KEY_1WARE_PATH = 0;
     const KEY_1WARE_ADDRESS = 1;
+    const LATITUDE = 2;
+    const LONGITUDE = 3;
 }
 
 interface modeDeviceValue {
@@ -138,4 +140,9 @@ interface formatValueDevice {
     const MQTT_SWITCH_WHD02 = 6;
     const MQTT_KITCHEN_HOOD = 7;
     const MQTT_GAS_SENSOR = 8;
+}
+
+interface storageValues {
+    const SHARED_MEMORY = 0;
+    const DATA_BASE = 1;
 }

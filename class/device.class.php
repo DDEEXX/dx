@@ -8,6 +8,46 @@ require_once(dirname(__FILE__) . '/sharedMemory.class.php');
 require_once(dirname(__FILE__) . '/mqtt.class.php');
 require_once dirname(__FILE__) . '/ownet.php';
 
+/*Данные физического датчика*/
+interface iDeviceValue
+{
+    function setValue($value);
+
+    function getValue();
+
+    function getStorageValue();
+}
+
+abstract class deviceValue implements iDeviceValue
+{
+    function setValue($value)
+    {
+        // TODO: Implement setValue() method.
+    }
+
+    function getValue()
+    {
+        // TODO: Implement getValue() method.
+    }
+
+}
+
+class deviceValueSM extends deviceValue
+{
+    function getStorageValue()
+    {
+        return storageValues::SHARED_MEMORY;
+    }
+}
+
+class deviceValueDB extends deviceValue
+{
+    function getStorageValue()
+    {
+        return storageValues::DATA_BASE;
+    }
+}
+
 /**
  *  Значения данных датчика
  */
@@ -214,10 +254,17 @@ interface iDevicePhysic
     function getFormatValue();
 
     function getData($deviceID);
+
+    function getStorageValue();
 }
 
 interface iDeviceSensorPhysic extends iDevicePhysic
 {
+
+    /**
+     * Запрос данных с физического датчика
+     * @return mixed
+     */
     function requestData();
 }
 
@@ -239,10 +286,7 @@ interface iDevicePhysicMQTT
     function formatTestPayload($testPayload, $ignoreUnknown = false);
 }
 
-/*
- * устройство способное отправлять по MQTT данные о "тревоге" на этом устройстве
- */
-
+/*устройство способное отправлять по MQTT данные о "тревоге" на этом устройстве*/
 interface iDeviceAlarm
 {
     function getTopicAlarm();
@@ -250,10 +294,7 @@ interface iDeviceAlarm
     function onMessageAlarm($payload);
 }
 
-/*
- * отправляет по MQTT, сведения о "тревоге"
- */
-
+/*отправляет по MQTT, сведения о "тревоге"*/
 interface iAlarmMQTT
 {
     function getTopicAlarm();
@@ -385,18 +426,25 @@ interface iDeviceMakerPhysicOWire extends iDeviceMakerPhysic, iDevicePhysicOWire
 abstract class aDevicePhysic implements iDevicePhysic
 {
     protected $formatValue = formatValueDevice::NO_FORMAT;
+    protected $value = null;
 
     public function getFormatValue()
     {
         return $this->formatValue;
     }
 
-    /** Получает данные датчика из sm памяти
+    /**
+     * Получает уже запрошенные и записанные (sm|db) данные с датчика
      * @param $deviceID
      * @return array|false|string
      */
     function getData($deviceID)
     {
+        //новый механизм
+        if (!is_null($this->value)) {
+            return  $this->value->getValue();
+        }
+
         switch ($this->formatValue) {
             case formatValueDevice::MQTT_KITCHEN_HOOD:
             case formatValueDevice::MQTT_GAS_SENSOR:
@@ -430,6 +478,11 @@ abstract class aDevicePhysic implements iDevicePhysic
                 $data = $deviceData->getData();
                 return $data->getDataJSON();
         }
+    }
+
+    function getStorageValue()
+    {
+        return $this->value instanceof iDeviceValue ? $this->value->getStorageValue() : storageValues::SHARED_MEMORY;
     }
 }
 
@@ -735,11 +788,18 @@ interface iDevice
 
     function test();
 
+    /**
+     * Получить место хранение значений датчиков
+     * @return mixed
+     */
+    function getStorageValue();
+
 }
 
 interface iSensorDevice extends iDevice
 {
     function requestData();
+
 }
 
 interface iMakerDevice extends iDevice
@@ -825,12 +885,16 @@ abstract class aDevice implements iDevice
         return $result;
     }
 
+    function getStorageValue()
+    {
+        return $this->devicePhysic->getStorageValue();
+    }
+
 }
 
 /** Устройство датчик*/
 abstract class aSensorDevice extends aDevice implements iSensorDevice
 {
-
     /**
      * sensor constructor.
      * @param array $options
@@ -894,7 +958,6 @@ abstract class aSensorDevice extends aDevice implements iSensorDevice
     }
 
     abstract function requestData();
-
 }
 
 /** Устройство исполнитель*/

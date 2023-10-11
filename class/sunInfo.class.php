@@ -7,6 +7,7 @@
  */
 
 require_once(dirname(__FILE__). '/sqlDataBase.class.php');
+require_once(dirname(__FILE__). '/sharedMemory.class.php');
 
 interface dayPart {
     const MORNING   = 0;
@@ -29,8 +30,8 @@ class sunInfo {
      */
     public static function getSunInfo($time) {
 
-        $latitude =  DB::getConst('latitude');
-        $longitude = DB::getConst('longitude');
+        $latitude = managerSharedMemory::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::LATITUDE);
+        $longitude = managerSharedMemory::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::LONGITUDE);
         if (is_null($latitude) || is_null($longitude)) {
             return dayPart::DAY;
         }

@@ -157,61 +157,70 @@ class sharedMemoryUnits
      * @return mixed|null
      */
     static public function getValue($projectID, $key) {
-        $sm = self::getInstance($projectID);
-        if (is_null($sm)) {
-            return null;
-        }
-        return $sm->get($key);
+        return managerSharedMemory::getValue($projectID, $key);
     }
 
 }
 
-class managerSharedMemory {
+class managerSharedMemory
+{
+    const FILE_PATH = __FILE__;
 
     /**
-     * Инициализация всех модулей.
-     * Метод должен выполнятся самым первым, перед работой всех остальных модулей.
-     * Помещает данные модулей в распределяемую память.
+     * Помещение константы из БД в sm
      * @return bool
      */
-    public static function init() {
+    public static function initConst() {
         //глобальные значения из БД
         try {
             $sm = sharedMemoryUnits::getInstance(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::SIZE_MEMORY_KEY);
         } catch (shareMemoryInitUnitException $e) {
             return false;
         }
-        if (!$sm->set(sharedMemory::KEY_1WARE_PATH, DB::getConst('OWNETDir'))) {return false;}
-        if (!$sm->set(sharedMemory::KEY_1WARE_ADDRESS, DB::getConst('OWNetAddress'))) {return false;}
 
-        //связь между наименованием модуля и ID модуля и устройства (для быстрого поиска без обращения к БД)
-        try {
-            $sm = sharedMemoryUnits::getInstance(sharedMemory::PROJECT_LETTER_UNITS, sharedMemory::SIZE_MEMORY_UNITS);
-        } catch (shareMemoryInitUnitException $e) {
-            return false;
-        }
-        $listUnit = managerUnits::getListUnits();
-        $smUnits = [];
-        foreach ($listUnit as $tekUnit) {
-            $device = $tekUnit->getDevice();
-            $idDevice = null;
-            if (!is_null($device)) {
-                $idDevice = $device->getDeviceID();
-            }
-            $smUnits[$tekUnit->getLabel()] = ['idUnit'=>$tekUnit->getId(), 'idDevice'=>$idDevice];
-        }
-        if (!$sm->set(0, $smUnits)) {return false;}
+        if (!$sm->set(sharedMemory::KEY_1WARE_PATH, DB::getConst('OWNETDir'))) return false;
+        if (!$sm->set(sharedMemory::KEY_1WARE_ADDRESS, DB::getConst('OWNetAddress'))) return false;
+        if (!$sm->set(sharedMemory::LATITUDE, DB::getConst('latitude'))) return false;
+        if (!$sm->set(sharedMemory::LONGITUDE, DB::getConst('longitude'))) return false;
 
-        //данные устройств
+        return true;
+    }
+
+    /**
+     * Выделяет в sm, место для значений датчиков
+     * @return bool
+     */
+    public static function initDeviceValues() {
         $listDevice = managerDevices::getListDevices();
         foreach ($listDevice as $device) {
-            $idDevice = $device->getDeviceID();
-            $dataDevice = new deviceData($idDevice);
-            if (!$dataDevice->setData()) {
-                return false;
+            if ($device->getStorageValue() == storageValues::SHARED_MEMORY) {
+                $idDevice = $device->getDeviceID();
+                $dataDevice = new deviceData($idDevice);
+                if (!$dataDevice->setData()) {
+                    return false;
+                }
             }
         }
         return true;
+    }
+
+    /**
+     * Получить значение из разделяемой памяти по букве проекта и ключу
+     * @param $projectID
+     * @param $key
+     * @return mixed|null
+     */
+    static public function getValue($projectID, $key) {
+        $shm_key = ftok(self::FILE_PATH, $projectID); //получаем ключ по пути и идентификатору
+        $shm_id = shm_attach($shm_key); //возвращает указатель
+        if (!$shm_id) return null;
+        $shm_sm = sem_get($shm_key);
+        if (!$shm_sm) return null;
+        if (!sem_acquire($shm_sm)) return null;
+        $value = shm_has_var($shm_id, $key) ? @shm_get_var($shm_id, $key) : null;
+        sem_release($shm_sm);
+        return $value;
+
     }
 
 }

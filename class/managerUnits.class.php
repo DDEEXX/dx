@@ -12,6 +12,7 @@ require_once(dirname(__FILE__) . '/lists.class.php');
 require_once(dirname(__FILE__) . '/globalConst.interface.php');
 require_once(dirname(__FILE__) . '/logger.class.php');
 require_once(dirname(__FILE__) . '/sharedMemory.class.php');
+require_once(dirname(__FILE__) . '/managerValues.class.php');
 
 class unitFactory
 {
@@ -137,6 +138,17 @@ class managerUnits
         }
         unset($arr);
         return $list;
+    }
+
+    /**
+     * Инициализация, для начала работы программы
+     * @return bool
+     */
+    public static function initUnits()
+    {
+        $result = managerValues::initUnits();
+        $result = $result && managerSharedMemory::initConst();
+        return $result && managerSharedMemory::initDeviceValues();
     }
 
 }
