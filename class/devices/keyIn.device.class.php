@@ -11,9 +11,7 @@ class keyInSensorPhysicMQQT extends aDeviceSensorPhysicMQTT
 
     public function __construct($mqttParameters)
     {
-        if (empty($mqttParameters['payload'])) {
-            $mqttParameters['payload'] = self::DEFAULT_PAYLOAD;
-        }
+        if (empty($mqttParameters['payloadRequest'])) $mqttParameters['payloadRequest'] = self::DEFAULT_PAYLOAD;
         parent::__construct($mqttParameters, formatValueDevice::MQTT_KEY_IN);
     }
 }
@@ -29,7 +27,7 @@ class keyInSensorPhysicOWire extends aDeviceSensorPhysicOWire {
         parent::__construct($address, $alarm);
     }
 
-    function requestData() { }
+    function requestData($ignoreActivity = true) { }
 
     function test()
     {
@@ -86,11 +84,11 @@ class keyInSensorDevice extends aSensorDevice
             'topicStat' => $options['topic_stat'],
             'topicTest' => $options['topic_test'],
             'topicAlarm' => $options['topic_alarm'],
-            'payload' => $options['payload_cmnd']];
+            'payloadRequest' => $options['payload_cmnd']];
         $this->devicePhysic = keyInSensorFactory::create($this->getNet(), $address, $ow_alarm, $mqttParameters);
     }
 
-    function requestData()
+    function requestData($ignoreActivity = true)
     {
         if ($this->devicePhysic instanceof aDeviceSensorPhysic) {
             $this->devicePhysic->requestData();

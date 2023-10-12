@@ -1,10 +1,12 @@
 <?php
 require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
-require_once(dirname(__FILE__) . '/class/managerDevices.class.php');
+require_once(dirname(__FILE__) . '/class/sharedMemory.class.php');
 require_once(dirname(__FILE__) . '/class/logger.class.php');
 
-//if (managerSharedMemory::init()) {
-if (managerUnits::initUnits()) {
+$resInitConst = managerSharedMemory::initConst();
+$resInitUnits = managerUnits::initUnits();
+
+if ($resInitConst && $resInitUnits) {
     logger::writeLog('Модули инициализированы', loggerTypeMessage::NOTICE ,loggerName::ACCESS);
     try {
         managerDevices::updateAlarmOWireSensorDeviceFromDB();

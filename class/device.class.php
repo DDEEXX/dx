@@ -8,45 +8,94 @@ require_once(dirname(__FILE__) . '/sharedMemory.class.php');
 require_once(dirname(__FILE__) . '/mqtt.class.php');
 require_once dirname(__FILE__) . '/ownet.php';
 
+/*Форматированные данные с датчиков*/
+class formatDeviceValue implements iDeviceDataValue
+{
+    public $date = 0;
+    public $value = null;
+    public $status = 0;
+    public $valueNull = true; //для совместимости
+
+    public function getDataJSON()
+    {
+        return json_encode(
+            ['value' => $this->value,
+                'valueNull' => $this->valueNull,
+                'date' => $this->date,
+                'status' => $this->status]);
+    }
+
+    function setDefaultValue()
+    {
+        $this->value = 0.0;
+        $this->valueNull = true;
+        $this->date = 0;
+        $this->status = 0;
+    }
+}
+
+interface iFormatterValue {
+    function formatRawValue($value);
+}
+
 /*Данные физического датчика*/
 interface iDeviceValue
 {
-    function setValue($value, $idDevice);
-
-    function getValue($idDevice);
-
-    function printValue($idDevice); //значение для вывода на экран
+    function setValue($value);
 
     function getStorageValue();
+
+    function getFormatValue();
 }
 
 abstract class aDeviceValue implements iDeviceValue
 {
+    protected $id;
+    protected $formatter;
 
+    /**
+     * @param $id
+     * @param $formatter - объект для форматирования "сырых" данных датчиков в единый формат для dxHome
+     */
+    public function __construct($id, $formatter)
+    {
+        $this->id = $id;
+        $this->formatter = $formatter;
+    }
 
+    abstract protected function getValue();
+
+    function getStorageValue()
+    {
+        $result = storageValues::SHARED_MEMORY;
+        if (is_a($this, 'aDeviceValueDB')) $result = storageValues::DATA_BASE;
+        return $result;
+    }
 }
 
 abstract class aDeviceValueSM extends aDeviceValue
 {
-    function getStorageValue()
-    {
-        return storageValues::SHARED_MEMORY;
-    }
 
-    function getValue($idDevice)
+    protected function getValue()
     {
         // TODO: Implement getValue() method.
     }
+
+    function setValue($value)
+    {
+        // TODO: Implement setValue() method.
+    }
+
 }
 
 abstract class aDeviceValueDB extends aDeviceValue
 {
-    function getStorageValue()
-    {
-        return storageValues::DATA_BASE;
-    }
 
-    function getValue($idDevice)
+    /**
+     * Получение "сырых" данных из базы
+     * @return array|null
+     */
+    protected function getValue()
     {
         try {
             $con = sqlDataBase::Connect();
@@ -56,8 +105,8 @@ abstract class aDeviceValueDB extends aDeviceValue
             return null;
         }
         $result = null;
-        $deviceID = $con->getConnect()->real_escape_string($idDevice);
-        $query = 'SELECT * FROM tdevicevalue WHERE DeviceID=' . $deviceID . ' Order By Date Desc LIMIT 1';
+        $deviceID = $con->getConnect()->real_escape_string($this->id);
+        $query = sprintf('SELECT * FROM tdevicevalue WHERE DeviceID=%s Order By Date Desc LIMIT 1', $deviceID);
         try {
             $value = queryDataBase::getOne($con, $query);
             if (is_array($value) && array_key_exists('Value', $value)) {
@@ -69,6 +118,47 @@ abstract class aDeviceValueDB extends aDeviceValue
         }
         return $result;
     }
+
+    function setValue($value)
+    {
+        $dateValue = date('Y-m-d H:i:s');
+        $currentData = $this->getValue();
+        $insertData = !is_array($currentData);
+
+        if ($insertData) {
+            $query = sprintf('INSERT INTO tdevicevalue (DeviceID, Date, Value) VALUES (\'%s\', \'%s\', \'%s\')',
+                $this->id, $dateValue, $value);
+        } else {
+            $query = sprintf('UPDATE tdevicevalue SET Date = \'%s\', Value = \'%s\' WHERE DeviceID = %s',
+                $dateValue, $value, $this->id);
+        }
+
+        try {
+            $con = sqlDataBase::Connect();
+            $result = queryDataBase::execute($con, $query);
+            if (!$result) {
+                logger::writeLog('Ошибка при записи в базу данных (writeValue)',
+                    loggerTypeMessage::ERROR, loggerName::ERROR);
+            }
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных',
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка при добавлении данных в базу данных',
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+        }
+
+        unset($con);
+    }
+
+    function getFormatValue()
+    {
+        $valueData = $this->getValue();
+        if (!is_array($valueData)) return null;
+
+        return $this->formatter->formatRawValue($valueData);;
+    }
+
 }
 
 /**
@@ -282,9 +372,7 @@ interface iDevicePhysic
 
     function isValue();
 
-    function setValue($payload, $idDevice);
-
-    function printValue($idDevice);
+    function setValue($value);
 }
 
 interface iDeviceSensorPhysic extends iDevicePhysic
@@ -292,9 +380,10 @@ interface iDeviceSensorPhysic extends iDevicePhysic
 
     /**
      * Запрос данных с физического датчика
+     * @param $ignoreActivity - если false, то отправляем запрос, если датчик не присылает данные самостоятельно
      * @return mixed
      */
-    function requestData();
+    function requestData($ignoreActivity);
 }
 
 interface iDeviceMakerPhysic extends iDevicePhysic
@@ -471,7 +560,7 @@ abstract class aDevicePhysic implements iDevicePhysic
     {
         //новый механизм
         if (!is_null($this->value)) {
-            return  $this->value->getValue();
+            return  $this->value->getFormatValue();
         }
 
         switch ($this->formatValue) {
@@ -514,25 +603,24 @@ abstract class aDevicePhysic implements iDevicePhysic
         return $this->value instanceof iDeviceValue ? $this->value->getStorageValue() : storageValues::SHARED_MEMORY;
     }
 
+    /**
+     * Проверка на существования объекта в value
+     * @return bool
+     */
     public function isValue()
     {
-        return !is_null($this->value);
+        return $this->value instanceof iDeviceValue;
     }
 
-    function setValue($payload, $idDevice)
+    function setValue($value)
     {
-        if (!is_null($this->value)) $this->value->setValue($payload, $idDevice);
-    }
-
-    function printValue($idDevice)
-    {
-        return $this->isValue() ? $this->value->printValue($idDevice) : null;
+        if (!is_null($this->value)) $this->value->setValue($value);
     }
 }
 
 abstract class aDeviceSensorPhysic extends aDevicePhysic implements iDeviceSensorPhysic
 {
-    abstract function requestData();
+    abstract function requestData($ignoreActivity);
 }
 
 abstract class aDeviceMakerPhysic extends aDevicePhysic implements iDeviceMakerPhysic
@@ -548,8 +636,9 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
     private $topicTest; //топик на который приходит информация о нахождении устройства в сети
     private $topicSet;
 
-    private $requestPayload;
+    private $requestPayload; //сообщение для запроса данных с датчика
     private $testPayload;
+    protected $selfActivity = false; //
 
     public function __construct($mqttParameters, $formatValue = formatValueDevice::NO_FORMAT)
     {
@@ -558,7 +647,7 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
         $this->topicTest = $mqttParameters['topicTest'];
         $this->topicAvailabilityInput = isset($mqttParameters['topicAvailability']) ?
             $mqttParameters['topicAvailability'] : $mqttParameters['topicCmnd'];
-        $this->requestPayload = isset($mqttParameters['payload']) ? $mqttParameters['payload'] : '';
+        $this->requestPayload = isset($mqttParameters['payloadRequest']) ? $mqttParameters['payloadRequest'] : '';
         $this->topicSet = isset($mqttParameters['topicSet']) ?
             $mqttParameters['topicSet'] : '';
         $this->testPayload = isset($mqttParameters['testPayload']) ?
@@ -570,12 +659,15 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
     private function publishTopic($payload)
     {
         if (is_null($this->topicCmnd)) return;
+        if (trim($payload) == '') return;
         $mqtt = mqttSend::connect();
         $mqtt->publish($this->topicCmnd, $payload);
     }
 
-    function requestData()
+    function requestData($ignoreActivity = true)
     {
+        if (!$ignoreActivity && $this->selfActivity) return null;
+
         $this->publishTopic($this->requestPayload);
         return null;
     }
@@ -784,7 +876,7 @@ abstract class aDeviceMakerPhysicOWire extends aDeviceMakerPhysic implements iDe
 
 class DeviceSensorPhysicDefault extends aDeviceSensorPhysic
 {
-    function requestData()
+    function requestData($ignoreActivity = true)
     {
         // TODO: Implement requestData() method.
     }
@@ -837,15 +929,11 @@ interface iDevice
      * @return mixed
      */
     function getStorageValue();
-
-    function printValue();
-
 }
 
 interface iSensorDevice extends iDevice
 {
-    function requestData();
-
+    function requestData($ignoreActivity);
 }
 
 interface iMakerDevice extends iDevice
@@ -935,11 +1023,6 @@ abstract class aDevice implements iDevice
     {
         return $this->devicePhysic->getStorageValue();
     }
-
-    function printValue()
-    {
-        return $this->devicePhysic->printValue($this->getDeviceID());
-    }
 }
 
 /** Устройство датчик*/
@@ -1007,7 +1090,7 @@ abstract class aSensorDevice extends aDevice implements iSensorDevice
 
     }
 
-    abstract function requestData();
+    abstract function requestData($ignoreActivity = true);
 }
 
 /** Устройство исполнитель*/
@@ -1056,7 +1139,7 @@ class labelSensorDevice extends aSensorDevice
         parent::__construct($options, typeDevice::LABEL);
     }
 
-    function requestData()
+    function requestData($ignoreActivity = true)
     {
         // TODO: Implement requestData() method.
     }

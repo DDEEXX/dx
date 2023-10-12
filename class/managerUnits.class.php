@@ -105,7 +105,8 @@ class managerUnits
         return sharedMemoryUnits::getUnitID($id);
     }
 
-    /** Создает получает объект модуля по параметрам в $value
+    /**
+     * Возвращает объект модуля по параметрам в $value
      * @param array $value
      * @return |humidityUnit|keyInUnit|KeyOutUnit|kitchenVentUnit|mixed|pressureUnit|temperatureUnit|null
      */
@@ -147,7 +148,6 @@ class managerUnits
     public static function initUnits()
     {
         $result = managerValues::initUnits();
-        $result = $result && managerSharedMemory::initConst();
         return $result && managerSharedMemory::initDeviceValues();
     }
 
@@ -174,7 +174,10 @@ class unitsValuesHistory {
         $nameTabValue = 'tvalue_' . $unit->getValueTable();
         $dateValue = date('Y-m-d H:i:s',$data->date);
 
-        $query = 'INSERT INTO ' . $nameTabValue . ' VALUES (NULL, ' . "$uniteID,"." '$dateValue',"  . $value . ')';
+        if (self::checkDataToDB($nameTabValue, $uniteID, $dateValue)) return;
+
+        $query = sprintf("INSERT INTO %s VALUES (NULL, %s, '%s',%s)",
+            $nameTabValue, $uniteID, $dateValue, $value);
 
         try {
             $con = sqlDataBase::Connect();
@@ -192,7 +195,26 @@ class unitsValuesHistory {
         }
 
         unset($con);
+    }
 
+    static private function checkDataToDB($tableValues, $uniteID, $date) {
+        $query = sprintf("SELECT * FROM %s WHERE UnitID=%s AND Date = '%s' LIMIT 1",
+            $tableValues, $uniteID, $date);
+
+        try {
+            $con = sqlDataBase::Connect();
+            $result = queryDataBase::getOne($con, $query);
+            unset($con);
+            return is_array($result);
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных',
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка при получении данных из базу данных',
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+        }
+
+        return false;
     }
 
 }

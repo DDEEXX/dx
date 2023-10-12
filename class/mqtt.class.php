@@ -98,6 +98,7 @@ class mqttLoop
         $this->subscribeDevice = [];
         $this->deviceFormatPayload = [];
         $this->deviceDataUpdate = [];
+        $this->devices = [];
 
         $sel = new selectOption();
         $sel->set('Disabled', 0);

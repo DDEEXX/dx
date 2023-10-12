@@ -8,9 +8,7 @@ class pressureSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
 
     public function __construct($mqttParameters)
     {
-        if (empty($mqttParameters['payload'])) {
-            $mqttParameters['payload'] = self::DEFAULT_PAYLOAD;
-        }
+        if (empty($mqttParameters['payloadRequest'])) $mqttParameters['payloadRequest'] = self::DEFAULT_PAYLOAD;
         parent::__construct($mqttParameters, formatValueDevice::MQTT_PRESSURE);
     }
 }
@@ -39,14 +37,14 @@ class pressureSensorDevice extends aSensorDevice
             'topicStat' => $options['topic_stat'],
             'topicTest' => $options['topic_test'],
             'topicAlarm' => $options['topic_alarm'],
-            'payload' => $options['payload_cmnd']];
+            'payloadRequest' => $options['payload_cmnd']];
         $this->devicePhysic = pressureSensorFactory::create($this->getNet(), $mqttParameters);
     }
 
-    function requestData()
+    function requestData($ignoreActivity = true)
     {
         if ($this->devicePhysic instanceof aDeviceSensorPhysic) {
-            $this->devicePhysic->requestData();
+            $this->devicePhysic->requestData($ignoreActivity);
         }
     }
 }

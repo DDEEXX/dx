@@ -18,11 +18,11 @@ class kitchenHood extends aSensorDevice
             'topicStat' => $options['topic_stat'],
             'topicTest' => $options['topic_test'],
             'topicAlarm' => $options['topic_alarm'],
-            'payload' => $options['payload_cmnd']];
+            'payloadRequest' => $options['payload_cmnd']];
         $this->devicePhysic = new kitchenHood_MQTT($mqttParameters);
     }
 
-    function requestData()
+    function requestData($ignoreActivity = true)
     {
         if ($this->devicePhysic instanceof aDeviceSensorPhysic) {
             $this->devicePhysic->requestData();

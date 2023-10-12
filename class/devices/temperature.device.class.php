@@ -4,19 +4,64 @@
 
 const CODE_NO_TEMP = -1000;
 
+class formatter1Wire implements iFormatterValue
+{
+    function formatRawValue($value)
+    {
+        // TODO: Implement formatRawValue() method.
+    }
+}
+
+class formatterMQTT_1 implements iFormatterValue
+{
+    function formatRawValue($value)
+    {
+        $result = new formatDeviceValue();
+        $result->date = $value['date'];
+        $result->valueNull = false;
+        $result->status = 0;
+        $valueTemperature = trim($value['value']);
+        if (is_numeric($valueTemperature))
+            $result->value = (float)$valueTemperature;
+        else {
+            $result->value = '';
+            $result->valueNull = true;
+        }
+        return $result;
+    }
+}
+
+class formatterMQTT_2 implements iFormatterValue
+{
+    function formatRawValue($value)
+    {
+        $result = new formatDeviceValue();
+        $result->date = $value['date'];
+        $result->valueNull = false;
+        $result->status = 0;
+        $arValueData = json_decode($value['value'], true);
+        if ($arValueData['enable_sensor'] && is_numeric($arValueData['temperature']))
+            $result->value = $arValueData['temperature'];
+        else {
+            $result->value = '';
+            $result->valueNull = true;
+        }
+        return $result;
+    }
+}
+
 class temperatureSensor1Wire extends aDeviceSensorPhysicOWire
 {
     /**
-     * @param $address - 1wire address
-     * @param $alarm
+     * @param $OWParameters
      */
-    public function __construct($address, $alarm)
+    public function __construct($OWParameters)
     {
-        parent::__construct($address, $alarm);
-        //$this->value = managerValues::createDeviceValue();
+        parent::__construct($OWParameters['address'], $OWParameters['ow_alarm']);
+        //$this->value = temperatureValuesFactory::createDeviceValue($id, $valueFormat, $param['formatter']);
     }
 
-    function requestData()
+    function requestData($ignoreActivity = true)
     {
         $value = CODE_NO_TEMP;
         $OWNetDir = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_PATH);
@@ -67,87 +112,61 @@ class temperatureSensor1Wire extends aDeviceSensorPhysicOWire
 
 class temperatureSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
 {
-    const DEFAULT_PAYLOAD = 'temperature';
-
-    public function __construct($mqttParameters, $valueFormat)
-    {
-        if (empty($mqttParameters['payload'])) {
-            $mqttParameters['payload'] = self::DEFAULT_PAYLOAD;
+    private static function getConstructParam($parameters) {
+        $result = [];
+        $result['payloadRequest'] = '';
+        $result['selfActivity'] = false;
+        $result['formatter'] = null;
+        switch ($parameters['valueFormat']) {
+            case 0 :
+                $result['payloadRequest'] = 'temperature';
+                $result['selfActivity'] = false;
+                $result['formatter'] = new formatterMQTT_1();
+                break;
+            case 1 :
+                $result['payloadRequest'] = '{"state": ""}';
+                $result['selfActivity'] = true;
+                $result['formatter'] = new formatterMQTT_2();
+                break;
         }
-        $this->value = temperatureValuesFactory::createDeviceValue($valueFormat);
+        return $result;
+    }
+
+    public function __construct($parameters, $mqttParameters)
+    {
+        $param = self::getConstructParam($parameters);
+        $mqttParameters['payloadRequest'] = $param['payloadRequest'];
+        $this->selfActivity = $param['selfActivity'];
+        $this->value = temperatureValuesFactory::createDeviceValue($parameters, $param['formatter']);
         parent::__construct($mqttParameters, formatValueDevice::MQTT_TEMPERATURE);
     }
 }
 
 class deviceTemperatureValueSM extends aDeviceValueSM
 {
-    function setValue($value, $idDevice)
+    function getFormatValue()
     {
-        // TODO: Implement setValue() method.
-    }
-
-    function printValue($idDevice)
-    {
-        // TODO: Implement toString() method.
+        return new formatDeviceValue(); // TODO: Implement getFormatValue() method.
     }
 }
 
 class deviceTemperatureValueDB extends aDeviceValueDB
 {
-    function setValue($value, $idDevice)
+    public function __construct($id, $formatter)
     {
-        $dateValue = date('Y-m-d H:i:s');
-        $currentData = $this->getValue($idDevice);
-        $insertData = !is_array($currentData);
-
-        if ($insertData) {
-            $query = sprintf('INSERT INTO tdevicevalue (DeviceID, Date, Value) VALUES (\'%s\', \'%s\', \'%s\')',
-                $idDevice, $dateValue, $value);
-        } else {
-            $query = sprintf('UPDATE tdevicevalue SET Date = \'%s\', Value = \'%s\' WHERE DeviceID = %s',
-                $dateValue, $value, $idDevice);
-        }
-
-        try {
-            $con = sqlDataBase::Connect();
-            $result = queryDataBase::execute($con, $query);
-            if (!$result) {
-                logger::writeLog('Ошибка при записи в базу данных (writeValue)',
-                    loggerTypeMessage::ERROR, loggerName::ERROR);
-            }
-        } catch (connectDBException $e) {
-            logger::writeLog('Ошибка при подключении к базе данных',
-                loggerTypeMessage::ERROR, loggerName::ERROR);
-        } catch (querySelectDBException $e) {
-            logger::writeLog('Ошибка при добавлении данных в базу данных',
-                loggerTypeMessage::ERROR, loggerName::ERROR);
-        }
-
-        unset($con);
-    }
-
-    function printValue($idDevice)
-    {
-        $valueData = $this->getValue($idDevice);
-        if (!is_array($valueData)) return null;
-
-        $result = [];
-        $result['date'] = $valueData['date'];
-        $arValueData = json_decode($valueData['value'], true) ;
-        $result['value'] = $arValueData['temperature'];
-        return $result;
+        parent::__construct($id, $formatter);
     }
 }
 
 class temperatureSensorFactory
 {
-    static public function create($net, $address, $alarm, $mqttParameters, $valueFormat)
+    static public function create($parameters, $OWParameters, $mqttParameters)
     {
-        switch ($net) {
+        switch ($parameters['net']) {
             case netDevice::ONE_WIRE:
-                return new temperatureSensor1Wire($address, $alarm);
+                return new temperatureSensor1Wire($OWParameters);
             case netDevice::ETHERNET_MQTT:
-                return new temperatureSensorMQQTPhysic($mqttParameters, $valueFormat);
+                return new temperatureSensorMQQTPhysic($parameters, $mqttParameters);
             default :
                 return new DeviceSensorPhysicDefault();
         }
@@ -156,12 +175,15 @@ class temperatureSensorFactory
 
 class  temperatureValuesFactory
 {
-    public static function createDeviceValue($shared = 0) {
-        switch ($shared) {
-            case 0 : return new deviceTemperatureValueSM();
-            case 1 : return new deviceTemperatureValueDB();
+    public static function createDeviceValue($parameters, $formatter)
+    {
+        switch ($parameters['valueStorage']) { //место хранение данных
+            case 0 :
+                return null; //TODO - new deviceTemperatureValueSM();
+            case 1 :
+                return new deviceTemperatureValueDB($parameters['deviceID'], $formatter);
             default :
-                logger::writeLog('Ошибка при создании объекта deviceValue (managerValues.class.php). $shared = '.$shared,
+                logger::writeLog('Ошибка при создании объекта deviceValue (managerValues.class.php). $parameters[valueStorage] = ' . $parameters['valueStorage'],
                     loggerTypeMessage::ERROR, loggerName::ERROR);
         }
         return null;
@@ -173,22 +195,28 @@ class temperatureSensorDevice extends aSensorDevice
     public function __construct(array $options)
     {
         parent::__construct($options, typeDevice::TEMPERATURE);
-        $address = $options['Address'];
-        $ow_alarm = $options['OW_alarm'];
-        $valueFormat = $options['value_format'];
+        $parameters =[
+            'deviceID' => $this->getDeviceID(),
+            'net' => $this->getNet(),
+            'valueFormat' => $options['value_format'],
+            'valueStorage' => $options['value_storage']
+        ];
         $mqttParameters = [
             'topicCmnd' => $options['topic_cmnd'],
             'topicStat' => $options['topic_stat'],
             'topicTest' => $options['topic_test'],
             'topicAlarm' => $options['topic_alarm'],
-            'payload' => $options['payload_cmnd']];
-        $this->devicePhysic = temperatureSensorFactory::create($this->getNet(), $address, $ow_alarm, $mqttParameters, $valueFormat);
+            'payloadRequest' => $options['payload_cmnd']];
+        $OWParameters = [
+            'address' => $options['Address'],
+            'ow_alarm' => $options['OW_alarm']];
+        $this->devicePhysic = temperatureSensorFactory::create($parameters, $OWParameters, $mqttParameters);
     }
 
-    function requestData()
+    function requestData($ignoreActivity = true)
     {
         if ($this->devicePhysic instanceof aDeviceSensorPhysic) {
-            $value = $this->devicePhysic->requestData();
+            $value = $this->devicePhysic->requestData($ignoreActivity);
 
             if (!is_null($value)) { //запрос вернул результат, запишем в sm
 
@@ -203,7 +231,6 @@ class temperatureSensorDevice extends aSensorDevice
 
                 $dataDevice = new deviceData($this->getDeviceID());
                 $dataDevice->setData($value, $dataValue, $valueNull);
-
             }
         }
     }
