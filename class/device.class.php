@@ -154,7 +154,7 @@ abstract class aDeviceValueDB extends aDeviceValue
     function getFormatValue()
     {
         $valueData = $this->getValue();
-        return $this->formatter->formatRawValue($valueData);;
+        return $this->formatter->formatRawValue($valueData);
     }
 
 }
@@ -591,8 +591,7 @@ abstract class aDevicePhysic implements iDevicePhysic
                 return $result;
             default :
                 $deviceData = new deviceData($deviceID);
-                $data = $deviceData->getData();
-                return $data->getDataJSON();
+                return $deviceData->getData();
         }
     }
 
