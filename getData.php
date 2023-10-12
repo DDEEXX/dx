@@ -33,7 +33,8 @@ if ($_REQUEST['dev'] == 'temp') { //получаем температуру
             $classMinus = 'temperature_weather_minus_plan';
         }
 
-        $valueData = json_decode($unit->getData(), true);
+        $formatData = $unit->getData();
+        $valueData = $formatData->getDataArray();
         if (!is_null($valueData)) {
             $valueNull = $valueData['valueNull'];
             if (!$valueNull) {

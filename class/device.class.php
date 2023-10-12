@@ -18,11 +18,7 @@ class formatDeviceValue implements iDeviceDataValue
 
     public function getDataJSON()
     {
-        return json_encode(
-            ['value' => $this->value,
-                'valueNull' => $this->valueNull,
-                'date' => $this->date,
-                'status' => $this->status]);
+        return json_encode($this->getDataArray());
     }
 
     function setDefaultValue()
@@ -31,6 +27,14 @@ class formatDeviceValue implements iDeviceDataValue
         $this->valueNull = true;
         $this->date = 0;
         $this->status = 0;
+    }
+
+    function getDataArray()
+    {
+        return ['value' => $this->value,
+            'valueNull' => $this->valueNull,
+            'date' => $this->date,
+            'status' => $this->status];
     }
 }
 
@@ -167,6 +171,8 @@ interface iDeviceDataValue
     function getDataJSON();
 
     function setDefaultValue();
+
+    function getDataArray();
 }
 
 class deviceDataValue implements iDeviceDataValue
@@ -182,11 +188,7 @@ class deviceDataValue implements iDeviceDataValue
      */
     public function getDataJSON()
     {
-        return json_encode(
-            ['value' => $this->value,
-                'valueNull' => $this->valueNull,
-                'date' => $this->date,
-                'status' => $this->status]);
+        return json_encode($this->getDataArray());
     }
 
     function setDefaultValue()
@@ -195,6 +197,14 @@ class deviceDataValue implements iDeviceDataValue
         $this->valueNull = true;
         $this->date = 0;
         $this->status = 0;
+    }
+
+    function getDataArray()
+    {
+        return ['value' => $this->value,
+            'valueNull' => $this->valueNull,
+            'date' => $this->date,
+            'status' => $this->status];
     }
 }
 
