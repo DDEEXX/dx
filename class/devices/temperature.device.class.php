@@ -10,6 +10,11 @@ class formatter1Wire implements iFormatterValue
     {
         // TODO: Implement formatRawValue() method.
     }
+
+    function formatTestCode($value)
+    {
+        // TODO: Implement formatTestCode() method.
+    }
 }
 
 class formatterMQTT_1 implements iFormatterValue
@@ -30,6 +35,11 @@ class formatterMQTT_1 implements iFormatterValue
         }
         return $result;
     }
+
+    function formatTestCode($value)
+    {
+        return $value;
+    }
 }
 
 class formatterMQTT_2 implements iFormatterValue
@@ -49,6 +59,22 @@ class formatterMQTT_2 implements iFormatterValue
             $result->valueNull = true;
         }
         return $result;
+    }
+
+    function formatTestCode($value)
+    {
+        $arValue = json_decode($value);
+        switch ($arValue->state) {
+            case 'online' :
+                $testCode = testDeviceCode::WORKING;
+                break;
+            case 'offline' :
+                $testCode = testDeviceCode::NO_CONNECTION;
+                break;
+            default :
+                $testCode = testDeviceCode::UNKNOWN;
+        }
+        return $testCode;
     }
 }
 
@@ -114,7 +140,8 @@ class temperatureSensor1Wire extends aDeviceSensorPhysicOWire
 
 class temperatureSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
 {
-    private static function getConstructParam($parameters) {
+    private static function getConstructParam($parameters)
+    {
         $result = [];
         $result['payloadRequest'] = '';
         $result['selfActivity'] = false;
@@ -141,6 +168,14 @@ class temperatureSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
         $this->selfActivity = $param['selfActivity'];
         $this->value = temperatureValuesFactory::createDeviceValue($parameters, $param['formatter']);
         parent::__construct($mqttParameters, formatValueDevice::MQTT_TEMPERATURE);
+    }
+
+    public function formatTestPayload($testPayload, $ignoreUnknown = false)
+    {
+        if ($this->value instanceof iDeviceValue) {
+            $testPayload = $this->value->formatTestCode($testPayload); //{"state":"online"}/{"state":"offline"}
+        }
+        return parent::formatTestPayload($testPayload, $ignoreUnknown);
     }
 }
 
@@ -197,7 +232,7 @@ class temperatureSensorDevice extends aSensorDevice
     public function __construct(array $options)
     {
         parent::__construct($options, typeDevice::TEMPERATURE);
-        $parameters =[
+        $parameters = [
             'deviceID' => $this->getDeviceID(),
             'net' => $this->getNet(),
             'valueFormat' => $options['value_format'],

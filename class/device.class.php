@@ -40,6 +40,7 @@ class formatDeviceValue implements iDeviceDataValue
 
 interface iFormatterValue {
     function formatRawValue($value);
+    function formatTestCode($value);
 }
 
 /*Данные физического датчика*/
@@ -50,6 +51,8 @@ interface iDeviceValue
     function getStorageValue();
 
     function getFormatValue();
+
+    function formatTestCode($testData);
 }
 
 abstract class aDeviceValue implements iDeviceValue
@@ -74,6 +77,11 @@ abstract class aDeviceValue implements iDeviceValue
         $result = storageValues::SHARED_MEMORY;
         if (is_a($this, 'aDeviceValueDB')) $result = storageValues::DATA_BASE;
         return $result;
+    }
+
+    function formatTestCode($testData)
+    {
+        return $this->formatter->formatTestCode($testData);
     }
 }
 
