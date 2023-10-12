@@ -14,7 +14,7 @@ class formatDeviceValue implements iDeviceDataValue
     public $date = 0;
     public $value = null;
     public $status = 0;
-    public $valueNull = true; //для совместимости
+    public $valueNull = true;
 
     public function getDataJSON()
     {
@@ -154,8 +154,6 @@ abstract class aDeviceValueDB extends aDeviceValue
     function getFormatValue()
     {
         $valueData = $this->getValue();
-        if (!is_array($valueData)) return null;
-
         return $this->formatter->formatRawValue($valueData);;
     }
 

@@ -17,6 +17,7 @@ class formatterMQTT_1 implements iFormatterValue
     function formatRawValue($value)
     {
         $result = new formatDeviceValue();
+        if (!is_null($value)) return $result;
         $result->date = $value['date'];
         $result->valueNull = false;
         $result->status = 0;
@@ -36,6 +37,7 @@ class formatterMQTT_2 implements iFormatterValue
     function formatRawValue($value)
     {
         $result = new formatDeviceValue();
+        if (!is_null($value)) return $result;
         $result->date = $value['date'];
         $result->valueNull = false;
         $result->status = 0;
