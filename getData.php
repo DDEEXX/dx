@@ -78,10 +78,12 @@ elseif ($_REQUEST['dev'] == 'temp_delta') { //получаем температ�
             loggerTypeMessage::ERROR, loggerName::ERROR);
     }
     else {
-        $valueData = json_decode($unit1->getData(), true);
+        $formatData = $unit1->getData();
+        $valueData = $formatData->getDataArray();
         $temp1 = $valueData['valueNull'] ? null : (double)$valueData['value'];
 
-        $valueData = json_decode($unit2->getData(), true);
+        $formatData = $unit2->getData();
+        $valueData = $formatData->getDataArray();
         $temp2 = $valueData['valueNull'] ? null : (double)$valueData['value'];
 
         if (is_numeric($temp1) && is_numeric($temp2)) {
@@ -108,7 +110,8 @@ elseif ($_REQUEST['dev'] == 'pressure') { //получаем атмосферн�
         logger::writeLog('Модуль с именем :: ' . $label . ' :: не найден',
             loggerTypeMessage::ERROR, loggerName::ERROR);
     } else {
-        $valueData = json_decode($unit->getData(), true);
+        $formatData = $unit->getData();
+        $valueData = $formatData->getDataArray();
         if (!is_null($valueData)) {
             $valueNull = $valueData['valueNull'];
             if (!$valueNull) {
@@ -143,7 +146,8 @@ elseif ($_REQUEST['dev'] == 'humidity') { //получаем влажность
         /*        echo '--'; //пока так
                 exit(); //тут надо подумать что возвращать*/
     } else {
-        $valueData = json_decode($unit->getData(), true);
+        $formatData = $unit->getData();
+        $valueData = $formatData->getDataArray();
         if (!is_null($valueData)) {
             $valueNull = $valueData['valueNull'];
             if (!$valueNull) {
@@ -191,9 +195,11 @@ elseif ($_REQUEST['dev'] == 'light') { //получаем значение ос�
 
     if (!is_null($unit)) {
         if (!is_null($unitSensor)) {
-            $valueData = json_decode($unitSensor->getData(), true);
+            $formatData = $unitSensor->getData();
+            $valueData = $formatData->getDataArray();
         } else {
-            $valueData = json_decode($unit->getData(), true);
+            $formatData = $unit->getData();
+            $valueData = $formatData->getDataArray();
         }
         if (!is_null($valueData)) {
             $valueNull = $valueData['valueNull'];
@@ -239,9 +245,11 @@ elseif ($_REQUEST['dev'] == 'light_tile') {
     $payload = 'on';
     if (!is_null($unit)) {
         if (!is_null($unitSensor)) {
-            $valueData = json_decode($unitSensor->getData(), true);
+            $formatData = $unitSensor->getData();
+            $valueData = $formatData->getDataArray();
         } else {
-            $valueData = json_decode($unit->getData(), true);
+            $formatData = $unit->getData();
+            $valueData = $formatData->getDataArray();
         }
         if (!is_null($valueData)) {
             $valueNull = $valueData['valueNull'];
@@ -297,7 +305,8 @@ elseif ($_REQUEST['dev'] == 'check_value') {
     foreach ($labels as $label) {
         $unit = managerUnits::getUnitLabel($label);
         if (!is_null($unit)) {
-            $valueData = json_decode($unit->getData(), true);
+            $formatData = $unit->getData();
+            $valueData = $formatData->getDataArray();
             $value = -1;
             if (!is_null($valueData)) {
                 $valueNull = $valueData['valueNull'];
