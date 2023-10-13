@@ -5,14 +5,14 @@
     "expand": true,
     "value": {
       "classDigit": "sensor_data",
-      "label": "bathroom_humidity",
+      "label": "outdoor_humidity",
       "dev": "humidity"
     }
   },
   "widget": {
     "id":"home_outdoor_sensors",
     "properties": {
-      "label": "bathroom_humidity",
+      "label": "outdoor_humidity",
       "icon": {
         "image": "img2/icon_medium/humidity.png",
         "width": 24,
