@@ -579,6 +579,7 @@ abstract class aDevicePhysic implements iDevicePhysic
             return  $this->value->getFormatValue();
         }
 
+        //старый
         switch ($this->formatValue) {
             case formatValueDevice::MQTT_KITCHEN_HOOD:
             case formatValueDevice::MQTT_GAS_SENSOR:

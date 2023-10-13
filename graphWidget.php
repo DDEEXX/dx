@@ -70,7 +70,7 @@ if (!is_null($options['label'])) {
             $options['minDelta']);
         $imageGraph64 = $graphWidget->getGraph64();
         if ($options['curValueShow']) {
-            $data = json_decode($unit->getData(), true);
+            $data = $unit->getData();
             if (!$data['valueNull']) {
                 $precision = (int)$options['curValuePrecision'];
                 $curValueNumeric = round( (double)$data['value'], $precision);
