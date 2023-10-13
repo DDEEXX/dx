@@ -53,6 +53,30 @@ interface iFormatterValue {
     function formatTestCode($value);
 }
 
+class formatterNumeric implements iFormatterValue
+{
+    function formatRawValue(array $value)
+    {
+        $result = new formatDeviceValue();
+        $result->valueNull = false;
+        $result->status = 0;
+        $valueTemperature = trim($value['value']);
+        if (is_numeric($valueTemperature))
+            $result->value = (float)$valueTemperature;
+        else {
+            $result->value = '';
+            $result->valueNull = true;
+        }
+        return $result;
+    }
+
+    function formatTestCode($value)
+    {
+        return $value;
+    }
+}
+
+
 /*Данные физического датчика*/
 interface iDeviceValue
 {
@@ -104,7 +128,7 @@ abstract class aDeviceValue implements iDeviceValue
     }
 }
 
-abstract class aDeviceValueSM extends aDeviceValue
+class aDeviceValueSM extends aDeviceValue
 {
 
     protected function getValue()
@@ -123,7 +147,7 @@ abstract class aDeviceValueSM extends aDeviceValue
     }
 }
 
-abstract class aDeviceValueDB extends aDeviceValue
+class aDeviceValueDB extends aDeviceValue
 {
 
     /**
@@ -186,6 +210,23 @@ abstract class aDeviceValueDB extends aDeviceValue
         unset($con);
     }
 
+}
+
+class  valuesFactory
+{
+    public static function createDeviceValue($parameters, $formatter)
+    {
+        switch ($parameters['valueStorage']) { //место хранение данных
+            case 0 :
+                return new aDeviceValueSM($parameters['deviceID'], $formatter);
+            case 1 :
+                return new aDeviceValueDB($parameters['deviceID'], $formatter);
+            default :
+                logger::writeLog('Ошибка при создании объекта deviceValue (managerValues.class.php). $parameters[valueStorage] = ' . $parameters['valueStorage'],
+                    loggerTypeMessage::ERROR, loggerName::ERROR);
+        }
+        return null;
+    }
 }
 
 /**
