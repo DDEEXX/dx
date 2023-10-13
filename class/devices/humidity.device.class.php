@@ -10,7 +10,7 @@ class formatterHumidityMQTT_1 implements iFormatterValue
         $result->status = 0;
         $arValueData = json_decode($value['value'], true);
         if ($arValueData['enable_sensor'] && is_numeric($arValueData['humidity']))
-            $result->value = $arValueData['temperature'];
+            $result->value = $arValueData['humidity'];
         else {
             $result->value = '';
             $result->valueNull = true;
