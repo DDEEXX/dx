@@ -20,8 +20,8 @@ class formatterHumidityMQTT_1 implements iFormatterValue
 
     function formatTestCode($value)
     {
-        $arValue = json_decode($value);
-        switch ($arValue->state) {
+        $objValue = json_decode($value);
+        switch ($objValue->state) {
             case 'online' :
                 $testCode = testDeviceCode::WORKING;
                 break;
@@ -66,6 +66,15 @@ class humiditySensorMQQTPhysic extends aDeviceSensorPhysicMQTT
         $this->value = valuesFactory::createDeviceValue($parameters, $param['formatter']);
         parent::__construct($mqttParameters, formatValueDevice::MQTT_HUMIDITY);
     }
+
+    public function formatTestPayload($testPayload, $ignoreUnknown = false)
+    {
+        if ($this->value instanceof iDeviceValue) {
+            $testPayload = $this->value->getFormatTestCode($testPayload); //{"state":"online"}/{"state":"offline"}
+        }
+        return parent::formatTestPayload($testPayload, $ignoreUnknown);
+    }
+
 }
 
 class humiditySensorFactory

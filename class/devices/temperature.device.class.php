@@ -46,8 +46,8 @@ class formatterTemperatureMQTT_1 implements iFormatterValue
 
     function formatTestCode($value)
     {
-        $arValue = json_decode($value);
-        switch ($arValue->state) {
+        $objValue = json_decode($value);
+        switch ($objValue->state) {
             case 'online' :
                 $testCode = testDeviceCode::WORKING;
                 break;

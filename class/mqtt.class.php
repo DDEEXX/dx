@@ -367,6 +367,8 @@ class mqttTest
     private $logger;
     // массив: индекс - id устройства, значения - топики
     private $subscribeDevice;
+    // массив: индекс - id устройства, значения - объект iDevice
+    private $devices;
 
     public function __construct($logger = false)
     {
@@ -431,7 +433,8 @@ class mqttTest
                     loggerTypeMessage::NOTICE,
                     loggerName::MQTT);
             }
-            $device = managerDevices::getDevice($idDevice);
+            //$device = managerDevices::getDevice($idDevice);
+            $device = $this->devices[$idDevice];
             if (is_null($device)) continue;
             $devicePhysic = $device->getDevicePhysic();
             //"сырой" результат тестирования -> код тестирования
@@ -475,6 +478,7 @@ class mqttTest
     private function getSubscribeDevice()
     {
         $this->subscribeDevice = [];
+        $this->devices = [];
 
         $sel = new selectOption();
         $sel->set('NetTypeID', netDevice::ETHERNET_MQTT);
@@ -487,6 +491,7 @@ class mqttTest
                     $this->subscribeDevice[$device->getDeviceID()] = $topicTest;
                 }
             }
+            $this->devices[$device->getDeviceID()] = $device;
         }
     }
 }
