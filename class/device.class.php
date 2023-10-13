@@ -52,7 +52,7 @@ interface iDeviceValue
 
     function getFormatValue();
 
-    function formatTestCode($testData);
+    function getFormatTestCode($testData);
 }
 
 abstract class aDeviceValue implements iDeviceValue
@@ -79,7 +79,7 @@ abstract class aDeviceValue implements iDeviceValue
         return $result;
     }
 
-    function formatTestCode($testData)
+    function getFormatTestCode($testData)
     {
         return $this->formatter->formatTestCode($testData);
     }

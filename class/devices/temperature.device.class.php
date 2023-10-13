@@ -13,7 +13,7 @@ class formatter1Wire implements iFormatterValue
 
     function formatTestCode($value)
     {
-        // TODO: Implement formatTestCode() method.
+        // TODO: Implement getFormatTestCode() method.
     }
 }
 
@@ -173,7 +173,7 @@ class temperatureSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
     public function formatTestPayload($testPayload, $ignoreUnknown = false)
     {
         if ($this->value instanceof iDeviceValue) {
-            $testPayload = $this->value->formatTestCode($testPayload); //{"state":"online"}/{"state":"offline"}
+            $testPayload = $this->value->getFormatTestCode($testPayload); //{"state":"online"}/{"state":"offline"}
         }
         return parent::formatTestPayload($testPayload, $ignoreUnknown);
     }
