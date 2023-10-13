@@ -49,7 +49,7 @@ class formatDeviceValue implements iDeviceDataValue
 }
 
 interface iFormatterValue {
-    function formatRawValue($value);
+    function formatRawValue(array $value);
     function formatTestCode($value);
 }
 
@@ -89,6 +89,15 @@ abstract class aDeviceValue implements iDeviceValue
         return $result;
     }
 
+    function getFormatValue()
+    {
+        $valueData = $this->getValue();
+        if (!is_array($valueData)) return new formatDeviceValue();
+        $result = $this->formatter->formatRawValue($valueData);
+        $result->date = $valueData['date'];
+        return $result;
+    }
+
     function getFormatTestCode($testData)
     {
         return $this->formatter->formatTestCode($testData);
@@ -100,14 +109,18 @@ abstract class aDeviceValueSM extends aDeviceValue
 
     protected function getValue()
     {
-        // TODO: Implement getValue() method.
+        $deviceData = new deviceData($this->id);
+        $value = $deviceData->getData();
+        return $value->getDataArray();
     }
 
     function setValue($value)
     {
-        // TODO: Implement setValue() method.
+        $fData = $this->formatter->formatRawValue(['value'=>$value]);
+        $fData->date = time();
+        $deviceData = new deviceData($this->id);
+        $deviceData->setData($fData->value , $fData->date, $fData->valueNull, $fData->status);
     }
-
 }
 
 abstract class aDeviceValueDB extends aDeviceValue
@@ -171,12 +184,6 @@ abstract class aDeviceValueDB extends aDeviceValue
         }
 
         unset($con);
-    }
-
-    function getFormatValue()
-    {
-        $valueData = $this->getValue();
-        return $this->formatter->formatRawValue($valueData);
     }
 
 }

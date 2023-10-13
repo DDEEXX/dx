@@ -6,24 +6,32 @@ const CODE_NO_TEMP = -1000;
 
 class formatter1Wire implements iFormatterValue
 {
-    function formatRawValue($value)
+    function formatRawValue(array $value)
     {
-        // TODO: Implement formatRawValue() method.
+        $result = new formatDeviceValue();
+        $result->valueNull = false;
+        $result->status = 0;
+        $valueTemperature = trim($value['value']);
+        if ($valueTemperature == CODE_NO_TEMP || !is_numeric($valueTemperature)) {
+            $result->valueNull = true;
+            $result->value = 0.0;
+        } else {
+            $result->value = round((float)$valueTemperature, valuePrecision::TEMPERATURE);
+        }
+        return $result;
     }
 
     function formatTestCode($value)
     {
-        // TODO: Implement getFormatTestCode() method.
+        return $value;
     }
 }
 
 class formatterMQTT_1 implements iFormatterValue
 {
-    function formatRawValue($value)
+    function formatRawValue(array $value)
     {
         $result = new formatDeviceValue();
-        if (is_null($value)) return $result;
-        $result->date = $value['date'];
         $result->valueNull = false;
         $result->status = 0;
         $valueTemperature = trim($value['value']);
@@ -44,11 +52,9 @@ class formatterMQTT_1 implements iFormatterValue
 
 class formatterMQTT_2 implements iFormatterValue
 {
-    function formatRawValue($value)
+    function formatRawValue(array $value)
     {
         $result = new formatDeviceValue();
-        if (is_null($value)) return $result;
-        $result->date = $value['date'];
         $result->valueNull = false;
         $result->status = 0;
         $arValueData = json_decode($value['value'], true);
@@ -78,15 +84,45 @@ class formatterMQTT_2 implements iFormatterValue
     }
 }
 
+class deviceTemperatureValueSM extends aDeviceValueSM
+{
+    public function __construct($id, $formatter)
+    {
+        parent::__construct($id, $formatter);
+    }
+}
+
+class deviceTemperatureValueDB extends aDeviceValueDB
+{
+    public function __construct($id, $formatter)
+    {
+        parent::__construct($id, $formatter);
+    }
+}
+
+class  temperatureValuesFactory
+{
+    public static function createDeviceValue($parameters, $formatter)
+    {
+        switch ($parameters['valueStorage']) { //место хранение данных
+            case 0 :
+                return new deviceTemperatureValueSM($parameters['deviceID'], $formatter);
+            case 1 :
+                return new deviceTemperatureValueDB($parameters['deviceID'], $formatter);
+            default :
+                logger::writeLog('Ошибка при создании объекта deviceValue (managerValues.class.php). $parameters[valueStorage] = ' . $parameters['valueStorage'],
+                    loggerTypeMessage::ERROR, loggerName::ERROR);
+        }
+        return null;
+    }
+}
+
 class temperatureSensor1Wire extends aDeviceSensorPhysicOWire
 {
-    /**
-     * @param $OWParameters
-     */
-    public function __construct($OWParameters)
+    public function __construct($parameters, $OWParameters)
     {
+        $this->value = temperatureValuesFactory::createDeviceValue($parameters, new formatter1Wire());
         parent::__construct($OWParameters['address'], $OWParameters['ow_alarm']);
-        //$this->value = temperatureValuesFactory::createDeviceValue($id, $valueFormat, $param['formatter']);
     }
 
     function requestData($ignoreActivity = true)
@@ -179,51 +215,18 @@ class temperatureSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
     }
 }
 
-class deviceTemperatureValueSM extends aDeviceValueSM
-{
-    function getFormatValue()
-    {
-        return new formatDeviceValue(); // TODO: Implement getFormatValue() method.
-    }
-}
-
-class deviceTemperatureValueDB extends aDeviceValueDB
-{
-    public function __construct($id, $formatter)
-    {
-        parent::__construct($id, $formatter);
-    }
-}
-
 class temperatureSensorFactory
 {
     static public function create($parameters, $OWParameters, $mqttParameters)
     {
         switch ($parameters['net']) {
             case netDevice::ONE_WIRE:
-                return new temperatureSensor1Wire($OWParameters);
+                return new temperatureSensor1Wire($parameters, $OWParameters);
             case netDevice::ETHERNET_MQTT:
                 return new temperatureSensorMQQTPhysic($parameters, $mqttParameters);
             default :
                 return new DeviceSensorPhysicDefault();
         }
-    }
-}
-
-class  temperatureValuesFactory
-{
-    public static function createDeviceValue($parameters, $formatter)
-    {
-        switch ($parameters['valueStorage']) { //место хранение данных
-            case 0 :
-                return null; //TODO - new deviceTemperatureValueSM();
-            case 1 :
-                return new deviceTemperatureValueDB($parameters['deviceID'], $formatter);
-            default :
-                logger::writeLog('Ошибка при создании объекта deviceValue (managerValues.class.php). $parameters[valueStorage] = ' . $parameters['valueStorage'],
-                    loggerTypeMessage::ERROR, loggerName::ERROR);
-        }
-        return null;
     }
 }
 
@@ -255,19 +258,8 @@ class temperatureSensorDevice extends aSensorDevice
         if ($this->devicePhysic instanceof aDeviceSensorPhysic) {
             $value = $this->devicePhysic->requestData($ignoreActivity);
 
-            if (!is_null($value)) { //запрос вернул результат, запишем в sm
-
-                $dataValue = time();
-                if ($value == CODE_NO_TEMP || !is_numeric($value)) {
-                    $valueNull = true;
-                    $value = 0.0;
-                } else {
-                    $valueNull = false;
-                    $value = round((float)$value, valuePrecision::TEMPERATURE);
-                }
-
-                $dataDevice = new deviceData($this->getDeviceID());
-                $dataDevice->setData($value, $dataValue, $valueNull);
+            if (!is_null($value)) { //запрос вернул результат
+                $this->devicePhysic->setValue($value);
             }
         }
     }
