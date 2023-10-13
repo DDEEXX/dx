@@ -36,6 +36,13 @@ class formatDeviceValue implements iDeviceDataValue
             'date' => $this->date,
             'status' => $this->status];
     }
+
+    function changeValue($delta)
+    {
+        if (is_numeric($this->value) && is_numeric($delta)) {
+            $this->value = $this->value + $delta;
+        }
+    }
 }
 
 interface iFormatterValue {
@@ -181,6 +188,12 @@ interface iDeviceDataValue
     function setDefaultValue();
 
     function getDataArray();
+
+    /**
+     * Изменить значение на delta
+     * @param $delta
+     */
+    function changeValue($delta);
 }
 
 class deviceDataValue implements iDeviceDataValue
@@ -213,6 +226,13 @@ class deviceDataValue implements iDeviceDataValue
             'valueNull' => $this->valueNull,
             'date' => $this->date,
             'status' => $this->status];
+    }
+
+    function changeValue($delta)
+    {
+        if (is_numeric($this->value) && is_numeric($delta)) {
+            $this->value = $this->value + $delta;
+        }
     }
 }
 

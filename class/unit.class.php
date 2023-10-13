@@ -276,22 +276,13 @@ abstract class sensorUnit extends unit implements iSensorUnite
     {
         $data = parent::getData();
 
-        //TODO - надо сделать как-то по другому, с датчика данные могут приходить не только как числовое значение
-        //делать через форматер
-        if ($data instanceof iDeviceDataValue) $data = $data->getDataJSON();
-
-        if (is_string($data)) {
-            $dataDecode = json_decode($data, true);
-            if (!is_null($dataDecode)) {
-                $delta = $this->getDelta();
-                $dataDecode['value'] = (float)$dataDecode['value'] + $delta;
-                $data = json_encode($dataDecode);
-            }
+        if ($data instanceof iDeviceDataValue) {
+            $delta = $this->getDelta();
+            $data = $data->changeValue($delta);
         }
 
         return $data;
     }
-
 }
 
 abstract class moduleUnit extends unit implements iModuleUnite
