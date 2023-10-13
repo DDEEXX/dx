@@ -39,8 +39,11 @@ class formatDeviceValue implements iDeviceDataValue
 
     function changeValue($delta)
     {
-        if (is_numeric($this->value) && is_numeric($delta)) {
-            $this->value = $this->value + $delta;
+        if (is_numeric($delta)) {
+            if ($delta == 0) return;
+            if (is_numeric($this->value)) {
+                $this->value = $this->value + $delta;
+            }
         }
     }
 }

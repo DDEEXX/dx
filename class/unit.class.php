@@ -278,7 +278,7 @@ abstract class sensorUnit extends unit implements iSensorUnite
 
         if ($data instanceof iDeviceDataValue) {
             $delta = $this->getDelta();
-            $data = $data->changeValue($delta);
+            $data->changeValue($delta);
         }
 
         return $data;
