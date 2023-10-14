@@ -641,7 +641,7 @@ abstract class aDevicePhysic implements iDevicePhysic
     /**
      * Получает уже запрошенные и записанные (sm|db) данные с датчика
      * @param $deviceID
-     * @return array|false|string
+     * @return array|deviceDataValue|string
      */
     function getData($deviceID)
     {

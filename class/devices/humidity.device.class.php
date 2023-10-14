@@ -114,7 +114,7 @@ class humiditySensorDevice extends aSensorDevice
     function requestData($ignoreActivity = true)
     {
         if ($this->devicePhysic instanceof aDeviceSensorPhysic) {
-            $this->devicePhysic->requestData();
+            $this->devicePhysic->requestData($ignoreActivity);
         }
     }
 }

@@ -42,7 +42,7 @@ class daemonLoopMQTTalarm extends daemon
     {
         parent::run();
 
-        $mqtt = new mqttAlarm(true);
+        $mqtt = new mqttAlarm();
         $mqtt->connect();
 
         $previousUpdateSubscibe = time();
