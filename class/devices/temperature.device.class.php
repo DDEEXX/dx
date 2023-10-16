@@ -35,7 +35,7 @@ class formatterTemperatureMQTT_1 implements iFormatterValue
         $result->valueNull = false;
         $result->status = 0;
         $arValueData = json_decode($value['value'], true);
-        if ($arValueData['enable_sensor'] && is_numeric($arValueData['temperature']))
+        if (is_numeric($arValueData['temperature']))
             $result->value = $arValueData['temperature'];
         else {
             $result->value = '';
