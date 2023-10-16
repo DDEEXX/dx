@@ -20,8 +20,8 @@
       },
       "currentValue": {
         "show": true,
-        "top": "5px",
-        "left": "40px",
+        "top": "35px",
+        "left": "5px",
         "postfix": "%"
       },
       "graph": {
