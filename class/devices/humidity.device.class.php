@@ -9,7 +9,7 @@ class formatterHumidityMQTT_1 implements iFormatterValue
         $result->valueNull = false;
         $result->status = 0;
         $arValueData = json_decode($value['value'], true);
-        if ($arValueData['enable_sensor'] && is_numeric($arValueData['humidity']))
+        if (is_numeric($arValueData['humidity']))
             $result->value = $arValueData['humidity'];
         else {
             $result->value = '';
@@ -37,7 +37,7 @@ class formatterHumidityMQTT_1 implements iFormatterValue
 
 class humiditySensorMQQTPhysic extends aDeviceSensorPhysicMQTT
 {
-    private static function getConstructParam($parameters)
+    private static function getConstructParam($parameters, &$mqttParameters)
     {
         $result = [];
         $result['payloadRequest'] = '';
@@ -45,12 +45,13 @@ class humiditySensorMQQTPhysic extends aDeviceSensorPhysicMQTT
         $result['formatter'] = null;
         switch ($parameters['valueFormat']) {
             case 0 :
-                $result['payloadRequest'] = 'humidity';
+                $mqttParameters['payloadRequest'] = 'humidity';
                 $result['selfActivity'] = false;
                 $result['formatter'] = new formatterNumeric();
                 break;
             case 1 :
-                $result['payloadRequest'] = '{"state": ""}';
+                $mqttParameters['payloadRequest'] = '{"state": ""}';
+                $mqttParameters['topicAvailability'] = '';
                 $result['selfActivity'] = true;
                 $result['formatter'] = new formatterHumidityMQTT_1();
                 break;
@@ -60,8 +61,7 @@ class humiditySensorMQQTPhysic extends aDeviceSensorPhysicMQTT
 
     public function __construct($parameters, $mqttParameters)
     {
-        $param = self::getConstructParam($parameters);
-        $mqttParameters['payloadRequest'] = $param['payloadRequest'];
+        $param = self::getConstructParam($parameters, $mqttParameters);
         $this->selfActivity = $param['selfActivity'];
         $this->value = valuesFactory::createDeviceValue($parameters, $param['formatter']);
         parent::__construct($mqttParameters, formatValueDevice::MQTT_HUMIDITY);

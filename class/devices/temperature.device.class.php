@@ -120,7 +120,7 @@ class temperatureSensor1Wire extends aDeviceSensorPhysicOWire
 
 class temperatureSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
 {
-    private static function getConstructParam($parameters)
+    private static function getConstructParam($parameters, &$mqttParameters)
     {
         $result = [];
         $result['payloadRequest'] = '';
@@ -128,12 +128,13 @@ class temperatureSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
         $result['formatter'] = null;
         switch ($parameters['valueFormat']) {
             case 0 :
-                $result['payloadRequest'] = 'temperature';
+                $mqttParameters['payloadRequest'] = 'temperature';
                 $result['selfActivity'] = false;
                 $result['formatter'] = new formatterNumeric();
                 break;
             case 1 :
-                $result['payloadRequest'] = '{"state": ""}';
+                $mqttParameters['payloadRequest'] = '{"state": ""}';
+                $mqttParameters['topicAvailability'] = '';
                 $result['selfActivity'] = true;
                 $result['formatter'] = new formatterTemperatureMQTT_1();
                 break;
@@ -143,8 +144,7 @@ class temperatureSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
 
     public function __construct($parameters, $mqttParameters)
     {
-        $param = self::getConstructParam($parameters);
-        $mqttParameters['payloadRequest'] = $param['payloadRequest'];
+        $param = self::getConstructParam($parameters, $mqttParameters);
         $this->selfActivity = $param['selfActivity'];
         $this->value = valuesFactory::createDeviceValue($parameters, $param['formatter']);
         parent::__construct($mqttParameters, formatValueDevice::MQTT_TEMPERATURE);
