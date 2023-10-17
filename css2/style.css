@@ -38,12 +38,12 @@ html {
 }
 
 
-#temp_out_1, #temp_under_stair {
+#temp_out_2, #temp_under_stair {
     font-size: 200%;
     font-weight: 600;
 }
 
-#temp_out_1_g, #temp_hall_g, #temp_bedroom_g {
+#temp_out_2_g, #temp_hall_g, #temp_bedroom_g {
     color: #5272BF;
 }
 

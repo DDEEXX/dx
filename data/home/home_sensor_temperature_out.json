@@ -5,14 +5,14 @@
     "expand": true,
     "value": {
       "classDigit": "sensor_data",
-      "label": "temp_out_1",
+      "label": "temp_out_2",
       "dev": "temp"
     }
   },
   "widget": {
     "id": "home_outdoor_sensors",
     "properties": {
-      "label": "temp_out_1",
+      "label": "temp_out_2",
       "icon": {
         "image": "img2/icon_medium/thermometer.png",
         "width": 24,
