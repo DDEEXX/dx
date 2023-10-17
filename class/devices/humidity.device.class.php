@@ -3,12 +3,12 @@
  */
 class formatterHumidityMQTT_1 implements iFormatterValue
 {
-    function formatRawValue(array $value)
+    function formatRawValue($value)
     {
         $result = new formatDeviceValue();
         $result->valueNull = false;
         $result->status = 0;
-        $arValueData = json_decode($value['value'], true);
+        $arValueData = json_decode($value, true);
         if (is_numeric($arValueData['humidity']))
             $result->value = $arValueData['humidity'];
         else {

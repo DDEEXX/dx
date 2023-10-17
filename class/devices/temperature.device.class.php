@@ -6,12 +6,12 @@ const CODE_NO_TEMP = -1000;
 
 class formatterTemperature1Wire implements iFormatterValue
 {
-    function formatRawValue(array $value)
+    function formatRawValue($value)
     {
         $result = new formatDeviceValue();
         $result->valueNull = false;
         $result->status = 0;
-        $valueTemperature = trim($value['value']);
+        $valueTemperature = trim($value);
         if ($valueTemperature == CODE_NO_TEMP || !is_numeric($valueTemperature)) {
             $result->valueNull = true;
             $result->value = 0.0;
@@ -34,12 +34,12 @@ class formatterTemperature1Wire implements iFormatterValue
 
 class formatterTemperatureMQTT_1 implements iFormatterValue
 {
-    function formatRawValue(array $value)
+    function formatRawValue($value)
     {
         $result = new formatDeviceValue();
         $result->valueNull = false;
         $result->status = 0;
-        $arValueData = json_decode($value['value'], true);
+        $arValueData = json_decode($value, true);
         if (is_numeric($arValueData['temperature']))
             $result->value = $arValueData['temperature'];
         else {

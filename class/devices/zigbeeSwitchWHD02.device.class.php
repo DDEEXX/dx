@@ -2,12 +2,12 @@
 
 class formatterSwitchWHD02 implements iFormatterValue
 {
-    function formatRawValue(array $value)
+    function formatRawValue($value)
     {
         $result = new formatDeviceValue();
         $result->valueNull = false;
         $result->status = 0;
-        $arValueData = json_decode($value['value'], true);
+        $arValueData = json_decode($value, true);
         if (!is_null($arValueData)) $result->value = $arValueData['state'] == 'ON' ? 1 : 0;
         return $result;
     }

@@ -49,19 +49,19 @@ class formatDeviceValue implements iDeviceDataValue
 }
 
 interface iFormatterValue {
-    function formatRawValue(array $value);
+    function formatRawValue($value);
     function formatTestCode($value);
     function formatOutData($data);
 }
 
 class formatterNumeric implements iFormatterValue
 {
-    function formatRawValue(array $value)
+    function formatRawValue($value)
     {
         $result = new formatDeviceValue();
         $result->valueNull = false;
         $result->status = 0;
-        $valueTemperature = trim($value['value']);
+        $valueTemperature = trim($value);
         if (is_numeric($valueTemperature))
             $result->value = (float)$valueTemperature;
         else {
@@ -116,18 +116,11 @@ abstract class aDeviceValue implements iDeviceValue
     function getStorageValue()
     {
         $result = storageValues::SHARED_MEMORY;
-        if (is_a($this, 'aDeviceValueDB')) $result = storageValues::DATA_BASE;
+        if (is_a($this, 'deviceValueDB')) $result = storageValues::DATA_BASE;
         return $result;
     }
 
-    function getFormatValue()
-    {
-        $valueData = $this->getValue();
-        if (!is_array($valueData)) return new formatDeviceValue();
-        $result = $this->formatter->formatRawValue($valueData);
-        $result->date = $valueData['date'];
-        return $result;
-    }
+    abstract function getFormatValue();
 
     function getFormatTestCode($testData)
     {
@@ -139,26 +132,30 @@ abstract class aDeviceValue implements iDeviceValue
     }
 }
 
-class aDeviceValueSM extends aDeviceValue
+class deviceValueSM extends aDeviceValue
 {
 
     protected function getValue()
     {
-        $deviceData = new deviceData($this->id);
-        $value = $deviceData->getData();
-        return $value->getDataArray();
+        return (new deviceData($this->id))->getData();
     }
 
     function setValue($value)
     {
-        $fData = $this->formatter->formatRawValue(['value'=>$value]);
+        $fData = $this->formatter->formatRawValue($value);
         $fData->date = time();
         $deviceData = new deviceData($this->id);
         $deviceData->setData($fData->value , $fData->date, $fData->valueNull, $fData->status);
     }
+
+    function getFormatValue()
+    {
+        return $this->getValue();
+    }
+
 }
 
-class aDeviceValueDB extends aDeviceValue
+class deviceValueDB extends aDeviceValue
 {
 
     /**
@@ -189,6 +186,11 @@ class aDeviceValueDB extends aDeviceValue
         return $result;
     }
 
+    /**
+     * В базе, данные храняться в "сыром" виде
+     * @param $value - "сырые" данные
+     * @return void
+     */
     function setValue($value)
     {
         $dateValue = date('Y-m-d H:i:s');
@@ -221,6 +223,14 @@ class aDeviceValueDB extends aDeviceValue
         unset($con);
     }
 
+    function getFormatValue()
+    {
+        $valueData = $this->getValue();
+        if (!is_array($valueData)) return new formatDeviceValue();
+        $result = $this->formatter->formatRawValue($valueData['value']);
+        $result->date = $valueData['date'];
+        return $result;
+    }
 }
 
 class  valuesFactory
@@ -229,9 +239,9 @@ class  valuesFactory
     {
         switch ($parameters['valueStorage']) { //место хранение данных
             case 0 :
-                return new aDeviceValueSM($parameters['deviceID'], $formatter);
+                return new deviceValueSM($parameters['deviceID'], $formatter);
             case 1 :
-                return new aDeviceValueDB($parameters['deviceID'], $formatter);
+                return new deviceValueDB($parameters['deviceID'], $formatter);
             default :
                 logger::writeLog('Ошибка при создании объекта deviceValue (managerValues.class.php). $parameters[valueStorage] = ' . $parameters['valueStorage'],
                     loggerTypeMessage::ERROR, loggerName::ERROR);
