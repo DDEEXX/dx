@@ -41,10 +41,10 @@ class pressureSensorDevice extends aSensorDevice
         $this->devicePhysic = pressureSensorFactory::create($this->getNet(), $mqttParameters);
     }
 
-    function requestData($ignoreActivity = true)
+    function requestData()
     {
         if ($this->devicePhysic instanceof aDeviceSensorPhysic) {
-            $this->devicePhysic->requestData($ignoreActivity);
+            $this->devicePhysic->requestData();
         }
     }
 }

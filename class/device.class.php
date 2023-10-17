@@ -51,6 +51,7 @@ class formatDeviceValue implements iDeviceDataValue
 interface iFormatterValue {
     function formatRawValue(array $value);
     function formatTestCode($value);
+    function formatOutData($data);
 }
 
 class formatterNumeric implements iFormatterValue
@@ -74,8 +75,12 @@ class formatterNumeric implements iFormatterValue
     {
         return $value;
     }
-}
 
+    function formatOutData($data)
+    {
+        return $data;
+    }
+}
 
 /*Данные физического датчика*/
 interface iDeviceValue
@@ -87,6 +92,8 @@ interface iDeviceValue
     function getFormatValue();
 
     function getFormatTestCode($testData);
+
+    function getFormatOutData($data);
 }
 
 abstract class aDeviceValue implements iDeviceValue
@@ -125,6 +132,10 @@ abstract class aDeviceValue implements iDeviceValue
     function getFormatTestCode($testData)
     {
         return $this->formatter->formatTestCode($testData);
+    }
+
+    function getFormatOutData($data) {
+        return $this->formatter->formatOutData($data);
     }
 }
 
@@ -460,6 +471,8 @@ interface iDevicePhysic
     function isValue();
 
     function setValue($value);
+
+    function isSelfState();
 }
 
 interface iDeviceSensorPhysic extends iDevicePhysic
@@ -467,10 +480,9 @@ interface iDeviceSensorPhysic extends iDevicePhysic
 
     /**
      * Запрос данных с физического датчика
-     * @param $ignoreActivity - если false, то отправляем запрос, если датчик не присылает данные самостоятельно
      * @return mixed
      */
-    function requestData($ignoreActivity);
+    function requestData();
 }
 
 interface iDeviceMakerPhysic extends iDevicePhysic
@@ -632,6 +644,12 @@ abstract class aDevicePhysic implements iDevicePhysic
 {
     protected $formatValue = formatValueDevice::NO_FORMAT;
     protected $value = null;
+    protected $selfState = false;
+
+    public function isSelfState()
+    {
+        return $this->selfState;
+    }
 
     public function getFormatValue()
     {
@@ -707,7 +725,7 @@ abstract class aDevicePhysic implements iDevicePhysic
 
 abstract class aDeviceSensorPhysic extends aDevicePhysic implements iDeviceSensorPhysic
 {
-    abstract function requestData($ignoreActivity);
+    abstract function requestData();
 }
 
 abstract class aDeviceMakerPhysic extends aDevicePhysic implements iDeviceMakerPhysic
@@ -725,7 +743,6 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
 
     private $requestPayload; //сообщение для запроса данных с датчика
     private $testPayload;
-    protected $selfActivity = false; //
 
     public function __construct($mqttParameters, $formatValue = formatValueDevice::NO_FORMAT)
     {
@@ -751,10 +768,8 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
         $mqtt->publish($this->topicCmnd, $payload);
     }
 
-    function requestData($ignoreActivity = true)
+    function requestData()
     {
-        if (!$ignoreActivity && $this->selfActivity) return null;
-
         $this->publishTopic($this->requestPayload);
         return null;
     }
@@ -963,7 +978,7 @@ abstract class aDeviceMakerPhysicOWire extends aDeviceMakerPhysic implements iDe
 
 class DeviceSensorPhysicDefault extends aDeviceSensorPhysic
 {
-    function requestData($ignoreActivity = true)
+    function requestData()
     {
         // TODO: Implement requestData() method.
     }
@@ -1015,12 +1030,14 @@ interface iDevice
      * Получить место хранение значений датчиков
      * @return mixed
      */
-    function getStorageValue();
+    function getStorageValue(); //Del&&&
+
+    function isSelfState();
 }
 
 interface iSensorDevice extends iDevice
 {
-    function requestData($ignoreActivity);
+    function requestData();
 }
 
 interface iMakerDevice extends iDevice
@@ -1110,6 +1127,11 @@ abstract class aDevice implements iDevice
     {
         return $this->devicePhysic->getStorageValue();
     }
+
+    function isSelfState()
+    {
+        return ($this->devicePhysic instanceof iDevicePhysic) ? $this->devicePhysic->isSelfState() : false;
+    }
 }
 
 /** Устройство датчик*/
@@ -1177,7 +1199,7 @@ abstract class aSensorDevice extends aDevice implements iSensorDevice
 
     }
 
-    abstract function requestData($ignoreActivity = true);
+    abstract function requestData();
 }
 
 /** Устройство исполнитель*/
@@ -1226,7 +1248,7 @@ class labelSensorDevice extends aSensorDevice
         parent::__construct($options, typeDevice::LABEL);
     }
 
-    function requestData($ignoreActivity = true)
+    function requestData()
     {
         // TODO: Implement requestData() method.
     }

@@ -33,6 +33,11 @@ class formatterHumidityMQTT_1 implements iFormatterValue
         }
         return $testCode;
     }
+
+    function formatOutData($data)
+    {
+        return $data;
+    }
 }
 
 class humiditySensorMQQTPhysic extends aDeviceSensorPhysicMQTT
@@ -41,18 +46,18 @@ class humiditySensorMQQTPhysic extends aDeviceSensorPhysicMQTT
     {
         $result = [];
         $result['payloadRequest'] = '';
-        $result['selfActivity'] = false;
+        $result['selfState'] = false;
         $result['formatter'] = null;
         switch ($parameters['valueFormat']) {
             case 0 :
                 $mqttParameters['payloadRequest'] = 'humidity';
-                $result['selfActivity'] = false;
+                $result['selfState'] = false;
                 $result['formatter'] = new formatterNumeric();
                 break;
             case 1 :
                 $mqttParameters['payloadRequest'] = '{"state": ""}';
                 $mqttParameters['topicAvailability'] = '';
-                $result['selfActivity'] = true;
+                $result['selfState'] = true;
                 $result['formatter'] = new formatterHumidityMQTT_1();
                 break;
         }
@@ -62,7 +67,7 @@ class humiditySensorMQQTPhysic extends aDeviceSensorPhysicMQTT
     public function __construct($parameters, $mqttParameters)
     {
         $param = self::getConstructParam($parameters, $mqttParameters);
-        $this->selfActivity = $param['selfActivity'];
+        $this->selfState = $param['selfState'];
         $this->value = valuesFactory::createDeviceValue($parameters, $param['formatter']);
         parent::__construct($mqttParameters, formatValueDevice::MQTT_HUMIDITY);
     }
@@ -74,7 +79,6 @@ class humiditySensorMQQTPhysic extends aDeviceSensorPhysicMQTT
         }
         return parent::formatTestPayload($testPayload, $ignoreUnknown);
     }
-
 }
 
 class humiditySensorFactory
@@ -111,10 +115,10 @@ class humiditySensorDevice extends aSensorDevice
         $this->devicePhysic = humiditySensorFactory::create($parameters, $mqttParameters);
     }
 
-    function requestData($ignoreActivity = true)
+    function requestData()
     {
         if ($this->devicePhysic instanceof aDeviceSensorPhysic) {
-            $this->devicePhysic->requestData($ignoreActivity);
+            $this->devicePhysic->requestData();
         }
     }
 }

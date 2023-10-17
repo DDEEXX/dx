@@ -80,7 +80,7 @@ class gasSensor extends aSensorDevice implements iDeviceAlarm
         $this->alarm = managerAlarmDevice::createAlarm($options['topic_alarm'], $this->devicePhysic);
     }
 
-    function requestData($ignoreActivity = true)
+    function requestData()
     {
         if ($this->devicePhysic instanceof aDeviceSensorPhysic) {
             $this->devicePhysic->requestData();

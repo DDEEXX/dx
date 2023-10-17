@@ -25,6 +25,11 @@ class formatterTemperature1Wire implements iFormatterValue
     {
         return $value;
     }
+
+    function formatOutData($data)
+    {
+        return $data;
+    }
 }
 
 class formatterTemperatureMQTT_1 implements iFormatterValue
@@ -59,6 +64,11 @@ class formatterTemperatureMQTT_1 implements iFormatterValue
         }
         return $testCode;
     }
+
+    function formatOutData($data)
+    {
+        return $data;
+    }
 }
 
 class temperatureSensor1Wire extends aDeviceSensorPhysicOWire
@@ -69,7 +79,7 @@ class temperatureSensor1Wire extends aDeviceSensorPhysicOWire
         parent::__construct($OWParameters['address'], $OWParameters['ow_alarm']);
     }
 
-    function requestData($ignoreActivity = true)
+    function requestData()
     {
         $value = CODE_NO_TEMP;
         $OWNetDir = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_PATH);
@@ -124,18 +134,18 @@ class temperatureSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
     {
         $result = [];
         $result['payloadRequest'] = '';
-        $result['selfActivity'] = false;
+        $result['selfState'] = false;
         $result['formatter'] = null;
         switch ($parameters['valueFormat']) {
             case 0 :
                 $mqttParameters['payloadRequest'] = 'temperature';
-                $result['selfActivity'] = false;
+                $result['selfState'] = false;
                 $result['formatter'] = new formatterNumeric();
                 break;
             case 1 :
                 $mqttParameters['payloadRequest'] = '{"state": ""}';
                 $mqttParameters['topicAvailability'] = '';
-                $result['selfActivity'] = true;
+                $result['selfState'] = true;
                 $result['formatter'] = new formatterTemperatureMQTT_1();
                 break;
         }
@@ -145,7 +155,7 @@ class temperatureSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
     public function __construct($parameters, $mqttParameters)
     {
         $param = self::getConstructParam($parameters, $mqttParameters);
-        $this->selfActivity = $param['selfActivity'];
+        $this->selfState = $param['selfState'];
         $this->value = valuesFactory::createDeviceValue($parameters, $param['formatter']);
         parent::__construct($mqttParameters, formatValueDevice::MQTT_TEMPERATURE);
     }
@@ -197,10 +207,10 @@ class temperatureSensorDevice extends aSensorDevice
         $this->devicePhysic = temperatureSensorFactory::create($parameters, $OWParameters, $mqttParameters);
     }
 
-    function requestData($ignoreActivity = true)
+    function requestData()
     {
         if ($this->devicePhysic instanceof aDeviceSensorPhysic) {
-            $value = $this->devicePhysic->requestData($ignoreActivity);
+            $value = $this->devicePhysic->requestData();
 
             if (!is_null($value)) { //запрос вернул результат
                 $this->devicePhysic->setValue($value);

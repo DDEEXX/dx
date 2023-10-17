@@ -27,7 +27,7 @@ class keyInSensorPhysicOWire extends aDeviceSensorPhysicOWire {
         parent::__construct($address, $alarm);
     }
 
-    function requestData($ignoreActivity = true) { }
+    function requestData() { }
 
     function test()
     {
@@ -88,7 +88,7 @@ class keyInSensorDevice extends aSensorDevice
         $this->devicePhysic = keyInSensorFactory::create($this->getNet(), $address, $ow_alarm, $mqttParameters);
     }
 
-    function requestData($ignoreActivity = true)
+    function requestData()
     {
         if ($this->devicePhysic instanceof aDeviceSensorPhysic) {
             $this->devicePhysic->requestData();
