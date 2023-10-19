@@ -321,25 +321,4 @@ elseif ($_REQUEST['dev'] == 'check_value') {
     echo json_encode($result);
 }
 
-elseif ($_REQUEST['dev'] == 'gasSensor') {
-    include 'data/power/gasSensors.php';
-}
-
-elseif ($_REQUEST['dev'] == 'check_gasSensorStatus') {
-    $result = ['update' => false];
-    $dateStatus = (int)$_REQUEST['dateStatus'];
-    $label = $_REQUEST['label'];
-    $unit = managerUnits::getUnitLabel($label);
-    if (!is_null($unit)) {
-        $unitData = $unit->getData();
-        $dateLastStatus = $unitData['date'];
-        if ($dateStatus != $dateLastStatus) {
-            $result['update'] = true;
-        }
-    }
-    header('Content-Type: application/json');
-    echo json_encode($result);
-}
-
-
 

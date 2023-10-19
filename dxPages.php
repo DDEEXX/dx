@@ -283,7 +283,7 @@ if ($p == 'power') {
     ?>
 
     <link rel="stylesheet" type="text/css" href="css2/style_power.css">
-    <script src="js2/power.js?version = 1.0"></script>
+    <script src="js2/power.js?version = 1.1"></script>
 
     <div id="page_power" class="grid_12">
         <div class="grid_12 alpha omega">
