@@ -101,7 +101,7 @@ elseif ($_REQUEST['dev'] == 'info') {
             $colorDisable = '#00ff00';
         }
 
-        echo '<script src="js2/powerKitchenHood.js"></script>';
+        echo '<script src="js2/powerKitchenHood.js?version = 1.0"></script>';
         echo '<div style="display: flex; justify-content: space-between">';
         echo '  <div id="power_kitchen_hood_update_info" style="background: url(\'img2/icon_medium/refresh.png\') no-repeat center center; width: 1em"></div>';
         echo '  <div style="width: 80%">';
