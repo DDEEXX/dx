@@ -5,7 +5,7 @@ $(function () {
         let btn_update_info = label+"_update_info";
 
         $("#"+btn_update_info).button().click(function () {
-            $.get("data/power/gasSensor.php?dev=updateInfo&label="+label, function () {});
+            $.get("data/power/gasSensors.php?dev=updateInfo&label="+label, function () {});
         });
     })
 
@@ -16,7 +16,7 @@ $(function () {
         const label = $(this).attr("label");
         const id_value = "#" + $(this).val();
         const value = $(id_value).val();
-        $.post("data/power/gasSensor.php?dev=set", {property: property, label: label, value: value});
+        $.post("data/power/gasSensors.php?dev=set", {property: property, label: label, value: value});
     });
 
 });

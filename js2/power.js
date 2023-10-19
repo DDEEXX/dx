@@ -13,7 +13,7 @@ function power_updateAll() {
         $("#power_kitchen_hood").html(data);
     });
 
-    const pathConst = "data/power/gasSensor.php?dev=gasSensor&label=";
+    const pathConst = "data/power/gasSensors.php?dev=gasSensor&label=";
     $.each(gasSensorsData, function (index, val) {
         const path = pathConst + val['label'] + "&title=" + val['title'];
         $.get(path, function (data) {
@@ -57,21 +57,21 @@ function power_checkVent_Status() {
 function power_checkKitchenGasSensor_Status() {
     $.each(gasSensorsData, function (index, val) {
         const curDateStatus = $("#" + val['label'] + "_last_update").val();
-        $.post("data/power/gasSensor.php", {
+        $.post("data/power/gasSensors.php", {
             dev: "check_gasSensorStatus",
             dateStatus: curDateStatus,
             label: val['label']
         }, function (jsonData) {
             if (jsonData['update']) {
-                $.get("data/power/gasSensor.php?dev=gasSensor&label=" + val['label'] + "&title=" + val['title'], function (data) {
+                $.get("data/power/gasSensors.php?dev=gasSensor&label=" + val['label'] + "&title=" + val['title'], function (data) {
                     $("#" + val['id']).html(data);
                 })
                 const power_kitchen_gas_sensor_dialogSetup_content = val['dialogSetupContent'];
-                $.get("data/power/gasSensor.php?dev=dialogSetupContent&label=" + val['label'], function (data) {
+                $.get("data/power/gasSensors.php?dev=dialogSetupContent&label=" + val['label'], function (data) {
                     $(power_kitchen_gas_sensor_dialogSetup_content).html(data);
                 });
             } else {
-                const path = "data/power/gasSensor.php?dev=gasSensor&label=" + val['label'] + "&title=" + val['title'];
+                const path = "data/power/gasSensors.php?dev=gasSensor&label=" + val['label'] + "&title=" + val['title'];
                 $.get(path, function (data) {
                     //если время изменения на странице меньше чем время в пришедшем коде с сервера, обновляем
                     const dataServer = $(data);
@@ -128,7 +128,7 @@ $(function () {
         height: "auto",
         width: 800,
         open: function (event, ui) {
-            $.get("data/power/gasSensor.php?dev=dialogSetupContent&label=" + label, function (data) {
+            $.get("data/power/gasSensors.php?dev=dialogSetupContent&label=" + label, function (data) {
                 $(power_kitchen_gas_sensor_dialogSetup_content).html(data);
             });
         }
