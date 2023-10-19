@@ -141,7 +141,7 @@ elseif ($_REQUEST['dev'] == 'info') {
             echo '    <div class="kh_setup_row" style="padding-top: 5px">';
             echo '        <div class="kh_setup_col1">';
             echo '          <span>' . $data['label'] . '</span> ';
-            echo '          <span>' . $data['value'] . $data['postfix'] .'&deg</span>';
+            echo '          <span>' . $data['value'] . $data['postfix'] .'</span>';
             echo '        </div>';
             echo '        <div class="kh_setup_col2"">';
             echo sprintf( "<input id=\"kh_%s\" class=\"property_spinner\" name=\"value\" value=\"%s\">",
