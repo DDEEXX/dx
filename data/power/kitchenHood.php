@@ -129,57 +129,30 @@ elseif ($_REQUEST['dev'] == 'info') {
         echo '                    </div>';
         echo '  </div>';
         echo '</div>';
-        echo '<div style="margin-top: 20px">';
-        echo '    <div class="kh_setup_row">';
-        echo '        <div class="kh_setup_col1">';
-        echo '          <span>Температура включения:</span> ';
-        echo '          <span>' . $deltaETemp . '&deg</span>';
-        echo '        </div>';
-        echo '        <div class="kh_setup_col2">';
-        echo '          <input id="kh_deltaETemp" name="value" value="' . $deltaETemp . '">';
-        echo '        </div>';
-        echo '        <div class="kh_setup_col3">';
-        echo '            <button id="btn_deltaETemp" class="btn_kitchen_hood_set" property="delta_temperature_enable" value="kh_deltaETemp">установить</button>';
-        echo '        </div>';
-        echo '    </div>';
-        echo '    <div class="kh_setup_row" style="padding-top: 5px">';
-        echo '        <div class="kh_setup_col1">';
-        echo '          <span>Температура выключения:</span> ';
-        echo '          <span>' . $deltaDTemp . '&deg</span>';
-        echo '        </div>';
-        echo '        <div class="kh_setup_col2"">';
-        echo '          <input id="kh_deltaDTemp" name="value" value="' . $deltaDTemp . '">';
-        echo '        </div>';
-        echo '        <div class="kh_setup_col3">';
-        echo '            <button id="btn_deltaDTemp" class="btn_kitchen_hood_set" property="delta_temperature_disable" value="kh_deltaDTemp">установить</button>';
-        echo '        </div>';
-        echo '    </div>';
-        echo '    <div class="kh_setup_row" style="padding-top: 5px">';
-        echo '        <div class="kh_setup_col1">';
-        echo '          <span>Влажность включения:</span> ';
-        echo '          <span>' . $deltaEHum . '%</span>';
-        echo '        </div>';
-        echo '        <div class="kh_setup_col2"">';
-        echo '          <input id="kh_deltaEHum" name="value" value="' . $deltaEHum . '">';
-        echo '        </div>';
-        echo '        <div class="kh_setup_col3">';
-        echo '            <button id="btn_deltaEHum" class="btn_kitchen_hood_set" property="delta_humidity_disable" value="kh_deltaEHum">установить</button>';
-        echo '        </div>';
-        echo '    </div>';
-        echo '    <div class="kh_setup_row" style="padding-top: 5px">';
-        echo '        <div class="kh_setup_col1">';
-        echo '          <span>Влажность выключения:</span> ';
-        echo '          <span>' . $deltaDHum . '%</span>';
-        echo '        </div>';
-        echo '        <div class="kh_setup_col2"">';
-        echo '          <input id="kh_deltaDHum" name="value" value="' . $deltaDHum . '">';
-        echo '        </div>';
-        echo '        <div class="kh_setup_col3">';
-        echo '            <button id="btn_deltaDHum" class="btn_kitchen_hood_set" property="delta_humidity_disable" value="kh_deltaDHum">установить</button>';
-        echo '        </div>';
-        echo '    </div>';
-        echo '</div>';
-        echo '<div style="display: flex"></div>';
+
+        $arData = [
+            0 => ['label'=>'Температура включения:', 'value'=>$deltaETemp, 'postfix'=>'&deg', 'property'=>'delta_temperature_enable'],
+            1 => ['label'=>'Температура выключения:', 'value'=>$deltaDTemp, 'postfix'=>'&deg', 'property'=>'delta_temperature_disable'],
+            2 => ['label'=>'Влажность включения:', 'value'=>$deltaEHum, 'postfix'=>'%', 'property'=>'delta_humidity_disable'],
+            3 => ['label'=>'Влажность выключения:', 'value'=>$deltaDHum, 'postfix'=>'%', 'property'=>'delta_humidity_disable'],
+        ];
+
+        foreach ($arData as $data) {
+            echo '    <div class="kh_setup_row" style="padding-top: 5px">';
+            echo '        <div class="kh_setup_col1">';
+            echo '          <span>' . $data['label'] . '</span> ';
+            echo '          <span>' . $data['label'] . $data['postfix'] .'&deg</span>';
+            echo '        </div>';
+            echo '        <div class="kh_setup_col2"">';
+            echo sprintf( "<input id=\"kh_%s\" class=\"property_spinner\" name=\"value\" value=\"%s\">",
+                    $data['property'], $data['value']);
+            echo '        </div>';
+            echo '        <div class="kh_setup_col3">';
+            echo sprintf("<button class=\"btn_kitchen_hood_set\" property=\"%s\" value=\"kh_%s\">установить</button>",
+                $data['property'], $data['property']);
+            echo '        </div>';
+            echo '    </div>';
+        }
     } else {
         echo '';
     }

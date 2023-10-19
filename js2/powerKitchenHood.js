@@ -1,6 +1,6 @@
 $(function () {
 
-    $("#kh_deltaETemp, #kh_deltaDTemp, #kh_deltaDHum, #kh_deltaEHum").spinner();
+    $(".property_spinner").spinner();
 
     $(".btn_kitchen_hood_set").button().click( function () {
         const property = $(this).attr("property");
