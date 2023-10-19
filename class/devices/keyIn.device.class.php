@@ -28,8 +28,8 @@ class formatterKeyInMQTT_1 extends aFormatterValue
         $result = new formatDeviceValue();
         $result->valueNull = false;
         $result->status = 0;
-        if (strtoupper($value) == 'ON') $result->value = 1;
-        else if (strtoupper($value) == 'OFF') $result->value = 0;
+        if (strtoupper($value) === 'ON' || strtoupper($value) === 'TRUE' || $value === true || $value === 1 || $value === '1') $result->value = 1;
+        else if (strtoupper($value) === 'OFF' || strtoupper($value) === 'FALSE' || $value === false || $value === 0 || $value === '0') $result->value = 0;
         else {
             $result->value = 0;
             $result->valueNull = true;
