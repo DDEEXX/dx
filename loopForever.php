@@ -101,7 +101,7 @@ class daemonLoopForever extends daemon
             //новый механизм
             $devicePhysic = $this->devices1Wire[$deviceID]->getDevicePhysic();
             if ($devicePhysic->isValue()) {
-                $devicePhysic->setValue($value, $deviceID);
+                $devicePhysic->updateValue($value, $deviceID);
                 continue;
             }
 

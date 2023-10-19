@@ -92,6 +92,8 @@ interface iDeviceValue
 {
     function setValue($value);
 
+    function updateValue($value);
+
     function getStorageValue();
 
     function getFormatValue();
@@ -141,6 +143,7 @@ abstract class aDeviceValue implements iDeviceValue
     function getFormatOutData($data) {
         return $this->formatter->formatOutData($data);
     }
+
 }
 
 class deviceValueSM extends aDeviceValue
@@ -164,6 +167,13 @@ class deviceValueSM extends aDeviceValue
         return $this->getValue();
     }
 
+    function updateValue($value)
+    {
+        $fData = $this->formatter->formatRawValue($value);
+        $fData->date = time();
+        $deviceData = new deviceData($this->id);
+        $deviceData->updateData($fData->value, $fData->date, $fData->valueNull);
+    }
 }
 
 class deviceValueDB extends aDeviceValue
@@ -241,6 +251,11 @@ class deviceValueDB extends aDeviceValue
         $result = $this->formatter->formatRawValue($valueData['value']);
         $result->date = $valueData['date'];
         return $result;
+    }
+
+    function updateValue($value)
+    {
+        // TODO: Implement updateValue() method.
     }
 }
 
@@ -493,6 +508,8 @@ interface iDevicePhysic
 
     function setValue($value);
 
+    function updateValue($value);
+
     function isSelfState();
 }
 
@@ -741,6 +758,11 @@ abstract class aDevicePhysic implements iDevicePhysic
     function setValue($value)
     {
         if (!is_null($this->value)) $this->value->setValue($value);
+    }
+
+    function updateValue($value)
+    {
+        if (!is_null($this->value)) $this->value->updateValue($value);
     }
 }
 
