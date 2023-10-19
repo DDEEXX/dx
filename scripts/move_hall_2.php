@@ -49,6 +49,8 @@ class move_hall_2
         //Часть дня - ночь/утро/день/вечер
         $sunInfo = sunInfo::getSunInfo(mktime());
 
+        echo "1. move - $isMove , light - $isLight , sun - $sunInfo , status - $statusKey";
+
         if ($sunInfo == dayPart::NIGHT) { // ночь
             if ($isMove) { // есть движение
                 if (!$isLight) { // свет не горит
@@ -65,6 +67,9 @@ class move_hall_2
                         if ($timeNoMove>0) {
                             $moveTime = $now - $timeNoMove;
                         }
+
+                        echo "2. move - $isMove , light - $isLight , sun - $sunInfo , status - $statusKey, move - $moveTime";
+
                         if ($moveTime > self::MOVE_TIME_N) { // время вышло с последнего отсутствия движения
                             $deviceLight = managerDevices::getDevice($idDeviceUnitNightLight);
                             $data = json_encode(['value' => 0, 'status' => statusKey::OFF]);
