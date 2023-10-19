@@ -48,6 +48,7 @@ class kitchenHood_MQTT extends aDeviceSensorPhysicMQTT
     public function __construct($parameters, $mqttParameters)
     {
         $this->selfState = true;
+        $mqttParameters['payloadRequest'] = '{"state": ""}';
         $this->value = valuesFactory::createDeviceValue($parameters, new formatterKitchenHood());
         parent::__construct($mqttParameters, formatValueDevice::MQTT_KITCHEN_HOOD);
     }
