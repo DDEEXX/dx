@@ -6,22 +6,22 @@ $valueVent = null;
 $dateLastStatus = '';
 if (!is_null($unit)) {
     $dataVent = $unit->getData();
-    $valueVent = json_decode($dataVent['value'], true);
-    $dateLastStatus = $dataVent['date'];
+    $valueVent = $dataVent->value;
+    $dateLastStatus = $dataVent->date;
 }
 
-if (is_array($valueVent)) {
+if (is_object($valueVent)) {
 
-    $tempOut = $valueVent['tempOut'];
-    $humOut = $valueVent['humOut'];
-    $tempVent = $valueVent['tempVent'];
-    $humVent = $valueVent['humVent'];
-    $deltaEnable = $valueVent['deltaEnable'];
-    $deltaETemp = $valueVent['deltaETemp'];
-    $deltaEHum = $valueVent['deltaEHum'];
-    $deltaDisable = $valueVent['deltaDisable'];
-    $deltaDTemp = $valueVent['deltaDTemp'];
-    $deltaDHum = $valueVent['deltaDHum'];
+    $tempOut = $valueVent->tempOut;
+    $humOut = $valueVent->humOut;
+    $tempVent = $valueVent->tempVent;
+    $humVent = $valueVent->humVent;
+    $deltaEnable = $valueVent->deltaEnable;
+    $deltaETemp = $valueVent->deltaTemperatureEnable;
+    $deltaEHum = $valueVent->deltaHumidityEnable;
+    $deltaDisable = $valueVent->deltaDisable;
+    $deltaDTemp = $valueVent->deltaTemperatureDisable;
+    $deltaDHum = $valueVent->deltaHumidityDisable;
     $deltaTemp = round($tempVent - $tempOut, 1);
     $deltaHum = round($humVent - $humOut, 1);
 
