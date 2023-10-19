@@ -42,7 +42,7 @@ class daemonLoopMQTTfast extends daemon
     {
         parent::run();
 
-        $mqtt = new mqttLoop(true, 1, true);
+        $mqtt = new mqttLoop(true, 1);
         $mqtt->connect();
 
         while (!$this->stopServer()) {
