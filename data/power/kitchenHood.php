@@ -133,7 +133,7 @@ elseif ($_REQUEST['dev'] == 'info') {
         $arData = [
             0 => ['label'=>'Температура включения:', 'value'=>$deltaETemp, 'postfix'=>'&deg', 'property'=>'delta_temperature_enable'],
             1 => ['label'=>'Температура выключения:', 'value'=>$deltaDTemp, 'postfix'=>'&deg', 'property'=>'delta_temperature_disable'],
-            2 => ['label'=>'Влажность включения:', 'value'=>$deltaEHum, 'postfix'=>'%', 'property'=>'delta_humidity_disable'],
+            2 => ['label'=>'Влажность включения:', 'value'=>$deltaEHum, 'postfix'=>'%', 'property'=>'delta_humidity_enable'],
             3 => ['label'=>'Влажность выключения:', 'value'=>$deltaDHum, 'postfix'=>'%', 'property'=>'delta_humidity_disable'],
         ];
 
