@@ -4,8 +4,8 @@ $valueVent = null;
 $dateLastStatus = '';
 if (!is_null($unit)) {
     $dataVent = $unit->getData();
-    $valueVent = json_decode($dataVent['value'], true);
-    $dateLastStatus = $dataVent['date'];
+    $valueVent = $dataVent->value;
+    $dateLastStatus = $dataVent->date;
 }
 
 $unit = managerUnits::getUnitLabel('light_kitchen_vent');
@@ -20,16 +20,11 @@ if (!is_null($unit)) {
     }
 }
 
-if (is_array($valueVent)) {
-    $mode = $valueVent['mode'];
-    $mode = $valueVent['mode'] == 'auto'?'авто':'ручной';
-    $colorMode = $valueVent['mode'] == 'auto'?'#00ff00':'#336699';
+if (is_object($valueVent)) {
+    $mode = $valueVent->mode == 'auto' ? 'авто' : 'ручной';
+    $colorMode = $valueVent->mode == 'auto'?'#00ff00':'#336699';
     $colorFan = '#003200';
-    //$workTime = '';
-    if ($valueVent['run']) {
-        $colorFan = '#00ff00';
-        //$workTime = date('G:i:s' , (int)$valueVent['time']);
-    }
+    if ($valueVent->run) $colorFan = '#00ff00';
 
     echo '<div id="kitchen_hood_mode" style="margin-left:5px">';
     echo '    <input id="kitchen_hood_last_status" value='.$dateLastStatus.' type="hidden"/>';

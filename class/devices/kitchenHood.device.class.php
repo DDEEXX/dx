@@ -4,11 +4,8 @@ class formatterKitchenHood implements iFormatterValue
 {
     function formatRawValue($value)
     {
-        $result = new formatDeviceValue();
-        $result->valueNull = false;
-        $result->status = 0;
-        $arValueData = json_decode($value, true);
-        if (!is_null($arValueData)) $result->value = $arValueData['state'] == 'ON' ? 1 : 0;
+        $result = new stdClass();
+        $result->value = json_decode($value);
         return $result;
     }
 
