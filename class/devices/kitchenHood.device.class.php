@@ -75,6 +75,7 @@ class kitchenHood extends aSensorDevice
             'topicCmnd' => $options['topic_cmnd'],
             'topicStat' => $options['topic_stat'],
             'topicTest' => $options['topic_test'],
+            'topicSet' => $options['topic_cmnd'].'/set',
             'topicAvailability' => '',
             'topicAlarm' => $options['topic_alarm']];
         $this->devicePhysic = new kitchenHood_MQTT($parameters, $mqttParameters);

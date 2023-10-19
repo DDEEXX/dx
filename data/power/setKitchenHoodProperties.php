@@ -9,18 +9,18 @@ if (!is_numeric($value)) {
     exit;
 }
 $unit = managerUnits::getUnitLabel('kitchen_hood');
-if (is_null($unit)) {
-    exit;
-}
-$device = $unit->getDevice();
-if (is_null($device)) {
-    exit;
-}
+if (is_null($unit)) exit;
 
-$topic = 'home/kitchen/vent/cmnd/set'; //TODO - костыль, топик надо хранить в базе
+$device = $unit->getDevice();
+if (is_null($device)) exit;
+
+$devicePhysic = $device->getDevicePhysic();
+if (is_null($devicePhysic)) exit;
+
+$topic = $devicePhysic->getTopicSet();
 
 $value = (int)$value;
-$payload = ''.$property.';'.$value;
+$payload = json_encode([$property => $value]);
 
 $mqtt = mqttSend::connect();
 $mqtt->publish($topic, $payload);

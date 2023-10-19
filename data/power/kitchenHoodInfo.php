@@ -73,7 +73,7 @@ if (is_object($valueVent)) {
     echo '          <input id="kh_deltaETemp" name="value" value="'.$deltaETemp.'">';
     echo '        </div>';
     echo '        <div class="kh_setup_col3">';
-    echo '            <button id="btn_deltaETemp" class="btn_kitchen_hood_set" property="deltaTemperatureEnable" value="kh_deltaETemp">установить</button>';
+    echo '            <button id="btn_deltaETemp" class="btn_kitchen_hood_set" property="delta_temperature_enable" value="kh_deltaETemp">установить</button>';
     echo '        </div>';
     echo '    </div>';
     echo '    <div class="kh_setup_row" style="padding-top: 5px">';
@@ -85,7 +85,7 @@ if (is_object($valueVent)) {
     echo '          <input id="kh_deltaDTemp" name="value" value="'.$deltaDTemp.'">';
     echo '        </div>';
     echo '        <div class="kh_setup_col3">';
-    echo '            <button id="btn_deltaDTemp" class="btn_kitchen_hood_set" property="deltaTemperatureDisable" value="kh_deltaDTemp">установить</button>';
+    echo '            <button id="btn_deltaDTemp" class="btn_kitchen_hood_set" property="delta_temperature_disable" value="kh_deltaDTemp">установить</button>';
     echo '        </div>';
     echo '    </div>';
     echo '    <div class="kh_setup_row" style="padding-top: 5px">';
@@ -97,7 +97,7 @@ if (is_object($valueVent)) {
     echo '          <input id="kh_deltaEHum" name="value" value="'.$deltaEHum.'">';
     echo '        </div>';
     echo '        <div class="kh_setup_col3">';
-    echo '            <button id="btn_deltaEHum" class="btn_kitchen_hood_set" property="deltaHumidityEnable" value="kh_deltaEHum">установить</button>';
+    echo '            <button id="btn_deltaEHum" class="btn_kitchen_hood_set" property="delta_humidity_disable" value="kh_deltaEHum">установить</button>';
     echo '        </div>';
     echo '    </div>';
     echo '    <div class="kh_setup_row" style="padding-top: 5px">';
@@ -109,7 +109,7 @@ if (is_object($valueVent)) {
     echo '          <input id="kh_deltaDHum" name="value" value="'.$deltaDHum.'">';
     echo '        </div>';
     echo '        <div class="kh_setup_col3">';
-    echo '            <button id="btn_deltaDHum" class="btn_kitchen_hood_set" property="deltaHumidityDisable" value="kh_deltaDHum">установить</button>';
+    echo '            <button id="btn_deltaDHum" class="btn_kitchen_hood_set" property="delta_humidity_disable" value="kh_deltaDHum">установить</button>';
     echo '        </div>';
     echo '    </div>';
     echo '</div>';
