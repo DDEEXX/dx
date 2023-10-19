@@ -4,7 +4,7 @@
 
 const CODE_NO_TEMP = -1000;
 
-class formatterTemperature1Wire implements iFormatterValue
+class formatterTemperature1Wire extends aFormatterValue
 {
     function formatRawValue($value)
     {
@@ -20,19 +20,9 @@ class formatterTemperature1Wire implements iFormatterValue
         }
         return $result;
     }
-
-    function formatTestCode($value)
-    {
-        return $value;
-    }
-
-    function formatOutData($data)
-    {
-        return $data;
-    }
 }
 
-class formatterTemperatureMQTT_1 implements iFormatterValue
+class formatterTemperatureMQTT_1 extends aFormatterValue
 {
     function formatRawValue($value)
     {
@@ -62,12 +52,7 @@ class formatterTemperatureMQTT_1 implements iFormatterValue
             default :
                 $testCode = testDeviceCode::UNKNOWN;
         }
-        return $testCode;
-    }
-
-    function formatOutData($data)
-    {
-        return $data;
+        return parent::formatTestCode($testCode);
     }
 }
 

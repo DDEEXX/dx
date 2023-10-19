@@ -146,7 +146,7 @@
                         //TODO - придумать с value
                         break;
                     default :
-                        $deviceData = json_decode($device->getData(), true);
+                        $deviceData = $device->getData()->getDataArray();
                         $value = 'v: '.($deviceData['valueNull']?'null': $deviceData['value']).
                             ', d: '.date('H:i:s d-m-Y', $deviceData['date']).
                             ', s: '.getStatus($deviceData['status']);

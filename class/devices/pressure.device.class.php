@@ -2,7 +2,7 @@
 /** Датчик атмосферного давления
  */
 
-class formatterPressureMQTT_1 implements iFormatterValue
+class formatterPressureMQTT_1 extends aFormatterValue
 {
     function formatRawValue($value)
     {
@@ -32,15 +32,9 @@ class formatterPressureMQTT_1 implements iFormatterValue
             default :
                 $testCode = testDeviceCode::UNKNOWN;
         }
-        return $testCode;
-    }
-
-    function formatOutData($data)
-    {
-        return $data;
+        return parent::formatTestCode($testCode);
     }
 }
-
 
 class pressureSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
 {

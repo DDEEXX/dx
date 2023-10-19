@@ -74,7 +74,7 @@ class mqttLoop
     private $deviceFormatPayload;
     // массив: индекс - id устройства, значения - истина - обновляем данные, ложь - записываем
     private $deviceDataUpdate;
-    // массив: индекс - id устройства, значения - объект unit
+    // массив: индекс - id устройства, значения - объект device
     private $devices;
 
     public function __construct($subscibe, $mqttGroup, $logger = false)

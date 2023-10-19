@@ -54,7 +54,22 @@ interface iFormatterValue {
     function formatOutData($data);
 }
 
-class formatterNumeric implements iFormatterValue
+abstract class aFormatterValue
+{
+    abstract function formatRawValue($value);
+
+    function formatTestCode($value)
+    {
+        return $value;
+    }
+
+    function formatOutData($data)
+    {
+        return $data;
+    }
+}
+
+class formatterNumeric extends aFormatterValue
 {
     function formatRawValue($value)
     {
@@ -69,16 +84,6 @@ class formatterNumeric implements iFormatterValue
             $result->valueNull = true;
         }
         return $result;
-    }
-
-    function formatTestCode($value)
-    {
-        return $value;
-    }
-
-    function formatOutData($data)
-    {
-        return $data;
     }
 }
 
@@ -127,6 +132,12 @@ abstract class aDeviceValue implements iDeviceValue
         return $this->formatter->formatTestCode($testData);
     }
 
+
+    /**
+     * Преобразует данные dxhome в данные понятные датчикам
+     * @param $data
+     * @return mixed
+     */
     function getFormatOutData($data) {
         return $this->formatter->formatOutData($data);
     }
@@ -762,8 +773,7 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
         $this->topicAvailabilityInput = isset($mqttParameters['topicAvailability']) ?
             $mqttParameters['topicAvailability'] : $mqttParameters['topicCmnd'];
         $this->requestPayload = isset($mqttParameters['payloadRequest']) ? $mqttParameters['payloadRequest'] : '';
-        $this->topicSet = isset($mqttParameters['topicSet']) ?
-            $mqttParameters['topicSet'] : '';
+        $this->topicSet = isset($mqttParameters['topicSet']) ? $mqttParameters['topicSet'] : '';
         $this->testPayload = isset($mqttParameters['testPayload']) ?
             $mqttParameters['testPayload'] : iDevicePhysicMQTT::DEFAULT_TEST_PAYLOAD;
 
@@ -1114,9 +1124,8 @@ abstract class aDevice implements iDevice
         if ($this->devicePhysic instanceof iDevicePhysic) {
             $data = $this->devicePhysic->getData($this->getDeviceID());
         } else {
-            $value = new deviceDataValue();
-            $value->setDefaultValue();
-            $data = $value->getDataJSON();
+            $data = new deviceDataValue();
+            $data->setDefaultValue();
         }
         return $data;
     }

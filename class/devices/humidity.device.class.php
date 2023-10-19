@@ -1,7 +1,7 @@
 <?php
 /** Датчик влажности
  */
-class formatterHumidityMQTT_1 implements iFormatterValue
+class formatterHumidityMQTT_1 extends aFormatterValue
 {
     function formatRawValue($value)
     {
@@ -31,12 +31,7 @@ class formatterHumidityMQTT_1 implements iFormatterValue
             default :
                 $testCode = testDeviceCode::UNKNOWN;
         }
-        return $testCode;
-    }
-
-    function formatOutData($data)
-    {
-        return $data;
+        return parent::formatTestCode($testCode);
     }
 }
 

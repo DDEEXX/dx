@@ -32,12 +32,15 @@ $STDERR = fopen($fileDir . '/logs/daemonLoopForever.log', 'ab');
 class daemonLoopForever extends daemon
 {
     const NAME_PID_FILE = 'loopForever.pid';
-    const UPDATE_UNITE_DELAY = 60; //Интервал обновления списка модулей, в секундах
+    const UPDATE_UNITE_DELAY = 300; //Интервал обновления списка модулей (сек)
     const PAUSE = 100000; //Пауза в основном цикле, в микросекундах (0.1 сек)
     const SEPARATOR_OWNET_ALARM_FILES = ',';
 
     private $ow;
+    // массив: индекс - id устройства, значения - 1-wire адрес
     private $listDevice1Wire;
+    // массив: индекс - id устройства, значения - объект device
+    private $devices1Wire;
     private $now;
 
     public function __construct($dirPidFile)
@@ -46,13 +49,12 @@ class daemonLoopForever extends daemon
 
         $OWNetAddress = sharedMemoryUnits::getValue(sharedMemory::PROJECT_LETTER_KEY, sharedMemory::KEY_1WARE_ADDRESS);
         $this->ow = new OWNet($OWNetAddress);
-
-
     }
 
-    private function getAlarmOWireSensorDevice()
+    private function updateAlarmOWireSensorDevice()
     {
-        $listDevices = [];
+        $this->listDevice1Wire = [];
+        $this->devices1Wire = [];
         $sel = new selectOption();
         $sel->set('Disabled', 0);
         $sel->set('NetTypeID', netDevice::ONE_WIRE);
@@ -62,10 +64,10 @@ class daemonLoopForever extends daemon
         foreach ($listDeviceSensor1Wire as $device) {
             $devicePhysic = $device->getDevicePhysic();
             if ($devicePhysic instanceof iDevicePhysicOWire) {
-                $listDevices[$device->getDeviceID()] = $devicePhysic->getAddress();
+                $this->listDevice1Wire[$device->getDeviceID()] = $devicePhysic->getAddress();
+                $this->devices1Wire[$device->getDeviceID()] = $device;
             }
         }
-        return $listDevices;
     }
 
     private function oneWireDevice() {
@@ -95,6 +97,14 @@ class daemonLoopForever extends daemon
             } else {
                 $value = 0;
             }
+
+            //новый механизм
+            $devicePhysic = $this->devices1Wire[$deviceID]->getDevicePhysic();
+            if ($devicePhysic->isValue()) {
+                $devicePhysic->setValue($value, $deviceID);
+                continue;
+            }
+
             $deviceData = new deviceData($deviceID);
             //Т.к. пока только датчик //DS2406 то данные обновляем,
             //для других датчиков возможно надо будет записывать
@@ -109,7 +119,7 @@ class daemonLoopForever extends daemon
 
         $previousTime = time();
 
-        $this->listDevice1Wire = $this->getAlarmOWireSensorDevice();
+        $this->updateAlarmOWireSensorDevice();
 
         while (!$this->stopServer()) {
 
@@ -123,7 +133,7 @@ class daemonLoopForever extends daemon
             //обновляем список модулей через определенный промежуток времени
             if ($this->now - $previousTime > self::UPDATE_UNITE_DELAY) {
                 $previousTime = $this->now;
-                $this->listDevice1Wire = $this->getAlarmOWireSensorDevice();
+                $this->updateAlarmOWireSensorDevice();
             }
 
             pcntl_signal_dispatch(); //Вызывает обработчики для ожидающих сигналов
