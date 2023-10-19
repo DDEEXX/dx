@@ -9,7 +9,7 @@ const gasSensorsData = [
 
 function power_updateAll() {
 
-    $.get("getData.php?dev=kitchenHood", function (data) {
+    $.get("data/power/kitchenHood.php?dev=kitchenHood", function (data) {
         $("#power_kitchen_hood").html(data);
     });
 
@@ -24,12 +24,12 @@ function power_updateAll() {
 
 function power_checkVent_Status() {
     const curDateStatus = $('#kitchen_hood_last_status').val();
-    $.post("getData.php", {dev: "check_ventStatus", dateStatus: curDateStatus}, function (jsonData) {
+    $.post("data/power/kitchenHood.php", {dev: "check_ventStatus", dateStatus: curDateStatus}, function (jsonData) {
         if (jsonData['update']) {
-            $.get("getData.php?dev=kitchenHood", function (data) {
+            $.get("data/power/kitchenHood.php?dev=kitchenHood", function (data) {
                 $("#power_kitchen_hood").html(data);
             });
-            $.get("data/power/kitchenHoodInfo.php", function (data) {
+            $.get("data/power/kitchenHood.php?dev=info", function (data) {
                 $("#power_kitchen_hood_dialogSetup_content").html(data);
             });
         } else {
@@ -41,7 +41,7 @@ function power_checkVent_Status() {
                     const value = $('#power_kitchen_hood_light').attr("value");
                     if ((value === 'on' && res.value !== 1) ||
                         (value === 'off' && res.value === 1)) {
-                        $.get("getData.php?dev=kitchenHood", function (data) {
+                        $.get("data/power/kitchenHood.php?dev=kitchenHood", function (data) {
                             $("#power_kitchen_hood").html(data);
                         });
                     }
@@ -98,7 +98,7 @@ $(function () {
         height: "auto",
         width: 800,
         open: function (event, ui) {
-            $.get("data/power/kitchenHoodInfo.php", function (data) {
+            $.get("data/power/kitchenHood.php?dev=info", function (data) {
                 $("#power_kitchen_hood_dialogSetup_content").html(data);
             });
         }
