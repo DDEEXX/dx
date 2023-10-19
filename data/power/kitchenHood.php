@@ -101,7 +101,7 @@ elseif ($_REQUEST['dev'] == 'info') {
             $colorDisable = '#00ff00';
         }
 
-        echo '<script src="js2/powerKitchenHood.js?version = 1.1"></script>';
+        echo '<script src="js2/powerKitchenHood.js?version = 1.2"></script>';
         echo '<div style="display: flex; justify-content: space-between">';
         echo '  <div id="power_kitchen_hood_update_info" style="background: url(\'img2/icon_medium/refresh.png\') no-repeat center center; width: 1em"></div>';
         echo '  <div style="width: 80%">';
@@ -141,7 +141,7 @@ elseif ($_REQUEST['dev'] == 'info') {
             echo '    <div class="kh_setup_row" style="padding-top: 5px">';
             echo '        <div class="kh_setup_col1">';
             echo '          <span>' . $data['label'] . '</span> ';
-            echo '          <span>' . $data['label'] . $data['postfix'] .'&deg</span>';
+            echo '          <span>' . $data['value'] . $data['postfix'] .'&deg</span>';
             echo '        </div>';
             echo '        <div class="kh_setup_col2"">';
             echo sprintf( "<input id=\"kh_%s\" class=\"property_spinner\" name=\"value\" value=\"%s\">",

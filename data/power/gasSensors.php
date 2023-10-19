@@ -78,7 +78,7 @@ if ($_REQUEST['dev'] == 'gasSensor') {
             2 => ['label' => 'Тревога:', 'value' => $alarm],
         ];
 
-        echo '<script src="js2/powerGasSensor.js?version = 1.0"></script>';
+        echo '<script src="js2/powerGasSensor.js?version = 1.1"></script>';
         echo '<div>';
         echo '  <div id="' . $label . '_update_info" style="background: url(\'img2/icon_medium/refresh.png\') no-repeat center center; width: 1em; height: 2em"></div>';
         echo '</div>';
