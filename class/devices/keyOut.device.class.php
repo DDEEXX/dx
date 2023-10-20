@@ -66,9 +66,6 @@ class formatterKeyOutMQTT_1 extends aFormatterValue
 
     function formatRawValue($value)
     {
-
-        return $value;
-
         $result = new formatDeviceValue();
         $result->valueNull = false;
         $result->status = 0;
@@ -142,6 +139,8 @@ class formatterKeyOutMQTT_2 extends aFormatterValue
 {
     function formatRawValue($value)
     {
+        logger::writeLog('пришел ' .$value, loggerTypeMessage::NOTICE, loggerName::ERROR);
+
         $result = new formatDeviceValue();
         $result->valueNull = false;
         $result->status = 0;
