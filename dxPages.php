@@ -156,7 +156,7 @@ if ($p == 'home' || empty($p)) {
     <div id="page_home" class="grid_12" style="height: 790px">
         <div class="grid_12" style="height: 70px">
             <div class="grid_9 alpha">1
-                <div id="button_full_screen" style="margin-left: 5px">
+                <button id="button_full_screen"></button>
             </div>
             <div class="grid_2 omega">
                 <div id="TekDate" class="TekDate" style="font-size:110%"></div>
