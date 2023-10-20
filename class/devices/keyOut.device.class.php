@@ -66,6 +66,9 @@ class formatterKeyOutMQTT_1 extends aFormatterValue
 
     function formatRawValue($value)
     {
+
+        return $value;
+
         $result = new formatDeviceValue();
         $result->valueNull = false;
         $result->status = 0;
