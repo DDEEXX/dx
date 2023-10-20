@@ -310,6 +310,15 @@ class KeyOutMQQT extends aDeviceMakerPhysicMQTT
         $data = $this->maker->make($makeData);
         parent::setData($data);
     }
+
+    public function formatTestPayload($testPayload, $ignoreUnknown = false)
+    {
+        if ($this->value instanceof iDeviceValue) {
+            $testPayload = $this->value->getFormatTestCode($testPayload);
+        }
+        return parent::formatTestPayload($testPayload, $ignoreUnknown);
+    }
+
 }
 
 class KeyOutFactory
