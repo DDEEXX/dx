@@ -116,4 +116,18 @@ $(function () {
         $("#home_cameraFullSize").dialog("open");
     });
 
+    $("#button_full_screen").button().on("click", function () {
+        let elem = document.querySelector("#dx_home");
+
+        if (!document.fullscreenElement) {
+            elem.requestFullscreen().catch((err) => {
+                alert(
+                    `Error attempting to enable fullscreen mode: ${err.message} (${err.name})`,
+                );
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    });
+
 })

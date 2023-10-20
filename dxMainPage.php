@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta name="mobile-web-app-capable" content="yes">
+    <!-- <meta name="mobile-web-app-capable" content="yes"> -->
     <?php
     //header('Content-type: text/html; charset=utf-8')
     ?>
@@ -66,7 +66,7 @@ if (!$UID) {
 } else {
     ?>
 
-    <div class="container_13">
+    <div id= "dx_home" class="container_13">
         <div class="grid_1">
             <ul id="mainMenu" class="navigation">
                 <li>
