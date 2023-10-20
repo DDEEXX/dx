@@ -3,6 +3,18 @@
  * Силовой ключ, реле, коммутация низких токов и т.д.
  */
 
+function convertStatus($status)
+{
+    if (!is_string($status)) {
+        return 0;
+    }
+    if (array_key_exists($status, statusKeyData::status)) {
+        return statusKeyData::status[$status];
+    }
+    return 0;
+}
+
+
 class formatterKeyOut1Wire_3A extends aFormatterValue
 {
     function formatRawValue($value)
@@ -50,9 +62,38 @@ class makerKeyOut1Wire_3A implements iMaker
 
 class formatterKeyOutMQTT_1 extends aFormatterValue
 {
+    const MQTT_CODE_SEPARATOR = ';';
+
     function formatRawValue($value)
     {
-        return $value;
+        $result = new formatDeviceValue();
+        $result->valueNull = false;
+        $result->status = 0;
+
+        $value = null;
+        $status = null;
+        if (is_string($value)) { //может прийти команда и статус
+            $p = explode(self::MQTT_CODE_SEPARATOR, $value);
+            if (strtoupper($p[0]) == 'OFF' || strtoupper($p[0]) == 'FALSE' || $p[0] == '0') {
+                $value = 0;
+            } elseif (strtoupper($p[0]) == 'ON' || strtoupper($p[0]) == 'TRUE' || $p[0] == '1') {
+                $value = 1;
+            }
+            if (count($p) > 1) {
+                $status = $p[1];
+            }
+        } elseif (is_int($value)) {
+            $value = $value == 0 ? 0 : 1;
+        } elseif (is_bool($value)) {
+            $value = $value ? 1 : 0;
+        }
+        if (!is_null($value)) {
+            $result->value = $value;
+            if (!is_null($status)) {
+                $result['status'] = convertStatus($status);
+            }
+        } else $result->valueNull = true;
+        return $result;
     }
 
     function formatOutData($data)
@@ -97,7 +138,18 @@ class formatterKeyOutMQTT_2 extends aFormatterValue
 {
     function formatRawValue($value)
     {
-        return $value;
+        $result = new formatDeviceValue();
+        $result->valueNull = false;
+        $result->status = 0;
+        $objValue = json_decode($value);
+        if ($objValue->state == 'on') $result->value = 1;
+        else if ($objValue->state == 'off') $result->value = 0;
+        else {
+            $result->value = 0;
+            $result->valueNull = true;
+        }
+        if (isset($objValue->status)) $result->status = convertStatus($objValue->status);
+        return $result;
     }
 
     function formatTestCode($value)
@@ -174,17 +226,6 @@ class KeyOutOWire extends aDeviceMakerPhysicOWire
         parent::__construct($parameters['deviceID'], $OWParameters['address'], $OWParameters['chanel']);
     }
 
-    private function convertStatus($status)
-    {
-        if (!is_string($status)) {
-            return 0;
-        }
-        if (array_key_exists($status, statusKeyData::status)) {
-            return statusKeyData::status[$status];
-        }
-        return 0;
-    }
-
     function setData($data)
     {
         $makeData = $this->value->getFormatOutData($data);
@@ -198,7 +239,7 @@ class KeyOutOWire extends aDeviceMakerPhysicOWire
 
         //если после установки значения вернулся результат выполнения, запишем состояние
         $dataValue = time();
-        if (isset($makeData['status'])) $status = $this->convertStatus($makeData['status']);
+        if (isset($makeData['status'])) $status = convertStatus($makeData['status']);
         else $status = 0;
         $dataDevice = new deviceData($this->getDeviceID());
         $dataDevice->setData($result, $dataValue, false, $status);
