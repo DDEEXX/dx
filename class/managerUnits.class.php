@@ -67,7 +67,6 @@ class unitFactory
 */
 class managerUnits
 {
-
     /**
      * Получить ID устройства по метке модуля
      * @param $label - метка модуля
@@ -92,6 +91,8 @@ class managerUnits
             $result = $tekUnit;
         }
         unset($listUnits);
+        if (is_null($result)) logger::writeLog('Не могу создать объект по метке :: ' . $label,
+            loggerTypeMessage::ERROR, loggerName::ERROR);
         return $result;
     }
 

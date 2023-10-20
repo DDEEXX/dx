@@ -52,7 +52,7 @@ class switchWHD02_MQTT extends aDeviceMakerPhysicMQTT
     {
         $this->selfState = true;
         $this->value = valuesFactory::createDeviceValue($parameters, new formatterSwitchWHD02());
-        parent::__construct($mqttParameters, formatValueDevice::MQTT_SWITCH_WHD02);
+        parent::__construct($parameters['deviceID'], $mqttParameters, formatValueDevice::MQTT_SWITCH_WHD02);
     }
 
     function setData($data)

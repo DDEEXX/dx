@@ -8,11 +8,11 @@ class gasSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
     const DEFAULT_PAYLOAD = '{"state": ""}';
     const DEFAULT_TEST_PAYLOAD = '{"availability": ""}';
 
-    public function __construct($mqttParameters)
+    public function __construct($deviceID, $mqttParameters)
     {
         if (empty($mqttParameters['payloadRequest'])) $mqttParameters['payloadRequest'] = self::DEFAULT_PAYLOAD;
         if (empty($mqttParameters['testPayload'])) $mqttParameters['testPayload'] = self::DEFAULT_TEST_PAYLOAD;
-        parent::__construct($mqttParameters, formatValueDevice::MQTT_GAS_SENSOR);
+        parent::__construct($deviceID, $mqttParameters, formatValueDevice::MQTT_GAS_SENSOR);
     }
 
     function formatTestPayload($testPayload, $ignoreUnknown = false)
@@ -28,13 +28,13 @@ class gasSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
 
 class gasSensorFactory
 {
-    static public function create($net, $mqttParameters)
+    static public function create($deviceID, $net, $mqttParameters)
     {
         switch ($net) {
             case netDevice::ETHERNET_MQTT:
-                return new gasSensorMQQTPhysic($mqttParameters);
+                return new gasSensorMQQTPhysic($deviceID, $mqttParameters);
             default :
-                return new DeviceSensorPhysicDefault();
+                return new DeviceSensorPhysicDefault($deviceID);
         }
     }
 }
@@ -76,7 +76,7 @@ class gasSensor extends aSensorDevice implements iDeviceAlarm
             'topicSet' => $options['topic_cmnd'] . '/set',
             'topicTest' => $options['topic_test'],
             'payloadRequest' => $options['payload_cmnd']];
-        $this->devicePhysic = gasSensorFactory::create($this->getNet(), $mqttParameters);
+        $this->devicePhysic = gasSensorFactory::create($this->getDeviceID(), $this->getNet(), $mqttParameters);
         $this->alarm = managerAlarmDevice::createAlarm($options['topic_alarm'], $this->devicePhysic);
     }
 

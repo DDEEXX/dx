@@ -64,7 +64,7 @@ class humiditySensorMQQTPhysic extends aDeviceSensorPhysicMQTT
         $param = self::getConstructParam($parameters, $mqttParameters);
         $this->selfState = $param['selfState'];
         $this->value = valuesFactory::createDeviceValue($parameters, $param['formatter']);
-        parent::__construct($mqttParameters, formatValueDevice::MQTT_HUMIDITY);
+        parent::__construct($parameters['deviceID'], $mqttParameters, formatValueDevice::MQTT_HUMIDITY);
     }
 
     public function formatTestPayload($testPayload, $ignoreUnknown = false)
@@ -84,7 +84,7 @@ class humiditySensorFactory
             case netDevice::ETHERNET_MQTT:
                 return new humiditySensorMQQTPhysic($parameters, $mqttParameters);
             default :
-                return new DeviceSensorPhysicDefault();
+                return new DeviceSensorPhysicDefault($parameters['deviceID']);
         }
     }
 }

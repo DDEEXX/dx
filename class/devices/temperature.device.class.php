@@ -61,7 +61,7 @@ class temperatureSensor1Wire extends aDeviceSensorPhysicOWire
     public function __construct($parameters, $OWParameters)
     {
         $this->value = valuesFactory::createDeviceValue($parameters, new formatterTemperature1Wire());
-        parent::__construct($OWParameters['address'], $OWParameters['ow_alarm']);
+        parent::__construct($parameters['deviceID'], $OWParameters['address'], $OWParameters['ow_alarm']);
     }
 
     function requestData()
@@ -142,7 +142,7 @@ class temperatureSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
         $param = self::getConstructParam($parameters, $mqttParameters);
         $this->selfState = $param['selfState'];
         $this->value = valuesFactory::createDeviceValue($parameters, $param['formatter']);
-        parent::__construct($mqttParameters, formatValueDevice::MQTT_TEMPERATURE);
+        parent::__construct($parameters['deviceID'], $mqttParameters, formatValueDevice::MQTT_TEMPERATURE);
     }
 
     public function formatTestPayload($testPayload, $ignoreUnknown = false)
@@ -164,7 +164,7 @@ class temperatureSensorFactory
             case netDevice::ETHERNET_MQTT:
                 return new temperatureSensorMQQTPhysic($parameters, $mqttParameters);
             default :
-                return new DeviceSensorPhysicDefault();
+                return new DeviceSensorPhysicDefault($parameters['deviceID']);
         }
     }
 }

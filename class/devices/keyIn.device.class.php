@@ -74,7 +74,6 @@ class formatterKeyInMQTT_2 extends aFormatterValue
 
 class keyInSensorPhysicMQQT extends aDeviceSensorPhysicMQTT
 {
-
     private static function getConstructParam($parameters, &$mqttParameters)
     {
         $result = [];
@@ -100,16 +99,25 @@ class keyInSensorPhysicMQQT extends aDeviceSensorPhysicMQTT
         $param = self::getConstructParam($parameters, $mqttParameters);
         $this->selfState = $param['selfState'];
         $this->value = valuesFactory::createDeviceValue($parameters, $param['formatter']);
-        parent::__construct($mqttParameters, formatValueDevice::MQTT_KEY_IN);
+        parent::__construct($parameters['deviceID'], $mqttParameters, formatValueDevice::MQTT_KEY_IN);
     }
+
+    public function formatTestPayload($testPayload, $ignoreUnknown = false)
+    {
+        if ($this->value instanceof iDeviceValue) {
+            $testPayload = $this->value->getFormatTestCode($testPayload); //{"state":"online"}/{"state":"offline"}
+        }
+        return parent::formatTestPayload($testPayload, $ignoreUnknown);
+    }
+
 }
 
-class keyInSensorPhysicOWire extends aDeviceSensorPhysicOWire {
-
+class keyInSensorPhysicOWire extends aDeviceSensorPhysicOWire
+{
     public function __construct($parameters, $OWParameters)
     {
         $this->value = valuesFactory::createDeviceValue($parameters, new formatterKeyIn1Wire());
-        parent::__construct($OWParameters['address'], $OWParameters['ow_alarm']);
+        parent::__construct($parameters['deviceID'], $OWParameters['address'], $OWParameters['ow_alarm']);
     }
 
     function requestData() { }
@@ -151,14 +159,13 @@ class keyInSensorFactory
             case netDevice::ETHERNET_MQTT:
                 return new keyInSensorPhysicMQQT($parameters, $mqttParameters);
             default :
-                return new DeviceSensorPhysicDefault();
+                return new DeviceSensorPhysicDefault($parameters['deviceID']);
         }
     }
 }
 
 class keyInSensorDevice extends aSensorDevice
 {
-
     public function __construct(array $options)
     {
         parent::__construct($options, typeDevice::KEY_IN);
@@ -187,5 +194,4 @@ class keyInSensorDevice extends aSensorDevice
             $this->devicePhysic->requestData();
         }
     }
-
 }

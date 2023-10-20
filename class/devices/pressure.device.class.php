@@ -65,7 +65,7 @@ class pressureSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
         $param = self::getConstructParam($parameters, $mqttParameters);
         $this->selfState = $param['selfState'];
         $this->value = valuesFactory::createDeviceValue($parameters, $param['formatter']);
-        parent::__construct($mqttParameters, formatValueDevice::MQTT_PRESSURE);
+        parent::__construct($parameters['deviceID'], $mqttParameters, formatValueDevice::MQTT_PRESSURE);
     }
 }
 
@@ -77,7 +77,7 @@ class pressureSensorFactory
             case netDevice::ETHERNET_MQTT:
                 return new pressureSensorMQQTPhysic($parameters, $mqttParameters);
             default :
-                return new DeviceSensorPhysicDefault();
+                return new DeviceSensorPhysicDefault($parameters['deviceID']);
         }
     }
 }

@@ -8,6 +8,11 @@ require_once(dirname(__FILE__) . '/sharedMemory.class.php');
 require_once(dirname(__FILE__) . '/mqtt.class.php');
 require_once dirname(__FILE__) . '/ownet.php';
 
+/*Выполнение действий модулем aDeviceMakerPhysic*/
+interface iMaker {
+    function make($data);
+}
+
 /*Форматированные данные с датчиков*/
 class formatDeviceValue implements iDeviceDataValue
 {
@@ -255,7 +260,7 @@ class deviceValueDB extends aDeviceValue
 
     function updateValue($value)
     {
-        // TODO: Implement updateValue() method.
+        $this->setValue($value);// TODO: Implement updateValue() method.
     }
 }
 
@@ -683,6 +688,17 @@ abstract class aDevicePhysic implements iDevicePhysic
     protected $formatValue = formatValueDevice::NO_FORMAT;
     protected $value = null;
     protected $selfState = false;
+    private $deviceID;
+
+    public function __construct($deviceID)
+    {
+        $this->deviceID = $deviceID;
+    }
+
+    public function getDeviceID()
+    {
+        return $this->deviceID;
+    }
 
     public function isSelfState()
     {
@@ -773,6 +789,8 @@ abstract class aDeviceSensorPhysic extends aDevicePhysic implements iDeviceSenso
 
 abstract class aDeviceMakerPhysic extends aDevicePhysic implements iDeviceMakerPhysic
 {
+    protected $maker; //объект выполняющий действие
+
     abstract function setData($data);
 }
 
@@ -787,8 +805,9 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
     private $requestPayload; //сообщение для запроса данных с датчика
     private $testPayload;
 
-    public function __construct($mqttParameters, $formatValue = formatValueDevice::NO_FORMAT)
+    public function __construct($deviceID, $mqttParameters, $formatValue = formatValueDevice::NO_FORMAT)
     {
+        parent::__construct($deviceID);
         $this->topicCmnd = $mqttParameters['topicCmnd'];
         $this->topicStat = $mqttParameters['topicStat'];
         $this->topicTest = $mqttParameters['topicTest'];
@@ -859,8 +878,9 @@ abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDev
 
     protected $testPayload;
 
-    public function __construct($mqttParameters, $formatValue = formatValueDevice::NO_FORMAT)
+    public function __construct($deviceID, $mqttParameters, $formatValue = formatValueDevice::NO_FORMAT)
     {
+        parent::__construct($deviceID);
         $this->topicCmnd = $mqttParameters['topicCmnd'];
         $this->topicStat = $mqttParameters['topicStat'];
         $this->topicTest = $mqttParameters['topicTest'];
@@ -929,12 +949,9 @@ abstract class aDeviceSensorPhysicOWire extends aDeviceSensorPhysic implements i
     private $address;
     private $alarm;
 
-    /**
-     * @param $address
-     * @param $alarm
-     */
-    public function __construct($address, $alarm)
+    public function __construct($deviceID, $address, $alarm)
     {
+        parent::__construct($deviceID);
         $this->address = $address;
         $this->alarm = $alarm;
     }
@@ -990,8 +1007,9 @@ abstract class aDeviceMakerPhysicOWire extends aDeviceMakerPhysic implements iDe
      * @param $address
      * @param null $chanel
      */
-    public function __construct($address, $chanel = null)
+    public function __construct($deviceID, $address, $chanel = null)
     {
+        parent::__construct($deviceID);
         $this->address = $address;
         $this->chanel = is_null($chanel) ? '' : $chanel;
     }
@@ -1190,7 +1208,7 @@ abstract class aSensorDevice extends aDevice implements iSensorDevice
         $disabled = $options['Disabled'];
         $note = $options['Note'];
         parent::__construct($deviceID, $net, $typeDevice, $disabled, $note);
-        $this->devicePhysic = new DeviceSensorPhysicDefault();
+        $this->devicePhysic = new DeviceSensorPhysicDefault($deviceID);
     }
 
     /**
@@ -1259,7 +1277,7 @@ abstract class aMakerDevice extends aDevice implements iMakerDevice
         $disabled = $options['Disabled'];
         $note = $options['Note'];
         parent::__construct($deviceID, $net, $typeDevice, $disabled, $note);
-        $this->devicePhysic = new DeviceMakerPhysicDefault();
+        $this->devicePhysic = new DeviceMakerPhysicDefault($deviceID);
     }
 
     function setData($data)
