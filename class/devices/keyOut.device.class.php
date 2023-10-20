@@ -197,6 +197,54 @@ class makerKeyOutMQTT_2 implements iMaker
     }
 }
 
+class formatterKeyOutMQTT_3 extends aFormatterValue
+{
+    const MQTT_CODE_SEPARATOR = ';';
+
+    function formatRawValue($value)
+    {
+        $result = new formatDeviceValue();
+        $result->valueNull = false;
+        $result->status = 0;
+
+        $value_ = null;
+        $status = null;
+        if (is_string($value)) { //может прийти команда и статус
+            $p = explode(self::MQTT_CODE_SEPARATOR, $value);
+            if (strtoupper($p[0]) == 'OFF' || strtoupper($p[0]) == 'FALSE' || $p[0] == '0') {
+                $value_ = 0;
+            } elseif (strtoupper($p[0]) == 'ON' || strtoupper($p[0]) == 'TRUE' || $p[0] == '1') {
+                $value_ = 1;
+            }
+            if (count($p) > 1) {
+                $status = $p[1];
+            }
+        } elseif (is_int($value)) {
+            $value_ = $value == 0 ? 0 : 1;
+        } elseif (is_bool($value)) {
+            $value_ = $value ? 1 : 0;
+        }
+        if (!is_null($value_)) {
+            $result->value = $value_;
+            if (!is_null($status)) {
+                $result->status = convertStatus($status);
+            }
+        } else $result->valueNull = true;
+        return $result;
+    }
+
+    function formatOutData($data)
+    {
+        $dataDecode = json_decode(parent::formatOutData($data), true);
+        if (is_null($dataDecode)) return null;
+        if (!isset($dataDecode['value'])) return null;
+        $result['value'] = $dataDecode['value'];
+        if (isset($dataDecode['status'])) $result['status'] = strtolower($dataDecode['status']);
+
+        return $result;
+    }
+}
+
 function checkKeyOutDataValue($nameValue, $arr)
 {
     if (is_array($arr)) {
@@ -289,6 +337,11 @@ class KeyOutMQQT extends aDeviceMakerPhysicMQTT
                 $result['selfState'] = true;
                 $result['formatter'] = new formatterKeyOutMQTT_2();
                 $result['maker'] = new makerKeyOutMQTT_2();
+                break;
+            case 2 :
+                $result['selfState'] = false;
+                $result['formatter'] = new formatterKeyOutMQTT_3();
+                $result['maker'] = new makerKeyOutMQTT_1();
                 break;
         }
         return $result;
