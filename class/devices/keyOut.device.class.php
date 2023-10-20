@@ -70,25 +70,25 @@ class formatterKeyOutMQTT_1 extends aFormatterValue
         $result->valueNull = false;
         $result->status = 0;
 
-        $value = null;
+        $value_ = null;
         $status = null;
         if (is_string($value)) { //может прийти команда и статус
             $p = explode(self::MQTT_CODE_SEPARATOR, $value);
             if (strtoupper($p[0]) == 'OFF' || strtoupper($p[0]) == 'FALSE' || $p[0] == '0') {
-                $value = 0;
+                $value_ = 0;
             } elseif (strtoupper($p[0]) == 'ON' || strtoupper($p[0]) == 'TRUE' || $p[0] == '1') {
-                $value = 1;
+                $value_ = 1;
             }
             if (count($p) > 1) {
                 $status = $p[1];
             }
         } elseif (is_int($value)) {
-            $value = $value == 0 ? 0 : 1;
+            $value_ = $value == 0 ? 0 : 1;
         } elseif (is_bool($value)) {
-            $value = $value ? 1 : 0;
+            $value_ = $value ? 1 : 0;
         }
-        if (!is_null($value)) {
-            $result->value = $value;
+        if (!is_null($value_)) {
+            $result->value = $value_;
             if (!is_null($status)) {
                 $result['status'] = convertStatus($status);
             }
@@ -104,6 +104,7 @@ class formatterKeyOutMQTT_1 extends aFormatterValue
         $value = 'off';
         if (is_numeric($dataDecode['value'])) $value = (int)$dataDecode['value'] > 0 ? 'on' : 'off';
         elseif (strtolower($dataDecode['value']) == 'on') $value = 'on';
+        elseif (strtolower($dataDecode['value']) == 'pulse') $value = 'pulse';
         $result['value'] = $value;
 
         if (isset($dataDecode['status'])) $result['status'] = strtolower($dataDecode['status']);
