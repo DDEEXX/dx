@@ -5,8 +5,8 @@
 
 <!DOCTYPE html>
 <html lang="ru">
-<meta name="mobile-web-app-capable" content="yes">
 <head>
+    <meta name="mobile-web-app-capable" content="yes">
     <?php
     //header('Content-type: text/html; charset=utf-8')
     ?>
