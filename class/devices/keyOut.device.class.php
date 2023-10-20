@@ -14,7 +14,6 @@ function convertStatus($status)
     return 0;
 }
 
-
 class formatterKeyOut1Wire_3A extends aFormatterValue
 {
     function formatRawValue($value)
@@ -90,7 +89,7 @@ class formatterKeyOutMQTT_1 extends aFormatterValue
         if (!is_null($value_)) {
             $result->value = $value_;
             if (!is_null($status)) {
-                $result['status'] = convertStatus($status);
+                $result->status = convertStatus($status);
             }
         } else $result->valueNull = true;
         return $result;
