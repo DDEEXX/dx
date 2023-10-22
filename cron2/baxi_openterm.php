@@ -32,14 +32,3 @@ if (!$temperatureBoilerIn->valueNull && time() - $dateValue < 1200) {
     $payload = sprintf('{"retb":%s}', $temperatureBoilerIn->value);
     $mqtt->publish($topic, $payload);
 }
-
-sleep(1);
-$unitePressure = managerUnits::getUnitLabel('pressure');
-$pressure = $unitePressure->getData();
-$dateValue = $pressure->date;
-if (!$pressure->valueNull && time() - $dateValue < 1200) {
-    echo var_dump('pressure');
-    $topic = 'baxi_open/controller/set';
-    $payload = sprintf('{"presb":%s}', $pressure->value);
-    $mqtt->publish($topic, $payload);
-}
