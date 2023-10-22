@@ -37,6 +37,7 @@ $unitePressure = managerUnits::getUnitLabel('pressure');
 $pressure = $unitePressure->getData();
 echo var_dump($pressure);
 $dateValue = $pressure->date;
+echo var_dump(time() - $dateValue);
 if (!$pressure->valueNull && time() - $dateValue < 1200) {
     echo var_dump('pressure');
     $topic = 'baxi_open/controller/set';
