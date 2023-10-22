@@ -15,6 +15,7 @@ if (!is_null($temperatureOut->valueNull) && time() - $dateValue < 1200) {
 
 $unitTemperatureIn = managerUnits::getUnitLabel('temp_bedroom');
 $temperatureIn = $unitTemperatureIn->getData();
+$dateValue = $temperatureIn->date;
 if (!is_null($temperatureIn->valueNull) && time() - $dateValue < 1200) {
     $mqtt = mqttSend::connect();
     $topic = 'baxi_open/controller/set';
@@ -24,6 +25,7 @@ if (!is_null($temperatureIn->valueNull) && time() - $dateValue < 1200) {
 
 $unitTemperatureBoilerIn = managerUnits::getUnitLabel('temp_heater_boiler_in');
 $temperatureBoilerIn = $unitTemperatureBoilerIn->getData();
+$dateValue = $temperatureBoilerIn->date;
 if (!is_null($temperatureBoilerIn->valueNull) && time() - $dateValue < 1200) {
     $mqtt = mqttSend::connect();
     $topic = 'baxi_open/controller/set';
@@ -33,6 +35,7 @@ if (!is_null($temperatureBoilerIn->valueNull) && time() - $dateValue < 1200) {
 
 $unitePressure = managerUnits::getUnitLabel('pressure');
 $pressure = $unitePressure->getData();
+$dateValue = $pressure->date;
 if (!is_null($pressure->valueNull) && time() - $dateValue < 1200) {
     $mqtt = mqttSend::connect();
     $topic = 'baxi_open/controller/set';
