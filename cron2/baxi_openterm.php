@@ -25,6 +25,7 @@ if (!is_null($temperatureIn->valueNull) && time() - $dateValue < 1200) {
 
 $unitTemperatureBoilerIn = managerUnits::getUnitLabel('temp_heater_boiler_in');
 $temperatureBoilerIn = $unitTemperatureBoilerIn->getData();
+echo var_dump($temperatureBoilerIn);
 $dateValue = $temperatureBoilerIn->date;
 if (!is_null($temperatureBoilerIn->valueNull) && time() - $dateValue < 1200) {
     $mqtt = mqttSend::connect();
@@ -35,6 +36,7 @@ if (!is_null($temperatureBoilerIn->valueNull) && time() - $dateValue < 1200) {
 
 $unitePressure = managerUnits::getUnitLabel('pressure');
 $pressure = $unitePressure->getData();
+echo var_dump($pressure);
 $dateValue = $pressure->date;
 if (!is_null($pressure->valueNull) && time() - $dateValue < 1200) {
     $mqtt = mqttSend::connect();
