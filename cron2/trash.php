@@ -1,4 +1,6 @@
 <?php
+require_once(dirname(__FILE__) . '/../class/sqlDataBase.class.php');
+
 //1. удаление историю записей старше 1 месяца
     $query = 'DELETE FROM tvalue_1 WHERE Date < DATE_SUB(NOW(), INTERVAL 1 MONTH)';
 
