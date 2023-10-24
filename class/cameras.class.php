@@ -139,6 +139,7 @@ class camera implements iCamera
     private $wwwGroup = 'www-data'; //группа назначаемая на новые каталоги файлы
     private $wwwOwner = 'www-data'; //пользователь назначаемый на новые каталоги и файлы
     private $listVideoFiles = 'list_cam.txt'; //временный файл для склейки видео
+    private $maskTimelapseConvertFiles = '*-timelapse.mp4'; //маска для поиска timelapse файлов
 
     public function __construct(array $options)
     {
@@ -213,7 +214,7 @@ class camera implements iCamera
      */
     public function deleteTimelapseFileInArchive()
     {
-        $mask = $this->getTimelapseDir() . '/' . $this->maskTimelapseFiles;
+        $mask = $this->getTimelapseDir() . '/' . $this->maskTimelapseConvertFiles;
         $this->deleteFile($mask, $this->countTimelapseFiles);
     }
 
@@ -258,7 +259,7 @@ class camera implements iCamera
      */
     public function deleteVideoFileInArchive()
     {
-        $mask = $this->getVideoDir() . '/*' . $this->nameVideoFiles . $this->getId() . '.' . $this->extensionVideo;
+        $mask = $this->getVideoDir() . '/*' . $this->nameVideoFiles . $this->getId() . '.' . $this->extensionVideoConvert;
         $this->deleteFile($mask, $this->countVideoFiles);
     }
 
