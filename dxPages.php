@@ -431,6 +431,7 @@ if ($p == 'heater') {
         <div class="clear"></div>
         <div class="grid_12 alpha omega" style="align-self: flex-start; margin-top: 5px;">
             <div class="ui-corner-all ui-state-default ui-widget-content" style="height: 250px">
+                <input id="heater_boiler_last_status" value="" type="hidden">
                 <div style="display: flex; align-content: flex-start">
                     <div class="boiler_tile">
                         <h1>Отопление</h1>

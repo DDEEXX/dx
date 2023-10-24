@@ -14,6 +14,7 @@ function heater_updateDataScheme() {
 
 function heater_updateBoiler() {
     $.get('data/heater/heating.php?dev=boiler&label=boiler_opentherm', function (data) {
+        $('#heater_boiler_last_status').val(data.date);
         $('#boiler_ch').html(data.ch + " &degC");
         $('#boiler_retb').html(data.retb + " &degC");
         $('#boiler_tset').html(data.tset + " &degC");
@@ -36,6 +37,19 @@ function heater_updateBoiler() {
         $('#boiler_room').html(data.room + " &degC");
         $('#boiler_out').html(data.out + " &degC");
     });
+}
+
+function heater_checkBoiler_Status() {
+    const curDateStatus = $('#heater_boiler_last_status').val();
+    $.post("data/heater/heating.php", {
+        dev: "check_boilerStatus",
+        dateStatus: curDateStatus,
+        label: "boiler_opentherm"
+    }, function (jsonData) {
+        if (jsonData['update']) {
+            heater_updateBoiler();
+        }
+    }, "json");
 }
 
 $(function () {
@@ -115,6 +129,11 @@ $(document).everyTime("60s", function () {
     heater_updateDataScheme();
 });
 
-$(document).everyTime("15s", function () {
-    heater_updateBoiler();
+// $(document).everyTime("15s", function () {
+//     heater_updateBoiler();
+// });
+
+$(document).everyTime("3s", function () {
+    heater_checkBoiler_Status();
 });
+

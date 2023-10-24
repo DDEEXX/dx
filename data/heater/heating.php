@@ -16,10 +16,25 @@ if ($_REQUEST['dev'] == 'boiler') {
     }
     $unitData = $unit->getData();
     $value = $unitData->value;
-    $lastDate = $unitData->date;
+    $value->date = $unitData->date;
 
     header('Content-Type: application/json');
     echo json_encode($value);
+}
+elseif ($_REQUEST['dev'] == 'check_boilerStatus') {
+    $result = ['update' => false];
+    $label = $_REQUEST['label'];
+    $dateStatus = (int)$_REQUEST['dateStatus'];
+    $unit = managerUnits::getUnitLabel($label);
+    if (!is_null($unit)) {
+        $unitData = $unit->getData();
+        $dateLastStatus = $unitData->date;
+        if ($dateStatus != $dateLastStatus) {
+            $result['update'] = true;
+        }
+    }
+    header('Content-Type: application/json');
+    echo json_encode($result);
 }
 else if ($_REQUEST['dev'] == 'set') {
 
