@@ -34,8 +34,8 @@ function heater_updateBoiler() {
             $('#boiler_heating_wfire').attr('src', 'img2/icon_small/fire_.png')
             $('#boiler_heating_wfire_level').html("");
         }
-        $('#boiler_room').html(data.room + " &degC");
-        $('#boiler_out').html(data.out + " &degC");
+        $('#boiler_room').html(data.room.toFixed(1) + " &degC");
+        $('#boiler_out').html(data.out.toFixed(1) + " &degC");
     });
 }
 
