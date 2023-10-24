@@ -13,7 +13,8 @@ class formatterBoilerOpenTerm implements iFormatterValue
         $result->value->retb = $dValue->retb; //обратка СО
         $result->value->tset = $dValue->tset; //расчетная СО
 
-        $result->value->_dhw = $dValue->_dhw; //целевая температура (установка)
+        $result->value->_dhw = $dValue->_dhw; //целевая температура ГВС
+        $result->value->dhw = $dValue->dhw;   //текущая температура ГВС
         $result->value->mlev = $dValue->mlev; //уровень модуляции горелки
 
 

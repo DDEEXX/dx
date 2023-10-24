@@ -475,6 +475,10 @@ if ($p == 'heater') {
                             <span id="boiler_sprw"></span>
                         </div>
                         <div id="heater_boiler_water" class="heater_boiler_slider"></div>
+                        <div class="boiler_data">
+                            <h2>Текущая</h2>
+                            <span id="boiler_dhw"></span>
+                        </div>
                     </div>
                 </div>
             </div>
