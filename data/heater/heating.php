@@ -26,6 +26,7 @@ else if ($_REQUEST['dev'] == 'set') {
     $label = $_REQUEST['label'];
     $p = $_REQUEST['p'];
     $v = $_REQUEST['v'];
+    $d = isset($_REQUEST['d']) && is_numeric($_REQUEST['d']) ? (int)$_REQUEST['d'] : 1;
 
     $unit = managerUnits::getUnitLabel($label);
     if (is_null($unit)) {
@@ -36,7 +37,7 @@ else if ($_REQUEST['dev'] == 'set') {
     $curData = $unit->getData();
     $curV = $curData->value->{$p};
     if (!is_numeric($v)) return;
-    else $value = (float)($v/10);
+    else $value = (float)($v/$d);
     if ($curV == $value) return;
     $device = $unit->getDevice();
     if (is_null($device)) exit;

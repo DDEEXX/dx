@@ -55,7 +55,7 @@ $(function () {
             $('#boiler_spr').html(ui.value / 10 + " &degC");
         },
         change: function( event, ui ) {
-            $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=_spr&v='+ui.value, function () {});
+            $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=_spr&v='+ui.value+'&d=10', function () {});
         }
     });
 
@@ -82,18 +82,18 @@ $(function () {
         }
     });
     $("#heater_boiler_water").slider({
-        min: 350,
-        max: 600,
+        min: 35,
+        max: 60,
         create: function (event, ui) {
             let th = $(this);
             $.get('data/heater/heating.php?dev=boiler&label=boiler_opentherm', function (data) {
-                let dhw10 = Math.round(data._dhw * 10);
-                th.slider("value", dhw10);
-                $('#boiler_sprw').html(dhw10 / 10 + " &degC");
+                let dhw = Number(data._dhw);
+                th.slider("value", dhw);
+                $('#boiler_sprw').html(dhw + " &degC");
             });
         },
         slide: function (event, ui) {
-            $('#boiler_sprw').html(ui.value / 10 + " &degC");
+            $('#boiler_sprw').html(ui.value + " &degC");
         },
         change: function( event, ui ) {
             $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=_dhw&v='+ui.value, function () {});
