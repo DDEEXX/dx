@@ -455,7 +455,7 @@ if ($p == 'heater') {
                         </div>
                     </div>
                     <div class="boiler_tile">
-                        <h1>Теплый пол 1 этаж</h1>
+                        <h1>Теплый пол</h1>
                         <div class="boiler_data">
                             <p>Целевая</p>
                             <p id="boiler_sprf1"></p>
@@ -463,7 +463,7 @@ if ($p == 'heater') {
                         <div id="heater_floor_1" class="heater_boiler_slider"></div>
                     </div>
                     <div class="boiler_tile">
-                        <h1>Теплый пол ванная</h1>
+                        <h1>Ванная</h1>
                         <div class="boiler_data">
                             <p>Целевая</p>
                             <p id="boiler_sprb"></p>

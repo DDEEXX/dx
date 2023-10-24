@@ -10,6 +10,10 @@
     margin-right: 15px
 }
 
+.boiler_tile>h1 {
+    font-size: 180%
+}
+
 /*контейнер с показаниями*/
 .boiler_data {
     display: flex;
