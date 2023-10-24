@@ -20,18 +20,28 @@ function heater_updateBoiler() {
         $('#boiler_tset').html(data.tset + " &degC");
         $('#boiler_dhw').html(data.dhw + " &degC");
         $('#boiler_spdhw').html(data.spdhw + " &degC");
-        if (data.chon && data.flon) {
-            $('#boiler_heating_fire').attr('src', 'img2/icon_small/fire.png')
-            $('#boiler_heating_fire_level').html(data.mlev + '%');
+        if (data.chon) {
+            if (data.flon) {
+                $('#boiler_heating_fire').attr('src', 'img2/icon_small/fire.png')
+                $('#boiler_heating_fire_level').html(data.mlev + '%');
+            } else {
+                $('#boiler_heating_fire').attr('src', 'img2/icon_small/fire1.png')
+                $('#boiler_heating_fire_level').html("");
+            }
         } else {
-            $('#boiler_heating_fire').attr('src', 'img2/icon_small/fire_.png')
+            $('#boiler_heating_fire').attr('src', 'img2/icon_small/fire2.png')
             $('#boiler_heating_fire_level').html("");
         }
-        if (data.dhwon && data.flon) {
-            $('#boiler_heating_wfire').attr('src', 'img2/icon_small/fire.png')
-            $('#boiler_heating_wfire_level').html(data.mlev + '%');
+        if (data.dhwon) {
+            if (data.flon) {
+                $('#boiler_heating_wfire').attr('src', 'img2/icon_small/fire.png')
+                $('#boiler_heating_wfire_level').html(data.mlev + '%');
+            } else {
+                $('#boiler_heating_wfire').attr('src', 'img2/icon_small/fire1.png')
+                $('#boiler_heating_wfire_level').html("");
+            }
         } else {
-            $('#boiler_heating_wfire').attr('src', 'img2/icon_small/fire_.png')
+            $('#boiler_heating_wfire').attr('src', 'img2/icon_small/fire2.png')
             $('#boiler_heating_wfire_level').html("");
         }
         $('#boiler_room').html(data.room.toFixed(1) + " &degC");
