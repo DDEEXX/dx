@@ -7,7 +7,6 @@ class formatterBoilerOpenTerm implements iFormatterValue
         $dValue =  json_decode($value);
         $result = new stdClass();
         $result->value = new stdClass();
-        $result->value->room = $dValue->room; //температура в комнате
         $result->value->_spr = $dValue->_spr; //целевая температура (установка)
         $result->value->ch = $dValue->ch;     //подача СО
         $result->value->retb = $dValue->retb; //обратка СО
@@ -21,6 +20,9 @@ class formatterBoilerOpenTerm implements iFormatterValue
 
         $result->value->mlev = $dValue->mlev; //уровень модуляции горелки
         $result->value->flon = $dValue->flon; //статус горелки
+
+        $result->value->room = $dValue->room; //температура в комнате
+        $result->value->out = $dValue->out;   //внешняя температура
 
         return $result;
     }

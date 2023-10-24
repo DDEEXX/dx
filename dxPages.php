@@ -488,6 +488,17 @@ if ($p == 'heater') {
                             <span id="boiler_dhw"></span>
                         </div>
                     </div>
+                    <div class="boiler_tile">
+                        <h1>Инфо</h1>
+                        <div class="boiler_data">
+                            <h2>Температура внутри</h2>
+                            <span id="boiler_room"></span>
+                        </div>
+                        <div class="boiler_data">
+                            <h2>Температура снаружи</h2>
+                            <span id="boiler_out"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
