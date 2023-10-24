@@ -48,6 +48,9 @@ class unitFactory
             case typeUnit::GAS_SENSOR :
                 $className = 'gasSensorUnit';
                 break;
+            case typeUnit::BOILER_OPEN_THERM :
+                $className = 'boilerOpenThermUnit';
+                break;
             default :
                 $className = '';
         }

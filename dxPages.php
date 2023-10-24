@@ -429,9 +429,54 @@ if ($p == 'heater') {
             </div>
         </div>
         <div class="clear"></div>
-        <div class="grid_12 alpha omega" style="align-self: flex-start">
+        <div class="grid_12 alpha omega" style="align-self: flex-start; margin-top: 5px;">
             <div class="ui-corner-all ui-state-default ui-widget-content" style="height: 250px">
-                <span>резерв</span>
+                <div style="display: flex; align-content: flex-start">
+                    <div class="boiler_tile">
+                        <h2>Отопление</h2>
+                        <div class="boiler_data">
+                            <h2>Целевая</h2>
+                            <span id="boiler_spr"></span>
+                        </div>
+                        <div id="heater_boiler_heating" class="heater_boiler_slider"></div>
+                        <div class="boiler_data">
+                            <h2>Подача</h2>
+                            <span id="boiler_ch"></span>
+                        </div>
+                        <div class="boiler_data">
+                            <h2>Обратка</h2>
+                            <span id="boiler_retb"></span>
+                        </div>
+                        <div class="boiler_data">
+                            <h2>Расчетная</h2>
+                            <span id="boiler_tset"></span>
+                        </div>
+                    </div>
+                    <div class="boiler_tile">
+                        <h2>Теплый пол 1 этаж</h2>
+                        <div class="boiler_data">
+                            <h2>Целевая</h2>
+                            <span id="boiler_sprf1"></span>
+                        </div>
+                        <div id="heater_floor_1" class="heater_boiler_slider"></div>
+                    </div>
+                    <div class="boiler_tile">
+                        <h2>Теплый пол ванная</h2>
+                        <div class="boiler_data">
+                            <h2>Целевая</h2>
+                            <span id="boiler_sprb"></span>
+                        </div>
+                        <div id="heater_floor_bathroom" class="heater_boiler_slider"></div>
+                    </div>
+                    <div class="boiler_tile">
+                        <h2>ГВС</h2>
+                        <div class="boiler_data">
+                            <h2>Целевая</h2>
+                            <span id="boiler_sprw"></span>
+                        </div>
+                        <div id="heater_boiler_water" class="heater_boiler_slider"></div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="clear"></div>
@@ -439,9 +484,7 @@ if ($p == 'heater') {
              style="align-self: stretch; margin-top: 5px; margin-bottom: 2px; flex-grow: 1">
             <div class="grid_6 alpha" style="height: 100%">
                 <div class="ui-corner-all ui-state-default ui-widget-content" style="height: 100%">
-                    <div><img src="img2/heater.png" style="position: absolute; margin-left: 15px;margin-top: 30px">
-                    </div>
-
+                    <div><img src="img2/heater.png" style="position: absolute; margin-left: 15px;margin-top: 30px"></div>
                     <div id="heater_temp_boiler_out"
                          class="sensor_block temp_scheme ui-corner-all ui-state-default ui-widget-content"
                          style="position:absolute; left:8px; top:335px; padding: 5px">

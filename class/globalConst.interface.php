@@ -27,6 +27,7 @@ interface typeDevice{
     const SWITCH_WHD02      = 9; //Датчик влажности
     const KITCHEN_HOOD      = 10;//Кухонная вытяжка
     const GAS_SENSOR        = 11;//Датчик газа
+    const BOILER_OPEN_THERM = 12;//Котел отопления
 }
 
 interface typeUnit{
@@ -40,6 +41,7 @@ interface typeUnit{
     const HUMIDITY          = 8; //Датчик влажности
     const KITCHEN_HOOD      = 9; //Кухонная вытяжка
     const GAS_SENSOR        = 10;//Датчик газа
+    const BOILER_OPEN_THERM = 11;//Котел отопления
 }
 
 interface graphType {

@@ -416,3 +416,12 @@ class gasSensorUnit extends sensorUnit {
     }
 
 }
+
+class boilerOpenThermUnit extends sensorUnit {
+
+    public function __construct(array $options)
+    {
+        parent::__construct($options, typeUnit::GAS_SENSOR);
+    }
+
+}

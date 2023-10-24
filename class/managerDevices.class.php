@@ -70,8 +70,8 @@ class deviceFactory
             case typeDevice::KITCHEN_HOOD :
                 $className = 'kitchenHood';
                 break;
-            case typeDevice::GAS_SENSOR :
-                $className = 'gasSensor';
+            case typeDevice::BOILER_OPEN_THERM :
+                $className = 'boilerOpenTherm';
                 break;
             default :
                 return null;
