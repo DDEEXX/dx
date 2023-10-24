@@ -53,6 +53,9 @@ $(function () {
         },
         slide: function (event, ui) {
             $('#boiler_spr').html(ui.value / 10 + " &degC");
+        },
+        change: function( event, ui ) {
+            $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=_spr&v='+ui.value, function () {});
         }
     });
 
@@ -91,6 +94,9 @@ $(function () {
         },
         slide: function (event, ui) {
             $('#boiler_sprw').html(ui.value / 10 + " &degC");
+        },
+        change: function( event, ui ) {
+            $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=_dhw&v='+ui.value, function () {});
         }
     });
     heater_updateBoiler();
