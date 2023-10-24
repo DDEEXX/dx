@@ -433,10 +433,12 @@ if ($p == 'heater') {
             <div class="ui-corner-all ui-state-default ui-widget-content" style="height: 250px">
                 <div style="display: flex; align-content: flex-start">
                     <div class="boiler_tile">
-                        <h2>Отопление</h2>
+                        <h1>Отопление</h1>
                         <div class="boiler_data">
-                            <h2>Целевая</h2>
-                            <span id="boiler_spr"></span>
+                            <h1>Целевая</h1>
+                            <p id="boiler_spr"></p>
+                            <img id="boiler_heating_fire" style="margin-left: 5px">
+                            <h3 id="boiler_heating_fire_level"></h3>
                         </div>
                         <div id="heater_boiler_heating" class="heater_boiler_slider"></div>
                         <div class="boiler_data">
@@ -453,28 +455,34 @@ if ($p == 'heater') {
                         </div>
                     </div>
                     <div class="boiler_tile">
-                        <h2>Теплый пол 1 этаж</h2>
+                        <h1>Теплый пол 1 этаж</h1>
                         <div class="boiler_data">
-                            <h2>Целевая</h2>
-                            <span id="boiler_sprf1"></span>
+                            <p>Целевая</p>
+                            <p id="boiler_sprf1"></p>
                         </div>
                         <div id="heater_floor_1" class="heater_boiler_slider"></div>
                     </div>
                     <div class="boiler_tile">
-                        <h2>Теплый пол ванная</h2>
+                        <h1>Теплый пол ванная</h1>
                         <div class="boiler_data">
-                            <h2>Целевая</h2>
-                            <span id="boiler_sprb"></span>
+                            <p>Целевая</p>
+                            <p id="boiler_sprb"></p>
                         </div>
                         <div id="heater_floor_bathroom" class="heater_boiler_slider"></div>
                     </div>
                     <div class="boiler_tile">
-                        <h2>ГВС</h2>
+                        <h1>ГВС</h1>
                         <div class="boiler_data">
-                            <h2>Целевая</h2>
-                            <span id="boiler_sprw"></span>
+                            <p>Целевая</p>
+                            <p id="boiler_sprw"></p>
+                            <img id="boiler_heating_wfire" style="margin-left: 5px">
+                            <h3 id="boiler_heating_wfire_level"></h3>
                         </div>
                         <div id="heater_boiler_water" class="heater_boiler_slider"></div>
+                        <div class="boiler_data">
+                            <h2>Принятая</h2>
+                            <span id="boiler_spdhw"></span>
+                        </div>
                         <div class="boiler_data">
                             <h2>Текущая</h2>
                             <span id="boiler_dhw"></span>

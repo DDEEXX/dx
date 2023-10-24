@@ -12,12 +12,15 @@ class formatterBoilerOpenTerm implements iFormatterValue
         $result->value->ch = $dValue->ch;     //подача СО
         $result->value->retb = $dValue->retb; //обратка СО
         $result->value->tset = $dValue->tset; //расчетная СО
+        $result->value->chon = $dValue->chon; //статус СО
 
         $result->value->_dhw = $dValue->_dhw; //целевая температура ГВС
         $result->value->dhw = $dValue->dhw;   //текущая температура ГВС
+        $result->value->spdhw = $dValue->spdhw;//Принятая ГВС
+        $result->value->dhwon = $dValue->dhwon;//статус ГВС
+
         $result->value->mlev = $dValue->mlev; //уровень модуляции горелки
-
-
+        $result->value->flon = $dValue->flon; //статус горелки
 
         return $result;
     }

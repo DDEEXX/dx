@@ -18,9 +18,18 @@
 }
 
 /*показания в контейнере*/
-.boiler_data>span {
+.boiler_data>h2 {
+    font-size: 80%
+}
+
+/*показания в контейнере*/
+.boiler_data>p {
     margin-left: 5px;
     font-size: 20px
+}
+
+.boiler_data>span {
+    margin-left: 5px;
 }
 
 /*слайдер*/
