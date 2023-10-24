@@ -64,6 +64,9 @@ class deviceFactory
             case typeDevice::HUMIDITY :
                 $className = 'humiditySensorDevice';
                 break;
+            case typeDevice::GAS_SENSOR :
+                $className = 'gasSensor';
+                break;
             case typeDevice::SWITCH_WHD02 :
                 $className = 'zigbeeSwitchWHD02';
                 break;

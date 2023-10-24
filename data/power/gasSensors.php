@@ -10,19 +10,17 @@ if ($_REQUEST['dev'] == 'gasSensor') {
     if (!is_null($unit)) {
         $data = $unit->getData();
         if (!is_null($data)) {
-            $value = json_decode($data['value'], true);
-            $dateLastStatus = $data['date'];
+            $value = $data->value;
+            $dateLastStatus = $data->date;
         }
     }
 
     $colorSensor = '#323200';
     $valueGas = '';
-    if (is_array($value)) {
+    if (is_object($value)) {
         $colorSensor = '#00ff00';
-        if ($value['alarm']) {
-            $colorSensor = '#ff0000';
-        }
-        $valueGas = $value['gas'];
+        if ($value->alarm) $colorSensor = '#ff0000';
+        $valueGas = $value->gas;
     }
 
     echo '<div style="display: flex">';
@@ -37,8 +35,8 @@ if ($_REQUEST['dev'] == 'gasSensor') {
     $label = $_REQUEST['label'];
     $unit = managerUnits::getUnitLabel($label);
     if (!is_null($unit)) {
-        $unitData = $unit->getData();
-        $dateLastStatus = $unitData['date'];
+        $data = $unit->getData();
+        $dateLastStatus = $data->date;
         if ($dateStatus != $dateLastStatus) {
             $result['update'] = true;
         }
@@ -52,25 +50,25 @@ if ($_REQUEST['dev'] == 'gasSensor') {
     $valueSensor = null;
     if (!is_null($unit)) {
         $dataSensor = $unit->getData();
-        $valueSensor = json_decode($dataSensor['value'], true);
-        $dateLastSensor = $dataSensor['date'];
+        $valueSensor = $dataSensor->value;
+        $dateLastSensor = $dataSensor->date;
     }
 
-    if (is_array($valueSensor)) {
+    if (is_object($valueSensor)) {
 
-        $gas = $valueSensor['gas'];
-        $igas = $valueSensor['igas'];
-        $alarm = $valueSensor['alarm'];
-        $threshold = is_numeric($valueSensor['threshold']) ?
-            (int)$valueSensor['threshold'] : 0;
-        $detectInterval = is_numeric($valueSensor['sensor_detect_interval']) ?
-            (int)$valueSensor['sensor_detect_interval'] : 0;
-        $stateInterval = is_numeric($valueSensor['state_send_interval']) ?
-            (int)($valueSensor['state_send_interval'] / 1000) : 0;
-        $alarmInterval = is_numeric($valueSensor['alarm_send_interval']) ?
-            (int)($valueSensor['alarm_send_interval'] / 1000) : 0;
-        $availabilityInterval = is_numeric($valueSensor['send_availability_interval']) ?
-            (int)($valueSensor['send_availability_interval'] / 1000) : 0;
+        $gas = $valueSensor->gas;
+        $igas = $valueSensor->igas;
+        $alarm = $valueSensor->alarm;
+        $threshold = is_numeric($valueSensor->threshold) ?
+            (int)$valueSensor->threshold : 0;
+        $detectInterval = is_numeric($valueSensor->sensor_detect_interval) ?
+            (int)$valueSensor->sensor_detect_interval : 0;
+        $stateInterval = is_numeric($valueSensor->state_send_interval) ?
+            (int)($valueSensor->state_send_interval / 1000) : 0;
+        $alarmInterval = is_numeric($valueSensor->alarm_send_interval) ?
+            (int)($valueSensor->alarm_send_interval / 1000) : 0;
+        $availabilityInterval = is_numeric($valueSensor->send_availability_interval) ?
+            (int)($valueSensor->send_availability_interval / 1000) : 0;
 
         $arData = [
             0 => ['label' => 'Текущее показание:', 'value' => $igas],

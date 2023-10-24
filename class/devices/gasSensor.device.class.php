@@ -1,18 +1,60 @@
 <?php
-/** Датчик атмосферного давления
+/** Датчик газа
  */
+
+class formatterGasSensorMQTT extends aFormatterValue
+{
+    function formatRawValue($value)
+    {
+        $result = new stdClass();
+        $result->value = json_decode($value);
+        return $result;
+    }
+
+    function formatTestCode($value)
+    {
+        $objValue = json_decode($value);
+        switch ($objValue->state) {
+            case 'online' :
+                $testCode = testDeviceCode::WORKING;
+                break;
+            case 'offline' :
+                $testCode = testDeviceCode::NO_CONNECTION;
+                break;
+            default :
+                $testCode = testDeviceCode::UNKNOWN;
+        }
+        return parent::formatTestCode($testCode);
+    }
+}
 
 class gasSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
 
 {
-    const DEFAULT_PAYLOAD = '{"state": ""}';
-    const DEFAULT_TEST_PAYLOAD = '{"availability": ""}';
-
-    public function __construct($deviceID, $mqttParameters)
+    private static function getConstructParam($parameters, &$mqttParameters)
     {
-        if (empty($mqttParameters['payloadRequest'])) $mqttParameters['payloadRequest'] = self::DEFAULT_PAYLOAD;
-        if (empty($mqttParameters['testPayload'])) $mqttParameters['testPayload'] = self::DEFAULT_TEST_PAYLOAD;
-        parent::__construct($deviceID, $mqttParameters, formatValueDevice::MQTT_GAS_SENSOR);
+        $result = [];
+        $mqttParameters['payloadRequest'] = '';
+        $result['selfState'] = false;
+        $result['formatter'] = null;
+        switch ($parameters['valueFormat']) {
+            case 0 :
+                $mqttParameters['payloadRequest'] = '{"state": ""}';
+                $mqttParameters['topicAvailability'] = $mqttParameters['topicCmnd'];
+                $mqttParameters['testPayload'] = '{"availability": ""}';
+                $result['selfState'] = false;
+                $result['formatter'] = new formatterGasSensorMQTT();
+                break;
+        }
+        return $result;
+    }
+
+    public function __construct($parameters, $mqttParameters)
+    {
+        $param = self::getConstructParam($parameters, $mqttParameters);
+        $this->selfState = $param['selfState'];
+        $this->value = valuesFactory::createDeviceValue($parameters, $param['formatter']);
+        parent::__construct($parameters['deviceID'], $mqttParameters, formatValueDevice::MQTT_GAS_SENSOR);
     }
 
     function formatTestPayload($testPayload, $ignoreUnknown = false)
@@ -28,13 +70,13 @@ class gasSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
 
 class gasSensorFactory
 {
-    static public function create($deviceID, $net, $mqttParameters)
+    static public function create($parameters, $mqttParameters)
     {
-        switch ($net) {
+        switch ($parameters['net']) {
             case netDevice::ETHERNET_MQTT:
-                return new gasSensorMQQTPhysic($deviceID, $mqttParameters);
+                return new gasSensorMQQTPhysic($parameters, $mqttParameters);
             default :
-                return new DeviceSensorPhysicDefault($deviceID);
+                return new DeviceSensorPhysicDefault($parameters['deviceID']);
         }
     }
 }
@@ -69,14 +111,18 @@ class gasSensor extends aSensorDevice implements iDeviceAlarm
     public function __construct(array $options)
     {
         parent::__construct($options, typeDevice::GAS_SENSOR);
+        $parameters = [
+            'deviceID' => $this->getDeviceID(),
+            'net' => $this->getNet(),
+            'valueFormat' => $options['value_format'],
+            'valueStorage' => $options['value_storage']
+        ];
         $mqttParameters = [
             'topicCmnd' => $options['topic_cmnd'],
             'topicStat' => $options['topic_stat'],
-            'topicAvailability' => '',
             'topicSet' => $options['topic_cmnd'] . '/set',
-            'topicTest' => $options['topic_test'],
-            'payloadRequest' => $options['payload_cmnd']];
-        $this->devicePhysic = gasSensorFactory::create($this->getDeviceID(), $this->getNet(), $mqttParameters);
+            'topicTest' => $options['topic_test']];
+        $this->devicePhysic = gasSensorFactory::create($parameters, $mqttParameters);
         $this->alarm = managerAlarmDevice::createAlarm($options['topic_alarm'], $this->devicePhysic);
     }
 

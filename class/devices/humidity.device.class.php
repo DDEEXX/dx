@@ -40,7 +40,7 @@ class humiditySensorMQQTPhysic extends aDeviceSensorPhysicMQTT
     private static function getConstructParam($parameters, &$mqttParameters)
     {
         $result = [];
-        $result['payloadRequest'] = '';
+        $mqttParameters['payloadRequest'] = '';
         $result['selfState'] = false;
         $result['formatter'] = null;
         switch ($parameters['valueFormat']) {
@@ -105,8 +105,7 @@ class humiditySensorDevice extends aSensorDevice
             'topicCmnd' => $options['topic_cmnd'],
             'topicStat' => $options['topic_stat'],
             'topicTest' => $options['topic_test'],
-            'topicAlarm' => $options['topic_alarm'],
-            'payloadRequest' => $options['payload_cmnd']];
+            'topicAlarm' => $options['topic_alarm']];
         $this->devicePhysic = humiditySensorFactory::create($parameters, $mqttParameters);
     }
 
