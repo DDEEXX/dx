@@ -47,6 +47,15 @@ class boilerOpenTherm_MQTT extends aDeviceMakerPhysicMQTT
         $this->value = valuesFactory::createDeviceValue($parameters, new formatterBoilerOpenTerm());
         parent::__construct($parameters['deviceID'], $mqttParameters);
     }
+
+    function formatTestPayload($testPayload, $ignoreUnknown = false)
+    {
+        if ($this->value instanceof iDeviceValue) {
+            $testPayload = $this->value->getFormatTestCode($testPayload);
+        }
+        return parent::formatTestPayload($testPayload, $ignoreUnknown);
+    }
+
 }
 
 class boilerOpenTherm extends aMakerDevice

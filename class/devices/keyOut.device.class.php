@@ -138,8 +138,6 @@ class formatterKeyOutMQTT_2 extends aFormatterValue
 {
     function formatRawValue($value)
     {
-        logger::writeLog('пришел ' .$value, loggerTypeMessage::NOTICE, loggerName::ERROR);
-
         $result = new formatDeviceValue();
         $result->valueNull = false;
         $result->status = 0;
