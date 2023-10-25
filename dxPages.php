@@ -436,7 +436,6 @@ if ($p == 'heater') {
                     <div class="boiler_tile">
                         <h1>Отопление</h1>
                         <div class="boiler_data">
-                            <h1>Целевая</h1>
                             <p id="boiler_spr"></p>
                             <img id="boiler_heating_fire" style="margin-left: 5px">
                             <h3 id="boiler_heating_fire_level"></h3>
@@ -458,7 +457,6 @@ if ($p == 'heater') {
                     <div class="boiler_tile">
                         <h1>Теплый пол</h1>
                         <div class="boiler_data">
-                            <p>Целевая</p>
                             <p id="boiler_sprf1"></p>
                         </div>
                         <div id="heater_floor_1" class="heater_boiler_slider"></div>
@@ -466,7 +464,6 @@ if ($p == 'heater') {
                     <div class="boiler_tile">
                         <h1>Ванная</h1>
                         <div class="boiler_data">
-                            <p>Целевая</p>
                             <p id="boiler_sprb"></p>
                         </div>
                         <div id="heater_floor_bathroom" class="heater_boiler_slider"></div>
@@ -474,7 +471,6 @@ if ($p == 'heater') {
                     <div class="boiler_tile">
                         <h1>ГВС</h1>
                         <div class="boiler_data">
-                            <p>Целевая</p>
                             <p id="boiler_sprw"></p>
                             <img id="boiler_heating_wfire" style="margin-left: 5px">
                             <h3 id="boiler_heating_wfire_level"></h3>
