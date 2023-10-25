@@ -140,16 +140,11 @@
                 $netTitle = getNetTitle($device->getNet());
                 $deviceImage = getImageDevice($device->getType());
                 $value = '';
-                switch ($device->getDevicePhysic()->getFormatValue()) {
-                    case formatValueDevice::MQTT_KITCHEN_HOOD:
-                    case formatValueDevice::MQTT_GAS_SENSOR:
-                        //TODO - придумать с value
-                        break;
-                    default :
-                        $deviceData = $device->getData()->getDataArray();
-                        $value = 'v: '.($deviceData['valueNull']?'null': $deviceData['value']).
-                            ', d: '.date('H:i:s d-m-Y', $deviceData['date']).
-                            ', s: '.getStatus($deviceData['status']);
+                $deviceData = $device->getData();
+                if ($deviceData instanceof iDeviceDataValue) {
+                    $value = 'v: ' . ($deviceData->valueNull ? 'null' : $deviceData->value) .
+                        ', d: ' . date('H:i:s d-m-Y', $deviceData->date) .
+                        ', s: ' . getStatus($deviceData->status);
                 }
                 $deviceNote = $device->getNote();
                 $deviceStatus = testDeviceCode::NO_TEST;

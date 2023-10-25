@@ -34,18 +34,10 @@ class gasSensorMQQTPhysic extends aDeviceSensorPhysicMQTT
     private static function getConstructParam($parameters, &$mqttParameters)
     {
         $result = [];
-        $mqttParameters['payloadRequest'] = '';
-        $result['selfState'] = false;
-        $result['formatter'] = null;
-        switch ($parameters['valueFormat']) {
-            case 0 :
-                $mqttParameters['payloadRequest'] = '{"state": ""}';
-                $mqttParameters['topicAvailability'] = $mqttParameters['topicCmnd'];
-                $mqttParameters['testPayload'] = '{"availability": ""}';
-                $result['selfState'] = false;
-                $result['formatter'] = new formatterGasSensorMQTT();
-                break;
-        }
+        $result['selfState'] = true;
+        $result['formatter'] = new formatterGasSensorMQTT();
+        $mqttParameters['payloadRequest'] = '{"state": ""}';
+        $mqttParameters['topicAvailability'] = '';
         return $result;
     }
 

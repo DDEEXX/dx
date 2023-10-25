@@ -20,30 +20,20 @@ function heater_updateBoiler() {
         $('#boiler_tset').html(data.tset + " &degC");
         $('#boiler_dhw').html(data.dhw + " &degC");
         $('#boiler_spdhw').html(data.spdhw + " &degC");
-        if (data.chon) {
-            if (data.flon) {
-                $('#boiler_heating_fire').attr('src', 'img2/icon_small/fire.png')
-                $('#boiler_heating_fire_level').html(data.mlev + '%');
-            } else {
-                $('#boiler_heating_fire').attr('src', 'img2/icon_small/fire1.png')
-                $('#boiler_heating_fire_level').html("");
-            }
-        } else {
-            $('#boiler_heating_fire').attr('src', 'img2/icon_small/fire2.png')
-            $('#boiler_heating_fire_level').html("");
-        }
-        if (data.dhwon) {
-            if (data.flon) {
-                $('#boiler_heating_wfire').attr('src', 'img2/icon_small/fire.png')
-                $('#boiler_heating_wfire_level').html(data.mlev + '%');
-            } else {
-                $('#boiler_heating_wfire').attr('src', 'img2/icon_small/fire1.png')
-                $('#boiler_heating_wfire_level').html("");
-            }
-        } else {
-            $('#boiler_heating_wfire').attr('src', 'img2/icon_small/fire2.png')
-            $('#boiler_heating_wfire_level').html("");
-        }
+
+        //модуляция горелки
+        $levelFire = data.flon && (data.chon || data.flon) ? data.mlev + '%' : '';
+        //иконка горелки СО
+        $scrFire = data.chon ? (data.flon ? 'img2/icon_small/fire.png' : 'img2/icon_small/fire2.png')
+            : 'img2/icon_small/fire2.png';
+        //иконка горелки ГВС
+        $scrFireWater = data.dhwon ? (data.flon ? 'img2/icon_small/fire.png' : 'img2/icon_small/fire2.png')
+            : 'img2/icon_small/fire2.png';
+        $('#boiler_heating_fire').attr('src', $scrFire);
+        $('#boiler_heating_fire_level').html(data.chon && data.flon ? $levelFire : "");
+        $('#boiler_heating_wfire').attr('src', $scrFireWater);
+        $('#boiler_heating_wfire_level').html(data.dhwon && data.flon ? $levelFire : "");
+
         $('#boiler_room').html(data.room.toFixed(1) + " &degC");
         $('#boiler_out').html(data.out.toFixed(1) + " &degC");
     });
