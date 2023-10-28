@@ -117,6 +117,7 @@ class managerDevices
      */
     public static function getDevice($idDevice)
     {
+        if (is_null($idDevice)) return null;
         try {
             $conn = sqlDataBase::Connect();
         } catch (connectDBException $e) {

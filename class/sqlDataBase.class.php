@@ -243,7 +243,7 @@ class DB
      */
     static public function getListUnits(Iterator $sel = null)
     {
-        $query = 'SELECT *, a.Note NoteU, b.Note NoteD FROM tunits a LEFT JOIN tdevice b ON a.DeviceID = b.DeviceID LEFT JOIN tunitetype c ON a.UniteTypeID = c.UniteTypeID';
+        $query = 'SELECT *, a.Note NoteU, b.Note NoteD FROM tunits a LEFT JOIN tdevice b ON a.DeviceID = b.DeviceID';
         return self::getListBD($query, $sel);
     }
 

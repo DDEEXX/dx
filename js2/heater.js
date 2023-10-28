@@ -54,6 +54,33 @@ function heater_checkBoiler_Status() {
 
 $(function () {
 
+    $("#boiler_power").checkboxradio({
+        icon: false
+    });
+    $("#boiler_power_water").checkboxradio({
+        icon: false
+    });
+
+    const label = "boiler_opentherm";
+    $("#heater_boiler_setup_dialog_").dialog({
+        autoOpen: false,
+        draggable: false,
+        position: {my: "center", at: "center", of: "#page_heater"},
+        resizable: false,
+        title: "Настройка отопления в доме",
+        height: "auto",
+        width: 1100,
+        open: function (event, ui) {
+            $.get("data/heater/heating.php?dev=dialogSetup&label=" + label, function (data) {
+                $("#heater_boiler_setup_dialog_content").html(data);
+            });
+        }
+    });
+
+    $("#heater_boiler_setup").button().click(function () {
+        $("#heater_boiler_setup_dialog_").dialog("open");
+    });
+
     $("#heater_boiler_heating").slider({
         min: 190,
         max: 280,
@@ -68,11 +95,11 @@ $(function () {
         slide: function (event, ui) {
             $('#boiler_spr').html(ui.value / 10 + " &degC");
         },
-        change: function( event, ui ) {
-            $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=_spr&v='+ui.value+'&d=10', function () {});
+        stop: function (event, ui) {
+            $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=_spr&v=' + ui.value + '&d=10', function () {
+            });
         }
     });
-
     $("#heater_floor_1").slider({
         min: 230,
         max: 400,
@@ -109,8 +136,9 @@ $(function () {
         slide: function (event, ui) {
             $('#boiler_sprw').html(ui.value + " &degC");
         },
-        change: function( event, ui ) {
-            $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=_dhw&v='+ui.value, function () {});
+        stop: function (event, ui) {
+            $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=_dhw&v=' + ui.value, function () {
+            });
         }
     });
     heater_updateBoiler();
@@ -122,6 +150,12 @@ $(function () {
     });
     heater_updateSchemeDelta();
 
+    //события на подгружаемые элементы - режим работы
+    $('#heater_boiler_setup_dialog_content').on("change", 'input[name="boiler_mode_radio"]' ,function() {
+        const value = $(this).val();
+        $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=_mode&v=' + value);
+    });
+
 });
 
 //Обновление показания температуры каждые 5 минут
@@ -129,11 +163,7 @@ $(document).everyTime("60s", function () {
     heater_updateDataScheme();
 });
 
-// $(document).everyTime("15s", function () {
-//     heater_updateBoiler();
-// });
-
 $(document).everyTime("3s", function () {
-    heater_checkBoiler_Status();
+    // heater_checkBoiler_Status();
 });
 

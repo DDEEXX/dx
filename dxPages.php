@@ -420,6 +420,7 @@ if ($p == 'heater') {
     ?>
     <link rel="stylesheet" type="text/css" href="css2/style_heater.css">
     <script src="js2/heater.js"></script>
+    <script src="js2/boilerSetup.js"></script>
 
     <div id="page_heater" class="grid_12"
          style="display: flex; flex-direction: column; align-content: flex-start; height: 790px">
@@ -434,7 +435,10 @@ if ($p == 'heater') {
                 <input id="heater_boiler_last_status" value="" type="hidden">
                 <div style="display: flex; align-content: flex-start">
                     <div class="boiler_tile">
-                        <h1>Отопление</h1>
+                        <label for="boiler_power">Отопление
+                            <input type="checkbox" name="boiler_power" id="boiler_power">
+                        </label>
+<!--                        <h1 id="boiler_power">Отопление</h1>-->
                         <div class="boiler_data">
                             <p id="boiler_spr"></p>
                             <img id="boiler_heating_fire" style="margin-left: 5px">
@@ -469,7 +473,10 @@ if ($p == 'heater') {
                         <div id="heater_floor_bathroom" class="heater_boiler_slider"></div>
                     </div>
                     <div class="boiler_tile">
-                        <h1>ГВС</h1>
+                        <label for="boiler_power_water">ГВС
+                            <input type="checkbox" name="boiler_power_water" id="boiler_power_water">
+                        </label>
+<!--                        <h1>ГВС</h1>-->
                         <div class="boiler_data">
                             <p id="boiler_sprw"></p>
                             <img id="boiler_heating_wfire" style="margin-left: 5px">
@@ -486,6 +493,10 @@ if ($p == 'heater') {
                         </div>
                     </div>
                     <div class="boiler_tile">
+                        <div id="heater_boiler_setup">Настройка</div>
+                        <div id="heater_boiler_setup_dialog_">
+                            <div id="heater_boiler_setup_dialog_content"></div>
+                        </div>
                         <h1>Инфо</h1>
                         <div class="boiler_data">
                             <h2>Температура внутри</h2>

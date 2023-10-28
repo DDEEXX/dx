@@ -11,7 +11,12 @@
 }
 
 .boiler_tile>h1 {
-    font-size: 180%
+    font-size: 180%;
+}
+
+.boiler_tile>label {
+    font-size: 180%;
+    width: 150px;
 }
 
 /*контейнер с показаниями*/
@@ -41,4 +46,13 @@
     width: 180px;
     margin-top: 20px;
     margin-bottom: 20px
+}
+
+.boiler_setup_spinner {
+    width: 2.5em;
+}
+
+.boiler_setup_spinner_ {
+    margin-left: 5px;
+    margin-right: 5px;
 }

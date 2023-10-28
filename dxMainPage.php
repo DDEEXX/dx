@@ -25,6 +25,7 @@
     <link rel="stylesheet" type="text/css" href="css2/icon.css">
     <link rel="stylesheet" type="text/css" href="css2/style.css">
     <link href="js2/jPlayer/skin/dxhome/css/jplayer.blue.monday.min.css" rel="stylesheet" type="text/css" />
+    <script src="js2/chart.umd.js"></script>
 
     <script>
         $(function () {
