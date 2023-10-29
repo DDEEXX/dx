@@ -15,24 +15,34 @@ interface iUniteOptions
 {
     function get($options);
 
-    function set($options, $value);
+    function set($option, $value);
+
+    function setOptions($options);
 }
 
 abstract class aUniteOptions
 {
+    protected $unitID;
+
+    public function __construct($unitID)
+    {
+        $this->unitID = $unitID;
+    }
+
     abstract function get($options);
 
-    abstract function set($options, $value);
+    abstract function set($option, $value);
+
+    abstract function setOptions($options);
 }
 
 class uniteOptionsJSON extends aUniteOptions
 {
     private $data = [];
-    private $unitID;
 
     public function __construct($unitID, $jsonData)
     {
-        $this->unitID = $unitID;
+        parent::__construct($unitID);
         if (is_string($jsonData)) $this->data = json_decode($jsonData, true);
     }
 
@@ -41,9 +51,9 @@ class uniteOptionsJSON extends aUniteOptions
         return array_key_exists($options, $this->data) ? $this->data[$options] : null;
     }
 
-    function set($options, $value)
+    function set($option, $value)
     {
-        $this->data[$options] = $value;
+        $this->data[$option] = $value;
         $this->save();
     }
 
@@ -69,6 +79,16 @@ class uniteOptionsJSON extends aUniteOptions
         }
         unset($con);
     }
+
+    function setOptions($options) {
+        if (is_string($options)) {
+            $jsonData = json_decode($options, true);
+            foreach ($jsonData as $key=>$value)
+            $this->data[$key] = $value;
+        }
+        $this->save();
+    }
+
 }
 
 interface iUnit

@@ -1,7 +1,7 @@
 var boilerChart;
 
 function graph() {
-    $.get("data/heater/heating.php?dev=dialogSetup&data=curveGraph", function (jsonData) {
+    $.get("data/heater/heating.php?dev=dialogSetup&label=boiler_opentherm&data=curveGraph", function (jsonData) {
 
         const $grafica = document.querySelector("#graphCurve");
 
@@ -95,7 +95,7 @@ function graph() {
 }
 
 function updateGraph() {
-    $.get("data/heater/heating.php?dev=dialogSetup&data=curveGraph", function (jsonData) {
+    $.get("data/heater/heating.php?dev=dialogSetup&label=boiler_opentherm&data=curveGraph", function (jsonData) {
 
         const data1 = Object.values(jsonData.data1);
         const data_b = Object.values(jsonData.data_b);
@@ -120,12 +120,12 @@ function getData() {
     // });
 }
 
-$(function () {
+$(document).ready(function () {
 
-    $('input[name="boiler_mode_radio"]').checkboxradio({
+    $('input[name="boiler_mode_radio"], input[name="boiler_floor_mode_radio"]').checkboxradio({
         icon: false
     });
-    $( "#boiler_mode_radio_group" ).controlgroup();
+    $( "#boiler_mode_radio_group, #boiler_f_mode_radio_group" ).controlgroup();
 
     $(".property_spinner").spinner({
         step: 0.1,
@@ -133,17 +133,21 @@ $(function () {
         change: function( event, ui ) {
             const property = $(this).attr("property");
             const value = $(this).spinner( "value" );
-            $.get("data/heater/heating.php?dev=setProperty&property="+property+"&value="+value, function (data) {
+            $.get("data/heater/heating.php?dev=setProperty&mode=one&property="+property+"&value="+value, function () {
                 updateGraph();
             })
         },
         stop: function( event, ui ) {
             const property = $(this).attr("property");
             const value = $(this).spinner( "value" );
-            $.get("data/heater/heating.php?dev=setProperty&property="+property+"&value="+value, function (data) {
+            $.get("data/heater/heating.php?dev=setProperty&mode=one&property="+property+"&value="+value, function () {
                 updateGraph();
             })
         }
+    });
+
+    $("#boiler_setup_save_options").button({
+        icon: "ui-icon-disk"
     });
 
     //getData();

@@ -14,7 +14,7 @@
     font-size: 180%;
 }
 
-.boiler_tile>label {
+.boiler_tile>label, #heater_boiler_setup {
     font-size: 180%;
     width: 150px;
 }
@@ -53,6 +53,14 @@
 }
 
 .boiler_setup_spinner_ {
-    margin-left: 5px;
-    margin-right: 5px;
+    margin: 0px 5px 0px;
+}
+
+.boiler_setup_input_title {
+    margin-left: 10px;
+}
+
+.boiler_setup_input {
+    margin: 0px 5px 0px;
+    height: 1.5em;
 }

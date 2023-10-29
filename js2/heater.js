@@ -14,6 +14,7 @@ function heater_updateDataScheme() {
 
 function heater_updateBoiler() {
     $.get('data/heater/heating.php?dev=boiler&label=boiler_opentherm', function (data) {
+
         $('#heater_boiler_last_status').val(data.date);
         $('#boiler_ch').html(data.ch + " &degC");
         $('#boiler_retb').html(data.retb + " &degC");
@@ -56,7 +57,12 @@ $(function () {
 
     $("#boiler_power").checkboxradio({
         icon: false
+    }).click(function () {
+        const p = $(this).attr("property");
+        const v = $(this).is(":checked");
+        $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=' + p + 'a&v=' + v);
     });
+
     $("#boiler_power_water").checkboxradio({
         icon: false
     });
@@ -65,7 +71,7 @@ $(function () {
     $("#heater_boiler_setup_dialog_").dialog({
         autoOpen: false,
         draggable: false,
-        position: {my: "center", at: "center", of: "#page_heater"},
+        position: {my: "center", at: "center top", of: "#page_heater"},
         resizable: false,
         title: "Настройка отопления в доме",
         height: "auto",
@@ -96,8 +102,7 @@ $(function () {
             $('#boiler_spr').html(ui.value / 10 + " &degC");
         },
         stop: function (event, ui) {
-            $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=_spr&v=' + ui.value + '&d=10', function () {
-            });
+            $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=_spr&v=' + ui.value + '&d=10');
         }
     });
     $("#heater_floor_1").slider({
@@ -156,6 +161,36 @@ $(function () {
         $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=_mode&v=' + value);
     });
 
+    $('#heater_boiler_setup_dialog_content').on("change", 'input[name="boiler_floor_mode_radio"]' ,function() {
+        const value = $(this).val();
+        $.get("data/heater/heating.php?dev=setProperty&mode=one&property=f_mode&value="+value, function () {
+            $.get("data/heater/heating.php?dev=dialogSetup&label=" + label, function (data) {
+                $("#heater_boiler_setup_dialog_content").html(data);
+            });
+        });
+    });
+
+    $('#heater_boiler_setup_dialog_content').on("click", '#boiler_setup_save_options' ,function() {
+        let data = {};
+        $('#heater_boiler_setup_dialog_content').find('[property]').each(function(i, el) {
+            const p = $(this).attr('property');
+            const v = $(this).val();
+            data[p] = v;
+        });
+        data['f_mode'] = $('#heater_boiler_setup_dialog_content').find('input[name="boiler_floor_mode_radio"]:checked').val();
+
+        const jsonDana = JSON.stringify(data);
+        $.post("data/heater/heating.php", {dev: "setProperty", data: jsonDana} );
+    });
+
+
+});
+
+$(document).ready(function () {
+    $.get('data/heater/heating.php?dev=boiler&label=boiler_opentherm', function (data) {
+        $("#boiler_power").attr("checked", data._chena).checkboxradio("refresh");
+        $("#boiler_power_water").attr("checked", data._dhwena).checkboxradio("refresh");
+    });
 });
 
 //Обновление показания температуры каждые 5 минут
@@ -164,6 +199,6 @@ $(document).everyTime("60s", function () {
 });
 
 $(document).everyTime("3s", function () {
-    // heater_checkBoiler_Status();
+    heater_checkBoiler_Status();
 });
 
