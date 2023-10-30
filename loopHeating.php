@@ -61,7 +61,7 @@ class daemonLoopHeating extends daemon
                 $dt = ($now - $predStep);
                 $predStep = $now;
 
-                $unitBoiler = managerUnits::getUnitLabel('boiler_pid');
+                $unitBoiler = managerUnits::getUnitLabel('boiler_opentherm');
                 $unitPID = managerUnits::getUnitLabel('boiler_pid');
                 if (is_null($unitBoiler) || is_null($unitPID)) continue;
                 $this->boiler($unitBoiler, $unitPID, $boilerTempCurrentLast, $boiler_iError, $dt);
