@@ -92,8 +92,10 @@ class daemonLoopHeating extends daemon
     {
         $data = $unitBoiler->getData();
         $value = $data->value;
-//        if ($value->_mode) return; //режим не mqtt
+//        if ($value->_mode) return; //режим не mqtt !!!!!
         if ($value->_mode != 1) return; //режим не mqtt
+
+        $_dhw = $value->_dhw;
 
         $op = $unitPID->getOptions();
         $boiler_Kp = $op->get('b_kp');
@@ -151,7 +153,7 @@ class daemonLoopHeating extends daemon
         $opLow = $pid_b1->getTempCurve($boilerCurrentInT, $currentOutT);
 
         $op = $this->PID(
-            $boiler_target,
+            $_dhw,
             $boilerCurrentInT,
             $tempCurrentLast,
             $boiler_iError,
@@ -187,7 +189,7 @@ class daemonLoopHeating extends daemon
         }
         $op = max($opLow, min($opHigh, $op_));
         $iError = $I;	
-        $l = 'tT=' .$tempTarget. ' tC=' .$tempCurrent. ' op=' .$op. ' op_=' .$op_. ' P=' .$P. ' I=' .$I. ' D=' .$D.' h='.$opHigh.' l = '.$opLow.' dt = '.$dt;
+        $l = 'd-'.date('H:i:s').'tT=' .$tempTarget. ' tC=' .$tempCurrent. ' op=' .$op. ' op_=' .$op_. ' P=' .$P. ' I=' .$I. ' D=' .$D.' h='.$opHigh.' l = '.$opLow.' dt = '.$dt;
         logger::writeLog($l,loggerTypeMessage::NOTICE, loggerName::DEBUG);
         return $op;
     }

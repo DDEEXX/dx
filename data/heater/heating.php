@@ -196,10 +196,10 @@ if ($_REQUEST['dev'] == 'boiler') {
                 if ($i % 10 == 0) {
                     $tags[] = strval($i);
                     $data1[] = $pid1->getTempCurve(20, $i);
-                    if ($dataBoiler->_mode == 0) {
+                    //if ($dataBoiler->_mode == 0) {
                         $data_b[] = $pid_b->getTempCurve($boilerCurrentInT, $i);
                         $data_b1[] = $pid_b1->getTempCurve($boilerCurrentInT, $i);
-                    }
+                    //}
                     $data_f[] = $pid_f->getTempCurve($boilerCurrentInTf, $i);
                 }
             }
@@ -216,6 +216,7 @@ if ($_REQUEST['dev'] == 'boiler') {
     $value = $data->value;
 
     $mode = $value->_mode;
+    $mode = 0;
 
     echo '<script src="js2/boilerSetup.js"></script>';
     echo '<div style="display: flex; margin-top: 10px">';
