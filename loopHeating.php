@@ -15,7 +15,8 @@ posix_setsid();
 $fileDir = dirname(__FILE__);
 
 require($fileDir . '/class/daemon.class.php');
-require($fileDir . '/class/managerDevices.class.php');
+require($fileDir . '/class/managerUnits.class.php');
+require($fileDir . '/class/logger.class.php');
 
 ini_set('error_log', $fileDir . '/logs/errorLoopHeating.log');
 fclose(STDIN);
@@ -28,7 +29,7 @@ $STDERR = fopen($fileDir . '/logs/daemonLoopHeating.log', 'ab');
 class daemonLoopHeating extends daemon
 {
     const NAME_PID_FILE = 'loopHeating.pid';
-    const PAUSE = 30; //Пауза в основном цикле, в секундах (30 сек)
+    const PAUSE = 60; //Пауза в основном цикле, в секундах (30 сек)
 
     public function __construct($dirPidFile)
     {
@@ -39,13 +40,12 @@ class daemonLoopHeating extends daemon
     {
         parent::run();
 
-        $unitBoiler = managerUnits::getUnitLabel('boiler_pid');
-        $unitPID = managerUnits::getUnitLabel('boiler_pid');
-        if (is_null()) return;
-
         $startTime = time();
         $nextStep = $startTime + self::PAUSE;
+        $predStep = $startTime - self::PAUSE;;
         $doStep = false;
+        $boilerTempCurrentLast = null;
+        $boiler_iError = 0;
 
         while (!$this->stopServer()) {
 
@@ -58,10 +58,15 @@ class daemonLoopHeating extends daemon
 
             if ($now < $nextStep && !$doStep) {
                 //выполняем алгоритм управления отопление
-                $optionsPID = $unitPID->getOptions();
-                boiler($optionsPID);
-
                 $doStep = true;
+                $dt = ($now - $predStep);
+                $predStep = $now;
+
+                $unitBoiler = managerUnits::getUnitLabel('boiler_pid');
+                $unitPID = managerUnits::getUnitLabel('boiler_pid');
+                if (is_null($unitBoiler) || is_null($unitPID)) continue;
+                $this->boiler($unitBoiler, $unitPID, $boilerTempCurrentLast, $boiler_iError, $dt);
+
             }
 
             sleep(1); //ждем
@@ -70,9 +75,93 @@ class daemonLoopHeating extends daemon
         }
     }
 
-    function boiler($optionsPID)
+    private function getTemp($label, &$currentTemperature, &$flagActualTemperature)
     {
+        $uniteTempIn = managerUnits::getUnitLabel($label);
+        if (!is_null($uniteTempIn)) {
+            $valueTempIn = $uniteTempIn->getData();
+            $actualTimeTemperature = DB::getConst('ActualTimeTemperature');
+            if ((time() - $valueTempIn->date) < $actualTimeTemperature && !$valueTempIn->valueNull) {
+                $currentTemperature = $valueTempIn->value;
+                $flagActualTemperature = true;
+            }
+        }
+    }
 
+    private function boiler($unitBoiler, $unitPID, &$tempCurrentLast, &$boiler_iError, $dt)
+    {
+        $data = $unitBoiler->getData();
+        $value = $data->value;
+//        if ($value->_mode) return; //режим не mqtt
+        if ($value->_mode != 1) return; //режим не mqtt
+
+        $op = $unitPID->getOptions();
+        $boiler_Kp = $op->get('b_kp');
+        if (is_null($boiler_Kp)) $boiler_Kp = 1;
+        $boiler_Ki = $op->get('b_ki');
+        if (is_null($boiler_Ki)) $boiler_Ki = 0.1;
+        $boiler_Kd = $op->get('b_kd');
+        if (is_null($boiler_Kd)) $boiler_Kd = 10;
+        $boiler_target = $op->get('b_tar');
+        if (is_null($boiler_target)) $boiler_target = 23;
+        $boiler_cur = $op->get('b_cur');
+        if (is_null($boiler_cur)) $boiler_cur = 1;
+        $boiler_dK = $op->get('b_dK');
+        if (is_null($boiler_dK)) $boiler_dK = 1;
+        $boiler_dT = $op->get('b_dT');
+        if (is_null($boiler_dT)) $boiler_dT = 1;
+        $floor_Kp = $op->get('f_kp');
+        if (is_null($floor_Kp)) $floor_Kp = 1;
+        $boiler_target1 = $op->get('b_tar1');
+        if (is_null($boiler_target1)) $boiler_target1 = 20;
+        $boiler_cur1 = $op->get('b_cur1');
+        if (is_null($boiler_cur1)) $boiler_cur1 = 1;
+        $boiler_dK1 = $op->get('b_dK1');
+        if (is_null($boiler_dK1)) $boiler_dK1 = 1;
+        $boiler_dT1 = $op->get('b_dT1');
+        if (is_null($boiler_dT1)) $boiler_dT1 = 1;
+        $boiler_out = $op->get('b_tOut');
+        if (is_null($boiler_out)) $boiler_out = '';
+        $boiler_out1 = $op->get('b_tOut1');
+        if (is_null($boiler_out1)) $boiler_out1 = '';
+        $boiler_in = $op->get('b_tIn');
+        if (is_null($boiler_in)) $boiler_in = '';
+        $boiler_in1 = $op->get('b_tIn1');
+        if (is_null($boiler_in1)) $boiler_in1 = '';
+
+        //температура в помещение для отопления
+        $boilerCurrentInT = 20;
+        $flagTemp = false; //флаг есть актуальная температура
+        $this->getTemp($boiler_in, $boilerCurrentInT, $flagTemp);
+        if (!$flagTemp) $this->getTemp($boiler_in1, $boilerCurrentInT, $flagTemp);
+        if (is_null($tempCurrentLast)) $tempCurrentLast = $boilerCurrentInT;
+
+        //Температура на улице
+        $currentOutT = -10;
+        $flagTempOut = false; //флаг есть актуальная температура
+        $this->getTemp($boiler_out, $currentOutT, $flagTempOut);
+        if (!$flagTempOut) $this->getTemp($boiler_out1, $currentOutT, $flagTempOut);
+
+        $pid_b = new pidTemperature($boiler_target);
+        $pid_b->setCurve($boiler_cur, $boiler_dK, $boiler_dT);
+        $opHigh = $pid_b->getTempCurve($boilerCurrentInT, $currentOutT);
+
+        $pid_b1 = new pidTemperature($boiler_target1);
+        $pid_b1->setCurve($boiler_cur1, $boiler_dK1, $boiler_dT1);
+        $opLow = $pid_b1->getTempCurve($boilerCurrentInT, $currentOutT);
+
+        $op = $this->PID(
+            $boiler_target,
+            $boilerCurrentInT,
+            $tempCurrentLast,
+            $boiler_iError,
+            $dt,
+            $boiler_Kp,
+            $boiler_Ki,
+            $boiler_Kd,
+            $opHigh,
+            $opLow);
+        $tempCurrentLast = $boilerCurrentInT;
     }
 
     private function PID($tempTarget, $tempCurrent, $tempCurrentLast, &$iError, $dt, $KP, $KI, $KD, $opHigh, $opLow)
@@ -98,7 +187,8 @@ class daemonLoopHeating extends daemon
         }
         $op = max($opLow, min($opHigh, $op_));
         $iError = $I;	
-        //print("$tempTarget=".$tempTarget." $tempCurrent=".$tempCurrent." $dt=".$dt." $op=".$op." $P=".$P." $I=".$I." $D=".$D);
+        $l = 'tT=' .$tempTarget. ' tC=' .$tempCurrent. ' op=' .$op. ' op_=' .$op_. ' P=' .$P. ' I=' .$I. ' D=' .$D.' h='.$opHigh.' l = '.$opLow.' dt = '.$dt;
+        logger::writeLog($l,loggerTypeMessage::NOTICE, loggerName::DEBUG);
         return $op;
     }
 }
