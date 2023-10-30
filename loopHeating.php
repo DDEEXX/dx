@@ -92,8 +92,7 @@ class daemonLoopHeating extends daemon
     {
         $data = $unitBoiler->getData();
         $value = $data->value;
-//        if ($value->_mode) return; //режим не mqtt !!!!!
-        if ($value->_mode != 1) return; //режим не mqtt
+        if ($value->_mode != boilerMode::MQTT) return;
 
         $_spr = $value->_spr;
 

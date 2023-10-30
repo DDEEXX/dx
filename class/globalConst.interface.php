@@ -149,3 +149,11 @@ interface storageValues {
     const SHARED_MEMORY = 0;
     const DATA_BASE = 1;
 }
+
+interface boilerMode {
+    const MQTT = 1; //!!!!!
+    const PID = 1;
+    const CURVE = 2;
+    const MANUAL = 3;
+    const OFF = 4;
+}

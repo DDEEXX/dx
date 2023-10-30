@@ -196,7 +196,7 @@ if ($_REQUEST['dev'] == 'boiler') {
                 if ($i % 10 == 0) {
                     $tags[] = strval($i);
                     $data1[] = $pid1->getTempCurve(20, $i);
-                    if ($dataBoiler->_mode == 0) {
+                    if ($dataBoiler->_mode == boilerMode::MQTT) {
                         $data_b[] = $pid_b->getTempCurve($boilerCurrentInT, $i);
                         $data_b1[] = $pid_b1->getTempCurve($boilerCurrentInT, $i);
                     }
@@ -322,7 +322,7 @@ PID
         , $boiler_out, $boiler_out1, $currentOutT, $flagTempOut ? '' : 'неакт.');
     echo $outTemp;
 
-    if ($mode == 0) { //MQTT
+    if ($mode == boilerMode::MQTT) { //MQTT
         //ПИД отопление радиаторы
         echo '<div style="display: flex; align-items:center; margin-top: 15px">';
         echo '    <div style="width: 150px">';
@@ -371,7 +371,7 @@ PID
     echo '        </div>';
     echo '    </div>';
 
-    if ($floor_mode == 0) {
+    if ($floor_mode == boilerMode::MQTT) {
         echo '    <span class="boiler_setup_input_title">Kp</span>';
         echo '    <div class="boiler_setup_spinner_">';
         echo '      <input id="boiler_setup_floor_kp" class="property_spinner boiler_setup_spinner" value=' .
@@ -406,7 +406,7 @@ PID
     //Кривые
     echo '<div style="display: flex; margin-top: 20px">';
     echo '    <div style="width: 600px">';
-    if ($mode == 0) { //MQTT
+    if ($mode == boilerMode::MQTT) { //MQTT
         echo '        <div style="margin-top: 10px">';
         echo '            <p1>Котел (верхнее ограничение)</p1>';
         echo '        </div>';
@@ -459,7 +459,7 @@ PID
         echo '        </div>';
     }
 
-    if ($mode == 0 || ($mode != 0 && $floor_mode != 0)) {
+    if ($mode == boilerMode::MQTT || $floor_mode != 0) {
         echo '        <div style="margin-top: 25px">';
         if ($mode == 0 && $floor_mode == 0)
             echo '            <p1>Полы (нижнее ограничение)</p1>';
