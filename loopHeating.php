@@ -189,7 +189,7 @@ class daemonLoopHeating extends daemon
         }
         $op = max($opLow, min($opHigh, $op_));
         $iError = $I;	
-        $l = 'd-'.date('H:i:s').'tT=' .$tempTarget. ' tC=' .$tempCurrent. ' op=' .$op. ' op_=' .$op_. ' P=' .$P. ' I=' .$I. ' D=' .$D.' h='.$opHigh.' l = '.$opLow.' dt = '.$dt;
+        $l = 'tT=' .$tempTarget. ' tC=' .$tempCurrent. ' op=' .$op. ' op_=' .$op_. ' P=' .$P. ' I=' .$I. ' D=' .$D.' h='.$opHigh.' l = '.$opLow.' dt = '.$dt;
         logger::writeLog($l,loggerTypeMessage::NOTICE, loggerName::DEBUG);
         return $op;
     }
