@@ -95,7 +95,7 @@ class daemonLoopHeating extends daemon
 //        if ($value->_mode) return; //режим не mqtt !!!!!
         if ($value->_mode != 1) return; //режим не mqtt
 
-        $_dhw = $value->_dhw;
+        $_chm = $value->_chm;
 
         $op = $unitPID->getOptions();
         $boiler_Kp = $op->get('b_kp');
@@ -153,7 +153,7 @@ class daemonLoopHeating extends daemon
         $opLow = $pid_b1->getTempCurve($boilerCurrentInT, $currentOutT);
 
         $op = $this->PID(
-            $_dhw,
+            $_chm,
             $boilerCurrentInT,
             $tempCurrentLast,
             $boiler_iError,
