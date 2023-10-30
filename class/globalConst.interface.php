@@ -42,7 +42,7 @@ interface typeUnit{
     const KITCHEN_HOOD      = 9; //Кухонная вытяжка
     const GAS_SENSOR        = 10;//Датчик газа
     const BOILER_OPEN_THERM = 11;//Котел отопления
-    const BOILER_PIR        = 12;//Котел отопления
+    const BOILER_PID        = 12;//Котел отопления
 }
 
 interface graphType {

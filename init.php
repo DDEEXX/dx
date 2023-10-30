@@ -4,6 +4,18 @@ require_once(dirname(__FILE__) . '/class/sharedMemory.class.php');
 require_once(dirname(__FILE__) . '/class/logger.class.php');
 require_once(dirname(__FILE__) . '/class/sqlDataBase.class.php');
 
+$i = 50;
+while ($i>0) {
+    try {
+        $con = sqlDataBase::Connect();
+        unset($con);
+        break;
+    } catch (connectDBException $e) {
+        sleep(2);
+        $i--;
+    }
+}
+
 $resInitConst = managerSharedMemory::initConst();
 $resInitUnits = managerUnits::initUnits();
 
@@ -23,15 +35,6 @@ else {
                     loggerName::ERROR);
 }
 
-while (true) {
-    try {
-        $con = sqlDataBase::Connect();
-        unset($con);
-        break;
-    } catch (connectDBException $e) {
-        sleep(2);
-    }
-}
-
 exec("nohup php loopMQTTfast.php &");
 exec("nohup php loopMQTT.php &");
+//exec("nohup php loopHeating.php &");

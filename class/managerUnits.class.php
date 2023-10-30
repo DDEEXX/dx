@@ -51,8 +51,8 @@ class unitFactory
             case typeUnit::BOILER_OPEN_THERM :
                 $className = 'boilerOpenThermUnit';
                 break;
-            case typeUnit::BOILER_PIR :
-                $className = 'boilerPIR';
+            case typeUnit::BOILER_PID :
+                $className = 'boilerPID';
                 break;
             default :
                 $className = '';

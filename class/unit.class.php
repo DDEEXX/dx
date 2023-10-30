@@ -512,13 +512,13 @@ class boilerOpenThermUnit extends sensorUnit
 
 }
 
-class boilerPIR extends moduleUnit
+class boilerPID extends moduleUnit
 {
 
     public function __construct(array $options)
     {
         $options_ = new uniteOptionsJSON($options['UnitID'], $options['Options']);
-        parent::__construct($options, typeUnit::BOILER_PIR, $options_);
+        parent::__construct($options, typeUnit::BOILER_PID, $options_);
     }
 
     function setData($data)

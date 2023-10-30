@@ -97,7 +97,7 @@ if ($_REQUEST['dev'] == 'boiler') {
     $mqtt->publish($topic, $payload);
 } elseif ($_REQUEST['dev'] == 'setProperty') {
 
-    $unit = managerUnits::getUnitLabel('boiler_pir');
+    $unit = managerUnits::getUnitLabel('boiler_pid');
     $op = $unit->getOptions();
 
     if (isset($_REQUEST['mode']) && $_REQUEST['mode'] == 'one') {
@@ -126,7 +126,7 @@ if ($_REQUEST['dev'] == 'boiler') {
             $label = $_REQUEST['label'];
             $dataBoiler = getDataBoiler($label);
 
-            $unit = managerUnits::getUnitLabel('boiler_pir');
+            $unit = managerUnits::getUnitLabel('boiler_pid');
             $op = $unit->getOptions();
 
             $boiler_in = $op->get('b_tIn');
@@ -137,16 +137,20 @@ if ($_REQUEST['dev'] == 'boiler') {
             if (is_null($boiler_in_floor)) $boiler_in_floor = '';
             $boiler_in_floor1 = $op->get('b_tfIn1');
             if (is_null($boiler_in_floor1)) $boiler_in_floor1 = '';
+            $boiler_in = $op->get('b_tIn');
+            if (is_null($boiler_in)) $boiler_in = '';
+            $boiler_in1 = $op->get('b_tIn1');
+            if (is_null($boiler_in1)) $boiler_in1 = '';
 
             $boilerCurrentInT = 20;
             $flagTemp = false; //флаг есть актуальная температура
             getTemp($boiler_in, $boilerCurrentInT, $flagTemp);
-            getTemp($boiler_in1, $boilerCurrentInT, $flagTemp);
+            if (!$flagTemp) getTemp($boiler_in1, $boilerCurrentInT, $flagTemp);
 
             $boilerCurrentInTf = 20;
             $flagTempF = false; //флаг есть актуальная температура
             getTemp($boiler_in_floor, $boilerCurrentInTf, $flagTempF);
-            getTemp($boiler_in_floor1, $boilerCurrentInTf, $flagTempF);
+            if (!$flagTempF) getTemp($boiler_in_floor1, $boilerCurrentInTf, $flagTempF);
 
             $boiler_target = $op->get('b_tar');
             if (is_null($boiler_target)) $boiler_target = 23;
@@ -234,8 +238,8 @@ if ($_REQUEST['dev'] == 'boiler') {
     echo '        <button id="boiler_setup_save_options"></button>';
     echo '</div>';
 
-    $unitPIR = managerUnits::getUnitLabel('boiler_pir');
-    $op = $unitPIR->getOptions();
+    $unitPID = managerUnits::getUnitLabel('boiler_pid');
+    $op = $unitPID->getOptions();
 
     $boiler_Kp = $op->get('b_kp');
     if (is_null($boiler_Kp)) $boiler_Kp = 1;
@@ -285,16 +289,38 @@ if ($_REQUEST['dev'] == 'boiler') {
     if (is_null($boiler_in_floor1)) $boiler_in_floor1 = '';
     $floor_mode = $op->get('f_mode');
     if (is_null($floor_mode)) $floor_mode = 0;
+    $boiler_out = $op->get('b_tOut');
+    if (is_null($boiler_out)) $boiler_out = '';
+    $boiler_out1 = $op->get('b_tOut1');
+    if (is_null($boiler_out1)) $boiler_out1 = '';
 
     $boilerCurrentInT = 20;
     $flagTemp = false; //флаг есть актуальная температура
     getTemp($boiler_in, $boilerCurrentInT, $flagTemp);
-    getTemp($boiler_in1, $boilerCurrentInT, $flagTemp);
+    if (!$flagTemp) getTemp($boiler_in1, $boilerCurrentInT, $flagTemp);
 
     $boilerCurrentInTf = 20;
     $flagTempF = false; //флаг есть актуальная температура
     getTemp($boiler_in_floor, $boilerCurrentInTf, $flagTempF);
-    getTemp($boiler_in_floor1, $boilerCurrentInTf, $flagTempF);
+    if (!$flagTempF) getTemp($boiler_in_floor1, $boilerCurrentInTf, $flagTempF);
+
+    $currentOutT = -10;
+    $flagTempOut = false; //флаг есть актуальная температура
+    getTemp($boiler_out, $currentOutT, $flagTempOut);
+    if (!$flagTempOut) getTemp($boiler_out1, $currentOutT, $flagTempOut);
+
+    $outTemp = sprintf(<<<PID
+<div style="display: flex; align-items:center; margin-top: 15px">
+    <span>Температура на улице:</span>
+    <span class="boiler_setup_input_title">основная</span>
+    <input class="ui-corner-all ui-state-default boiler_setup_input" value="%s" property = "b_tOut">
+    <span class="boiler_setup_input_title">альтернатива</span>
+    <input class="ui-corner-all ui-state-default boiler_setup_input" value="%s" property = "b_tOut1">
+    <span class="boiler_setup_input_title">t = %s &degC %s</span>
+</div>                
+PID
+        , $boiler_out, $boiler_out1, $currentOutT, $flagTempOut ? '' : 'неакт.');
+    echo $outTemp;
 
     if ($mode == 0) { //MQTT
         //ПИД отопление радиаторы
@@ -319,7 +345,7 @@ if ($_REQUEST['dev'] == 'boiler') {
         echo '    </div>';
         echo '</div>';
 
-        $outTemp = sprintf(<<<PIR
+        $inTemp = sprintf(<<<PID
 <div style="display: flex; align-items:center; margin-top: 15px">
     <span>Источник температуры:</span>
     <span class="boiler_setup_input_title">основная</span>
@@ -328,9 +354,9 @@ if ($_REQUEST['dev'] == 'boiler') {
     <input class="ui-corner-all ui-state-default boiler_setup_input" value="%s" property = "b_tIn1">
     <span class="boiler_setup_input_title">t = %s &degC %s</span>
 </div>                
-PIR
+PID
             , $boiler_in, $boiler_in1, $boilerCurrentInT, $flagTemp ? '' : 'неакт.');
-        echo $outTemp;
+        echo $inTemp;
     }
 
     //ПИД отопление теплые полы
@@ -364,7 +390,7 @@ PIR
     }
     echo '</div>';
 
-    $outTempFloor = sprintf(<<<PIR
+    $inTempFloor = sprintf(<<<PID
 <div style="display: flex; align-items:center; margin-top: 15px">
     <span>Источник температуры:</span>
     <span class="boiler_setup_input_title">основная</span>
@@ -373,9 +399,9 @@ PIR
     <input class="ui-corner-all ui-state-default boiler_setup_input" value="%s" property = "b_tfIn1">
     <span class="boiler_setup_input_title">t = %s &degC %s</span>
 </div>
-PIR
+PID
         , $boiler_in_floor, $boiler_in_floor1, $boilerCurrentInTf, $flagTempF ? '' : 'неакт.');
-    echo $outTempFloor;
+    echo $inTempFloor;
 
     //Кривые
     echo '<div style="display: flex; margin-top: 20px">';
@@ -467,14 +493,14 @@ PIR
         echo '</div>';
     }
 
-    $outTempFloorBathroom = sprintf(<<<PIR
+    $outTempFloorBathroom = sprintf(<<<PID
 <div style="margin-top: 25px">
     <p1>Теплые полы (Ванная)</p1>
     <div style="display: flex; align-items:center; margin-top: 15px">
         <span>%s</span>
     </div>
 </div>
-PIR
+PID
         , '');
     echo $outTempFloorBathroom;
 
