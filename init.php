@@ -35,6 +35,11 @@ else {
                     loggerName::ERROR);
 }
 
-exec("nohup php loopMQTTfast.php &");
-exec("nohup php loopMQTT.php &");
+$dir = dirname(__FILE__). '/';
+exec('php '.$dir.'loopMQTTfast.php &');
+exec('php '.$dir.'loopMQTT.php &');
+exec('php '.$dir.'loopMQTTalarm.php &');
+exec('php '.$dir.'loopMQTTtest.php &');
+exec('php '.$dir.'loopForever.php &');
+exec('php '.$dir.'runScripts.php &');
 //exec("nohup php loopHeating.php &");
