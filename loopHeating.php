@@ -16,6 +16,7 @@ $fileDir = dirname(__FILE__);
 
 require($fileDir . '/class/daemon.class.php');
 require($fileDir . '/class/managerUnits.class.php');
+require($fileDir . '/class/pidTemperature.class.php');
 
 ini_set('error_log', $fileDir . '/logs/errorLoopHeating.log');
 fclose(STDIN);
