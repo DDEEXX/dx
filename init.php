@@ -4,6 +4,8 @@ require_once(dirname(__FILE__) . '/class/sharedMemory.class.php');
 require_once(dirname(__FILE__) . '/class/logger.class.php');
 require_once(dirname(__FILE__) . '/class/sqlDataBase.class.php');
 
+sleep(30);
+
 $i = 50;
 while ($i>0) {
     try {
