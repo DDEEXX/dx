@@ -39,16 +39,23 @@ abstract class aUniteOptions
 class uniteOptionsJSON extends aUniteOptions
 {
     private $data = [];
+    private $default;
 
-    public function __construct($unitID, $jsonData)
+    public function __construct($unitID, $jsonData, $default)
     {
         parent::__construct($unitID);
         if (is_string($jsonData)) $this->data = json_decode($jsonData, true);
+        $this->default = $default;
     }
 
     function get($options)
     {
-        return array_key_exists($options, $this->data) ? $this->data[$options] : null;
+        if (array_key_exists($options, $this->data)) {
+            $result = is_null($this->data[$options]) ? $this->default->{$options} : $this->data[$options];
+        } else {
+            $result = $this->default->{$options};
+        }
+        return $result;
     }
 
     function set($option, $value)
@@ -515,9 +522,41 @@ class boilerOpenThermUnit extends sensorUnit
 class boilerPID extends moduleUnit
 {
 
+    private function getDefaultOptions()
+    {
+        $default = new stdClass();
+        $default->b_kp = 1;
+        $default->b_ki = 0.1;
+        $default->b_kd = 10;
+        $default->b_tar = 23;
+        $default->b_cur = 1;
+        $default->b_dK = 1;
+        $default->b_dT = 1;
+        $default->f_kp = 1;
+        $default->b_tar1 = 20;
+        $default->b_cur1 = 1;
+        $default->b_dK1 = 1;
+        $default->b_dT1 = 1;
+        $default->f_kp1 = 1;
+        $default->f_ki = 0.1;
+        $default->f_kd = 10;
+        $default->f_tar = 20;
+        $default->f_cur = 0.4;
+        $default->f_dK = 1;
+        $default->f_dT = 1;
+        $default->b_tIn = '';
+        $default->b_tIn1 = '';
+        $default->b_tfIn = '';
+        $default->b_tfIn1 = '';
+        $default->f_mode = 0;
+        $default->b_tOut = '';
+        $default->b_tOut1 = '';
+        return $default;
+    }
+
     public function __construct(array $options)
     {
-        $options_ = new uniteOptionsJSON($options['UnitID'], $options['Options']);
+        $options_ = new uniteOptionsJSON($options['UnitID'], $options['Options'], $this->getDefaultOptions());
         parent::__construct($options, typeUnit::BOILER_PID, $options_);
     }
 

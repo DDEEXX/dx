@@ -98,37 +98,20 @@ class daemonLoopHeating extends daemon
 
         $op = $unitPID->getOptions();
         $boiler_Kp = $op->get('b_kp');
-        if (is_null($boiler_Kp)) $boiler_Kp = 1;
         $boiler_Ki = $op->get('b_ki');
-        if (is_null($boiler_Ki)) $boiler_Ki = 0.1;
         $boiler_Kd = $op->get('b_kd');
-        if (is_null($boiler_Kd)) $boiler_Kd = 10;
         $boiler_target = $op->get('b_tar');
-        if (is_null($boiler_target)) $boiler_target = 23;
         $boiler_cur = $op->get('b_cur');
-        if (is_null($boiler_cur)) $boiler_cur = 1;
         $boiler_dK = $op->get('b_dK');
-        if (is_null($boiler_dK)) $boiler_dK = 1;
         $boiler_dT = $op->get('b_dT');
-        if (is_null($boiler_dT)) $boiler_dT = 1;
-        $floor_Kp = $op->get('f_kp');
-        if (is_null($floor_Kp)) $floor_Kp = 1;
         $boiler_target1 = $op->get('b_tar1');
-        if (is_null($boiler_target1)) $boiler_target1 = 20;
         $boiler_cur1 = $op->get('b_cur1');
-        if (is_null($boiler_cur1)) $boiler_cur1 = 1;
         $boiler_dK1 = $op->get('b_dK1');
-        if (is_null($boiler_dK1)) $boiler_dK1 = 1;
         $boiler_dT1 = $op->get('b_dT1');
-        if (is_null($boiler_dT1)) $boiler_dT1 = 1;
         $boiler_out = $op->get('b_tOut');
-        if (is_null($boiler_out)) $boiler_out = '';
         $boiler_out1 = $op->get('b_tOut1');
-        if (is_null($boiler_out1)) $boiler_out1 = '';
         $boiler_in = $op->get('b_tIn');
-        if (is_null($boiler_in)) $boiler_in = '';
         $boiler_in1 = $op->get('b_tIn1');
-        if (is_null($boiler_in1)) $boiler_in1 = '';
 
         //температура в помещение для отопления
         $boilerCurrentInT = 20;
@@ -170,15 +153,15 @@ class daemonLoopHeating extends daemon
         // calculate the $error
         $error = $tempTarget - $tempCurrent;
         // calculate the integral $error
-        $dError = (int)($KI * $error * $dt);
+        $dError = round($KI * $error * $dt, 2);
         $iError = $iError + $dError;
         // calculate the measurement derivative
         $dpv = ($tempCurrent - $tempCurrentLast) / $dt;
         // calculate the PID output
-        $P = (int)($KP * $error); //proportional contribution
+        $P = round($KP * $error, 2); //proportional contribution
         $I = $iError; //integral contribution
-        $D = (int)(-$KD * $dpv); //derivative contribution
-        $op_ = $P + $I + $D;
+        $D = round(-$KD * $dpv, 2); //derivative contribution
+        $op_ = round($P + $I + $D, 2);
         // implement anti-reset windup
         if ($error>0) {
             if ($op_ >= $opHigh) $I = $I - $dError;
@@ -186,9 +169,11 @@ class daemonLoopHeating extends daemon
         else {
             if ($op_ < $opLow) $I = $I - $dError;
         }
-        $op = max($opLow, min($opHigh, $op_));
+        $op = round(max($opLow, min($opHigh, $op_)), 2);
         $iError = $I;	
-        $l = 'tT=' .$tempTarget. ' tC=' .$tempCurrent. ' op=' .$op. ' op_=' .$op_. ' P=' .$P. ' I=' .$I. ' D=' .$D.' h='.$opHigh.' l = '.$opLow.' dt = '.$dt;
+        $l = 'tT='.round($tempTarget,2).' tC='.round($tempCurrent,2).' op='.round($op,2).
+            ' op_='.round($op_,2).' P='.round($P,2).' I='.round($I,2).' D='.round($D,2).
+            ' h='.round($opHigh,2).' l = '.round($opLow,2).' dt = '.round($dt,2);
         logger::writeLog($l,loggerTypeMessage::NOTICE, loggerName::DEBUG);
         return $op;
     }

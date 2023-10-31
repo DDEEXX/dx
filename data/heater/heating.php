@@ -130,17 +130,11 @@ if ($_REQUEST['dev'] == 'boiler') {
             $op = $unit->getOptions();
 
             $boiler_in = $op->get('b_tIn');
-            if (is_null($boiler_in)) $boiler_in = '';
             $boiler_in1 = $op->get('b_tIn1');
-            if (is_null($boiler_in1)) $boiler_in1 = '';
             $boiler_in_floor = $op->get('b_tfIn');
-            if (is_null($boiler_in_floor)) $boiler_in_floor = '';
             $boiler_in_floor1 = $op->get('b_tfIn1');
-            if (is_null($boiler_in_floor1)) $boiler_in_floor1 = '';
             $boiler_in = $op->get('b_tIn');
-            if (is_null($boiler_in)) $boiler_in = '';
             $boiler_in1 = $op->get('b_tIn1');
-            if (is_null($boiler_in1)) $boiler_in1 = '';
 
             $boilerCurrentInT = 20;
             $flagTemp = false; //флаг есть актуальная температура
@@ -153,29 +147,17 @@ if ($_REQUEST['dev'] == 'boiler') {
             if (!$flagTempF) getTemp($boiler_in_floor1, $boilerCurrentInTf, $flagTempF);
 
             $boiler_target = $op->get('b_tar');
-            if (is_null($boiler_target)) $boiler_target = 23;
             $boiler_cur = $op->get('b_cur');
-            if (is_null($boiler_cur)) $boiler_cur = 1;
             $boiler_dK = $op->get('b_dK');
-            if (is_null($boiler_dK)) $boiler_dK = 1;
             $boiler_dT = $op->get('b_dT');
-            if (is_null($boiler_dT)) $boiler_dT = 1;
             $boiler_target1 = $op->get('b_tar1');
-            if (is_null($boiler_target1)) $boiler_target1 = 20;
             $boiler_cur1 = $op->get('b_cur1');
-            if (is_null($boiler_cur1)) $boiler_cur1 = 1;
             $boiler_dK1 = $op->get('b_dK1');
-            if (is_null($boiler_dK1)) $boiler_dK1 = 1;
             $boiler_dT1 = $op->get('b_dT1');
-            if (is_null($boiler_dT1)) $boiler_dT1 = 1;
             $floor_target = $op->get('f_tar');
-            if (is_null($floor_target)) $floor_target = 20;
             $floor_cur = $op->get('f_cur');
-            if (is_null($floor_cur)) $floor_cur = 0.4;
             $floor_dK = $op->get('f_dK');
-            if (is_null($floor_dK)) $floor_dK = 1;
             $floor_dT = $op->get('f_dT');
-            if (is_null($floor_dT)) $floor_dT = 1;
 
             $pid1 = new pidTemperature(20);
             $pid1->setCurve(1, 0, 0);
@@ -242,57 +224,31 @@ if ($_REQUEST['dev'] == 'boiler') {
     $op = $unitPID->getOptions();
 
     $boiler_Kp = $op->get('b_kp');
-    if (is_null($boiler_Kp)) $boiler_Kp = 1;
     $boiler_Ki = $op->get('b_ki');
-    if (is_null($boiler_Ki)) $boiler_Ki = 0.1;
     $boiler_Kd = $op->get('b_kd');
-    if (is_null($boiler_Kd)) $boiler_Kd = 10;
     $boiler_target = $op->get('b_tar');
-    if (is_null($boiler_target)) $boiler_target = 23;
     $boiler_cur = $op->get('b_cur');
-    if (is_null($boiler_cur)) $boiler_cur = 1;
     $boiler_dK = $op->get('b_dK');
-    if (is_null($boiler_dK)) $boiler_dK = 1;
     $boiler_dT = $op->get('b_dT');
-    if (is_null($boiler_dT)) $boiler_dT = 1;
     $floor_Kp = $op->get('f_kp');
-    if (is_null($floor_Kp)) $floor_Kp = 1;
     $boiler_target1 = $op->get('b_tar1');
-    if (is_null($boiler_target1)) $boiler_target1 = 20;
     $boiler_cur1 = $op->get('b_cur1');
-    if (is_null($boiler_cur1)) $boiler_cur1 = 1;
     $boiler_dK1 = $op->get('b_dK1');
-    if (is_null($boiler_dK1)) $boiler_dK1 = 1;
     $boiler_dT1 = $op->get('b_dT1');
-    if (is_null($boiler_dT1)) $boiler_dT1 = 1;
     $floor_Kp1 = $op->get('f_kp1');
-    if (is_null($floor_Kp1)) $floor_Kp1 = 1;
     $floor_Ki = $op->get('f_ki');
-    if (is_null($floor_Ki)) $floor_Ki = 0.1;
     $floor_Kd = $op->get('f_kd');
-    if (is_null($floor_Kd)) $floor_Kd = 10;
     $floor_target = $op->get('f_tar');
-    if (is_null($floor_target)) $floor_target = 20;
     $floor_cur = $op->get('f_cur');
-    if (is_null($floor_cur)) $floor_cur = 0.4;
     $floor_dK = $op->get('f_dK');
-    if (is_null($floor_dK)) $floor_dK = 1;
     $floor_dT = $op->get('f_dT');
-    if (is_null($floor_dT)) $floor_dT = 1;
     $boiler_in = $op->get('b_tIn');
-    if (is_null($boiler_in)) $boiler_in = '';
     $boiler_in1 = $op->get('b_tIn1');
-    if (is_null($boiler_in1)) $boiler_in1 = '';
     $boiler_in_floor = $op->get('b_tfIn');
-    if (is_null($boiler_in_floor)) $boiler_in_floor = '';
     $boiler_in_floor1 = $op->get('b_tfIn1');
-    if (is_null($boiler_in_floor1)) $boiler_in_floor1 = '';
     $floor_mode = $op->get('f_mode');
-    if (is_null($floor_mode)) $floor_mode = 0;
     $boiler_out = $op->get('b_tOut');
-    if (is_null($boiler_out)) $boiler_out = '';
     $boiler_out1 = $op->get('b_tOut1');
-    if (is_null($boiler_out1)) $boiler_out1 = '';
 
     $boilerCurrentInT = 20;
     $flagTemp = false; //флаг есть актуальная температура
