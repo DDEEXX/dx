@@ -84,7 +84,7 @@ class daemonLoopHeating extends daemon
                     $payload = json_encode(['tset' => round($b_op)]);
                     $mqtt->publish($topic, $payload);
 
-                    $log['ch'] = $ch;
+                    $log['b_ch'] = $ch;
                     $this->saveInJournal(json_encode($log), 'bl');
                 }
             }
