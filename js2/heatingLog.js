@@ -32,13 +32,13 @@ function graphLog() {
                 scales: {
                     x: {
                         grid: {
-                            color: "black",
+                            // color: "black",
                             drawTicks: false
                         },
                     },
                     y: {
                         grid: {
-                            color: "black",
+                            // color: "black",
                             drawTicks: false
                         },
                     }

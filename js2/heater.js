@@ -71,7 +71,7 @@ $(function () {
     $("#heater_boiler_setup_dialog_").dialog({
         autoOpen: false,
         draggable: false,
-        position: {my: "center", at: "center top", of: "#page_heater"},
+        position: {my: "center", at: "center", of: "#page_heater"},
         resizable: false,
         title: "Настройка отопления в доме",
         height: "auto",
@@ -79,6 +79,7 @@ $(function () {
         open: function (event, ui) {
             $.get("data/heater/heating.php?dev=dialogSetup&label=" + label, function (data) {
                 $("#heater_boiler_setup_dialog_content").html(data);
+                $("#heater_boiler_setup_dialog_").dialog( "option", "position", {my: "center", at: "center", of: "#page_heater"})
             });
         }
     });
@@ -90,7 +91,7 @@ $(function () {
     $("#heater_boiler_log_dialog").dialog({
         autoOpen: false,
         draggable: false,
-        position: {my: "center", at: "center top", of: "#page_heater"},
+        position: {my: "center", at: "center", of: "#page_heater"},
         resizable: false,
         title: "Лог отопления в доме",
         height: "auto",
@@ -98,6 +99,7 @@ $(function () {
         open: function (event, ui) {
             $.get("data/heater/heating.php?dev=heatingLog&type=bl", function (data) {
                 $("#heater_boiler_log_dialog_content").html(data);
+                $("#heater_boiler_log_dialog").dialog( "option", "position", {my: "center", at: "center", of: "#page_heater"})
             });
         }
     });
