@@ -182,12 +182,46 @@ class daemonLoopHeating extends daemon
             if ($op_ < $opLow) $I = $I - $dError;
         }
         $op = round(max($opLow, min($opHigh, $op_)), 2);
-        $iError = $I;	
-        $l = 'tT='.round($tempTarget,2).' tC='.round($tempCurrent,2).' op='.round($op,2).
-            ' op_='.round($op_,2).' P='.round($P,2).' I='.round($I,2).' D='.round($D,2).
-            ' h='.round($opHigh,2).' l = '.round($opLow,2).' dt = '.round($dt,2);
-        logger::writeLog($l,loggerTypeMessage::NOTICE, loggerName::DEBUG);
+        $iError = $I;
+
+        $log = [
+            'b_tar' => round($tempTarget,2),
+            'b_cur' => round($tempCurrent,2),
+            'b_op' => round($op),
+            'b_P' => round($P,2),
+            'b_I' => round($I,2),
+            'b_D' => round($P,2),
+            'b_hi' => round($opHigh,2),
+            'b_lo' => round($opLow,2),
+        ];
+        $this->saveInJournal(json_encode($log), 'bl');
         return $op;
+    }
+
+    private function saveInJournal($data, $type = '') {
+        $currentData = date('Y-m-d H:i:s');
+
+        try {
+            $con = sqlDataBase::Connect();
+        } catch (connectDBException $e) {
+            logger::writeLog('Ошибка при подключении к базе данных в функции aAlarmMQTT::savePayloadInJournal. ' . $e->getMessage(),
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return;
+        }
+
+        $query = sprintf('INSERT INTO t_heatingJournal (date, type, data) VALUES (\'%s\', \'%s\', \'%s\')',
+            $currentData, $type, $data);
+
+        try {
+            $result = queryDataBase::execute($con, $query);
+            if (!$result) {
+                logger::writeLog('Ошибка при записи в базу данных (daemonLoopHeating.saveInJournal)',
+                    loggerTypeMessage::ERROR, loggerName::ERROR);
+            }
+        } catch (querySelectDBException $e) {
+            logger::writeLog('Ошибка при добавлении данных в базу данных (daemonLoopHeating.saveInJournal)',
+                loggerTypeMessage::ERROR, loggerName::ERROR);
+        }
     }
 }
 
