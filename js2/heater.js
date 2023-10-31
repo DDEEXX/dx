@@ -60,7 +60,7 @@ $(function () {
     }).click(function () {
         const p = $(this).attr("property");
         const v = $(this).is(":checked");
-        $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=' + p + 'a&v=' + v);
+        $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=' + p + '&v=' + v);
     });
 
     $("#boiler_power_water").checkboxradio({

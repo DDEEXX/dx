@@ -81,7 +81,7 @@ if ($_REQUEST['dev'] == 'boiler') {
             break;
         case '_chena' :
         case '_dhwena' :
-            $value = $v == 'true';
+            $value = $v === 'true';
             break;
         default :
             $value = $v;
@@ -111,7 +111,8 @@ if ($_REQUEST['dev'] == 'boiler') {
         $op->setOptions($data);
     }
 
-} elseif ($_REQUEST['dev'] == 'dialogSetup') {
+}
+elseif ($_REQUEST['dev'] == 'dialogSetup') {
 
     if (isset($_REQUEST['data'])) {
         if ($_REQUEST['data'] == 'boilerData') {
@@ -416,9 +417,8 @@ PID
         echo '        </div>';
     }
 
-    if ($mode == boilerMode::MQTT || $floor_mode != 0) {
         echo '        <div style="margin-top: 25px">';
-        if ($mode == 0 && $floor_mode == 0)
+        if ($floor_mode == 0)
             echo '            <p1>Полы (нижнее ограничение)</p1>';
         else
             echo '            <p1>Полы</p1>';
@@ -448,7 +448,6 @@ PID
         echo '    </div>';
         echo '    <div style="width: 500px"><canvas id="graphCurve"><p>GRAPH</p></canvas></div>';
         echo '</div>';
-    }
 
     $outTempFloorBathroom = sprintf(<<<PID
 <div style="margin-top: 25px">

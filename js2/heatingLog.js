@@ -50,7 +50,7 @@ function graphLog() {
                 }
             }
         });
-        boilerChartLog1 = new Chart($grafica2, {
+        boilerChartLog2 = new Chart($grafica2, {
             type: 'line',
             data: {
                 labels: tags,

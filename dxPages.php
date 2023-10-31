@@ -351,10 +351,10 @@ if ($p == 'power') {
                     <!--                               id="vault_auto"><label for="vault_auto">авто</label>-->
                     <!--                    </div>-->
                 </div>
-                <p>температура: &deg</p>
-                <p>влажность: %</p>
-                <p>вентиляция: </p>
-                <p>свет: </p>
+<!--                <p>температура: &deg</p>-->
+<!--                <p>влажность: %</p>-->
+<!--                <p>вентиляция: </p>-->
+<!--                <p>свет: </p>-->
             </div>
         </div>
     </div>
@@ -420,8 +420,8 @@ if ($p == 'heater') {
     ?>
     <link rel="stylesheet" type="text/css" href="css2/style_heater.css">
     <script src="js2/heater.js"></script>
-    <script src="js2/boilerSetup.js"></script>
-    <script src="js2/heatingLog.js"></script>
+<!--    <script src="js2/boilerSetup.js"></script>-->
+<!--    <script src="js2/heatingLog.js"></script>-->
 
     <div id="page_heater" class="grid_12"
          style="display: flex; flex-direction: column; align-content: flex-start; height: 790px">
@@ -437,7 +437,7 @@ if ($p == 'heater') {
                 <div style="display: flex; align-content: flex-start">
                     <div class="boiler_tile">
                         <label for="boiler_power">Отопление
-                            <input type="checkbox" name="boiler_power" id="boiler_power" property="_chena">
+                            <input type="checkbox" id="boiler_power" name="boiler_power" property="_chena">
                         </label>
 <!--                        <h1 id="boiler_power">Отопление</h1>-->
                         <div class="boiler_data">
@@ -479,7 +479,7 @@ if ($p == 'heater') {
                     </div>
                     <div class="boiler_tile">
                         <label for="boiler_power_water">ГВС
-                            <input type="checkbox" name="boiler_power_water" id="boiler_power_water" property="_dhwena">
+                            <input type="checkbox" id="boiler_power_water" name="boiler_power_water" property="_dhwena">
                         </label>
 <!--                        <h1>ГВС</h1>-->
                         <div class="boiler_data">
