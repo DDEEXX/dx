@@ -45,7 +45,7 @@ function graphLog() {
                 },
                 elements: {
                     point: {
-                        // pointStyle: false
+                        pointStyle: false
                     }
                 }
             }
