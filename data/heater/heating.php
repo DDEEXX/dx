@@ -490,16 +490,18 @@ elseif ($_REQUEST['dev'] == 'heatingLog') {
             $dataOp = [];
             $dataHi = [];
             $dataLo = [];
+            $dataCh = [];
 
             if (!is_null($result)) {
                 foreach ($result as $key=>$val) {
                     $tags[] = $val['date_f'];
                     $dataObj = json_decode($val['data']);
-                    $dataTar[] = $dataObj->b_tar;
-                    $dataCur[] = $dataObj->b_cur;
-                    $dataOp[] = $dataObj->b_op;
-                    $dataHi[] = $dataObj->b_hi;
-                    $dataLo[] = $dataObj->b_lo;
+                    $dataTar[] = is_null($dataObj->b_tar) ? 0 : $dataObj->b_tar;
+                    $dataCur[] = is_null($dataObj->b_cur) ? 0 : $dataObj->b_cur;
+                    $dataOp[] = is_null($dataObj->b_op) ? 0 : $dataObj->b_op;
+                    $dataHi[] = is_null($dataObj->b_hi) ? 0 : $dataObj->b_hi;
+                    $dataLo[] = is_null($dataObj->b_lo) ? 0 : $dataObj->b_lo;
+                    $dataCh[] = is_null($dataObj->b_ch) ? 0 : $dataObj->b_ch;
                 }
             }
 
@@ -518,9 +520,24 @@ elseif ($_REQUEST['dev'] == 'heatingLog') {
                 'label' => 'СО, расчет',
                 'borderColor' => 'rgba(225,201,45,0.8)'
             ];
+            $gr_hi = [
+                'data' => $dataHi,
+                'label' => 'СО max',
+                'borderColor' => 'rgba(227,90,90,0.8)'
+            ];
+            $gr_lo = [
+                'data' => $dataLo,
+                'label' => 'СО min',
+                'borderColor' => 'rgba(78,90,232,0.8)'
+            ];
+            $gr_ch = [
+                'data' => $dataCh,
+                'label' => 'СО подача',
+                'borderColor' => 'rgba(87,234,95,0.8)'
+            ];
 
             $data1 = [$gr_tar, $gr_cur];
-            $data2 = [$gr_op];
+            $data2 = [$gr_op, $gr_hi, $gr_lo, $gr_ch];
 
             $jsonData = json_encode(['tags' => $tags, 'data1' => $data1, 'data2' => $data2]);
             header('Content-Type: application/json');
