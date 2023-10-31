@@ -79,7 +79,7 @@ if ($_REQUEST['dev'] == 'boiler') {
         case '_mode' :
             $value = (int)($v);
             break;
-        case '_chenaa' :
+        case '_chena' :
         case '_dhwena' :
             $value = $v == 'true';
             break;
@@ -201,7 +201,7 @@ if ($_REQUEST['dev'] == 'boiler') {
     $mode = $value->_mode;
 
     echo '<script src="js2/boilerSetup.js"></script>';
-    echo '<div style="display: flex; margin-top: 10px">';
+    echo '<div style="display: flex; justify-content: space-between; margin-top: 10px">';
     echo '        <div style="margin-right: 10px">';
     echo '            <p1 style="font-size: 125%">Режим котла</p1>';
     echo '        </div>';
@@ -217,7 +217,7 @@ if ($_REQUEST['dev'] == 'boiler') {
     echo '            <label for="boiler_mode_4">Выкл</label>';
     echo '            <input type="radio" name="boiler_mode_radio" id="boiler_mode_4" value="4" ' . ($mode == 4 ? 'checked="checked"' : '') . '>';
     echo '        </div>';
-    echo '        <span style="margin-left: 15px; font-size: 80%; width: 40%">* при режимах отличных от MQTT настройка через клиента котла</span>';
+    echo '        <span style="margin-left: 15px; font-size: 80%; width: 35%">* при режимах отличных от MQTT настройка через клиента котла</span>';
     echo '        <button id="boiler_setup_save_options"></button>';
     echo '</div>';
 
