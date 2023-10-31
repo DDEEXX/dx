@@ -17,6 +17,7 @@ $fileDir = dirname(__FILE__);
 require($fileDir . '/class/daemon.class.php');
 require($fileDir . '/class/managerUnits.class.php');
 require($fileDir . '/class/pidTemperature.class.php');
+require_once($fileDir . '/class/mqtt.class.php');
 
 ini_set('error_log', $fileDir . '/logs/errorLoopHeating.log');
 fclose(STDIN);
@@ -29,7 +30,7 @@ $STDERR = fopen($fileDir . '/logs/daemonLoopHeating.log', 'ab');
 class daemonLoopHeating extends daemon
 {
     const NAME_PID_FILE = 'loopHeating.pid';
-    const PAUSE = 60; //Пауза в основном цикле, в секундах (30 сек)
+    const PAUSE = 30; //Пауза в основном цикле, в секундах (30 сек)
 
     public function __construct($dirPidFile)
     {
@@ -147,6 +148,16 @@ class daemonLoopHeating extends daemon
             $opHigh,
             $opLow);
         $tempCurrentLast = $boilerCurrentInT;
+
+        $device = $unitBoiler->getDevice();
+        if (is_null($device)) return;
+        $devicePhysic = $device->getDevicePhysic();
+        $topic = $devicePhysic->getTopicSet();
+        if (!strlen($topic)) return;
+        $payload = json_encode(['tset' => round($op)]);
+        $mqtt = mqttSend::connect();
+        $mqtt->publish($topic, $payload);
+
     }
 
     private function PID($tempTarget, $tempCurrent, $tempCurrentLast, &$iError, $dt, $KP, $KI, $KD, $opHigh, $opLow)

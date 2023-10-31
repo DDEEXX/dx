@@ -151,7 +151,7 @@ interface storageValues {
 }
 
 interface boilerMode {
-    const MQTT = 1; //!!!!!
+    const MQTT = 0;
     const PID = 1;
     const CURVE = 2;
     const MANUAL = 3;
