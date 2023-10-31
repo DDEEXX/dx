@@ -17,7 +17,6 @@ function heater_updateBoiler() {
 
         $('#heater_boiler_last_status').val(data.date);
         $('#boiler_ch').html(data.ch + " &degC");
-        $('#boiler_retb').html(data.retb + " &degC");
         $('#boiler_tset').html(data.tset + " &degC");
         $('#boiler_dhw').html(data.dhw + " &degC");
         $('#boiler_spdhw').html(data.spdhw + " &degC");

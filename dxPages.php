@@ -451,14 +451,10 @@ if ($p == 'heater') {
                             <span id="boiler_ch"></span>
                         </div>
                         <div class="boiler_data">
-                            <h2>Обратка</h2>
-                            <span id="boiler_retb"></span>
-                        </div>
-                        <div class="boiler_data">
                             <h2>Расчетная</h2>
                             <span id="boiler_tset"></span>
                         </div>
-                        <div id="heater_boiler_log"></div>
+                        <div id="heater_boiler_log" style="margin-top: 10px"></div>
                         <div id="heater_boiler_log_dialog">
                             <div id="heater_boiler_log_dialog_content"></div>
                         </div>
