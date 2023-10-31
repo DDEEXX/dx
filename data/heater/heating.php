@@ -95,7 +95,7 @@ if ($_REQUEST['dev'] == 'boiler') {
     if (!strlen($topic)) exit;
     $payload = json_encode([$p => $value]);
     $mqtt = mqttSend::connect();
-    $mqtt->publish($topic, $payload);
+    $mqtt->publish($topic, $payload, 1);
 } elseif ($_REQUEST['dev'] == 'setProperty') {
 
     $unit = managerUnits::getUnitLabel('boiler_pid');
