@@ -537,7 +537,7 @@ elseif ($_REQUEST['dev'] == 'heatingLog') {
             ];
 
             $data1 = [$gr_tar, $gr_cur];
-            $data2 = [$gr_op, $gr_hi, $gr_lo, $gr_ch];
+            $data2 = [$gr_op, $gr_ch, $gr_hi, $gr_lo];
 
             $jsonData = json_encode(['tags' => $tags, 'data1' => $data1, 'data2' => $data2]);
             header('Content-Type: application/json');
