@@ -23,12 +23,12 @@ if (!$temperatureIn->valueNull && time() - $dateValue < 1200) {
     $mqtt->publish($topic, $payload);
 }
 
-sleep(1);
-$unitTemperatureBoilerIn = managerUnits::getUnitLabel('temp_heater_boiler_in');
-$temperatureBoilerIn = $unitTemperatureBoilerIn->getData();
-$dateValue = $temperatureBoilerIn->date;
-if (!$temperatureBoilerIn->valueNull && time() - $dateValue < 1200) {
-    $topic = 'baxi_open/controller/set';
-    $payload = sprintf('{"retb":%s}', $temperatureBoilerIn->value);
-    $mqtt->publish($topic, $payload);
-}
+//sleep(1);
+//$unitTemperatureBoilerIn = managerUnits::getUnitLabel('temp_heater_boiler_in');
+//$temperatureBoilerIn = $unitTemperatureBoilerIn->getData();
+//$dateValue = $temperatureBoilerIn->date;
+//if (!$temperatureBoilerIn->valueNull && time() - $dateValue < 1200) {
+//    $topic = 'baxi_open/controller/set';
+//    $payload = sprintf('{"retb":%s}', $temperatureBoilerIn->value);
+//    $mqtt->publish($topic, $payload);
+//}

@@ -72,7 +72,9 @@ class daemonLoopHeating extends daemon
                 $value = $data->value;
                 if ($value->_mode == boilerMode::MQTT) {
                     $_spr = $value->_spr;
-                    $b_op = $this->boiler($unitPID, $_spr, $boilerTempCurrentLast, $boiler_iError, $dt);
+                    $ch = $value->ch;
+                    $log = [];
+                    $b_op = $this->boiler($unitPID, $_spr, $boilerTempCurrentLast, $boiler_iError, $dt, $log);
 
                     $device = $unitBoiler->getDevice();
                     if (is_null($device)) return;
@@ -81,6 +83,9 @@ class daemonLoopHeating extends daemon
                     if (!strlen($topic)) return;
                     $payload = json_encode(['tset' => round($b_op)]);
                     $mqtt->publish($topic, $payload);
+
+                    $log['ch'] = $ch;
+                    $this->saveInJournal(json_encode($log), 'bl');
                 }
             }
 
@@ -104,7 +109,7 @@ class daemonLoopHeating extends daemon
         }
     }
 
-    private function boiler($unitPID, $spr, &$tempCurrentLast, &$boiler_iError, $dt)
+    private function boiler($unitPID, $spr, &$tempCurrentLast, &$boiler_iError, $dt, &$log)
     {
         $op = $unitPID->getOptions();
         $boiler_Kp = $op->get('b_kp');
@@ -154,12 +159,13 @@ class daemonLoopHeating extends daemon
             $boiler_Ki,
             $boiler_Kd,
             $opHigh,
-            $opLow);
+            $opLow,
+            $log);
         $tempCurrentLast = $boilerCurrentInT;
         return $op;
     }
 
-    private function PID($tempTarget, $tempCurrent, $tempCurrentLast, &$iError, $dt, $KP, $KI, $KD, $opHigh, $opLow)
+    private function PID($tempTarget, $tempCurrent, $tempCurrentLast, &$iError, $dt, $KP, $KI, $KD, $opHigh, $opLow, &$log)
     {
         // calculate the $error
         $error = $tempTarget - $tempCurrent;
@@ -183,17 +189,14 @@ class daemonLoopHeating extends daemon
         $op = round(max($opLow, min($opHigh, $op_)), 2);
         $iError = $I;
 
-        $log = [
-            'b_tar' => round($tempTarget,2),
-            'b_cur' => round($tempCurrent,2),
-            'b_op' => round($op),
-            'b_P' => round($P,2),
-            'b_I' => round($I,2),
-            'b_D' => round($P,2),
-            'b_hi' => round($opHigh,2),
-            'b_lo' => round($opLow,2),
-        ];
-        $this->saveInJournal(json_encode($log), 'bl');
+        $log['b_tar'] = round($tempTarget,2);
+        $log['b_cur'] = round($tempCurrent,2);
+        $log['b_op'] = round($op);
+        $log['b_P'] = round($P,2);
+        $log['b_I'] = round($I,2);
+        $log['b_D'] = round($P,2);
+        $log['b_hi'] = round($opHigh,2);
+        $log['b_lo'] = round($opLow,2);
         return $op;
     }
 
