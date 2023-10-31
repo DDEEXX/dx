@@ -421,6 +421,7 @@ if ($p == 'heater') {
     <link rel="stylesheet" type="text/css" href="css2/style_heater.css">
     <script src="js2/heater.js"></script>
     <script src="js2/boilerSetup.js"></script>
+    <script src="js2/heatingLog.js"></script>
 
     <div id="page_heater" class="grid_12"
          style="display: flex; flex-direction: column; align-content: flex-start; height: 790px">
@@ -456,6 +457,10 @@ if ($p == 'heater') {
                         <div class="boiler_data">
                             <h2>Расчетная</h2>
                             <span id="boiler_tset"></span>
+                        </div>
+                        <div id="heater_boiler_log"></div>
+                        <div id="heater_boiler_log_dialog">
+                            <div id="heater_boiler_log_dialog_content"></div>
                         </div>
                     </div>
                     <div class="boiler_tile">

@@ -446,7 +446,7 @@ PID
         echo '            </div>';
         echo '        </div>';
         echo '    </div>';
-        echo '    <div style="width: 500px"><canvas id="graphCurve" width="400" ><p>GRAPH</p></canvas></div>';
+        echo '    <div style="width: 500px"><canvas id="graphCurve"><p>GRAPH</p></canvas></div>';
         echo '</div>';
     }
 
@@ -461,5 +461,78 @@ PID
         , '');
     echo $outTempFloorBathroom;
 
+
+}
+elseif ($_REQUEST['dev'] == 'heatingLog') {
+
+    $type = isset($_REQUEST['type']) ? $_REQUEST['type'] : '';
+
+    if (isset($_REQUEST['data'])) {
+        if ($_REQUEST['data'] == 'logGraph') { //данные для графика
+
+            $result = null;
+            try {
+                $con = sqlDataBase::Connect();
+                $format = 'SELECT data, DATE_FORMAT(date, \'%s\') date_f FROM t_heatingJournal WHERE type=\'%s\' AND date>=(NOW() - INTERVAL 12 HOUR) AND date<=NOW() ORDER BY date';
+                $query = sprintf($format, '%H:%i',$type);
+                $result = queryDataBase::getAll($con, $query);
+            } catch (connectDBException $e) {
+                logger::writeLog('Ошибка при подключении к базе данных в функции getTemperatureForInterval. ' . $e->getMessage(),
+                    loggerTypeMessage::FATAL, loggerName::ERROR);
+            } catch (querySelectDBException $e) {
+                logger::writeLog('Ошибка в функции getTemperatureForInterval. При выполнении запроса ' . $query . '. ' . $e->getMessage(),
+                    loggerTypeMessage::FATAL, loggerName::ERROR);
+            }
+            unset($con);
+
+            $tags = [];
+            $dataTar = [];
+            $dataCur = [];
+            $dataOp = [];
+            $dataHi = [];
+            $dataLo = [];
+
+            if (!is_null($result)) {
+                foreach ($result as $key=>$val) {
+                    $tags[] = $val['date_f'];
+                    $dataObj = json_decode($val['data']);
+                    $dataTar[] = $dataObj->b_tar;
+                    $dataCur[] = $dataObj->b_cur;
+                    $dataOp[] = $dataObj->b_op;
+                    $dataHi[] = $dataObj->b_hi;
+                    $dataLo[] = $dataObj->b_lo;
+                }
+            }
+
+            $gr_tar = [
+                'data' => $dataTar,
+                'label' => 'Целевая',
+                'borderColor' => 'rgba(38,90,203,0.8)'
+            ];
+            $gr_cur = [
+                'data' => $dataCur,
+                'label' => 'Текущая',
+                'borderColor' => 'rgba(62,203,38,0.8)'
+            ];
+            $gr_op = [
+                'data' => $dataOp,
+                'label' => 'СО, расчет',
+                'borderColor' => 'rgba(225,201,45,0.8)'
+            ];
+
+            $data1 = [$gr_tar, $gr_cur];
+            $data2 = [$gr_op];
+
+            $jsonData = json_encode(['tags' => $tags, 'data1' => $data1, 'data2' => $data2]);
+            header('Content-Type: application/json');
+            echo $jsonData;
+            return;
+        }
+    }
+
+    echo '<script src="js2/heatingLog.js"></script>';
+    echo '<p1>Отопление</p1>';
+    echo '<div><canvas id="graphCurveLog1"><p>GRAPH</p></canvas></div>';
+    echo '<div><canvas id="graphCurveLog2"><p>GRAPH</p></canvas></div>';
 
 }

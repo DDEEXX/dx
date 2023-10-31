@@ -87,6 +87,26 @@ $(function () {
         $("#heater_boiler_setup_dialog_").dialog("open");
     });
 
+    $("#heater_boiler_log_dialog").dialog({
+        autoOpen: false,
+        draggable: false,
+        position: {my: "center", at: "center top", of: "#page_heater"},
+        resizable: false,
+        title: "Лог отопления в доме",
+        height: "auto",
+        width: 1100,
+        open: function (event, ui) {
+            $.get("data/heater/heating.php?dev=heatingLog&type=bl", function (data) {
+                $("#heater_boiler_log_dialog_content").html(data);
+            });
+        }
+    });
+    $("#heater_boiler_log").button({
+        icon : 'ui-icon-signal'
+    }).click(function () {
+        $("#heater_boiler_log_dialog").dialog("open");
+    });
+
     $("#heater_boiler_heating").slider({
         min: 190,
         max: 280,
