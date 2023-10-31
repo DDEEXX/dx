@@ -48,6 +48,8 @@ class daemonLoopHeating extends daemon
         $boilerTempCurrentLast = null;
         $boiler_iError = 0;
 
+        $mqtt = mqttSend::connect();
+
         while (!$this->stopServer()) {
 
             $now = time();
@@ -66,8 +68,20 @@ class daemonLoopHeating extends daemon
                 $unitBoiler = managerUnits::getUnitLabel('boiler_opentherm');
                 $unitPID = managerUnits::getUnitLabel('boiler_pid');
                 if (is_null($unitBoiler) || is_null($unitPID)) continue;
-                $this->boiler($unitBoiler, $unitPID, $boilerTempCurrentLast, $boiler_iError, $dt);
+                $data = $unitBoiler->getData();
+                $value = $data->value;
+                if ($value->_mode == boilerMode::MQTT) {
+                    $_spr = $value->_spr;
+                    $b_op = $this->boiler($unitPID, $_spr, $boilerTempCurrentLast, $boiler_iError, $dt);
 
+                    $device = $unitBoiler->getDevice();
+                    if (is_null($device)) return;
+                    $devicePhysic = $device->getDevicePhysic();
+                    $topic = $devicePhysic->getTopicSet();
+                    if (!strlen($topic)) return;
+                    $payload = json_encode(['tset' => round($b_op)]);
+                    $mqtt->publish($topic, $payload);
+                }
             }
 
             sleep(1); //ждем
@@ -90,14 +104,8 @@ class daemonLoopHeating extends daemon
         }
     }
 
-    private function boiler($unitBoiler, $unitPID, &$tempCurrentLast, &$boiler_iError, $dt)
+    private function boiler($unitPID, $spr, &$tempCurrentLast, &$boiler_iError, $dt)
     {
-        $data = $unitBoiler->getData();
-        $value = $data->value;
-        if ($value->_mode != boilerMode::MQTT) return;
-
-        $_spr = $value->_spr;
-
         $op = $unitPID->getOptions();
         $boiler_Kp = $op->get('b_kp');
         $boiler_Ki = $op->get('b_ki');
@@ -137,7 +145,7 @@ class daemonLoopHeating extends daemon
         $opLow = $pid_b1->getTempCurve($boilerCurrentInT, $currentOutT);
 
         $op = $this->PID(
-            $_spr,
+            $spr,
             $boilerCurrentInT,
             $tempCurrentLast,
             $boiler_iError,
@@ -148,16 +156,7 @@ class daemonLoopHeating extends daemon
             $opHigh,
             $opLow);
         $tempCurrentLast = $boilerCurrentInT;
-
-        $device = $unitBoiler->getDevice();
-        if (is_null($device)) return;
-        $devicePhysic = $device->getDevicePhysic();
-        $topic = $devicePhysic->getTopicSet();
-        if (!strlen($topic)) return;
-        $payload = json_encode(['tset' => round($op)]);
-        $mqtt = mqttSend::connect();
-        $mqtt->publish($topic, $payload);
-
+        return $op;
     }
 
     private function PID($tempTarget, $tempCurrent, $tempCurrentLast, &$iError, $dt, $KP, $KI, $KD, $opHigh, $opLow)
