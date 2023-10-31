@@ -8,6 +8,7 @@ require_once(dirname(__FILE__) . '/../../class/pidTemperature.class.php');
 
 function getTemp($label, &$currentTemperature, &$flagActualTemperature)
 {
+    if (!strlen($label)) return;
     $uniteTempIn = managerUnits::getUnitLabel($label);
     if (!is_null($uniteTempIn)) {
         $valueTempIn = $uniteTempIn->getData();
