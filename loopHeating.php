@@ -30,7 +30,7 @@ $STDERR = fopen($fileDir . '/logs/daemonLoopHeating.log', 'ab');
 class daemonLoopHeating extends daemon
 {
     const NAME_PID_FILE = 'loopHeating.pid';
-    const PAUSE = 30; //Пауза в основном цикле, в секундах (30 сек)
+    const PAUSE = 10; //Пауза в основном цикле, в секундах (30 сек)
 
     public function __construct($dirPidFile)
     {
@@ -106,12 +106,14 @@ class daemonLoopHeating extends daemon
                         //if ($fCurValve > 0) {
                             $flagSent = true;
                             $payload = '{"value":"off"}';
+                        $payload = '{"current_heating_setpoint":5}';
                             $fCurValve = 0;
                         //}
                     } elseif (round($f_op, 1) < round($floorTempCurrentLast, 1) + 0.1) {
                         //if ($fCurValve == 0) {
                             $flagSent = true;
                             $payload = '{"value":"on"}';
+                            $payload = '{"current_heating_setpoint":45}';
                             $fCurValve = 1;
                         //}
                     }
