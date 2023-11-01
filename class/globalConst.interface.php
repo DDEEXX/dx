@@ -28,6 +28,7 @@ interface typeDevice{
     const KITCHEN_HOOD      = 10;//Кухонная вытяжка
     const GAS_SENSOR        = 11;//Датчик газа
     const BOILER_OPEN_THERM = 12;//Котел отопления
+    const RADIATOR_VALVE    = 13;//Головка радиатора
 }
 
 interface typeUnit{
@@ -43,6 +44,7 @@ interface typeUnit{
     const GAS_SENSOR        = 10;//Датчик газа
     const BOILER_OPEN_THERM = 11;//Котел отопления
     const BOILER_PID        = 12;//Котел отопления
+    const RADIATOR_VALVE    = 13;//Головка радиатора
 }
 
 interface graphType {

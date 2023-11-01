@@ -76,6 +76,9 @@ class deviceFactory
             case typeDevice::BOILER_OPEN_THERM :
                 $className = 'boilerOpenTherm';
                 break;
+            case typeDevice::RADIATOR_VALVE :
+                $className = 'radiatorValve';
+                break;
             default :
                 return null;
         }

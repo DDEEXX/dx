@@ -54,6 +54,9 @@ class unitFactory
             case typeUnit::BOILER_PID :
                 $className = 'boilerPID';
                 break;
+            case typeUnit::RADIATOR_VALVE :
+                $className = 'radiatorValveUnit';
+                break;
             default :
                 $className = '';
         }

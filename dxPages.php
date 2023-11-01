@@ -439,7 +439,6 @@ if ($p == 'heater') {
                         <label for="boiler_power">Отопление
                             <input type="checkbox" id="boiler_power" name="boiler_power" property="_chena">
                         </label>
-<!--                        <h1 id="boiler_power">Отопление</h1>-->
                         <div class="boiler_data">
                             <p id="boiler_spr"></p>
                             <img id="boiler_heating_fire" style="margin-left: 5px">
@@ -460,7 +459,9 @@ if ($p == 'heater') {
                         </div>
                     </div>
                     <div class="boiler_tile">
-                        <h1>Теплый пол</h1>
+                        <label for="boiler_power_floor">Теплый пол
+                            <input type="checkbox" id="boiler_power_floor" name="boiler_power_floor" property="f_pwr">
+                        </label>
                         <div class="boiler_data">
                             <p id="boiler_sprf1"></p>
                         </div>

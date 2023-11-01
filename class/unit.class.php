@@ -519,6 +519,23 @@ class boilerOpenThermUnit extends sensorUnit
 
 }
 
+class radiatorValveUnit extends moduleUnit
+{
+
+    public function __construct(array $options)
+    {
+        parent::__construct($options, typeUnit::RADIATOR_VALVE);
+    }
+
+    function setData($data)
+    {
+        $device = $this->getDevice();
+        if ($device instanceof iMakerDevice) {
+            $device->setData($data);
+        }
+    }
+}
+
 class boilerPID extends moduleUnit
 {
 
@@ -551,6 +568,7 @@ class boilerPID extends moduleUnit
         $default->f_mode = 0;
         $default->b_tOut = '';
         $default->b_tOut1 = '';
+        $default->f_pwr = false;
         return $default;
     }
 

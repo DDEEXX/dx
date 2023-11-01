@@ -34,9 +34,28 @@ function getDataBoiler($label)
     return $value;
 }
 
+function getDataPID()
+{
+    $value = new stdClass();
+    $unitPID = managerUnits::getUnitLabel('boiler_pid');
+    if (is_null($unitPID)) {
+        logger::writeLog('Модуль с именем :: boiler_pid :: не найден',
+            loggerTypeMessage::ERROR, loggerName::ERROR);
+        return $value;
+    }
+    $op = $unitPID->getOptions();
+    $value->f_pwr = $op->get('f_pwr');
+    return $value;
+}
+
 if ($_REQUEST['dev'] == 'boiler') {
     $label = $_REQUEST['label'];
     $data = getDataBoiler($label);
+    header('Content-Type: application/json');
+    echo json_encode($data);
+}
+if ($_REQUEST['dev'] == 'pid') {
+    $data = getDataPID();
     header('Content-Type: application/json');
     echo json_encode($data);
 }
@@ -116,6 +135,7 @@ elseif ($_REQUEST['dev'] == 'setProperty') {
         $property = $_REQUEST['property'];
         $value = $_REQUEST['value'];
         if (is_numeric($value)) $value = floatval($value);
+        elseif ($value === 'true' || $value === 'false') $value = $value === 'true';
         $op->set($property, $value);
     } else {
         $data = $_REQUEST['data'];

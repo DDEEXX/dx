@@ -70,11 +70,14 @@ class daemonLoopHeating extends daemon
                 if (is_null($unitBoiler) || is_null($unitPID)) continue;
                 $data = $unitBoiler->getData();
                 $value = $data->value;
+                $optionsPID = $unitPID->getOptions();
+
+                //Управление котлом отопления
                 if ($value->_mode == boilerMode::MQTT) {
                     $_spr = $value->_spr;
                     $ch = $value->ch;
                     $log = [];
-                    $b_op = $this->boiler($unitPID, $_spr, $boilerTempCurrentLast, $boiler_iError, $dt, $log);
+                    $b_op = $this->boiler($optionsPID, $_spr, $boilerTempCurrentLast, $boiler_iError, $dt, $log);
 
                     $device = $unitBoiler->getDevice();
                     if (is_null($device)) return;
@@ -87,6 +90,12 @@ class daemonLoopHeating extends daemon
                     $log['b_ch'] = $ch;
                     $this->saveInJournal(json_encode($log), 'bl');
                 }
+
+                //Управление теплыми полами
+                if ($optionsPID->get('f_pwr')) {
+
+                }
+
             }
 
             sleep(1); //ждем
@@ -109,9 +118,8 @@ class daemonLoopHeating extends daemon
         }
     }
 
-    private function boiler($unitPID, $spr, &$tempCurrentLast, &$boiler_iError, $dt, &$log)
+    private function boiler($op, $spr, &$tempCurrentLast, &$boiler_iError, $dt, &$log)
     {
-        $op = $unitPID->getOptions();
         $boiler_Kp = $op->get('b_kp');
         $boiler_Ki = $op->get('b_ki');
         $boiler_Kd = $op->get('b_kd');

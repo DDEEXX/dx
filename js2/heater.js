@@ -54,7 +54,7 @@ function heater_checkBoiler_Status() {
 
 $(function () {
 
-    $("#boiler_power").checkboxradio({
+    $("#boiler_power, #boiler_power_water").checkboxradio({
         icon: false
     }).click(function () {
         const p = $(this).attr("property");
@@ -62,9 +62,14 @@ $(function () {
         $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=' + p + '&v=' + v);
     });
 
-    $("#boiler_power_water").checkboxradio({
+    $("#boiler_power_floor").checkboxradio({
         icon: false
+    }).click(function () {
+        const p = $(this).attr("property");
+        const v = $(this).is(":checked");
+        $.get('data/heater/heating.php?dev=setProperty&mode=one&property=' + p + '&value=' + v);
     });
+
 
     const label = "boiler_opentherm";
     $("#heater_boiler_setup_dialog_").dialog({
@@ -204,13 +209,15 @@ $(function () {
         $.post("data/heater/heating.php", {dev: "setProperty", data: jsonDana} );
     });
 
-
 });
 
 $(document).ready(function () {
     $.get('data/heater/heating.php?dev=boiler&label=boiler_opentherm', function (data) {
         $("#boiler_power").attr("checked", data._chena).checkboxradio("refresh");
         $("#boiler_power_water").attr("checked", data._dhwena).checkboxradio("refresh");
+    });
+    $.get('data/heater/heating.php?dev=pid', function (data) {
+        $("#boiler_power_floor").attr("checked", data.f_pwr).checkboxradio("refresh");
     });
 });
 
