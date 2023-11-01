@@ -50,6 +50,7 @@ class daemonLoopHeating extends daemon
 
         $floorTempCurrentLast = null;
         $floor_iError = 0;
+        $fCurValve = 0;
 
         $mqtt = mqttSend::connect();
 
@@ -98,16 +99,18 @@ class daemonLoopHeating extends daemon
                 //Управление теплыми полами
                 if ($optionsPID->get('f_pwr')) {
                     $log = [];
-                    $f_op = $this->floor_1($optionsPID, $floorTempCurrentLast, $boiler_iError, $dt, $log);
+                    $f_op = $this->floor_1($optionsPID, $floorTempCurrentLast, $floor_iError, $dt, $log);
                     $flagSent = false;
                     $payload = '';
                     if (round($f_op, 1) > round($floorTempCurrentLast, 1) + 0.1) {
                         $flagSent = true;
                         $payload = '{"value":"off"}';
+                        $fCurValve = 0;
 
                     } elseif (round($f_op, 1) < round($floorTempCurrentLast, 1) + 0.1) {
                         $flagSent = true;
                         $payload = '{"value":"on"}';
+                        $fCurValve = 1;
                     }
                     if ($flagSent) {
                         $unitFloor1 = managerUnits::getUnitLabel('heating_floor_1');
@@ -118,6 +121,9 @@ class daemonLoopHeating extends daemon
                         if (strlen($topic)) {
                             $mqtt->publish($topic, $payload);
                         }
+
+                        $log['f_val'] = $fCurValve;
+                        $this->saveInJournal(json_encode($log), 'fl');
                     }
                 }
 
@@ -306,14 +312,14 @@ class daemonLoopHeating extends daemon
         $op = round(max($opLow, min($opHigh, $op_)), 2);
         $iError = $I;
 
-        $log['b_tar'] = round($tempTarget,2);
-        $log['b_cur'] = round($tempCurrent,2);
-        $log['b_op'] = round($op);
-        $log['b_P'] = round($P,2);
-        $log['b_I'] = round($I,2);
-        $log['b_D'] = round($P,2);
-        $log['b_hi'] = round($opHigh,2);
-        $log['b_lo'] = round($opLow,2);
+        $log['f_tar'] = round($tempTarget,2);
+        $log['f_cur'] = round($tempCurrent,2);
+        $log['f_op'] = round($op);
+        $log['f_P'] = round($P,2);
+        $log['f_I'] = round($I,2);
+        $log['f_D'] = round($P,2);
+        $log['f_hi'] = round($opHigh,2);
+        $log['f_lo'] = round($opLow,2);
         return $op;
     }
 
