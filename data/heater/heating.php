@@ -104,7 +104,7 @@ elseif ($_REQUEST['dev'] == 'set') {
     $mqtt->publish($topic, $payload, 1);
     if ($sentReset) {
         sleep(1);
-        $mqtt->publish($topic, '_rst', 1);
+        $mqtt->publish($topic, '{"_rst":true}', 1);
     }
 }
 elseif ($_REQUEST['dev'] == 'setProperty') {
