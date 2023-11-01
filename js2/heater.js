@@ -135,11 +135,18 @@ $(function () {
         min: 230,
         max: 400,
         create: function (event, ui) {
-            $(this).slider("value", 290);
-            $('#boiler_sprf1').html(290 / 10 + " &degC");
+            let th = $(this);
+            $.get('data/heater/heating.php?dev=pid', function (data) {
+                let spr10 = Math.round(data.f_spr * 10);
+                th.slider("value", spr10);
+                $('#boiler_sprf1').html(spr10 / 10 + " &degC");
+            });
         },
         slide: function (event, ui) {
             $('#boiler_sprf1').html(ui.value / 10 + " &degC");
+        },
+        stop: function (event, ui) {
+            $.get('data/heater/heating.php?dev=setProperty&mode=one&property=f_spr&value=' + ui.value + '&d=10');
         }
     });
     $("#heater_floor_bathroom").slider({

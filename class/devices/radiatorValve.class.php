@@ -4,11 +4,8 @@ class formatterRadiatorValve implements iFormatterValue
 {
     function formatRawValue($value)
     {
-        $result = new formatDeviceValue();
-        $result->valueNull = false;
-        $result->status = 0;
-        $arValueData = json_decode($value, true);
-        if (!is_null($arValueData)) $result->value = $arValueData['state'] == 'ON' ? 1 : 0;
+        $result = new stdClass();
+        $result->value = json_decode($value);
         return $result;
     }
 
@@ -37,9 +34,9 @@ class formatterRadiatorValve implements iFormatterValue
         $value = managerDevices::checkDataValue('value', $dataDecode);
         if (!is_null($value)) {
             if (strtolower($value) == 'on') {
-                return '{"state": "ON"}';
+                return '{"current_heating_setpoint":45}';
             } elseif (strtolower($value) == 'off') {
-                return '{"state": "OFF"}';
+                return '{"current_heating_setpoint":5}';
             }
         }
         return null;

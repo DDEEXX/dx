@@ -48,6 +48,9 @@ class daemonLoopHeating extends daemon
         $boilerTempCurrentLast = null;
         $boiler_iError = 0;
 
+        $floorTempCurrentLast = null;
+        $floor_iError = 0;
+
         $mqtt = mqttSend::connect();
 
         while (!$this->stopServer()) {
@@ -83,9 +86,10 @@ class daemonLoopHeating extends daemon
                     if (is_null($device)) return;
                     $devicePhysic = $device->getDevicePhysic();
                     $topic = $devicePhysic->getTopicSet();
-                    if (!strlen($topic)) return;
-                    $payload = json_encode(['tset' => round($b_op)]);
-                    $mqtt->publish($topic, $payload);
+                    if (strlen($topic)) {
+                        $payload = json_encode(['tset' => round($b_op)]);
+                        $mqtt->publish($topic, $payload);
+                    }
 
                     $log['b_ch'] = $ch;
                     $this->saveInJournal(json_encode($log), 'bl');
@@ -93,7 +97,28 @@ class daemonLoopHeating extends daemon
 
                 //Управление теплыми полами
                 if ($optionsPID->get('f_pwr')) {
+                    $log = [];
+                    $f_op = $this->floor_1($optionsPID, $floorTempCurrentLast, $boiler_iError, $dt, $log);
+                    $flagSent = false;
+                    $payload = '';
+                    if (round($f_op, 1) > round($floorTempCurrentLast, 1) + 0.1) {
+                        $flagSent = true;
+                        $payload = '{"value":"off"}';
 
+                    } elseif (round($f_op, 1) < round($floorTempCurrentLast, 1) + 0.1) {
+                        $flagSent = true;
+                        $payload = '{"value":"on"}';
+                    }
+                    if ($flagSent) {
+                        $unitFloor1 = managerUnits::getUnitLabel('heating_floor_1');
+                        $device = $unitBoiler->getDevice();
+                        if (is_null($device)) return;
+                        $devicePhysic = $device->getDevicePhysic();
+                        $topic = $devicePhysic->getTopicSet();
+                        if (strlen($topic)) {
+                            $mqtt->publish($topic, $payload);
+                        }
+                    }
                 }
 
             }
@@ -174,6 +199,90 @@ class daemonLoopHeating extends daemon
     }
 
     private function PID($tempTarget, $tempCurrent, $tempCurrentLast, &$iError, $dt, $KP, $KI, $KD, $opHigh, $opLow, &$log)
+    {
+        // calculate the $error
+        $error = $tempTarget - $tempCurrent;
+        // calculate the integral $error
+        $dError = round($KI * $error * $dt, 2);
+        $iError = $iError + $dError;
+        // calculate the measurement derivative
+        $dpv = ($tempCurrent - $tempCurrentLast) / $dt;
+        // calculate the PID output
+        $P = round($KP * $error, 2); //proportional contribution
+        $I = $iError; //integral contribution
+        $D = round(-$KD * $dpv, 2); //derivative contribution
+        $op_ = round($P + $I + $D, 2);
+        // implement anti-reset windup
+        if ($error>0) {
+            if ($op_ >= $opHigh) $I = $I - $dError;
+        }
+        else {
+            if ($op_ < $opLow) $I = $I - $dError;
+        }
+        $op = round(max($opLow, min($opHigh, $op_)), 2);
+        $iError = $I;
+
+        $log['b_tar'] = round($tempTarget,2);
+        $log['b_cur'] = round($tempCurrent,2);
+        $log['b_op'] = round($op);
+        $log['b_P'] = round($P,2);
+        $log['b_I'] = round($I,2);
+        $log['b_D'] = round($P,2);
+        $log['b_hi'] = round($opHigh,2);
+        $log['b_lo'] = round($opLow,2);
+        return $op;
+    }
+
+    private function floor_1($op, &$tempCurrentLast, &$iError, $dt, &$log) {
+        $Kp = $op->get('f_kp');
+        $Ki = $op->get('f_ki');
+        $Kd = $op->get('f_kd');
+        $target = $op->get('f_tar');
+        $cur = $op->get('f_cur');
+        $dK = $op->get('f_dK');
+        $dT = $op->get('f_dT');
+        $out = $op->get('b_tOut');
+        $out1 = $op->get('b_tOut1');
+        $in = $op->get('b_tfIn');
+        $in1 = $op->get('b_tfIn1');
+        $spr = $op->get('f_spr');
+
+        //температура обратки теплого пола
+        $CurrentInT = 30;
+        $flagTemp = false; //флаг есть актуальная температура
+        $this->getTemp($in, $CurrentInT, $flagTemp);
+        if (!$flagTemp) $this->getTemp($in1, $CurrentInT, $flagTemp);
+        if (is_null($tempCurrentLast)) $tempCurrentLast = $CurrentInT;
+
+        //Температура на улице
+        $currentOutT = -10;
+        $flagTempOut = false; //флаг есть актуальная температура
+        $this->getTemp($out, $currentOutT, $flagTempOut);
+        if (!$flagTempOut) $this->getTemp($out1, $currentOutT, $flagTempOut);
+
+        $opHigh = 100;
+
+        $pid = new pidTemperature($target);
+        $pid->setCurve($cur, $dK, $dT);
+        $opLow = $pid->getTempCurve($CurrentInT, $currentOutT);
+
+        $op = $this->PIDf(
+            $spr,
+            $CurrentInT,
+            $tempCurrentLast,
+            $iError,
+            $dt,
+            $Kp,
+            $Ki,
+            $Kd,
+            $opHigh,
+            $opLow,
+            $log);
+        $tempCurrentLast = $CurrentInT;
+        return $op;
+    }
+
+    private function PIDf($tempTarget, $tempCurrent, $tempCurrentLast, &$iError, $dt, $KP, $KI, $KD, $opHigh, $opLow, &$log)
     {
         // calculate the $error
         $error = $tempTarget - $tempCurrent;

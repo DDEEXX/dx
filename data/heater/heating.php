@@ -45,6 +45,7 @@ function getDataPID()
     }
     $op = $unitPID->getOptions();
     $value->f_pwr = $op->get('f_pwr');
+    $value->f_spr = $op->get('f_spr');
     return $value;
 }
 
@@ -134,7 +135,9 @@ elseif ($_REQUEST['dev'] == 'setProperty') {
     if (isset($_REQUEST['mode']) && $_REQUEST['mode'] == 'one') {
         $property = $_REQUEST['property'];
         $value = $_REQUEST['value'];
-        if (is_numeric($value)) $value = floatval($value);
+        $d = isset($_REQUEST['d']) && is_numeric($_REQUEST['d']) ? (int)$_REQUEST['d'] : 1;
+
+        if (is_numeric($value)) $value = floatval($value)/$d;
         elseif ($value === 'true' || $value === 'false') $value = $value === 'true';
         $op->set($property, $value);
     } else {
