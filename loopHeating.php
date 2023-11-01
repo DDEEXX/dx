@@ -58,8 +58,8 @@ class daemonLoopHeating extends daemon
 
             $now = time();
 
-            if ($now>$nextStep) {
-                $nextStep = $startTime + (((int)(($now - $startTime)/self::PAUSE))+1) * self::PAUSE;
+            if ($now > $nextStep) {
+                $nextStep = $startTime + (((int)(($now - $startTime) / self::PAUSE)) + 1) * self::PAUSE;
                 $doStep = false;
             }
 
@@ -100,30 +100,20 @@ class daemonLoopHeating extends daemon
                 if ($optionsPID->get('f_pwr')) {
                     $log = [];
                     $f_op = $this->floor_1($optionsPID, $floorTempCurrentLast, $floor_iError, $dt, $log);
-                    $flagSent = false;
-                    $payload = '';
-                    if (round($f_op, 1) > round($floorTempCurrentLast, 1) + 0.1) {
-                        if ($fCurValve == 0) {
-                            $flagSent = true;
-                            $payload = '{"current_heating_setpoint":45}';
-                            $fCurValve = 1;
-                        }
-                    } elseif (round($f_op, 1) < round($floorTempCurrentLast, 1) - 0.1) {
-                        if ($fCurValve > 0) {
-                            $flagSent = true;
-                            $payload = '{"current_heating_setpoint":5}';
-                            $fCurValve = 0;
-                        }
-                    }
-                    if ($flagSent) {
-                        $unitFloor1 = managerUnits::getUnitLabel('heating_floor_1');
-                        $device = $unitFloor1->getDevice();
-                        if (is_null($device)) return;
-                        $devicePhysic = $device->getDevicePhysic();
-                        $topic = $devicePhysic->getTopicSet();
-                        if (strlen($topic)) {
-                            $mqtt->publish($topic, $payload);
-                        }
+
+                    if (round($f_op, 1) > round($floorTempCurrentLast, 1)) $fCurValve = 1;
+                    elseif (round($f_op, 1) < round($floorTempCurrentLast, 1) - 0.1) $fCurValve = 0;
+
+                    if ($fCurValve) $payload = '{"current_heating_setpoint":45}';
+                    else $payload = '{"current_heating_setpoint":5}';
+
+                    $unitFloor1 = managerUnits::getUnitLabel('heating_floor_1');
+                    $device = $unitFloor1->getDevice();
+                    if (is_null($device)) return;
+                    $devicePhysic = $device->getDevicePhysic();
+                    $topic = $devicePhysic->getTopicSet();
+                    if (strlen($topic)) {
+                        $mqtt->publish($topic, $payload);
                     }
 
                     $log['f_val'] = $fCurValve;
@@ -221,27 +211,27 @@ class daemonLoopHeating extends daemon
         $D = round(-$KD * $dpv, 2); //derivative contribution
         $op_ = round($P + $I + $D, 2);
         // implement anti-reset windup
-        if ($error>0) {
+        if ($error > 0) {
             if ($op_ >= $opHigh) $I = $I - $dError;
-        }
-        else {
+        } else {
             if ($op_ < $opLow) $I = $I - $dError;
         }
         $op = round(max($opLow, min($opHigh, $op_)), 2);
         $iError = $I;
 
-        $log['b_tar'] = round($tempTarget,2);
-        $log['b_cur'] = round($tempCurrent,2);
+        $log['b_tar'] = round($tempTarget, 2);
+        $log['b_cur'] = round($tempCurrent, 2);
         $log['b_op'] = round($op);
-        $log['b_P'] = round($P,2);
-        $log['b_I'] = round($I,2);
-        $log['b_D'] = round($P,2);
-        $log['b_hi'] = round($opHigh,2);
-        $log['b_lo'] = round($opLow,2);
+        $log['b_P'] = round($P, 2);
+        $log['b_I'] = round($I, 2);
+        $log['b_D'] = round($P, 2);
+        $log['b_hi'] = round($opHigh, 2);
+        $log['b_lo'] = round($opLow, 2);
         return $op;
     }
 
-    private function floor_1($op, &$tempCurrentLast, &$iError, $dt, &$log) {
+    private function floor_1($op, &$tempCurrentLast, &$iError, $dt, &$log)
+    {
         $Kp = $op->get('f_kp');
         $Ki = $op->get('f_ki');
         $Kd = $op->get('f_kd');
@@ -305,27 +295,27 @@ class daemonLoopHeating extends daemon
         $D = round(-$KD * $dpv, 2); //derivative contribution
         $op_ = round($P + $I + $D, 2);
         // implement anti-reset windup
-        if ($error>0) {
+        if ($error > 0) {
             if ($op_ >= $opHigh) $I = $I - $dError;
-        }
-        else {
+        } else {
             if ($op_ < $opLow) $I = $I - $dError;
         }
         $op = round(max($opLow, min($opHigh, $op_)), 2);
         $iError = $I;
 
-        $log['f_tar'] = round($tempTarget,2);
-        $log['f_cur'] = round($tempCurrent,2);
+        $log['f_tar'] = round($tempTarget, 2);
+        $log['f_cur'] = round($tempCurrent, 2);
         $log['f_op'] = round($op);
-        $log['f_P'] = round($P,2);
-        $log['f_I'] = round($I,2);
-        $log['f_D'] = round($P,2);
-        $log['f_hi'] = round($opHigh,2);
-        $log['f_lo'] = round($opLow,2);
+        $log['f_P'] = round($P, 2);
+        $log['f_I'] = round($I, 2);
+        $log['f_D'] = round($P, 2);
+        $log['f_hi'] = round($opHigh, 2);
+        $log['f_lo'] = round($opLow, 2);
         return $op;
     }
 
-    private function saveInJournal($data, $type = '') {
+    private function saveInJournal($data, $type = '')
+    {
         $currentData = date('Y-m-d H:i:s');
 
         try {
