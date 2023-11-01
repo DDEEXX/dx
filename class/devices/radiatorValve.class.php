@@ -83,7 +83,7 @@ class radiatorValve extends aMakerDevice
         $mqttParameters = [
             'topicCmnd' => $options['topic_cmnd'],
             'topicStat' => $options['topic_stat'],
-            //'topicSet' => $options['topic_cmnd'].'/set',
+            'topicSet' => $options['topic_cmnd'].'/set',
             'topicAvailability' => '',
             'topicTest' => $options['topic_test'],
             'topicAlarm' => $options['topic_alarm']];
