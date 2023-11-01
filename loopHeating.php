@@ -114,7 +114,7 @@ class daemonLoopHeating extends daemon
                     }
                     if ($flagSent) {
                         $unitFloor1 = managerUnits::getUnitLabel('heating_floor_1');
-                        $device = $unitBoiler->getDevice();
+                        $device = $unitFloor1->getDevice();
                         if (is_null($device)) return;
                         $devicePhysic = $device->getDevicePhysic();
                         $topic = $devicePhysic->getTopicSet();
