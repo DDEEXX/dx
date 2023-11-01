@@ -103,16 +103,16 @@ class daemonLoopHeating extends daemon
                     $flagSent = false;
                     $payload = '';
                     if (round($f_op, 1) > round($floorTempCurrentLast, 1) + 0.1) {
-                        if ($fCurValve > 0) {
-                            $flagSent = true;
-                            $payload = '{"current_heating_setpoint":45}';
-                            $fCurValve = 0;
-                        }
-                    } elseif (round($f_op, 1) < round($floorTempCurrentLast, 1) - 0.1) {
                         if ($fCurValve == 0) {
                             $flagSent = true;
-                            $payload = '{"current_heating_setpoint":5}';
+                            $payload = '{"current_heating_setpoint":45}';
                             $fCurValve = 1;
+                        }
+                    } elseif (round($f_op, 1) < round($floorTempCurrentLast, 1) - 0.1) {
+                        if ($fCurValve > 0) {
+                            $flagSent = true;
+                            $payload = '{"current_heating_setpoint":5}';
+                            $fCurValve = 0;
                         }
                     }
                     if ($flagSent) {
