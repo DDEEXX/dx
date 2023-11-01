@@ -114,17 +114,11 @@ class daemonLoopHeating extends daemon
                     }
                     if ($flagSent) {
                         $unitFloor1 = managerUnits::getUnitLabel('heating_floor_1');
-                        $device = $unitFloor1->getDevice();
-                        if (is_null($device)) return;
-                        $devicePhysic = $device->getDevicePhysic();
-                        $topic = $devicePhysic->getTopicSet();
-                        if (strlen($topic)) {
-                            $mqtt->publish($topic, $payload);
-                        }
-
-                        $log['f_val'] = $fCurValve;
-                        $this->saveInJournal(json_encode($log), 'fl');
+                        $unitFloor1->setData($payload);
                     }
+
+                    $log['f_val'] = $fCurValve;
+                    $this->saveInJournal(json_encode($log), 'fl');
                 }
 
             }
