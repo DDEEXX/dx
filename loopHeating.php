@@ -103,17 +103,17 @@ class daemonLoopHeating extends daemon
                     $flagSent = false;
                     $payload = '';
                     if (round($f_op, 1) > round($floorTempCurrentLast, 1) + 0.1) {
-                        if ($fCurValve > 0) {
+                        //if ($fCurValve > 0) {
                             $flagSent = true;
                             $payload = '{"value":"off"}';
                             $fCurValve = 0;
-                        }
+                        //}
                     } elseif (round($f_op, 1) < round($floorTempCurrentLast, 1) + 0.1) {
-                        if ($fCurValve == 0) {
+                        //if ($fCurValve == 0) {
                             $flagSent = true;
                             $payload = '{"value":"on"}';
                             $fCurValve = 1;
-                        }
+                        //}
                     }
                     if ($flagSent) {
                         $unitFloor1 = managerUnits::getUnitLabel('heating_floor_1');
