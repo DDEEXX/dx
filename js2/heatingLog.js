@@ -2,7 +2,8 @@ var boilerChartLog1;
 var boilerChartLog2;
 
 function graphLog() {
-    $.get("data/heater/heating.php?dev=heatingLog&type=bl&data=logGraph", function (jsonData) {
+    const type =  $("#heater_boiler_log_dialog").attr("type");
+    $.get("data/heater/heating.php?dev=heatingLog&type="+type+"&data=logGraph", function (jsonData) {
 
         const $grafica1 = document.querySelector("#graphCurveLog1");
         const $grafica2 = document.querySelector("#graphCurveLog2");
@@ -12,13 +13,11 @@ function graphLog() {
         data1.forEach(function (item){
             item.borderWidth = 1;
             item.fill = false;
-            item.tension = 0.4;
         });
         const data2 = Object.values(jsonData.data2);
         data2.forEach(function (item){
             item.borderWidth = 1;
             item.fill = false;
-            item.tension = 0.4;
         });
 
         boilerChartLog1 = new Chart($grafica1, {

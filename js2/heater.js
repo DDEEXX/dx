@@ -70,7 +70,6 @@ $(function () {
         $.get('data/heater/heating.php?dev=setProperty&mode=one&property=' + p + '&value=' + v);
     });
 
-
     const label = "boiler_opentherm";
     $("#heater_boiler_setup_dialog_").dialog({
         autoOpen: false,
@@ -101,7 +100,8 @@ $(function () {
         height: "auto",
         width: 1100,
         open: function (event, ui) {
-            $.get("data/heater/heating.php?dev=heatingLog&type=bl", function (data) {
+            const type =  $("#heater_boiler_log_dialog").attr("type");
+            $.get("data/heater/heating.php?dev=heatingLog&type=" + type, function (data) {
                 $("#heater_boiler_log_dialog_content").html(data);
                 $("#heater_boiler_log_dialog").dialog( "option", "position", {my: "center", at: "center", of: "#page_heater"})
             });
@@ -110,6 +110,13 @@ $(function () {
     $("#heater_boiler_log").button({
         icon : 'ui-icon-signal'
     }).click(function () {
+        $("#heater_boiler_log_dialog").attr("type", "bl");
+        $("#heater_boiler_log_dialog").dialog("open");
+    });
+    $("#heater_boiler_log_f").button({
+        icon : 'ui-icon-signal'
+    }).click(function () {
+        $("#heater_boiler_log_dialog").attr("type", "fl");
         $("#heater_boiler_log_dialog").dialog("open");
     });
 

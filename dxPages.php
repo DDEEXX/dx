@@ -466,6 +466,7 @@ if ($p == 'heater') {
                             <p id="boiler_sprf1"></p>
                         </div>
                         <div id="heater_floor_1" class="heater_boiler_slider"></div>
+                        <div id="heater_boiler_log_f" style="margin-top: 10px"></div>
                     </div>
                     <div class="boiler_tile">
                         <h1>Ванная</h1>

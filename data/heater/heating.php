@@ -525,53 +525,78 @@ elseif ($_REQUEST['dev'] == 'heatingLog') {
             $dataHi = [];
             $dataLo = [];
             $dataCh = [];
+            $dataVal = [];
 
             if (!is_null($result)) {
                 foreach ($result as $key=>$val) {
                     $tags[] = $val['date_f'];
                     $dataObj = json_decode($val['data']);
-                    $dataTar[] = is_null($dataObj->b_tar) ? 0 : $dataObj->b_tar;
-                    $dataCur[] = is_null($dataObj->b_cur) ? 0 : $dataObj->b_cur;
-                    $dataOp[] = is_null($dataObj->b_op) ? 0 : $dataObj->b_op;
-                    $dataHi[] = is_null($dataObj->b_hi) ? 0 : $dataObj->b_hi;
-                    $dataLo[] = is_null($dataObj->b_lo) ? 0 : $dataObj->b_lo;
-                    $dataCh[] = is_null($dataObj->b_ch) ? 0 : $dataObj->b_ch;
+                    if ($type == 'bl') {
+                        $dataTar[] = is_null($dataObj->b_tar) ? 0 : $dataObj->b_tar;
+                        $dataCur[] = is_null($dataObj->b_cur) ? 0 : $dataObj->b_cur;
+                        $dataOp[] = is_null($dataObj->b_op) ? 0 : $dataObj->b_op;
+                        $dataHi[] = is_null($dataObj->b_hi) ? 0 : $dataObj->b_hi;
+                        $dataLo[] = is_null($dataObj->b_lo) ? 0 : $dataObj->b_lo;
+                        $dataCh[] = is_null($dataObj->b_ch) ? 0 : $dataObj->b_ch;
+                    }
+                    elseif ($type == 'fl') {
+                        $dataTar[] = is_null($dataObj->f_tar) ? 0 : $dataObj->f_tar;
+                        $dataCur[] = is_null($dataObj->f_cur) ? 0 : $dataObj->f_cur;
+                        $dataVal[] = is_null($dataObj->f_val) ? 0 : $dataObj->f_val;
+                    }
                 }
             }
 
+            $data2 = [];
             $gr_tar = [
                 'data' => $dataTar,
                 'label' => 'Целевая',
-                'borderColor' => 'rgba(38,90,203,0.8)'
+                'borderColor' => 'rgba(38,90,203,0.8)',
+                'tension' => 0.4
             ];
             $gr_cur = [
                 'data' => $dataCur,
                 'label' => 'Текущая',
-                'borderColor' => 'rgba(62,203,38,0.8)'
+                'borderColor' => 'rgba(62,203,38,0.8)',
+                'tension' => 0.4
             ];
-            $gr_op = [
-                'data' => $dataOp,
-                'label' => 'Расчет',
-                'borderColor' => 'rgba(225,201,45,0.8)'
-            ];
-            $gr_ch = [
-                'data' => $dataCh,
-                'label' => 'Подача',
-                'borderColor' => 'rgba(87,234,95,0.8)'
-            ];
-            $gr_hi = [
-                'data' => $dataHi,
-                'label' => 'Max',
-                'borderColor' => 'rgba(227,90,90,0.8)'
-            ];
-            $gr_lo = [
-                'data' => $dataLo,
-                'label' => 'Min',
-                'borderColor' => 'rgba(78,90,232,0.8)'
-            ];
+            if ($type == 'bl') {
+                $gr_op = [
+                    'data' => $dataOp,
+                    'label' => 'Расчет',
+                    'borderColor' => 'rgba(225,201,45,0.8)',
+                    'tension' => 0.4
+                ];
+                $gr_ch = [
+                    'data' => $dataCh,
+                    'label' => 'Подача',
+                    'borderColor' => 'rgba(87,234,95,0.8)',
+                    'tension' => 0.4
+                ];
+                $gr_hi = [
+                    'data' => $dataHi,
+                    'label' => 'Max',
+                    'borderColor' => 'rgba(227,90,90,0.8)',
+                    'tension' => 0.4
+                ];
+                $gr_lo = [
+                    'data' => $dataLo,
+                    'label' => 'Min',
+                    'borderColor' => 'rgba(78,90,232,0.8)',
+                    'tension' => 0.4
+                ];
+                $data2 = [$gr_op, $gr_ch, $gr_hi, $gr_lo];
+            }
+            elseif ($type == 'fl') {
+                $gr_val = [
+                    'data' => $dataVal,
+                    'label' => 'Головка',
+                    'borderColor' => 'rgba(225,201,45,0.8)'
+                ];
+                $data2 = [$gr_val];
+            }
 
             $data1 = [$gr_tar, $gr_cur];
-            $data2 = [$gr_op, $gr_ch, $gr_hi, $gr_lo];
 
             $jsonData = json_encode(['tags' => $tags, 'data1' => $data1, 'data2' => $data2]);
             header('Content-Type: application/json');
@@ -580,8 +605,12 @@ elseif ($_REQUEST['dev'] == 'heatingLog') {
         }
     }
 
-    echo '<script src="js2/heatingLog.js"></script>';
-    echo '<p1>Отопление</p1>';
+    echo '<script src="js2/heatingLog.js?version=1.0"></script>';
+    if ($type == 'bl') {
+        echo '<p1>Отопление</p1>';
+    } elseif ($type == 'fl') {
+        echo '<p1>Теплые полы</p1>';
+    }
     echo '<div><canvas id="graphCurveLog1"><p>GRAPH</p></canvas></div>';
     echo '<div><canvas id="graphCurveLog2"><p>GRAPH</p></canvas></div>';
 
