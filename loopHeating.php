@@ -81,10 +81,6 @@ class daemonLoopHeating extends daemon
                     $devicePhysic = $device->getDevicePhysic();
                     $topic = $devicePhysic->getTopicSet();
                     if (!strlen($topic)) return;
-
-                    $payload = json_encode(['_chena' => true]);
-                    $mqtt->publish($topic, $payload);
-                    sleep(1);
                     $payload = json_encode(['tset' => round($b_op)]);
                     $mqtt->publish($topic, $payload);
 

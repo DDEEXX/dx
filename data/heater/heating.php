@@ -39,7 +39,8 @@ if ($_REQUEST['dev'] == 'boiler') {
     $data = getDataBoiler($label);
     header('Content-Type: application/json');
     echo json_encode($data);
-} elseif ($_REQUEST['dev'] == 'check_boilerStatus') {
+}
+elseif ($_REQUEST['dev'] == 'check_boilerStatus') {
     $result = ['update' => false];
     $label = $_REQUEST['label'];
     $dateStatus = (int)$_REQUEST['dateStatus'];
@@ -53,7 +54,8 @@ if ($_REQUEST['dev'] == 'boiler') {
     }
     header('Content-Type: application/json');
     echo json_encode($result);
-} elseif ($_REQUEST['dev'] == 'set') {
+}
+elseif ($_REQUEST['dev'] == 'set') {
 
     $label = $_REQUEST['label'];
     $p = $_REQUEST['p'];
@@ -71,6 +73,7 @@ if ($_REQUEST['dev'] == 'boiler') {
 
     if (is_numeric($curV) && !is_numeric($v)) return;
 
+    $sentReset = false;
     switch ($p) {
         case '_dhw' :
         case '_spr' :
@@ -78,6 +81,9 @@ if ($_REQUEST['dev'] == 'boiler') {
             break;
         case '_mode' :
             $value = (int)($v);
+            if (($curV && !$value) || ((!$curV && $value))) {
+                $sentReset = true;
+            }
             break;
         case '_chena' :
         case '_dhwena' :
@@ -96,7 +102,12 @@ if ($_REQUEST['dev'] == 'boiler') {
     $payload = json_encode([$p => $value]);
     $mqtt = mqttSend::connect();
     $mqtt->publish($topic, $payload, 1);
-} elseif ($_REQUEST['dev'] == 'setProperty') {
+    if ($sentReset) {
+        sleep(1);
+        $mqtt->publish($topic, '_rst', 1);
+    }
+}
+elseif ($_REQUEST['dev'] == 'setProperty') {
 
     $unit = managerUnits::getUnitLabel('boiler_pid');
     $op = $unit->getOptions();
@@ -517,23 +528,23 @@ elseif ($_REQUEST['dev'] == 'heatingLog') {
             ];
             $gr_op = [
                 'data' => $dataOp,
-                'label' => 'СО, расчет',
+                'label' => 'Расчет',
                 'borderColor' => 'rgba(225,201,45,0.8)'
+            ];
+            $gr_ch = [
+                'data' => $dataCh,
+                'label' => 'Подача',
+                'borderColor' => 'rgba(87,234,95,0.8)'
             ];
             $gr_hi = [
                 'data' => $dataHi,
-                'label' => 'СО max',
+                'label' => 'Max',
                 'borderColor' => 'rgba(227,90,90,0.8)'
             ];
             $gr_lo = [
                 'data' => $dataLo,
-                'label' => 'СО min',
+                'label' => 'Min',
                 'borderColor' => 'rgba(78,90,232,0.8)'
-            ];
-            $gr_ch = [
-                'data' => $dataCh,
-                'label' => 'СО подача',
-                'borderColor' => 'rgba(87,234,95,0.8)'
             ];
 
             $data1 = [$gr_tar, $gr_cur];
