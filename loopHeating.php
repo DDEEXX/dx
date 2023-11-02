@@ -80,7 +80,8 @@ class daemonLoopHeating extends daemon
                 $_spr = $value->_spr;
 
                 $log = [];
-                $log['b_ch'] = round($ch, 2); //подача контура СО
+                //исправление лога, если температура подачи = 0, потеряна связь с котлом, пишем 20
+                $log['b_ch'] = $ch == 0 ? 20 : round($ch, 2); //подача контура СО
                 $log['b_tar'] = round($_spr, 2); //целевая
 
                 //Управление котлом отопления
@@ -118,10 +119,6 @@ class daemonLoopHeating extends daemon
                     $log['b_D'] = 0;
                     $log['b_hi'] = round($value->_chm, 2);
                     $log['b_lo'] = 0;
-                }
-                //исправление лога, если температура подачи = 0, потеряна связь с котлом, пишем 20
-                if ($log['b_ch'] == 0) {
-                    $log['b_ch'] = 20;
                 }
                 $this->saveInJournal(json_encode($log), 'bl');
 
