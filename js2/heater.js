@@ -108,13 +108,13 @@ $(function () {
         }
     });
     $("#heater_boiler_log").button({
-        icon : 'ui-icon-signal'
+        icon : false
     }).click(function () {
         $("#heater_boiler_log_dialog").attr("type", "bl");
         $("#heater_boiler_log_dialog").dialog("open");
     });
     $("#heater_boiler_log_f").button({
-        icon : 'ui-icon-signal'
+        icon : false
     }).click(function () {
         $("#heater_boiler_log_dialog").attr("type", "fl");
         $("#heater_boiler_log_dialog").dialog("open");

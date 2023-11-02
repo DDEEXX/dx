@@ -434,7 +434,7 @@ if ($p == 'heater') {
         <div class="grid_12 alpha omega" style="align-self: flex-start; margin-top: 5px;">
             <div class="ui-corner-all ui-state-default ui-widget-content" style="height: 250px">
                 <input id="heater_boiler_last_status" value="" type="hidden">
-                <div style="display: flex; align-content: flex-start">
+                <div style="display: flex; align-content: flex-start; height: 240px">
                     <div class="boiler_tile">
                         <label for="boiler_power">Отопление
                             <input type="checkbox" id="boiler_power" name="boiler_power" property="_chena">
@@ -444,7 +444,9 @@ if ($p == 'heater') {
                             <img id="boiler_heating_fire" style="margin-left: 5px">
                             <h3 id="boiler_heating_fire_level"></h3>
                         </div>
-                        <div id="heater_boiler_heating" class="heater_boiler_slider"></div>
+                        <div>
+                            <div id="heater_boiler_heating" class="heater_boiler_slider"></div>
+                        </div>
                         <div class="boiler_data">
                             <h2>Подача</h2>
                             <span id="boiler_ch"></span>
@@ -453,7 +455,11 @@ if ($p == 'heater') {
                             <h2>Расчетная</h2>
                             <span id="boiler_tset"></span>
                         </div>
-                        <div id="heater_boiler_log" style="margin-top: 10px"></div>
+                        <div style="display: flex; flex-direction: column; justify-content: flex-end; height: 100%">
+                            <div id="heater_boiler_log" style="align-self: flex-start">
+                                <img src="img2/icon_button/graph.png">
+                            </div>
+                        </div>
                         <div id="heater_boiler_log_dialog">
                             <div id="heater_boiler_log_dialog_content"></div>
                         </div>
@@ -465,8 +471,14 @@ if ($p == 'heater') {
                         <div class="boiler_data">
                             <p id="boiler_sprf1"></p>
                         </div>
-                        <div id="heater_floor_1" class="heater_boiler_slider"></div>
-                        <div id="heater_boiler_log_f" style="margin-top: 10px"></div>
+                        <div>
+                            <div id="heater_floor_1" class="heater_boiler_slider"></div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; justify-content: flex-end; height: 100%">
+                            <div id="heater_boiler_log_f" style="align-self: flex-start">
+                                <img src="img2/icon_button/graph.png">
+                            </div>
+                        </div>
                     </div>
                     <div class="boiler_tile">
                         <h1>Ванная</h1>
