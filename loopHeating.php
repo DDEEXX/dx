@@ -121,7 +121,7 @@ class daemonLoopHeating extends daemon
                 }
                 //исправление лога, если температура подачи = 0, потеряна связь с котлом, пишем 20
                 if ($log['b_ch'] == 0) {
-                    $log['b_op'] = 20;
+                    $log['b_ch'] = 20;
                 }
                 $this->saveInJournal(json_encode($log), 'bl');
 
