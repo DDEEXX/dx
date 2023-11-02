@@ -26,7 +26,7 @@ class formatterBoilerOpenTerm implements iFormatterValue
         $result->value->room = $dValue->room; //температура в комнате
         $result->value->out = $dValue->out;   //внешняя температура
         $result->value->_mode = $dValue->_mode; //режим работы
-        $result->value->_chm = $dValue->_chm; //режим работы
+        $result->value->_chm = $dValue->_chm;   //температура ограничения СО
 
         return $result;
     }

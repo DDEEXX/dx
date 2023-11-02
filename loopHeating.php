@@ -80,11 +80,11 @@ class daemonLoopHeating extends daemon
                 $_spr = $value->_spr;
 
                 $log = [];
+                $log['b_ch'] = round($ch, 2); //подача контура СО
+                $log['b_tar'] = round($_spr, 2); //целевая
+
                 //Управление котлом отопления
                 if ($value->_mode == boilerMode::MQTT) {
-
-                    $log['b_ch'] = round($ch, 2); //подача контура СО
-                    $log['b_tar'] = round($_spr, 2); //целевая
 
                     $b_op = $this->boiler($optionsPID, $_spr, $boilerTempCurrentLast, $boiler_iError, $dt, $log);
 
@@ -103,9 +103,6 @@ class daemonLoopHeating extends daemon
                 }
                 else { //пишем только лог
 
-                    $log['b_ch'] = round($ch, 2); //подача контура СО
-                    $log['b_tar'] = round($_spr, 2); //целевая
-
                     //температура в помещение для отопления
                     $boiler_in = $optionsPID->get('b_tIn');
                     $boiler_in1 = $optionsPID->get('b_tIn1');
@@ -123,7 +120,7 @@ class daemonLoopHeating extends daemon
                     $log['b_lo'] = 0;
                 }
                 //исправление лога, если температура подачи = 0, потеряна связь с котлом, пишем 20
-                if ($log['b_op'] == 0) {
+                if ($log['b_ch'] == 0) {
                     $log['b_op'] = 20;
                 }
                 $this->saveInJournal(json_encode($log), 'bl');
