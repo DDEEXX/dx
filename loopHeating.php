@@ -43,12 +43,12 @@ class daemonLoopHeating extends daemon
 
         $startTime = time();
         $nextStep = $startTime + self::PAUSE;
-        $predStep = $startTime - self::PAUSE;;
+        $predStep = $startTime - self::PAUSE;
         $doStep = false;
-        $boilerTempCurrentLast = null;
+        $boilerTempCurrentLast = 20;
         $boiler_iError = 0;
 
-        $floorTempCurrentLast = null;
+        $floorTempCurrentLast = 30;
         $floor_iError = 0;
         $fCurValve = 0;
 
@@ -76,11 +76,16 @@ class daemonLoopHeating extends daemon
                 $value = $data->value;
                 $optionsPID = $unitPID->getOptions();
 
+                $ch = $value->ch;
+                $_spr = $value->_spr;
+
+                $log = [];
                 //Управление котлом отопления
                 if ($value->_mode == boilerMode::MQTT) {
-                    $_spr = $value->_spr;
-                    $ch = $value->ch;
-                    $log = [];
+
+                    $log['b_ch'] = round($ch, 2); //подача контура СО
+                    $log['b_tar'] = round($_spr, 2); //целевая
+
                     $b_op = $this->boiler($optionsPID, $_spr, $boilerTempCurrentLast, $boiler_iError, $dt, $log);
 
                     $device = $unitBoiler->getDevice();
@@ -88,17 +93,40 @@ class daemonLoopHeating extends daemon
                     $devicePhysic = $device->getDevicePhysic();
                     $topic = $devicePhysic->getTopicSet();
                     if (strlen($topic)) {
-                        $payload = json_encode(['_chena' => true]);
+                        $payload = json_encode(['_chena' => true]); //!!!!!!
                         $mqtt->publish($topic, $payload);
                         sleep(1);
 
                         $payload = json_encode(['tset' => round($b_op)]);
                         $mqtt->publish($topic, $payload);
                     }
-
-                    $log['b_ch'] = $ch;
-                    $this->saveInJournal(json_encode($log), 'bl');
                 }
+                else { //пишем только лог
+
+                    $log['b_ch'] = round($ch, 2); //подача контура СО
+                    $log['b_tar'] = round($_spr, 2); //целевая
+
+                    //температура в помещение для отопления
+                    $boiler_in = $optionsPID->get('b_tIn');
+                    $boiler_in1 = $optionsPID->get('b_tIn1');
+                    $boilerCurrentInT = 20;
+                    $flagTemp = false; //флаг есть актуальная температура
+                    $this->getTemp($boiler_in, $boilerCurrentInT, $flagTemp);
+                    if (!$flagTemp) $this->getTemp($boiler_in1, $boilerCurrentInT, $flagTemp);
+                    $log['b_cur'] = round($boilerCurrentInT, 2);
+
+                    $log['b_op'] = round($value->tset, 2);
+                    $log['b_P'] = 0;
+                    $log['b_I'] = 0;
+                    $log['b_D'] = 0;
+                    $log['b_hi'] = round($value->_chm, 2);
+                    $log['b_lo'] = 0;
+                }
+                //исправление лога, если температура подачи = 0, потеряна связь с котлом, пишем 20
+                if ($log['b_op'] == 0) {
+                    $log['b_op'] = 20;
+                }
+                $this->saveInJournal(json_encode($log), 'bl');
 
                 //Управление теплыми полами
                 if ($optionsPID->get('f_pwr')) {
@@ -168,7 +196,6 @@ class daemonLoopHeating extends daemon
         $flagTemp = false; //флаг есть актуальная температура
         $this->getTemp($boiler_in, $boilerCurrentInT, $flagTemp);
         if (!$flagTemp) $this->getTemp($boiler_in1, $boilerCurrentInT, $flagTemp);
-        if (is_null($tempCurrentLast)) $tempCurrentLast = $boilerCurrentInT;
 
         //Температура на улице
         $currentOutT = -10;
@@ -223,7 +250,6 @@ class daemonLoopHeating extends daemon
         $op = round(max($opLow, min($opHigh, $op_)), 2);
         $iError = $I;
 
-        $log['b_tar'] = round($tempTarget, 2);
         $log['b_cur'] = round($tempCurrent, 2);
         $log['b_op'] = round($op);
         $log['b_P'] = round($P, 2);
@@ -254,7 +280,6 @@ class daemonLoopHeating extends daemon
         $flagTemp = false; //флаг есть актуальная температура
         $this->getTemp($in, $CurrentInT, $flagTemp);
         if (!$flagTemp) $this->getTemp($in1, $CurrentInT, $flagTemp);
-        if (is_null($tempCurrentLast)) $tempCurrentLast = $CurrentInT;
 
         //Температура на улице
         $currentOutT = -10;
