@@ -308,7 +308,7 @@ elseif ($_REQUEST['dev'] == 'dialogSetup') {
     <input class="ui-corner-all ui-state-default boiler_setup_input" value="%s" property = "b_tOut">
     <span class="boiler_setup_input_title">альтернатива</span>
     <input class="ui-corner-all ui-state-default boiler_setup_input" value="%s" property = "b_tOut1">
-    <span class="boiler_setup_input_title" style="font-size: 90%; margin-left: 5px">t = %s &degC %s</span>
+    <span class="boiler_setup_input_title" style="font-size: 90%%; margin-left: 5px">t = %s &degC %s</span>
 </div>                
 PID
         , $boiler_out, $boiler_out1, $currentOutT, $flagTempOut ? '' : 'неакт.');
@@ -344,7 +344,7 @@ PID
     <input class="ui-corner-all ui-state-default boiler_setup_input" value="%s" property = "b_tIn">
     <span class="boiler_setup_input_title">альтернатива</span>
     <input class="ui-corner-all ui-state-default boiler_setup_input" value="%s" property = "b_tIn1">
-    <span class="boiler_setup_input_title" style="font-size: 90%; margin-left: 5px">t = %s &degC %s</span>
+    <span class="boiler_setup_input_title" style="font-size: 90%%; margin-left: 5px">t = %s &degC %s</span>
 </div>                
 PID
             , $boiler_in, $boiler_in1, $boilerCurrentInT, $flagTemp ? '' : 'неакт.');
@@ -389,7 +389,7 @@ PID
     <input class="ui-corner-all ui-state-default boiler_setup_input" value="%s" property = "b_tfIn">
     <span class="boiler_setup_input_title">альтернатива</span>
     <input class="ui-corner-all ui-state-default boiler_setup_input" value="%s" property = "b_tfIn1">
-    <span class="boiler_setup_input_title" style="font-size: 90%; margin-left: 5px">t = %s &degC %s</span>
+    <span class="boiler_setup_input_title" style="font-size: 90%%; margin-left: 5px">t = %s &degC %s</span>
 </div>
 PID
         , $boiler_in_floor, $boiler_in_floor1, $boilerCurrentInTf, $flagTempF ? '' : 'неакт.');
