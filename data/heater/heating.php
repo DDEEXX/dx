@@ -23,29 +23,42 @@ function getTemp($label, &$currentTemperature, &$flagActualTemperature)
 function getDataBoiler($label)
 {
     $unitBoiler = managerUnits::getUnitLabel($label);
-    if (is_null($unitBoiler)) {
-        logger::writeLog('Модуль с именем :: ' . $label . ' :: не найден',
-            loggerTypeMessage::ERROR, loggerName::ERROR);
-        return new stdClass();
-    }
+    if (is_null($unitBoiler)) return new stdClass();
     $boilerData = $unitBoiler->getData();
     $value = $boilerData->value;
     $value->date = $boilerData->date;
     return $value;
 }
 
-function getDataPID()
+function getDataHeating()
 {
     $value = new stdClass();
     $unitPID = managerUnits::getUnitLabel('boiler_pid');
-    if (is_null($unitPID)) {
-        logger::writeLog('Модуль с именем :: boiler_pid :: не найден',
-            loggerTypeMessage::ERROR, loggerName::ERROR);
-        return $value;
-    }
+    if (is_null($unitPID)) return $value;
+    $unitBoiler = managerUnits::getUnitLabel('boiler_opentherm');
+    $boilerData = $unitBoiler->getData()->value;
+
     $op = $unitPID->getOptions();
-    $value->f_pwr = $op->get('f_pwr');
     $value->f_spr = $op->get('f_spr');
+
+    $value->f_pwr = $op->get('f_pwr') ? 1 : 0; //теплый пол
+
+    $value->b_pwr = $op->get('b_pwr') ? 1 : 0; //отопление
+    if ($value->b_pwr) {
+        if ($boilerData->_chena === true) $value->b_pwr = 1;  //везде вкл
+        else $value->b_pwr = 2; //на котле пока выкл
+    } else {
+        $value->b_pwr = 0; //выкл
+    }
+
+    $value->w_pwr = $op->get('w_pwr') ? 1 : 0; //горячая вода
+    if ($value->w_pwr) {
+        if ($boilerData->_dhwena === true) $value->w_pwr = 1;  //везде вкл
+        else $value->w_pwr = 2; //на котле пока выкл
+    } else {
+        $value->w_pwr = 0; //выкл
+    }
+
     return $value;
 }
 
@@ -55,8 +68,8 @@ if ($_REQUEST['dev'] == 'boiler') {
     header('Content-Type: application/json');
     echo json_encode($data);
 }
-if ($_REQUEST['dev'] == 'pid') {
-    $data = getDataPID();
+elseif ($_REQUEST['dev'] == 'heating') {
+    $data = getDataHeating();
     header('Content-Type: application/json');
     echo json_encode($data);
 }
@@ -139,6 +152,11 @@ elseif ($_REQUEST['dev'] == 'setProperty') {
 
         if (is_numeric($value)) $value = floatval($value)/$d;
         elseif ($value === 'true' || $value === 'false') $value = $value === 'true';
+
+        if ($property == 'b_pwr' || $property == 'w_pwr' || $property == 'f_pwr') {
+            $value = $value == 0;
+        }
+
         $op->set($property, $value);
     } else {
         $data = $_REQUEST['data'];
@@ -308,7 +326,7 @@ elseif ($_REQUEST['dev'] == 'dialogSetup') {
     <input class="ui-corner-all ui-state-default boiler_setup_input" value="%s" property = "b_tOut">
     <span class="boiler_setup_input_title">альтернатива</span>
     <input class="ui-corner-all ui-state-default boiler_setup_input" value="%s" property = "b_tOut1">
-    <span class="boiler_setup_input_title" style="font-size: 90%%; margin-left: 5px">t = %s &degC %s</span>
+    <span class="boiler_setup_input_title" style="font-size: 90%%; margin-left: 5px">%s &degC %s</span>
 </div>                
 PID
         , $boiler_out, $boiler_out1, $currentOutT, $flagTempOut ? '' : 'неакт.');
@@ -344,7 +362,7 @@ PID
     <input class="ui-corner-all ui-state-default boiler_setup_input" value="%s" property = "b_tIn">
     <span class="boiler_setup_input_title">альтернатива</span>
     <input class="ui-corner-all ui-state-default boiler_setup_input" value="%s" property = "b_tIn1">
-    <span class="boiler_setup_input_title" style="font-size: 90%%; margin-left: 5px">t = %s &degC %s</span>
+    <span class="boiler_setup_input_title" style="font-size: 90%%; margin-left: 5px">%s &degC %s</span>
 </div>                
 PID
             , $boiler_in, $boiler_in1, $boilerCurrentInT, $flagTemp ? '' : 'неакт.');
@@ -360,6 +378,8 @@ PID
     echo '            <input type="radio" name="boiler_floor_mode_radio" id="boiler_f_mode_0" value="0" ' . ($floor_mode == 0 ? 'checked="checked"' : '') . '>';
     echo '            <label for="boiler_f_mode_1">ПЗА</label>';
     echo '            <input type="radio" name="boiler_floor_mode_radio" id="boiler_f_mode_1" value="1" ' . ($floor_mode == 1 ? 'checked="checked"' : '') . '>';
+    echo '            <label for="boiler_f_mode_2">Термо</label>';
+    echo '            <input type="radio" name="boiler_floor_mode_radio" id="boiler_f_mode_2" value="2" ' . ($floor_mode == 2 ? 'checked="checked"' : '') . '>';
     echo '        </div>';
     echo '    </div>';
 
@@ -389,7 +409,7 @@ PID
     <input class="ui-corner-all ui-state-default boiler_setup_input" value="%s" property = "b_tfIn">
     <span class="boiler_setup_input_title">альтернатива</span>
     <input class="ui-corner-all ui-state-default boiler_setup_input" value="%s" property = "b_tfIn1">
-    <span class="boiler_setup_input_title" style="font-size: 90%%; margin-left: 5px">t = %s &degC %s</span>
+    <span class="boiler_setup_input_title" style="font-size: 90%%; margin-left: 5px">%s &degC %s</span>
 </div>
 PID
         , $boiler_in_floor, $boiler_in_floor1, $boilerCurrentInTf, $flagTempF ? '' : 'неакт.');
@@ -506,7 +526,7 @@ elseif ($_REQUEST['dev'] == 'heatingLog') {
             $result = null;
             try {
                 $con = sqlDataBase::Connect();
-                $format = 'SELECT data, DATE_FORMAT(date, \'%s\') date_f FROM t_heatingJournal WHERE type=\'%s\' AND date>=(NOW() - INTERVAL 12 HOUR) AND date<=NOW() ORDER BY date';
+                $format = 'SELECT data, DATE_FORMAT(date, \'%s\') date_f FROM t_heatingJournal WHERE type=\'%s\' AND date>=(NOW() - INTERVAL 6 HOUR) AND date<=NOW() ORDER BY date';
                 $query = sprintf($format, '%H:%i',$type);
                 $result = queryDataBase::getAll($con, $query);
             } catch (connectDBException $e) {

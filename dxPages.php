@@ -436,9 +436,12 @@ if ($p == 'heater') {
                 <input id="heater_boiler_last_status" value="" type="hidden">
                 <div style="display: flex; align-content: flex-start; height: 240px">
                     <div class="boiler_tile">
-                        <label for="boiler_power">Отопление
-                            <input type="checkbox" id="boiler_power" name="boiler_power" property="_chena">
-                        </label>
+                        <button id="boiler_power" style="width: 200px" property="b_pwr" status=0>
+                            <div>
+                                <div></div>
+                                <span>Отопление</span>
+                            </div>
+                        </button>
                         <div class="boiler_data">
                             <p id="boiler_spr"></p>
                             <img id="boiler_heating_fire" style="margin-left: 5px">
@@ -465,9 +468,12 @@ if ($p == 'heater') {
                         </div>
                     </div>
                     <div class="boiler_tile">
-                        <label for="boiler_power_floor">Теплый пол
-                            <input type="checkbox" id="boiler_power_floor" name="boiler_power_floor" property="f_pwr">
-                        </label>
+                        <button id="boiler_power_floor" style="width: 200px" property="f_pwr" status=0>
+                            <div>
+                                <div></div>
+                                <span>Теплый пол</span>
+                            </div>
+                        </button>
                         <div class="boiler_data">
                             <p id="boiler_sprf1"></p>
                         </div>
@@ -488,10 +494,12 @@ if ($p == 'heater') {
                         <div id="heater_floor_bathroom" class="heater_boiler_slider"></div>
                     </div>
                     <div class="boiler_tile">
-                        <label for="boiler_power_water">ГВС
-                            <input type="checkbox" id="boiler_power_water" name="boiler_power_water" property="_dhwena">
-                        </label>
-<!--                        <h1>ГВС</h1>-->
+                        <button id="boiler_power_water" style="width: 200px" property="w_pwr" status=0>
+                            <div>
+                                <div></div>
+                                <span>ГВС</span>
+                            </div>
+                        </button>
                         <div class="boiler_data">
                             <p id="boiler_sprw"></p>
                             <img id="boiler_heating_wfire" style="margin-left: 5px">

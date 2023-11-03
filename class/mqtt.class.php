@@ -23,10 +23,10 @@ class mqttSend
     //Если true - вести лог, критические события в лог попадают всегда
     private $logger;
 
-    private function __construct(iConfigMQTT $configMQTT, $logger)
+    private function __construct(iConfigMQTT $configMQTT, $clientNamePostfix, $logger)
     {
         $this->logger = $logger;
-        $this->client = new Mosquitto\Client($configMQTT->getID() . '_' . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9));
+        $this->client = new Mosquitto\Client($configMQTT->getID() . '_' . $clientNamePostfix. rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9));
         $this->client->onConnect([$this, 'onConnect']);
         $this->client->setCredentials($configMQTT->getUser(), $configMQTT->getPassword());
         $this->client->connect($configMQTT->getHost(), $configMQTT->getPort());
@@ -37,11 +37,11 @@ class mqttSend
      * @param false $logger
      * @return mqttSend|null
      */
-    public static function connect($logger = false)
+    public static function connect($clientNamePostfix = '', $logger = false)
     {
         if (self::$clientMQTT == null) {
             $config = new mqttConfig();
-            self::$clientMQTT = new mqttSend($config, $logger);
+            self::$clientMQTT = new mqttSend($config, $clientNamePostfix, $logger);
             unset($config);
         }
         return self::$clientMQTT;
@@ -84,7 +84,7 @@ class mqttLoop
         $this->updateSubscribeUnite($mqttGroup);
 
         $config = new mqttConfig();
-        $this->client = new Mosquitto\Client($config->getID() . '_' . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9));
+        $this->client = new Mosquitto\Client($config->getID() . '_loop_' . $mqttGroup . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9));
 
         $this->client->onConnect([$this, 'onConnect']);
         $this->client->onDisconnect([$this, 'onDisconnect']);

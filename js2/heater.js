@@ -52,21 +52,28 @@ function heater_checkBoiler_Status() {
     }, "json");
 }
 
+function heating_updateButtonStatus() {
+    $.get('data/heater/heating.php?dev=heating', function (data) {
+        //котел отопления
+        $("#boiler_power").attr('status', data.b_pwr);
+        $("#boiler_power>div>div").removeAttr('class').addClass(data.b_pwr == 0 ? "heating_pwr_off" :
+            data.b_pwr == 1 ? "heating_pwr_on" : "heating_pwr_ready");
+        //ГВС
+        $("#boiler_power_water").attr('status', data.w_pwr);
+        $("#boiler_power_water>div>div").removeAttr('class').addClass(data.w_pwr == 0 ? "heating_pwr_off" :
+            data.w_pwr == 1 ? "heating_pwr_on" : "heating_pwr_ready");
+        //Теплый пол
+        $("#boiler_power_floor").attr('status', data.f_pwr);
+        $("#boiler_power_floor>div>div").removeAttr('class').addClass(data.f_pwr == 0 ? "heating_pwr_off" :
+            data.f_pwr == 1 ? "heating_pwr_on" : "heating_pwr_ready");
+    });
+}
+
 $(function () {
 
-    $("#boiler_power, #boiler_power_water").checkboxradio({
-        icon: false
-    }).click(function () {
+    $("#boiler_power, #boiler_power_water, #boiler_power_floor").button().click(function () {
         const p = $(this).attr("property");
-        const v = $(this).is(":checked");
-        $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=' + p + '&v=' + v);
-    });
-
-    $("#boiler_power_floor").checkboxradio({
-        icon: false
-    }).click(function () {
-        const p = $(this).attr("property");
-        const v = $(this).is(":checked");
+        const v = $(this).attr("status");
         $.get('data/heater/heating.php?dev=setProperty&mode=one&property=' + p + '&value=' + v);
     });
 
@@ -139,11 +146,11 @@ $(function () {
         }
     });
     $("#heater_floor_1").slider({
-        min: 230,
+        min: 200,
         max: 400,
         create: function (event, ui) {
             let th = $(this);
-            $.get('data/heater/heating.php?dev=pid', function (data) {
+            $.get('data/heater/heating.php?dev=heating', function (data) {
                 let spr10 = Math.round(data.f_spr * 10);
                 th.slider("value", spr10);
                 $('#boiler_sprf1').html(spr10 / 10 + " &degC");
@@ -226,13 +233,7 @@ $(function () {
 });
 
 $(document).ready(function () {
-    $.get('data/heater/heating.php?dev=boiler&label=boiler_opentherm', function (data) {
-        $("#boiler_power").attr("checked", data._chena).checkboxradio("refresh");
-        $("#boiler_power_water").attr("checked", data._dhwena).checkboxradio("refresh");
-    });
-    $.get('data/heater/heating.php?dev=pid', function (data) {
-        $("#boiler_power_floor").attr("checked", data.f_pwr).checkboxradio("refresh");
-    });
+    heating_updateButtonStatus();
 });
 
 //Обновление показания температуры каждые 5 минут
@@ -242,5 +243,6 @@ $(document).everyTime("60s", function () {
 
 $(document).everyTime("3s", function () {
     heater_checkBoiler_Status();
+    heating_updateButtonStatus();
 });
 

@@ -569,7 +569,10 @@ class boilerPID extends moduleUnit
         $default->b_tOut = '';
         $default->b_tOut1 = '';
         $default->f_pwr = false;
-        $default->f_spr = 29.5;
+        $default->f_spr = false;
+        $default->b_pwr = false;
+        $default->w_pwr = false;
+
         return $default;
     }
 

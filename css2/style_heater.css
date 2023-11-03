@@ -9,9 +9,41 @@
     margin-left: 15px;
     margin-right: 15px;
     display: flex;
-    //justify-content: space-between;
     flex-direction: column;
     height: 100%
+}
+
+.boiler_tile>button {
+    padding: 0.4em 0.8em;
+}
+
+.boiler_tile>button>div {
+    display: flex;
+    align-items: center;
+}
+
+.boiler_tile>button>div>div {
+    width: 14px;
+    height: 14px;
+    margin-right: 15px;
+    border-radius: 2px;
+}
+
+.boiler_tile>button>div .heating_pwr_on {
+    background-color: lime;
+}
+
+.boiler_tile>button>div .heating_pwr_off {
+    background-color: rgba(128, 128, 128, 1);
+}
+
+.boiler_tile>button>div .heating_pwr_ready {
+    border: 2px solid lime;
+}
+
+.boiler_tile>button>div>span {
+    font-size: 130%;
+    flex-grow: 1;
 }
 
 .boiler_tile>h1 {
