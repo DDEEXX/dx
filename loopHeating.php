@@ -128,10 +128,11 @@ class daemonLoopHeating extends daemon
                 if ($dataBoiler->_mode == boilerMode::MQTT) {
 
                     $b_op = $this->boiler($optionsPID, $_spr, $boilerTempCurrentLast, $iErrorB, $dt, $log);
+                    $b_op = (int)(round($b_op));
 
                     if (strlen($topicBoilerSet)) {
                         if ($b_op != $dataBoiler->tset) {
-                            $payload = json_encode(['tset' => round($b_op)]);
+                            $payload = json_encode(['tset' => $b_op]);
                             $mqtt->publish($topicBoilerSet, $payload);
                         }
                     }
