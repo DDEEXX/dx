@@ -2,7 +2,7 @@
 require_once(dirname(__FILE__) . '/../class/managerUnits.class.php');
 require_once(dirname(__FILE__) . '/../class/mqtt.class.php');
 
-$mqtt = mqttSend::connect();
+$mqtt = mqttSend::connect('tempForOT');
 
 $unitTemperatureOut = managerUnits::getUnitLabel('temp_out_2');
 $temperatureOut = $unitTemperatureOut->getData();

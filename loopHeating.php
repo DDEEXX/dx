@@ -139,11 +139,11 @@ class daemonLoopHeating extends daemon
                     $b_op = (int)(round($b_op));
 
                     if (strlen($topicBoilerSet)) {
-                        if ($b_op != $dataBoiler->tset) {
+//                        if ($b_op != $dataBoiler->tset) {
                             $payload = json_encode(['tset' => $b_op]);
                             usleep(100000); //0.1 sec
                             $mqtt->publish($topicBoilerSet, $payload);
-                        }
+//                        }
                     }
                 }
                 else { //пишем только лог
@@ -188,7 +188,7 @@ class daemonLoopHeating extends daemon
                         elseif (round($f_op, 1) < round($floorTempCurrentLast, 1) - 0.1) $fTarValve = 0;
 
                         if (!is_null($fTarValve)) {
-                            if ($fCurValve != $fTarValve) {
+//                            if ($fCurValve != $fTarValve) {
                                 if ($fTarValve) $payload = '{"current_heating_setpoint":'.self::FLOOR_ON.'}';
                                 else $payload = '{"current_heating_setpoint":'.self::FLOOR_OFF.'}';
 
@@ -197,10 +197,10 @@ class daemonLoopHeating extends daemon
                                     $mqtt->publish($topicFloorSet, $payload);
                                 }
 
-                            }
+//                            }
                         }
                     }
-                    elseif ($optionsFloor1 == 2) { //режим ПИД регулятора
+                    elseif ($optionsFloor1 == 2) { //ручной режим головка сама регулирует
 
                         $spr = $optionsPID->get('f_spr');
                         $in = $optionsPID->get('b_tfIn');
@@ -213,22 +213,22 @@ class daemonLoopHeating extends daemon
                         if (!$flagTemp) $this->getTemp($in1, $currentInT, $flagTemp);
 
                         $fCurValve = $dataFloor1->current_heating_setpoint;
-                        if ($fCurValve != $spr) {
+                        //if ($fCurValve != $spr) {
                             if (strlen($topicFloorSet)) {
                                 $payload = '{"current_heating_setpoint":'.$spr.'}';
                                 usleep(100000); //0.1 sec
                                 $mqtt->publish($topicFloorSet, $payload);
                             }
-                        }
+                        //}
 
                         $local_temperature_calibration = (int)(round($currentInT - $dataFloor1->local_temperature, 0));
-                        if ($local_temperature_calibration != $dataFloor1->local_temperature_calibration) {
+                        //if ($local_temperature_calibration != $dataFloor1->local_temperature_calibration) {
                             if (strlen($topicFloorSet)) {
                                 $payload = '{"local_temperature_calibration":'.$local_temperature_calibration.'}';
                                 usleep(100000); //0.1 sec
                                 $mqtt->publish($topicFloorSet, $payload);
                             }
-                        }
+                        //}
 
                     }
 
