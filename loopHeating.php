@@ -99,9 +99,11 @@ class daemonLoopHeating extends daemon
                     if ($optionsPID->get('b_pwr') != $dataBoiler->_chena) {
                         if (strlen($topicBoilerSet)) {
                             $payload = json_encode(['_chena' => $optionsPID->get('b_pwr')]); //!!!!!!
+                            usleep(100000); //0.1 sec
                             $mqtt->publish($topicBoilerSet, $payload);
                             if ($dataBoiler->_mode == boilerMode::MQTT) {
                                 $payload = json_encode(['tset' => $b_op]);
+                                usleep(100000); //0.1 sec
                                 $mqtt->publish($topicBoilerSet, $payload);
                             }
                         }
@@ -110,6 +112,7 @@ class daemonLoopHeating extends daemon
                 if ($optionsPID->get('w_pwr') != $dataBoiler->_dhwena) {
                     if (strlen($topicBoilerSet)) {
                         $payload = json_encode(['_dhwena' => $optionsPID->get('w_pwr')]); //!!!!!!
+                        usleep(100000); //0.1 sec
                         $mqtt->publish($topicBoilerSet, $payload);
                     }
                 }
@@ -138,6 +141,7 @@ class daemonLoopHeating extends daemon
                     if (strlen($topicBoilerSet)) {
                         if ($b_op != $dataBoiler->tset) {
                             $payload = json_encode(['tset' => $b_op]);
+                            usleep(100000); //0.1 sec
                             $mqtt->publish($topicBoilerSet, $payload);
                         }
                     }
@@ -189,6 +193,7 @@ class daemonLoopHeating extends daemon
                                 else $payload = '{"current_heating_setpoint":'.self::FLOOR_OFF.'}';
 
                                 if (strlen($topicFloorSet)) {
+                                    usleep(100000); //0.1 sec
                                     $mqtt->publish($topicFloorSet, $payload);
                                 }
 
@@ -211,6 +216,7 @@ class daemonLoopHeating extends daemon
                         if ($fCurValve != $spr) {
                             if (strlen($topicFloorSet)) {
                                 $payload = '{"current_heating_setpoint":'.$spr.'}';
+                                usleep(100000); //0.1 sec
                                 $mqtt->publish($topicFloorSet, $payload);
                             }
                         }
@@ -219,6 +225,7 @@ class daemonLoopHeating extends daemon
                         if ($local_temperature_calibration != $dataFloor1->local_temperature_calibration) {
                             if (strlen($topicFloorSet)) {
                                 $payload = '{"local_temperature_calibration":'.$local_temperature_calibration.'}';
+                                usleep(100000); //0.1 sec
                                 $mqtt->publish($topicFloorSet, $payload);
                             }
                         }

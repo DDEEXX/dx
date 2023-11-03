@@ -56,10 +56,10 @@ class mqttSend
 
     public function publish($topic, $payload, $qos = 0, $retain = false)
     {
+        $id = $this->client->publish($topic, $payload, $qos, $retain);
         if ($this->logger) {
-            logger::writeLog('Отправка. topic: ' . $topic . '; payload ' . $payload, loggerTypeMessage::NOTICE, loggerName::MQTT);
+            logger::writeLog('Отправка. id: '.$id.'; topic: '.$topic.'; payload '.$payload, loggerTypeMessage::NOTICE, loggerName::MQTT);
         }
-        $this->client->publish($topic, $payload, $qos, $retain);
     }
 
 }
