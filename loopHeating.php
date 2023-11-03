@@ -56,6 +56,7 @@ class daemonLoopHeating extends daemon
         $doStepB = false;
         $boilerTempCurrentLast = 20;
         $iErrorB = 0;
+        $b_op = 0;
 
         $nextStepF = $startTime + self::PAUSE_F;
         $predStepF = $startTime - self::PAUSE_F;
@@ -99,6 +100,10 @@ class daemonLoopHeating extends daemon
                         if (strlen($topicBoilerSet)) {
                             $payload = json_encode(['_chena' => $optionsPID->get('b_pwr')]); //!!!!!!
                             $mqtt->publish($topicBoilerSet, $payload);
+                            if ($dataBoiler->_mode == boilerMode::MQTT) {
+                                $payload = json_encode(['tset' => $b_op]);
+                                $mqtt->publish($topicBoilerSet, $payload);
+                            }
                         }
                     }
                 }
