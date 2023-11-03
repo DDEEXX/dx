@@ -65,7 +65,7 @@ class daemonLoopHeating extends daemon
         $iErrorF = 0;
         $fCurValve = 0; //текущее положение головки
 
-        $mqtt = mqttSend::connect('heating', true);
+        $mqtt = mqttSend::connect('heating');
 
         $previousUpdateBoilerData = $startTime;
         $topicBoilerSet = $this->updateBoilerTopicSet();
