@@ -16,7 +16,6 @@ require_once(dirname(__FILE__) . '/managerDevices.class.php');
 
 class mqttSend
 {
-
     private static $clientMQTT = null;
     private $client;
 
@@ -45,11 +44,6 @@ class mqttSend
             unset($config);
         }
         return self::$clientMQTT;
-    }
-
-    public function disconnect()
-    {
-        $this->client->disconnect();
     }
 
     public function onConnect($rc, $message)
