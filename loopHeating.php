@@ -178,14 +178,15 @@ class daemonLoopHeating extends daemon
                     $log = [];
 
                     $optionsFloor1 = (int)($optionsPID->get('f_mode'));
+                    $f_spr = $optionsPID->get('f_spr');
 
                     if ($optionsFloor1 == 0) { //режим ПИД регулятора
                         $fCurValve = $dataFloor1->current_heating_setpoint == self::FLOOR_ON ? 1 : 0;
 
                         $f_op = $this->floor_1($optionsPID, $floorTempCurrentLast, $iErrorF, $dtF, $log);
                         $fTarValve = null; //положение не меняем
-                        if (round($f_op, 1) > round($floorTempCurrentLast, 1)) $fTarValve = 1;
-                        elseif (round($f_op, 1) < round($floorTempCurrentLast, 1) - 0.1) $fTarValve = 0;
+                        if (round($f_op, 1) > round($f_spr, 1)) $fTarValve = 1;
+                        elseif (round($f_op, 1) < round($f_spr, 1) - 0.1) $fTarValve = 0;
 
                         $log['f_t_val'] = $fTarValve;
                         $log['f_tcurlast'] = $floorTempCurrentLast;
