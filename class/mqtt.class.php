@@ -47,6 +47,11 @@ class mqttSend
         return self::$clientMQTT;
     }
 
+    public function disconnect()
+    {
+        $this->client->disconnect();
+    }
+
     public function onConnect($rc, $message)
     {
         if ($this->logger) {
