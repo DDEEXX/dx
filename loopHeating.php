@@ -200,8 +200,6 @@ class daemonLoopHeating extends daemon
                                     usleep(100000); //0.1 sec
                                     $mqttF->publish($topicFloorSet, $payload);
                                     unset($mqttF);
-                                    $log['topic'] = $topicFloorSet;
-                                    $log['payload'] = $payload;
                                 }
 
 //                            }
