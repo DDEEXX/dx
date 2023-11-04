@@ -32,7 +32,7 @@ class daemonLoopHeating extends daemon
     const NAME_PID_FILE = 'loopHeating.pid';
     const PAUSE_B = 30; //Пауза в цикле отопления котла (сек)
     const PAUSE_BOILER_DATA = 10; //Пауза между диалогом с котлом отопления
-    const PAUSE_F = 90; //Пауза в цикле теплых полов (сек)
+    const PAUSE_F = 30; //Пауза в цикле теплых полов (сек)
     const FLOOR_ON = 45; //Значение термо головки на 100%
     const FLOOR_OFF = 5; //Значение термо головки на 0%
     const INTERVAL_UPDATE_BOILER_DATA = 600; //пауза между обновлениями данных (топиков) котла отопления
@@ -186,6 +186,9 @@ class daemonLoopHeating extends daemon
                         $fTarValve = null; //положение не меняем
                         if (round($f_op, 1) > round($floorTempCurrentLast, 1)) $fTarValve = 1;
                         elseif (round($f_op, 1) < round($floorTempCurrentLast, 1) - 0.1) $fTarValve = 0;
+
+                        $log['f_t_val'] = $fTarValve;
+                        $log['f_tcurlast'] = $fTarValve;
 
                         if (!is_null($fTarValve)) {
 //                            if ($fCurValve != $fTarValve) {
