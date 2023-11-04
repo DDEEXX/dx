@@ -189,6 +189,7 @@ class daemonLoopHeating extends daemon
 
                         $log['f_t_val'] = $fTarValve;
                         $log['f_tcurlast'] = $floorTempCurrentLast;
+                        $log['topic'] = $topicFloorSet;
 
                         if (!is_null($fTarValve)) {
 //                            if ($fCurValve != $fTarValve) {
