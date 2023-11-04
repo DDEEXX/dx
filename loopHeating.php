@@ -188,7 +188,7 @@ class daemonLoopHeating extends daemon
                         elseif (round($f_op, 1) < round($floorTempCurrentLast, 1) - 0.1) $fTarValve = 0;
 
                         $log['f_t_val'] = $fTarValve;
-                        $log['f_tcurlast'] = $fTarValve;
+                        $log['f_tcurlast'] = $floorTempCurrentLast;
 
                         if (!is_null($fTarValve)) {
 //                            if ($fCurValve != $fTarValve) {
