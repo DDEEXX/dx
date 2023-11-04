@@ -95,7 +95,7 @@ class daemonLoopHeating extends daemon
                 $doStepBoilerData = true;
                 $optionsPID = $this->getLastHeatingData();
                 $dataBoiler = $this->getLastBoilerData();
-                if ($dataBoiler->_mode == boilerMode::MQTT) {
+                if ($dataBoiler->_mode == boilerMode::MQTT || $dataBoiler->_mode == boilerMode::MANUAL) {
                     if ($optionsPID->get('b_pwr') != $dataBoiler->_chena) {
                         if (strlen($topicBoilerSet)) {
                             $payload = json_encode(['_chena' => $optionsPID->get('b_pwr')]); //!!!!!!
