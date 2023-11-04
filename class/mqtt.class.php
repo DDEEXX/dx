@@ -31,6 +31,10 @@ class mqttSend
         $this->client->connect($configMQTT->getHost(), $configMQTT->getPort());
     }
 
+    function __destruct() {
+        $this->client->disconnect();
+    }
+
     /**
      * Подключение к брокеру
      * @param false $logger
