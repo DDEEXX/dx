@@ -52,7 +52,7 @@ function heater_checkBoiler_Status() {
     }, "json");
 }
 
-function heating_updateButtonStatus() {
+function heating_updateStatus() {
     $.get('data/heater/heating.php?dev=heating', function (data) {
         //котел отопления
         $("#boiler_power").attr('status', data.b_pwr);
@@ -67,6 +67,18 @@ function heating_updateButtonStatus() {
         $("#boiler_power_floor>div>div").removeAttr('class').addClass(data.f_pwr == 0 ? "heating_pwr_off" :
             data.f_pwr == 1 ? "heating_pwr_on" : "heating_pwr_ready");
     });
+
+    $.get('data/heater/heating.php?dev=boiler&label=boiler_opentherm', function (data) {
+        const spr10_boiler = Math.round(data._spr * 10);
+        if (spr10_boiler ==  $("#heater_boiler_heating").slider("value") && $('#boiler_spr').hasClass("boiler_temperature_no_actual")) {
+            $('#boiler_spr').removeAttr('class').addClass("boiler_temperature_actual");
+        }
+        const spr_w = Math.round(data._dhw);
+        if (spr_w ==  $("#heater_boiler_water").slider("value") && $('#boiler_sprw').hasClass("boiler_temperature_no_actual")) {
+            $('#boiler_sprw').removeAttr('class').addClass("boiler_temperature_actual");
+        }
+    });
+
 }
 
 $(function () {
@@ -136,13 +148,16 @@ $(function () {
                 let spr10 = Math.round(data._spr * 10);
                 th.slider("value", spr10);
                 $('#boiler_spr').html(spr10 / 10 + " &degC");
+                $('#boiler_spr').removeAttr('class').addClass("boiler_temperature_actual");
             });
         },
         slide: function (event, ui) {
             $('#boiler_spr').html(ui.value / 10 + " &degC");
         },
         stop: function (event, ui) {
+            $.get('data/heater/heating.php?dev=setProperty&mode=one&property=b_spr&value=' + ui.value + '&d=10');
             $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=_spr&v=' + ui.value + '&d=10');
+            $('#boiler_spr').removeAttr('class').addClass("boiler_temperature_no_actual");
         }
     });
     $("#heater_floor_1").slider({
@@ -183,14 +198,16 @@ $(function () {
                 let dhw = Number(data._dhw);
                 th.slider("value", dhw);
                 $('#boiler_sprw').html(dhw + " &degC");
+                $('#boiler_sprw').removeAttr('class').addClass("boiler_temperature_actual");
             });
         },
         slide: function (event, ui) {
             $('#boiler_sprw').html(ui.value + " &degC");
         },
         stop: function (event, ui) {
-            $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=_dhw&v=' + ui.value, function () {
-            });
+            $.get('data/heater/heating.php?dev=setProperty&mode=one&property=w_spr&value=' + ui.value);
+            $.get('data/heater/heating.php?dev=set&label=boiler_opentherm&p=_dhw&v=' + ui.value);
+            $('#boiler_sprw').removeAttr('class').addClass("boiler_temperature_no_actual");
         }
     });
     heater_updateBoiler();
@@ -233,7 +250,7 @@ $(function () {
 });
 
 $(document).ready(function () {
-    heating_updateButtonStatus();
+    heating_updateStatus();
 });
 
 //Обновление показания температуры каждые 5 минут
@@ -243,6 +260,6 @@ $(document).everyTime("60s", function () {
 
 $(document).everyTime("3s", function () {
     heater_checkBoiler_Status();
-    heating_updateButtonStatus();
+    heating_updateStatus();
 });
 

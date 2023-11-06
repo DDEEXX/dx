@@ -93,29 +93,7 @@ class daemonLoopHeating extends daemon
             //обновляем данные в бойлере
             if ($now < $nextStepBoilerData && !$doStepBoilerData) {
                 $doStepBoilerData = true;
-                $optionsPID = $this->getLastHeatingData();
-                $dataBoiler = $this->getLastBoilerData();
-                if ($dataBoiler->_mode == boilerMode::MQTT || $dataBoiler->_mode == boilerMode::MANUAL) {
-                    if ($optionsPID->get('b_pwr') != $dataBoiler->_chena) {
-                        if (strlen($topicBoilerSet)) {
-                            $payload = json_encode(['_chena' => $optionsPID->get('b_pwr')]); //!!!!!!
-                            usleep(100000); //0.1 sec
-                            $mqtt->publish($topicBoilerSet, $payload);
-                            if ($dataBoiler->_mode == boilerMode::MQTT) {
-                                $payload = json_encode(['tset' => $b_op]);
-                                usleep(100000); //0.1 sec
-                                $mqtt->publish($topicBoilerSet, $payload);
-                            }
-                        }
-                    }
-                }
-                if ($optionsPID->get('w_pwr') != $dataBoiler->_dhwena) {
-                    if (strlen($topicBoilerSet)) {
-                        $payload = json_encode(['_dhwena' => $optionsPID->get('w_pwr')]); //!!!!!!
-                        usleep(100000); //0.1 sec
-                        $mqtt->publish($topicBoilerSet, $payload);
-                    }
-                }
+                $this->checkBoilerData($mqtt, $topicBoilerSet);
             }
 
             //выполняем алгоритм управления отопление
@@ -185,13 +163,10 @@ class daemonLoopHeating extends daemon
                         $f_op = $this->floor_1($optionsPID, $floorTempCurrentLast, $iErrorF, $dtF, $log);
                         $fTarValve = null; //положение не меняем
                         if (round($f_op, 1) > round($floorTempCurrentLast, 1)) $fTarValve = 1;
-                        elseif (round($f_op, 1) < round($floorTempCurrentLast, 1) - 0.1) $fTarValve = 0;
-
-                        $log['f_t_val'] = $fTarValve;
-                        $log['f_tcurlast'] = $floorTempCurrentLast;
+                        elseif (round($f_op, 1) < round($floorTempCurrentLast, 1) - 0.2) $fTarValve = 0;
 
                         if (!is_null($fTarValve)) {
-//                            if ($fCurValve != $fTarValve) {
+                            if ($fCurValve != $fTarValve) {
                                 if ($fTarValve) $payload = '{"current_heating_setpoint":'.self::FLOOR_ON.'}';
                                 else $payload = '{"current_heating_setpoint":'.self::FLOOR_OFF.'}';
 
@@ -200,10 +175,14 @@ class daemonLoopHeating extends daemon
                                     usleep(100000); //0.1 sec
                                     $mqttF->publish($topicFloorSet, $payload);
                                     unset($mqttF);
+                                    $log['sent'] = $fTarValve ? 1 : 0;
                                 }
 
-//                            }
+                            }
+                            else $log['sent'] = '_';
                         }
+                        else $log['sent'] = 'null';
+
                     }
                     elseif ($optionsFloor1 == 2) { //ручной режим головка сама регулирует
 
@@ -251,6 +230,45 @@ class daemonLoopHeating extends daemon
             sleep(1); //ждем
 
             pcntl_signal_dispatch(); //Вызывает обработчики для ожидающих сигналов
+        }
+    }
+
+    private function checkBoilerData($mqtt, $topic) {
+        $optionsPID = $this->getLastHeatingData();
+        $dataBoiler = $this->getLastBoilerData();
+        if ($dataBoiler->_mode == boilerMode::MQTT || $dataBoiler->_mode == boilerMode::MANUAL) {
+            // включение СО
+            if ($optionsPID->get('b_pwr') != $dataBoiler->_chena) {
+                if (strlen($topic)) {
+                    $payload = json_encode(['_chena' => $optionsPID->get('b_pwr')]); //!!!!!!
+                    $mqtt->publish($topic, $payload);
+                    if ($dataBoiler->_mode == boilerMode::MQTT) {
+                        $payload = json_encode(['tset' => $b_op]);
+                        usleep(100000); //0.1 sec
+                        $mqtt->publish($topic, $payload);
+                    }
+                }
+            }
+        }
+        //целевая температура помещения/теплоносителя
+        if ($optionsPID->get('b_spr') != $dataBoiler->_spr) {
+            $payload = json_encode(['_spr' => $optionsPID->get('b_spr')]);
+            usleep(100000); //0.1 sec
+            $mqtt->publish($topic, $payload);
+        }
+        //включение ГВС
+        if ($optionsPID->get('w_pwr') != $dataBoiler->_dhwena) {
+            if (strlen($topic)) {
+                $payload = json_encode(['_dhwena' => $optionsPID->get('w_pwr')]); //!!!!!!
+                usleep(100000); //0.1 sec
+                $mqtt->publish($topic, $payload);
+            }
+        }
+        //целевая температура ГВС
+        if ($optionsPID->get('w_spr') != $dataBoiler->_dhw) {
+            $payload = json_encode(['_dhw' => $optionsPID->get('w_spr')]);
+            usleep(100000); //0.1 sec
+            $mqtt->publish($topic, $payload);
         }
     }
 
@@ -355,20 +373,20 @@ class daemonLoopHeating extends daemon
         return $op;
     }
 
-    private function floor_1($op, &$tempCurrentLast, &$iError, $dt, &$log)
+    private function floor_1($options, &$tempCurrentLast, &$iError, $dt, &$log)
     {
-        $Kp = $op->get('f_kp');
-        $Ki = $op->get('f_ki');
-        $Kd = $op->get('f_kd');
-        $target = $op->get('f_tar');
-        $cur = $op->get('f_cur');
-        $dK = $op->get('f_dK');
-        $dT = $op->get('f_dT');
-        $out = $op->get('b_tOut');
-        $out1 = $op->get('b_tOut1');
-        $in = $op->get('b_tfIn');
-        $in1 = $op->get('b_tfIn1');
-        $spr = $op->get('f_spr');
+        $Kp = $options->get('f_kp');
+        $Ki = $options->get('f_ki');
+        $Kd = $options->get('f_kd');
+        $target = $options->get('f_tar');
+        $cur = $options->get('f_cur');
+        $dK = $options->get('f_dK');
+        $dT = $options->get('f_dT');
+        $out = $options->get('b_tOut');
+        $out1 = $options->get('b_tOut1');
+        $in = $options->get('b_tfIn');
+        $in1 = $options->get('b_tfIn1');
+        $spr = $options->get('f_spr');
 
         //температура обратки теплого пола
         $CurrentInT = 30;
@@ -429,7 +447,7 @@ class daemonLoopHeating extends daemon
 
         $log['f_tar'] = round($tempTarget, 2);
         $log['f_cur'] = round($tempCurrent, 2);
-        $log['f_op'] = round($op);
+        $log['f_op'] = round($op, 2);
         $log['f_P'] = round($P, 2);
         $log['f_I'] = round($I, 2);
         $log['f_D'] = round($P, 2);

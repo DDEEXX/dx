@@ -100,3 +100,11 @@
     margin: 0px 5px 0px;
     height: 1.5em;
 }
+
+.boiler_temperature_actual {
+    color: #eeeeee;
+}
+
+.boiler_temperature_no_actual {
+    color: rgba(238, 238, 238, 0.2);
+}

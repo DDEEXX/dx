@@ -133,12 +133,13 @@ elseif ($_REQUEST['dev'] == 'set') {
     $topic = $devicePhysic->getTopicSet();
     if (!strlen($topic)) exit;
     $payload = json_encode([$p => $value]);
-    $mqtt = mqttSend::connect();
-    $mqtt->publish($topic, $payload, 1);
+    $mqtt = mqttSend::connect('heating_set');
+    //$mqtt->publish($topic, $payload, 1);
     if ($sentReset) {
         sleep(1);
-        $mqtt->publish($topic, '{"_rst":true}', 1);
+//        $mqtt->publish($topic, '{"_rst":true}', 1);
     }
+    unset($mqtt);
 }
 elseif ($_REQUEST['dev'] == 'setProperty') {
 
