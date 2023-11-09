@@ -7,26 +7,31 @@ class formatterBoilerOpenTerm implements iFormatterValue
         $dValue =  json_decode($value);
         $result = new stdClass();
         $result->value = new stdClass();
-        $result->value->_spr = $dValue->_spr; //целевая температура (установка)
-        $result->value->ch = $dValue->ch;     //температура подачи контура СО
-        $result->value->retb = $dValue->retb; //обратка СО
-        $result->value->tset = $dValue->tset; //расчетная СО
-        $result->value->chon = $dValue->chon; //статус СО
-        $result->value->_chena = $dValue->_chena; //вкл/выкл СО
+        try {
+            $result->value->_spr = $dValue->_spr; //целевая температура (установка)
+            $result->value->ch = $dValue->ch;     //температура подачи контура СО
+            $result->value->retb = $dValue->retb; //обратка СО
+            $result->value->tset = $dValue->tset; //расчетная СО
+            $result->value->chon = $dValue->chon; //статус СО
+            $result->value->_chena = $dValue->_chena; //вкл/выкл СО
 
-        $result->value->_dhw = $dValue->_dhw; //целевая температура ГВС
-        $result->value->dhw = $dValue->dhw;   //текущая температура ГВС
-        $result->value->spdhw = $dValue->spdhw;//Принятая ГВС
-        $result->value->dhwon = $dValue->dhwon;//статус ГВС
-        $result->value->_dhwena = $dValue->_dhwena;//вкл/выкл ГВС
+            $result->value->_dhw = $dValue->_dhw; //целевая температура ГВС
+            $result->value->dhw = $dValue->dhw;   //текущая температура ГВС
+            $result->value->spdhw = $dValue->spdhw;//Принятая ГВС
+            $result->value->dhwon = $dValue->dhwon;//статус ГВС
+            $result->value->_dhwena = $dValue->_dhwena;//вкл/выкл ГВС
 
-        $result->value->mlev = $dValue->mlev; //уровень модуляции горелки
-        $result->value->flon = $dValue->flon; //статус горелки
+            $result->value->mlev = $dValue->mlev; //уровень модуляции горелки
+            $result->value->flon = $dValue->flon; //статус горелки
 
-        $result->value->room = $dValue->room; //температура в комнате
-        $result->value->out = $dValue->out;   //внешняя температура
-        $result->value->_mode = $dValue->_mode; //режим работы
-        $result->value->_chm = $dValue->_chm;   //температура ограничения СО
+            $result->value->room = $dValue->room; //температура в комнате
+            $result->value->out = $dValue->out;   //внешняя температура
+            $result->value->_mode = $dValue->_mode; //режим работы
+            $result->value->_chm = $dValue->_chm;   //температура ограничения СО
+        } catch (Exception $e) {
+            logger::writeLog('Ошибка! Value: '.$value.'. Mess: ' .$e->getMessage(). ' Trace: '.$e->getTraceAsString(),
+            loggerTypeMessage::ERROR, loggerName::DEBUG);
+        }
 
         return $result;
     }

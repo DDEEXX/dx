@@ -62,12 +62,12 @@ class sharedMemoryUnits
         $this->shmID = shm_attach($this->key, $size); //первый вызов создает сегмент выделенной памяти, последующий возвращает только указатель
         $this->semID = sem_get($this->key);
         if (!$this->shmID) {
-            $mess = 'Не определен идентификатор для доступа к разделяемой памяти';
+            $mess = 'Не определен идентификатор для доступа к разделяемой памяти. key = ' . $this->key;
             logger::writeLog($mess);
             throw new shareMemoryInitUnitException($mess);
         }
         if (!$this->semID) {
-            $mess = 'Не определен идентификатор для доступа к семафору';
+            $mess = 'Не определен идентификатор для доступа к семафору. key' . $this->key;
             logger::writeLog($mess);
             throw new shareMemoryInitUnitException($mess);
         }

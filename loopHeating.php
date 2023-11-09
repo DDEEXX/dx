@@ -93,7 +93,7 @@ class daemonLoopHeating extends daemon
             //обновляем данные в бойлере
             if ($now < $nextStepBoilerData && !$doStepBoilerData) {
                 $doStepBoilerData = true;
-                $this->checkBoilerData($mqtt, $topicBoilerSet);
+                $this->checkBoilerData($mqtt, $topicBoilerSet, $b_op);
             }
 
             //выполняем алгоритм управления отопление
@@ -233,7 +233,7 @@ class daemonLoopHeating extends daemon
         }
     }
 
-    private function checkBoilerData($mqtt, $topic) {
+    private function checkBoilerData($mqtt, $topic, $b_op) {
         $optionsPID = $this->getLastHeatingData();
         $dataBoiler = $this->getLastBoilerData();
         if ($dataBoiler->_mode == boilerMode::MQTT || $dataBoiler->_mode == boilerMode::MANUAL) {

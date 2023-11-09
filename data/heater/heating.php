@@ -632,7 +632,7 @@ elseif ($_REQUEST['dev'] == 'heatingLog') {
     } elseif ($type == 'fl') {
         echo '<p1>Теплые полы</p1>';
     }
-    echo '<div><canvas id="graphCurveLog1"><p>GRAPH</p></canvas></div>';
-    echo '<div><canvas id="graphCurveLog2"><p>GRAPH</p></canvas></div>';
+    echo '<div><canvas id="graphCurveLog1" style="height: 260px"><p>GRAPH</p></canvas></div>';
+    echo '<div><canvas id="graphCurveLog2" style="height: 260px"><p>GRAPH</p></canvas></div>';
 
 }
