@@ -44,5 +44,5 @@ exec('php '.$dir.'loopMQTTalarm.php &');
 exec('php '.$dir.'loopMQTTtest.php &');
 exec('php '.$dir.'loopForever.php &');
 exec('php '.$dir.'loopHeating.php &');
+exec('php '.$dir.'loopAlice.php &');
 exec('php '.$dir.'runScripts.php &');
-//exec("nohup php loopHeating.php &");

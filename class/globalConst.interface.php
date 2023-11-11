@@ -159,3 +159,8 @@ interface boilerMode {
     const MANUAL = 3;
     const OFF = 4;
 }
+
+interface typeTopic {
+    const SET = 0;
+    const STATUS = 1;
+}

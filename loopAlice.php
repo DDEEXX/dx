@@ -65,7 +65,7 @@ class daemonLoopAlice extends daemon
 
 }
 
-$daemon = new daemonLoopMQTT( $fileDir.'/tmp');
+$daemon = new daemonLoopAlice( $fileDir.'/tmp');
 if ($daemon->isDaemonActive()) {
     exit();
 }

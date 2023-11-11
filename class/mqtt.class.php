@@ -714,6 +714,13 @@ class mqttAlice
             }
             $device = $this->devices[$idDevice];
             if (is_null($device)) continue;
+            $_Alice = $device->getAlice();
+            if ($_Alice->getTypeTopic() == typeTopic::SET) {
+
+            }  elseif ($_Alice->getTypeTopic($topic) == typeTopic::STATUS) {
+
+            }
+
             $devicePhysic = $device->getDevicePhysic();
             $payload = '{"state": "OFF"}';
             if ($message->payload == '1') $payload = '{"state": "ON"}';
@@ -769,11 +776,13 @@ class mqttAlice
         $sel->set('Alice', 1);
         $devices = managerDevices::getListDevices($sel);
         foreach ($devices as $device) {
-            $devicePhysic = $device->getDevicePhysic();
-            if ($devicePhysic instanceof iDevicePhysic && $devicePhysic instanceof iDevicePhysicMQTT) {
-                $topicSet = $devicePhysic->getTopicSet();
-                if (strlen($topicSet)) {
-                    $this->subscribeDevice[$device->getDeviceID()] = $topicSet.'/Alice';
+            if (is_null($device) || is_null($device->getAlice())) continue;
+            $_Alice = $device->getAlice();
+            foreach ($_Alice->mqtt as $mqtt) {
+                if (strlen($mqtt->topic)) {
+                    //если у разных устройств будут одинаковые подписки на мост Алисы, то в массив попадет только
+                    // последнее устройство
+                    $this->subscribeDevice[$mqtt->topic] = $device->getDeviceID();
                 }
             }
             $this->devices[$device->getDeviceID()] = $device;

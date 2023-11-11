@@ -7,6 +7,7 @@ require_once(dirname(__FILE__) . '/logger.class.php');
 require_once(dirname(__FILE__) . '/sharedMemory.class.php');
 require_once(dirname(__FILE__) . '/mqtt.class.php');
 require_once dirname(__FILE__) . '/ownet.php';
+require_once dirname(__FILE__) . '/Alice.class.php';
 
 /*Выполнение действий модулем aDeviceMakerPhysic*/
 interface iMaker {
@@ -1112,16 +1113,23 @@ abstract class aDevice implements iDevice
     private $deviceID;
     private $disabled;
     private $note;
+    protected $_Alice;
 
     protected $devicePhysic = null;
 
-    public function __construct($deviceID, $net, $type, $disabled, $note)
+    public function __construct($deviceID, $net, $type, $disabled, $note, $_Alice = '')
     {
         $this->net = $net;
         $this->type = $type;
         $this->deviceID = $deviceID;
         $this->disabled = $disabled;
         $this->note = $note;
+        $this->_Alice = strlen(trim($_Alice)) ? new Alice($_Alice) : null;
+    }
+
+    public function getAlice()
+    {
+        return $this->_Alice;
     }
 
     public function getDeviceID()
@@ -1276,7 +1284,8 @@ abstract class aMakerDevice extends aDevice implements iMakerDevice
         $net = $options['NetTypeID'];
         $disabled = $options['Disabled'];
         $note = $options['Note'];
-        parent::__construct($deviceID, $net, $typeDevice, $disabled, $note);
+        $_Alice = $options['_Alice'];
+        parent::__construct($deviceID, $net, $typeDevice, $disabled, $note, $_Alice);
         $this->devicePhysic = new DeviceMakerPhysicDefault($deviceID);
     }
 
