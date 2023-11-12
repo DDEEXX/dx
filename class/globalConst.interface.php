@@ -66,6 +66,7 @@ interface statusKey {
     const UNKNOWN     = 'unknown';    //неизвестно, скорее всего через выключатель не связанный с сервером
     const DEVICE      = 'device';     //на самом модуле
     const REED_SWITCH = 'reedSwitch'; //от геркона (сухой контакт)
+    const ALICE =       'Alice';      //голосовое управление "Алиса"
 }
 
 /** Каким способом включился модуль - числовой код */

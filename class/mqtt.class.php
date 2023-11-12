@@ -702,36 +702,42 @@ class mqttAlice
         }
         $topic = trim($message->topic);
         if (empty($topic)) {
-            logger::writeLog('Пришло пустое сообщение от mqtt', loggerTypeMessage::WARNING, loggerName::MQTT);
+            logger::writeLog('Пришло сообщение c пустым топиком от mqtt', loggerTypeMessage::WARNING, loggerName::MQTT);
         }
 
-        $idDevices = array_keys($this->subscribeDevice, $topic, true); //список id всех устройств с подпиской topic
-        foreach ($idDevices as $idDevice) {
-            if ($this->logger) {
-                logger::writeLog(sprintf('По топику: %s, найдено устройство с ID: %s', $topic, $idDevice),
-                    loggerTypeMessage::NOTICE,
-                    loggerName::MQTT);
-            }
-            $device = $this->devices[$idDevice];
-            if (is_null($device)) continue;
-            $_Alice = $device->getAlice();
-            if ($_Alice->getTypeTopic() == typeTopic::SET) {
-
-            }  elseif ($_Alice->getTypeTopic($topic) == typeTopic::STATUS) {
-
-            }
-
-            $devicePhysic = $device->getDevicePhysic();
-            $payload = '{"state": "OFF"}';
-            if ($message->payload == '1') $payload = '{"state": "ON"}';
-            $topicSet = $devicePhysic->getTopicSet();
-            if (strlen($topicSet)) {
-                $id = $this->client->publish($topicSet, $payload);
+        if (array_key_exists($topic, $this->subscribeDevice)) {
+            $idDevices = $this->subscribeDevice[$topic];
+            foreach ($idDevices as $idDevice) {
                 if ($this->logger) {
-                    logger::writeLog('Отправка. id: '.$id.'; topic: '.$topicSet.'; payload '.$payload, loggerTypeMessage::NOTICE, loggerName::MQTT);
+                    logger::writeLog(sprintf('По топику: %s, найдено устройство с ID: %s', $topic, $idDevice),
+                        loggerTypeMessage::NOTICE,
+                        loggerName::MQTT);
+                }
+
+                $device = $this->devices[$idDevice];
+                $_Alice = $device->getAlice();
+                $mqtt =   array_filter($_Alice->mqtt, function($v) use($topic) {return $v->topic == $topic;});
+                foreach ($mqtt as $value) {
+                    $formatValue = $value->formater->convert($message->payload);
+                    if ($value->typeTopic == typeTopic::SET) {
+                        $device->setData($formatValue);
+                    }
                 }
             }
         }
+
+
+//            $devicePhysic = $device->getDevicePhysic();
+//            $payload = '{"state": "OFF"}';
+//            if ($message->payload == '1') $payload = '{"state": "ON"}';
+//            $topicSet = $devicePhysic->getTopicSet();
+//            if (strlen($topicSet)) {
+//                $id = $this->client->publish($topicSet, $payload);
+//                if ($this->logger) {
+//                    logger::writeLog('Отправка. id: '.$id.'; topic: '.$topicSet.'; payload '.$payload, loggerTypeMessage::NOTICE, loggerName::MQTT);
+//                }
+//            }
+//        }
     }
 
     public function loop()
@@ -758,7 +764,7 @@ class mqttAlice
     {
         $this->getSubscribeDevice();
 
-        foreach ($this->subscribeDevice as $subscribe) {
+        foreach ($this->subscribeDevice as $subscribe=>$value) {
             if ($this->logger) {
                 logger::writeLog('Подключение подписки ' . $subscribe, loggerTypeMessage::NOTICE, loggerName::MQTT);
             }
@@ -780,9 +786,7 @@ class mqttAlice
             $_Alice = $device->getAlice();
             foreach ($_Alice->mqtt as $mqtt) {
                 if (strlen($mqtt->topic)) {
-                    //если у разных устройств будут одинаковые подписки на мост Алисы, то в массив попадет только
-                    // последнее устройство
-                    $this->subscribeDevice[$mqtt->topic] = $device->getDeviceID();
+                    $this->subscribeDevice[$mqtt->topic][] = $device->getDeviceID();
                 }
             }
             $this->devices[$device->getDeviceID()] = $device;
