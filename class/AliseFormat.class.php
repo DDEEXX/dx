@@ -10,12 +10,9 @@ class _AliseFormatOn_0 implements iAliceFormatter
 {
     function convert($value)
     {
-        function convert($value)
-        {
-            $data['value'] = $value == '1' ? 1 : 0;
-            $data['status'] = statusKey::ALICE;
-            return json_encode($data);
-        }
+        $data['value'] = $value == '1' ? 1 : 0;
+        $data['status'] = statusKey::ALICE;
+        return json_encode($data);
     }
 }
 
@@ -48,7 +45,7 @@ class _AliseFormatBrightness_0 implements iAliceFormatter
     {
         if (!is_numeric($value)) $data['value'] = '9';
         else {
-            $numValue = (int)(round((int)($value)*8/100) );
+            $numValue = (int)(round((int)($value) * 8 / 100));
             if ($numValue == 0) $data['value'] = '8';
             elseif ($numValue == 8) $data['value'] = '9';
             else $data['value'] = strval($numValue);
