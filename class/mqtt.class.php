@@ -721,26 +721,15 @@ class mqttAlice
                     $formatValue = $value->formater->convert($message->payload);
                     if ($value->typeTopic == typeTopic::SET) {
                         $device->setData($formatValue);
-                        logger::writeLog(sprintf('На устройство с ID: %s отправлено %s', $idDevice, $formatValue),
-                            loggerTypeMessage::NOTICE,
-                            loggerName::MQTT);
+                        if ($this->logger) {
+                            logger::writeLog(sprintf('На устройство с ID: %s отправлено %s', $idDevice, $formatValue),
+                                loggerTypeMessage::NOTICE,
+                                loggerName::MQTT);
+                        }
                     }
                 }
             }
         }
-
-
-//            $devicePhysic = $device->getDevicePhysic();
-//            $payload = '{"state": "OFF"}';
-//            if ($message->payload == '1') $payload = '{"state": "ON"}';
-//            $topicSet = $devicePhysic->getTopicSet();
-//            if (strlen($topicSet)) {
-//                $id = $this->client->publish($topicSet, $payload);
-//                if ($this->logger) {
-//                    logger::writeLog('Отправка. id: '.$id.'; topic: '.$topicSet.'; payload '.$payload, loggerTypeMessage::NOTICE, loggerName::MQTT);
-//                }
-//            }
-//        }
     }
 
     public function loop()
