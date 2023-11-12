@@ -243,6 +243,31 @@ class formatterKeyOutMQTT_3 extends aFormatterValue
     }
 }
 
+class formatterKeyOutMQTT_4 extends aFormatterValue
+{
+    function formatRawValue($value)
+    {
+        $result = new formatDeviceValue();
+        $result->valueNull = true;
+        $result->value = 0;
+        $result->status = 0;
+        return $result;
+    }
+
+    function formatOutData($data)
+    {
+        $dataDecode = json_decode(parent::formatOutData($data), true);
+        if (is_null($dataDecode)) return null;
+        if (!isset($dataDecode['value'])) return null;
+        $value = null;
+        if (strtolower($dataDecode['value']) == 'on') $value = 'on';
+        elseif (strtolower($dataDecode['value']) == 'off') $value = 'off';
+        elseif (is_numeric($dataDecode['value'])) $value = $dataDecode['value'];
+        $result['value'] = $value;
+        return $result;
+    }
+}
+
 function checkKeyOutDataValue($nameValue, $arr)
 {
     if (is_array($arr)) {
@@ -339,6 +364,11 @@ class KeyOutMQQT extends aDeviceMakerPhysicMQTT
             case 2 :
                 $result['selfState'] = false;
                 $result['formatter'] = new formatterKeyOutMQTT_3();
+                $result['maker'] = new makerKeyOutMQTT_1();
+                break;
+            case 3 :
+                $result['selfState'] = false;
+                $result['formatter'] = new formatterKeyOutMQTT_4();
                 $result['maker'] = new makerKeyOutMQTT_1();
                 break;
         }

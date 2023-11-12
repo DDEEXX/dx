@@ -3,6 +3,13 @@ require_once(dirname(__FILE__) . '/AliseFormat.class.php');
 
 class AliceFormatter {
 
+    static private function createBrightness($format) {
+        switch ($format) {
+            case 0 : return new  _AliseFormatBrightness_0;
+            default : return null;
+        }
+    }
+
     static private function createOn($format) {
         switch ($format) {
             case 0 : return new  _AliseFormatOn_0;
@@ -14,6 +21,7 @@ class AliceFormatter {
     static private function createSet($instance, $format) {
         switch ($instance) {
             case 'on' : return self::createOn($format);
+            case 'brightness' : return self::createBrightness($format);
             default : return null;
         }
     }

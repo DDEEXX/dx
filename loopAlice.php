@@ -41,7 +41,7 @@ class daemonLoopAlice extends daemon
     {
         parent::run();
 
-        $mqtt = new mqttAlice(true);
+        $mqtt = new mqttAlice();
         $mqtt->connect();
         $previousUpdateSubscibe = time();
 
