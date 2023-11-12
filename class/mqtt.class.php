@@ -656,7 +656,7 @@ class mqttAlice
         $config = new mqttConfig();
         $this->host = $config->getHost();
         $this->port = $config->getPort();
-        $this->client = new Mosquitto\Client($config->getID() . '_' . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9));
+        $this->client = new Mosquitto\Client($config->getID() . '_alice_' . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9));
         $this->client->setCredentials($config->getUser(), $config->getPassword());
         $this->client->onConnect([$this, 'onConnect']);
         $this->client->onDisconnect([$this, 'onDisconnect']);
@@ -721,6 +721,9 @@ class mqttAlice
                     $formatValue = $value->formater->convert($message->payload);
                     if ($value->typeTopic == typeTopic::SET) {
                         $device->setData($formatValue);
+                        logger::writeLog(sprintf('На устройство с ID: %s отправлено %s', $idDevice, $formatValue),
+                            loggerTypeMessage::NOTICE,
+                            loggerName::MQTT);
                     }
                 }
             }
@@ -750,7 +753,7 @@ class mqttAlice
      */
     public function updateSubscribe()
     {
-        foreach ($this->subscribeDevice as $subscribe) {
+        foreach ($this->subscribeDevice as $subscribe=>$value) {
             if ($this->logger) {
                 logger::writeLog('Отключение от подписки ' . $subscribe, loggerTypeMessage::NOTICE, loggerName::MQTT);
             }

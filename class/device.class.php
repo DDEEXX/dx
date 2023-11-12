@@ -898,7 +898,7 @@ abstract class aDeviceMakerPhysicMQTT extends aDeviceMakerPhysic implements iDev
     {
         try {
             if (is_string($data)) {
-                $mqtt = mqttSend::connect();
+                $mqtt = mqttSend::connect('sent'.$this->getDeviceID());
                 $mqtt->publish($this->topicCmnd, $data);
             } else {
                 return false;
