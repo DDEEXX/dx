@@ -14,6 +14,7 @@ class AliceFormatter {
         switch ($format) {
             case 0 : return new  _AliseFormatOn_0;
             case 1 : return new  _AliseFormatOn_1;
+            case 3 : return new  _AliseFormatOn_3;
             default : return null;
         }
     }
