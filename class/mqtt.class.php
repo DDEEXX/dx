@@ -14,6 +14,25 @@ require_once(dirname(__FILE__) . '/logger.class.php');
 require_once(dirname(__FILE__) . '/lists.class.php');
 require_once(dirname(__FILE__) . '/managerDevices.class.php');
 
+class mqttPublish
+{
+    static public function publish($topic, $payload, $qos = 0, $retain = false)
+    {
+        $configMQTT = new mqttConfig();
+        $client = new Mosquitto\Client(null, true);
+        $client->onLog('mqttPublish::log');
+        $client->setCredentials($configMQTT->getUser(), $configMQTT->getPassword());
+        $client->connect($configMQTT->getHost(), $configMQTT->getPort());
+        $client->publish($topic, $payload, $qos, $retain);
+        $client->disconnect();
+    }
+
+    static public function log($level, $str) {
+        logger::writeLog('MQTT Publish. Level: '.$level.',  '.$str,
+            loggerTypeMessage::NOTICE, loggerName::DEBUG);
+    }
+}
+
 class mqttSend
 {
     private static $clientMQTT = null;
