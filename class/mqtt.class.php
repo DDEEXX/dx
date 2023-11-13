@@ -56,7 +56,7 @@ class mqttSend
     public function onConnect($rc, $message)
     {
         if ($this->logger) {
-            logger::writeLog(sprintf('Подключился к MQTT брокеру. Status: %s - $s. ID: %s',
+            logger::writeLog(sprintf('Подключился к MQTT брокеру. Status: %s - %s. ID: %s',
                 $rc, $message, $this->idClient),
                 loggerTypeMessage::NOTICE, loggerName::MQTT);
         }
