@@ -56,8 +56,7 @@ class mqttSend
     public function onConnect($rc, $message)
     {
         if ($this->logger) {
-            logger::writeLog(sprintf('Подключился к MQTT брокеру. Status: %s - %s. ID: %s',
-                $rc, $message, $this->idClient),
+            logger::writeLog('Подключился к MQTT брокеру. Status: '.$rc.' - '.$message.'. ID: '.$this->idClient,
                 loggerTypeMessage::NOTICE, loggerName::MQTT);
         }
     }
@@ -65,7 +64,7 @@ class mqttSend
     public function onDisconnect($rc, $message)
     {
         if ($this->logger) {
-            logger::writeLog(sprintf('Отключился от MQTT брокера. ID: %s', $this->idClient),
+            logger::writeLog('Отключился от MQTT брокера. ID: '.$this->idClient,
                 loggerTypeMessage::NOTICE, loggerName::MQTT);
         }
     }
