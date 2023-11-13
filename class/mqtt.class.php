@@ -676,7 +676,9 @@ class mqttAlice
     //Если true - вести лог, критические события в лог попадают всегда
     private $logger;
     // массив: индекс - id устройства, значения - топики
-    private $subscribeDevice;
+    private $subscribeSetDevice;
+    // массив: индекс - id устройства, значения - объект iDevice
+    private $subscribeStatDevice;
     // массив: индекс - id устройства, значения - объект iDevice
     private $devices;
 
@@ -736,8 +738,8 @@ class mqttAlice
             logger::writeLog('Пришло сообщение c пустым топиком от mqtt', loggerTypeMessage::WARNING, loggerName::MQTT);
         }
 
-        if (array_key_exists($topic, $this->subscribeDevice)) {
-            $idDevices = $this->subscribeDevice[$topic];
+        if (array_key_exists($topic, $this->subscribeSetDevice)) {
+            $idDevices = $this->subscribeSetDevice[$topic];
             foreach ($idDevices as $idDevice) {
                 if ($this->logger) {
                     logger::writeLog(sprintf('По топику: %s, найдено устройство с ID: %s', $topic, $idDevice),
@@ -749,6 +751,7 @@ class mqttAlice
                 $_Alice = $device->getAlice();
                 $mqtt =   array_filter($_Alice->mqtt, function($v) use($topic) {return $v->topic == $topic;});
                 foreach ($mqtt as $value) {
+                    if (is_null($value->formater)) continue;
                     $formatValue = $value->formater->convert($message->payload);
                     if ($value->typeTopic == typeTopic::SET) {
                         $device->setData($formatValue);
@@ -760,6 +763,19 @@ class mqttAlice
                     }
                 }
             }
+        } else
+        {
+            $idDevices = array_keys($this->subscribeStatDevice, $topic, true); //список id всех устройств с подпиской topic
+            foreach ($idDevices as $idDevice) {
+                if ($this->logger) {
+                    logger::writeLog(sprintf('По топику: %s, найдено устройство с ID: %s', $topic, $idDevice),
+                        loggerTypeMessage::NOTICE,
+                        loggerName::MQTT);
+                }
+                $device = $this->devices[$idDevice];
+                $_Alice = $device->getAlice();
+                $_Alice->sentStatus($message->payload);
+            }
         }
     }
 
@@ -768,12 +784,15 @@ class mqttAlice
         $this->client->loop();
     }
 
-    /** Обновляет подписки из базы данных
-     * @return void
-     */
     public function updateSubscribe()
     {
-        foreach ($this->subscribeDevice as $subscribe=>$value) {
+        foreach ($this->subscribeSetDevice as $subscribe=>$value) {
+            if ($this->logger) {
+                logger::writeLog('Отключение от подписки ' . $subscribe, loggerTypeMessage::NOTICE, loggerName::MQTT);
+            }
+            $this->client->unsubscribe($subscribe);
+        }
+        foreach ($this->subscribeStatDevice as $subscribe) {
             if ($this->logger) {
                 logger::writeLog('Отключение от подписки ' . $subscribe, loggerTypeMessage::NOTICE, loggerName::MQTT);
             }
@@ -787,7 +806,13 @@ class mqttAlice
     {
         $this->getSubscribeDevice();
 
-        foreach ($this->subscribeDevice as $subscribe=>$value) {
+        foreach ($this->subscribeSetDevice as $subscribe=>$value) {
+            if ($this->logger) {
+                logger::writeLog('Подключение подписки ' . $subscribe, loggerTypeMessage::NOTICE, loggerName::MQTT);
+            }
+            $this->client->subscribe($subscribe, 0);
+        }
+        foreach ($this->subscribeStatDevice as $subscribe) {
             if ($this->logger) {
                 logger::writeLog('Подключение подписки ' . $subscribe, loggerTypeMessage::NOTICE, loggerName::MQTT);
             }
@@ -797,7 +822,7 @@ class mqttAlice
 
     private function getSubscribeDevice()
     {
-        $this->subscribeDevice = [];
+        $this->subscribeSetDevice = [];
         $this->devices = [];
 
         $sel = new selectOption();
@@ -806,12 +831,21 @@ class mqttAlice
         $devices = managerDevices::getListDevices($sel);
         foreach ($devices as $device) {
             if (is_null($device) || is_null($device->getAlice())) continue;
+            //подписка на топики приходящие от Алисы
             $_Alice = $device->getAlice();
             foreach ($_Alice->mqtt as $mqtt) {
                 if (strlen($mqtt->topic) && $mqtt->typeTopic == typeTopic::SET) {
-                    $this->subscribeDevice[$mqtt->topic][] = $device->getDeviceID();
+                    $this->subscribeSetDevice[$mqtt->topic][] = $device->getDeviceID();
                 }
             }
+            //подписка на топики от устройств о своем состоянии
+            $devicePhysic = $device->getDevicePhysic();
+            if ($devicePhysic instanceof iDevicePhysic && $devicePhysic instanceof iDevicePhysicMQTT) {
+                $topicStatus = $devicePhysic->getTopicStat();
+                if (!empty($topicStatus)) {
+                    $this->subscribeStatDevice[$device->getDeviceID()] = $topicStatus;
+                }
+            };
             $this->devices[$device->getDeviceID()] = $device;
         }
     }

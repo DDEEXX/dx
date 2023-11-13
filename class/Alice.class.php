@@ -5,16 +5,31 @@ class AliceFormatter {
 
     static private function createBrightness($format) {
         switch ($format) {
-            case 0 : return new  _AliseFormatBrightness_0;
+            case 1 : return new  _AliseFormatBrightness_1;
             default : return null;
         }
     }
 
     static private function createOn($format) {
         switch ($format) {
-            case 0 : return new  _AliseFormatOn_0;
             case 1 : return new  _AliseFormatOn_1;
+            case 2 : return new  _AliseFormatOn_2;
             case 3 : return new  _AliseFormatOn_3;
+            default : return null;
+        }
+    }
+
+    static private function createBrightnessStat($format) {
+        switch ($format) {
+            case 1 : return new  _AliseFormatBrightnessStat_1;
+            default : return null;
+        }
+    }
+
+    static private function createOnStat($format) {
+        switch ($format) {
+            case 1 : return new  _AliseFormatOnStat_1;
+            case 2 : return new  _AliseFormatOnStat_2;
             default : return null;
         }
     }
@@ -28,7 +43,11 @@ class AliceFormatter {
     }
 
     static private function createStat($instance, $format) {
-
+        switch ($instance) {
+            case 'on' : return self::createOnStat($format);
+            case 'brightness' : return self::createBrightnessStat($format);
+            default : return null;
+        }
     }
 
     static public function create($instance, $typeTopic, $format) {
@@ -65,6 +84,16 @@ class Alice
             $data->topic = $value->stat;
             $data->formater = AliceFormatter::create($data->instance, $data->typeTopic, $value->formatStat);
             $this->mqtt[] = $data;
+        }
+    }
+
+    public function sentStatus($payload) {
+        foreach ($this->mqtt as $mqtt) {
+            if ($mqtt->typeTopic != typeTopic::STATUS) continue;
+            if (is_null( $mqtt->formater)) continue;
+            $formatValue = $mqtt->formater->convert($payload);
+            if (is_null($formatValue)) continue;
+            mqttPublish::publish($mqtt->topic, $formatValue);
         }
     }
 }
