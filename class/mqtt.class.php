@@ -18,6 +18,7 @@ class mqttSend
 {
     private static $clientMQTT = null;
     private $client;
+    private $idClient;
 
     //Если true - вести лог, критические события в лог попадают всегда
     private $logger;
@@ -25,8 +26,10 @@ class mqttSend
     private function __construct(iConfigMQTT $configMQTT, $clientNamePostfix, $logger)
     {
         $this->logger = $logger;
-        $this->client = new Mosquitto\Client($configMQTT->getID() . '_' . $clientNamePostfix. rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9));
+        $this->idClient = $configMQTT->getID() . '_' . $clientNamePostfix. rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9);
+        $this->client = new Mosquitto\Client($this->idClient);
         $this->client->onConnect([$this, 'onConnect']);
+        $this->client->onDisconnect([$this, 'onDisconnect']);
         $this->client->setCredentials($configMQTT->getUser(), $configMQTT->getPassword());
         $this->client->connect($configMQTT->getHost(), $configMQTT->getPort());
     }
@@ -53,7 +56,17 @@ class mqttSend
     public function onConnect($rc, $message)
     {
         if ($this->logger) {
-            logger::writeLog('Подключился к MQTT брокеру. Код ' . $rc . ' - ' . $message, loggerTypeMessage::NOTICE, loggerName::MQTT);
+            logger::writeLog(sprintf('Подключился к MQTT брокеру. Status: %s - $s. ID: %s',
+                $rc, $message, $this->idClient),
+                loggerTypeMessage::NOTICE, loggerName::MQTT);
+        }
+    }
+
+    public function onDisconnect($rc, $message)
+    {
+        if ($this->logger) {
+            logger::writeLog(sprintf('Отключился от MQTT брокера. ID: %s', $this->idClient),
+                loggerTypeMessage::NOTICE, loggerName::MQTT);
         }
     }
 
@@ -777,7 +790,7 @@ class mqttAlice
             if (is_null($device) || is_null($device->getAlice())) continue;
             $_Alice = $device->getAlice();
             foreach ($_Alice->mqtt as $mqtt) {
-                if (strlen($mqtt->topic)) {
+                if (strlen($mqtt->topic) && $mqtt->typeTopic == typeTopic::SET) {
                     $this->subscribeDevice[$mqtt->topic][] = $device->getDeviceID();
                 }
             }
