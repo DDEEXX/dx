@@ -2,15 +2,13 @@
 require_once(dirname(__FILE__) . '/../class/managerUnits.class.php');
 require_once(dirname(__FILE__) . '/../class/mqtt.class.php');
 
-$mqtt = mqttSend::connect('tempForOT');
-
 $unitTemperatureOut = managerUnits::getUnitLabel('temp_out_2');
 $temperatureOut = $unitTemperatureOut->getData();
 $dateValue = $temperatureOut->date;
 if (!$temperatureOut->valueNull && time() - $dateValue < 1200) {
     $topic = 'baxi_open/controller/set';
     $payload = sprintf('{"eout":%s}', $temperatureOut->value);
-    $mqtt->publish($topic, $payload);
+    mqttPublish::publish($topic, $payload);
 }
 
 sleep(1);
@@ -20,7 +18,7 @@ $dateValue = $temperatureIn->date;
 if (!$temperatureIn->valueNull && time() - $dateValue < 1200) {
     $topic = 'baxi_open/controller/set';
     $payload = sprintf('{"ein":%s}', $temperatureIn->value);
-    $mqtt->publish($topic, $payload);
+    mqttPublish::publish($topic, $payload);
 }
 
 //sleep(1);

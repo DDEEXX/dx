@@ -48,7 +48,6 @@ class mqttSend
         $this->idClient = $configMQTT->getID() . '_' . $clientNamePostfix. rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9);
         $this->client = new Mosquitto\Client($this->idClient);
         $this->client->onConnect([$this, 'onConnect']);
-        //$this->client->onDisconnect([$this, 'onDisconnect']);
         $this->client->setCredentials($configMQTT->getUser(), $configMQTT->getPassword());
         $this->client->connect($configMQTT->getHost(), $configMQTT->getPort());
     }
@@ -76,14 +75,6 @@ class mqttSend
     {
         if ($this->logger) {
             logger::writeLog('Подключился к MQTT брокеру. Status: '.$rc.' - '.$message.'. ID: '.$this->idClient,
-                loggerTypeMessage::NOTICE, loggerName::MQTT);
-        }
-    }
-
-    public function onDisconnect($rc)
-    {
-        if ($this->logger) {
-            logger::writeLog('Отключился от MQTT брокера. ID: '.$this->idClient.' Status: '.$rc,
                 loggerTypeMessage::NOTICE, loggerName::MQTT);
         }
     }
