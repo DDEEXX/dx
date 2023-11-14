@@ -68,6 +68,11 @@ class Alice
     public function __construct($optionsJSON)
     {
         $options = json_decode($optionsJSON);
+        if (is_null($options)) {
+            logger::writeLog('Неверно заданы параметры для Алисы',
+                loggerTypeMessage::FATAL, loggerName::ERROR);
+            return;
+        }
         $this->type = $options->type;
 
         foreach ($options->mqtt as $value) {

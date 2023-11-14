@@ -80,10 +80,10 @@ class mqttSend
         }
     }
 
-    public function onDisconnect($rc, $message)
+    public function onDisconnect($rc)
     {
         if ($this->logger) {
-            logger::writeLog('Отключился от MQTT брокера. ID: '.$this->idClient,
+            logger::writeLog('Отключился от MQTT брокера. ID: '.$this->idClient.' Status: '.$rc,
                 loggerTypeMessage::NOTICE, loggerName::MQTT);
         }
     }
