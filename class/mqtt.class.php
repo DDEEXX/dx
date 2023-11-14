@@ -48,7 +48,7 @@ class mqttSend
         $this->idClient = $configMQTT->getID() . '_' . $clientNamePostfix. rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9);
         $this->client = new Mosquitto\Client($this->idClient);
         $this->client->onConnect([$this, 'onConnect']);
-        $this->client->onDisconnect([$this, 'onDisconnect']);
+        //$this->client->onDisconnect([$this, 'onDisconnect']);
         $this->client->setCredentials($configMQTT->getUser(), $configMQTT->getPassword());
         $this->client->connect($configMQTT->getHost(), $configMQTT->getPort());
     }
