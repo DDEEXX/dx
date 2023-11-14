@@ -826,8 +826,7 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
     {
         if (is_null($this->topicCmnd)) return;
         if (trim($payload) == '') return;
-        $mqtt = mqttSend::connect();
-        $mqtt->publish($this->topicCmnd, $payload);
+        mqttPublish::publish($this->topicCmnd, $payload);
     }
 
     function requestData()
@@ -844,8 +843,7 @@ abstract class aDeviceSensorPhysicMQTT extends aDeviceSensorPhysic implements iD
     public function test()
     {
         if (!empty($this->topicAvailabilityInput)) {
-            $mqtt = mqttSend::connect();
-            $mqtt->publish($this->topicAvailabilityInput, $this->testPayload);
+            mqttPublish::publish($this->topicAvailabilityInput, $this->testPayload);
             unset($mqtt);
         }
         return testDeviceCode::IS_MQTT_DEVICE;
