@@ -34,6 +34,14 @@ class AliceFormatter {
         }
     }
 
+    static private function createOnStat($format) {
+        switch ($format) {
+            case 1 : return new  _AliseFormatOnStat_1;
+            case 2 : return new  _AliseFormatOnStat_2;
+            default : return null;
+        }
+    }
+
     static private function createBrightnessStat($format) {
         switch ($format) {
             case 1 : return new  _AliseFormatBrightnessStat_1;
@@ -41,10 +49,16 @@ class AliceFormatter {
         }
     }
 
-    static private function createOnStat($format) {
+    static private function createProgramStat($format) {
         switch ($format) {
-            case 1 : return new  _AliseFormatOnStat_1;
-            case 2 : return new  _AliseFormatOnStat_2;
+            case 1 : return new  _AliseFormatProgramStat_1;
+            default : return null;
+        }
+    }
+
+    static private function createChannelStat($format) {
+        switch ($format) {
+            case 1 : return new  _AliseFormatChannelStat_1;
             default : return null;
         }
     }
@@ -63,6 +77,8 @@ class AliceFormatter {
         switch ($instance) {
             case 'on' : return self::createOnStat($format);
             case 'brightness' : return self::createBrightnessStat($format);
+            case 'program' : return self::createProgramStat($format);
+            case 'channel' : return self::createChannelStat($format);
             default : return null;
         }
     }

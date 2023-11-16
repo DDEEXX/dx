@@ -128,3 +128,40 @@ class _AliseFormatBrightnessStat_1 implements iAliceFormatter
         return null;
     }
 }
+
+//от устройства on|off в Алису 0|1
+class _AliseFormatProgramStat_1 implements iAliceFormatter
+{
+    function convert($value)
+    {
+        $data = json_decode($value, true);
+        if (array_key_exists('demoRun', $data)) {
+            switch ($data['demoRun']) {
+                case 1 :
+                    return '"one"';
+                case 2 :
+                    return '"two"';
+                case 3 :
+                    return '"three"';
+                case 4 :
+                    return '"four"';
+            }
+        }
+        return null;
+    }
+}
+
+//от устройства on|off в Алису 0|1
+class _AliseFormatChannelStat_1 implements iAliceFormatter
+{
+    function convert($value)
+    {
+        $data = json_decode($value, true);
+        if (array_key_exists('ledMode', $data)) {
+            if (is_int($data['ledMode'])) {
+                return strval($data['ledMode']);
+            }
+        }
+        return null;
+    }
+}
