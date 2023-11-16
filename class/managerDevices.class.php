@@ -79,6 +79,9 @@ class deviceFactory
             case typeDevice::RADIATOR_VALVE :
                 $className = 'radiatorValve';
                 break;
+            case typeDevice::NEW_YEAR_GARLAND :
+                $className = 'newYearGarland';
+                break;
             default :
                 return null;
         }

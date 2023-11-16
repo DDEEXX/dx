@@ -15,6 +15,7 @@ class AliceFormatter {
             case 1 : return new  _AliseFormatOn_1;
             case 2 : return new  _AliseFormatOn_2;
             case 3 : return new  _AliseFormatOn_3;
+            case 4 : return new  _AliseFormatOn_4;
             default : return null;
         }
     }

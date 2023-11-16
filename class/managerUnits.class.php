@@ -57,6 +57,9 @@ class unitFactory
             case typeUnit::RADIATOR_VALVE :
                 $className = 'radiatorValveUnit';
                 break;
+            case typeUnit::NEW_YEAR_GARLAND :
+                $className = 'newYearGarlandUnit';
+                break;
             default :
                 $className = '';
         }

@@ -38,6 +38,15 @@ class _AliseFormatOn_3 implements iAliceFormatter
     }
 }
 
+//Входящие сообщение от Алисы 0|1 в сообщение dxhome {"state":"on"}|{"state":"off"}
+class _AliseFormatOn_4 implements iAliceFormatter
+{
+    function convert($value)
+    {
+        return $value == '1' ? '{"state":"on"}' : '{"state":"off"}';
+    }
+}
+
 //Входящие сообщение от Алисы 0..100 в сообщение dxhome 0..9 (0->8, 8->9)
 class _AliseFormatBrightness_1 implements iAliceFormatter
 {

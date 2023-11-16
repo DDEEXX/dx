@@ -32,7 +32,6 @@ class formatterBoilerOpenTerm implements iFormatterValue
             logger::writeLog('Ошибка! Value: '.$value.'. Mess: ' .$e->getMessage(). ' Trace: '.$e->getTraceAsString(),
             loggerTypeMessage::ERROR, loggerName::DEBUG);
         }
-
         return $result;
     }
 

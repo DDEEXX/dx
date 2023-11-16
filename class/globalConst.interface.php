@@ -29,6 +29,7 @@ interface typeDevice{
     const GAS_SENSOR        = 11;//Датчик газа
     const BOILER_OPEN_THERM = 12;//Котел отопления
     const RADIATOR_VALVE    = 13;//Головка радиатора
+    const NEW_YEAR_GARLAND  = 14;//Новогодняя гирлянда
 }
 
 interface typeUnit{
@@ -45,6 +46,7 @@ interface typeUnit{
     const BOILER_OPEN_THERM = 11;//Котел отопления
     const BOILER_PID        = 12;//Котел отопления
     const RADIATOR_VALVE    = 13;//Головка радиатора
+    const NEW_YEAR_GARLAND  = 14;//Новогодняя гирлянда
 }
 
 interface graphType {

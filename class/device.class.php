@@ -1308,6 +1308,7 @@ require_once dirname(__FILE__) . '/devices/kitchenHood.device.class.php';
 require_once dirname(__FILE__) . '/devices/gasSensor.device.class.php';
 require_once dirname(__FILE__) . '/devices/boilerOpenTherm.class.php';
 require_once dirname(__FILE__) . '/devices/radiatorValve.class.php';
+require_once dirname(__FILE__) . '/devices/newYearGarland.class.php';
 
 class labelSensorDevice extends aSensorDevice
 {

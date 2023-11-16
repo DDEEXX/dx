@@ -588,3 +588,20 @@ class boilerPID extends moduleUnit
     {
     }
 }
+
+class newYearGarlandUnit extends moduleUnit
+{
+
+    public function __construct(array $options)
+    {
+        parent::__construct($options, typeUnit::NEW_YEAR_GARLAND);
+    }
+
+    function setData($data)
+    {
+        $device = $this->getDevice();
+        if ($device instanceof iMakerDevice) {
+            $device->setData($data);
+        }
+    }
+}
