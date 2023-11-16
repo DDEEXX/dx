@@ -265,6 +265,29 @@ class deviceValueDB extends aDeviceValue
     }
 }
 
+class deviceValueMQTT extends aDeviceValue
+{
+    protected function getValue()
+    {
+        return null;
+    }
+
+    function setValue($value)
+    {
+        $fData = $this->formatter->formatRawValue($value);
+        mqttPublish::publish('test/test', $fData->value);
+    }
+
+    function getFormatValue()
+    {
+        return $this->getValue();
+    }
+
+    function updateValue($value)
+    {
+    }
+}
+
 class  valuesFactory
 {
     public static function createDeviceValue($parameters, $formatter)
@@ -274,6 +297,8 @@ class  valuesFactory
                 return new deviceValueSM($parameters['deviceID'], $formatter);
             case 1 :
                 return new deviceValueDB($parameters['deviceID'], $formatter);
+            case 2 :
+                return new deviceValueMQTT($parameters['deviceID'], $formatter);
             default :
                 logger::writeLog('Ошибка при создании объекта deviceValue (managerValues.class.php). $parameters[valueStorage] = ' . $parameters['valueStorage'],
                     loggerTypeMessage::ERROR, loggerName::ERROR);
@@ -1303,12 +1328,13 @@ require_once dirname(__FILE__) . '/devices/humidity.device.class.php';
 require_once dirname(__FILE__) . '/devices/pressure.device.class.php';
 require_once dirname(__FILE__) . '/devices/keyIn.device.class.php';
 require_once dirname(__FILE__) . '/devices/keyOut.device.class.php';
-require_once dirname(__FILE__) . '/devices/zigbeeSwitchWHD02.device.class.php';
+require_once dirname(__FILE__) . '/devices/zigbeeSwitchWHD02.class.php';
 require_once dirname(__FILE__) . '/devices/kitchenHood.device.class.php';
 require_once dirname(__FILE__) . '/devices/gasSensor.device.class.php';
 require_once dirname(__FILE__) . '/devices/boilerOpenTherm.class.php';
 require_once dirname(__FILE__) . '/devices/radiatorValve.class.php';
 require_once dirname(__FILE__) . '/devices/newYearGarland.class.php';
+require_once dirname(__FILE__) . '/devices/zigbeeSwitchTS.class.php';
 
 class labelSensorDevice extends aSensorDevice
 {

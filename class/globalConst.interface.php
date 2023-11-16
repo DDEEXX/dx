@@ -24,12 +24,13 @@ interface typeDevice{
     const KEY_OUT           = 5; //Выходной ключ - коммутирует маленькие токи
     const PRESSURE          = 7; //Датчик атмосферного давления
     const HUMIDITY          = 8; //Датчик влажности
-    const SWITCH_WHD02      = 9; //Датчик влажности
+    const SWITCH_WHD02      = 9; //Switch module WHD02
     const KITCHEN_HOOD      = 10;//Кухонная вытяжка
     const GAS_SENSOR        = 11;//Датчик газа
     const BOILER_OPEN_THERM = 12;//Котел отопления
     const RADIATOR_VALVE    = 13;//Головка радиатора
     const NEW_YEAR_GARLAND  = 14;//Новогодняя гирлянда
+    const SWITCH_TUYA_TS    = 15;//Switch TuYa S
 }
 
 interface typeUnit{

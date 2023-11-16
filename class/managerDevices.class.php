@@ -82,6 +82,9 @@ class deviceFactory
             case typeDevice::NEW_YEAR_GARLAND :
                 $className = 'newYearGarland';
                 break;
+            case typeDevice::SWITCH_TUYA_TS :
+                $className = 'zigbeeSwitchTS';
+                break;
             default :
                 return null;
         }
