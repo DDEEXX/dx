@@ -85,7 +85,7 @@ class _AliseFormatChannel_1 implements iAliceFormatter
     function convert($value)
     {
         if (!is_numeric($value)) return '';
-        return '{"demoRun":'.(int)$value.'}';
+        return '{"ledMode":'.(int)$value.'}';
     }
 }
 
