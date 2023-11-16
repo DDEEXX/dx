@@ -3,6 +3,16 @@ require_once(dirname(__FILE__) . '/AliseFormat.class.php');
 
 class AliceFormatter {
 
+    static private function createOn($format) {
+        switch ($format) {
+            case 1 : return new  _AliseFormatOn_1;
+            case 2 : return new  _AliseFormatOn_2;
+            case 3 : return new  _AliseFormatOn_3;
+            case 4 : return new  _AliseFormatOn_4;
+            default : return null;
+        }
+    }
+
     static private function createBrightness($format) {
         switch ($format) {
             case 1 : return new  _AliseFormatBrightness_1;
@@ -10,12 +20,16 @@ class AliceFormatter {
         }
     }
 
-    static private function createOn($format) {
+    static private function createProgram($format) {
         switch ($format) {
-            case 1 : return new  _AliseFormatOn_1;
-            case 2 : return new  _AliseFormatOn_2;
-            case 3 : return new  _AliseFormatOn_3;
-            case 4 : return new  _AliseFormatOn_4;
+            case 1 : return new  _AliseFormatProgram_1;
+            default : return null;
+        }
+    }
+
+    static private function createChannel($format) {
+        switch ($format) {
+            case 1 : return new  _AliseFormatChannel_1;
             default : return null;
         }
     }
@@ -39,6 +53,8 @@ class AliceFormatter {
         switch ($instance) {
             case 'on' : return self::createOn($format);
             case 'brightness' : return self::createBrightness($format);
+            case 'program' : return self::createProgram($format);
+            case 'channel' : return self::createChannel($format);
             default : return null;
         }
     }

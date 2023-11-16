@@ -64,6 +64,30 @@ class _AliseFormatBrightness_1 implements iAliceFormatter
     }
 }
 
+//Входящие сообщение от Алисы one|two|three|four в сообщение dxhome {"demoRun":1|2|3|4}
+class _AliseFormatProgram_1 implements iAliceFormatter
+{
+    function convert($value)
+    {
+        switch ($value) {
+            case 'one' : return '{"demoRun":1}';
+            case 'two' : return '{"demoRun":2}';
+            case 'three' : return '{"demoRun":3}';
+            case 'four' : return '{"demoRun":4}';
+            default : return '';
+        }
+    }
+}
+
+//Входящие сообщение от Алисы 0..n в сообщение dxhome "ledMode":0..n
+class _AliseFormatChannel_1 implements iAliceFormatter
+{
+    function convert($value)
+    {
+        if (!is_numeric($value)) return '';
+        return '{"demoRun":'.(int)$value.'}';
+    }
+}
 
 //__STATUS__
 
