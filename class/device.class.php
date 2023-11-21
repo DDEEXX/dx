@@ -267,6 +267,24 @@ class deviceValueDB extends aDeviceValue
 
 class deviceValueMQTT extends aDeviceValue
 {
+    private $options;
+
+    public function __construct($parameters, $formatter)
+    {
+        parent::__construct($parameters['deviceID'], $formatter);
+        $this->options = $this->createOptionsFromJSON($parameters['options']);
+    }
+
+    private function createOptionsFromJSON($jsonData)
+    {
+        $result = [];
+        $data = json_decode($jsonData);
+        foreach ($data as $action) {
+            $result[$action->action] = ['topics'=>$action->topics, 'payload'=>$action->payload];
+        }
+        return $result;
+    }
+
     protected function getValue()
     {
         return null;
@@ -275,7 +293,15 @@ class deviceValueMQTT extends aDeviceValue
     function setValue($value)
     {
         $fData = $this->formatter->formatRawValue($value);
-        mqttPublish::publish('test/test', $fData->value);
+        if (is_null($fData)) return;
+
+        if (array_key_exists($fData, $this->options)) {
+            $action = $this->options[$fData];
+            $payload = $action['payload'];
+            foreach ($action['topics'] as $topic) {
+                mqttPublish::publish($topic, $payload);
+            }
+        }
     }
 
     function getFormatValue()
@@ -298,7 +324,7 @@ class  valuesFactory
             case 1 :
                 return new deviceValueDB($parameters['deviceID'], $formatter);
             case 2 :
-                return new deviceValueMQTT($parameters['deviceID'], $formatter);
+                return new deviceValueMQTT($parameters, $formatter);
             default :
                 logger::writeLog('Ошибка при создании объекта deviceValue (managerValues.class.php). $parameters[valueStorage] = ' . $parameters['valueStorage'],
                     loggerTypeMessage::ERROR, loggerName::ERROR);

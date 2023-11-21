@@ -4,40 +4,9 @@ class formatterSwitchTS implements iFormatterValue
 {
     function formatRawValue($value)
     {
-        $result = new formatDeviceValue();
-        $result->valueNull = false;
-        $result->status = 0;
         $arValueData = json_decode($value, true);
-        switch ($arValueData['action']) {
-            case '1_single' :
-                $result->value = 1;
-                break;
-            case '2_single' :
-                $result->value = 2;
-                break;
-            case '3_single' :
-                $result->value = 3;
-                break;
-            case '1_double' :
-                $result->value = 4;
-                break;
-            case '2_double' :
-                $result->value = 5;
-                break;
-            case '3_double' :
-                $result->value = 6;
-                break;
-            case '1_hold' :
-                $result->value = 7;
-                break;
-            case '2_hold' :
-                $result->value = 8;
-                break;
-            case '3_hold' :
-                $result->value = 9;
-                break;
-        }
-        return $result;
+        if (array_key_exists('action', $arValueData)) return $arValueData['action'];
+        return null;
     }
 
     function formatTestCode($value)
@@ -97,7 +66,8 @@ class zigbeeSwitchTS extends aMakerDevice
         parent::__construct($options, typeDevice::SWITCH_TUYA_TS);
         $parameters = [
             'deviceID' => $this->getDeviceID(),
-            'valueStorage'=>$options['value_storage']
+            'valueStorage'=>$options['value_storage'],
+            'options'=>$options['options']
         ] ;
         $mqttParameters = [
             'topicCmnd' => $options['topic_cmnd'],
