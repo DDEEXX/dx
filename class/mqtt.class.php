@@ -20,7 +20,7 @@ class mqttPublish
     {
         $configMQTT = new mqttConfig();
         $client = new Mosquitto\Client(null, true);
-        $client->onLog('mqttPublish::log');
+        //$client->onLog('mqttPublish::log');
         $client->setCredentials($configMQTT->getUser(), $configMQTT->getPassword());
         $client->connect($configMQTT->getHost(), $configMQTT->getPort());
         $client->publish($topic, $payload, $qos, $retain);
