@@ -332,7 +332,20 @@ elseif ($_REQUEST['dev'] == 'check_value') {
         $unit = managerUnits::getUnitLabel($label);
         if (!is_null($unit)) {
             $formatData = $unit->getData();
-            $valueData = $formatData->getDataArray();
+            if ($formatData instanceof iDeviceDataValue) {
+                $valueData = $formatData->getDataArray();
+            }
+            else {
+                if ($unit instanceof newYearGarlandUnit) {
+                    $valueData = ['value'=>0, 'valueNull'=>true];
+                    if (property_exists($formatData, 'value')) {
+                        if (property_exists($formatData->value, 'state')) {
+                            $valueData['valueNull'] = false;
+                            $valueData['value'] = $formatData->value->state == 'on' ? 1 : 0;
+                        }
+                    }
+                }
+            }
             $value = -1;
             if (!is_null($valueData)) {
                 $valueNull = $valueData['valueNull'];
