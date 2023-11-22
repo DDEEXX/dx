@@ -275,7 +275,20 @@ elseif ($_REQUEST['dev'] == 'light_tile') {
             $valueData = $formatData->getDataArray();
         } else {
             $formatData = $unit->getData();
-            $valueData = $formatData->getDataArray();
+            if ($formatData instanceof iDeviceDataValue) {
+                $valueData = $formatData->getDataArray();
+            }
+            else {
+                if ($unit instanceof newYearGarlandUnit) {
+                    $valueData = ['value'=>0, 'valueNull'=>true];
+                    if (property_exists($formatData, 'value')) {
+                        if (property_exists($formatData->value, 'state')) {
+                            $valueData['valueNull'] = false;
+                            $valueData['value'] = $formatData->value->state == 'on' ? 1 : 0;
+                        }
+                    }
+                }
+            }
         }
         if (!is_null($valueData)) {
             $valueNull = $valueData['valueNull'];

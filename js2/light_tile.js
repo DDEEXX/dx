@@ -23,8 +23,9 @@ const lampsData = [
     {"id": "light_tile_light_terrace", "label": "light_terrace", "payload": "pulse"},
     {"id": "light_tile_backlight_bedroom", "label": "backlight_bedroom", "payload": ""},
     {"id": "light_tile_light_bedroom_Lera", "label": "light_bedroom_Lera", "payload": "pulse", "labelSensor": "sensor_light_bedroom_Lera"},
-    {"id": "light_tile__garland_home_1", "label": "garland_home_1", "payload": ""},
-    {"id": "light_tile__garland_home_2", "label": "garland_home_2", "payload": ""}
+    {"id": "light_tile_garland_home_1", "label": "garland_home_1", "payload": ""},
+    {"id": "light_tile_garland_home_2", "label": "garland_home_2", "payload": ""},
+    {"id": "light_tile_new_year_garland", "label": "new_year_garland", "payload": ""}
 ]
 
 function light_tile_setEvent() {
