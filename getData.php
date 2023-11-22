@@ -207,7 +207,7 @@ elseif ($_REQUEST['dev'] == 'light') { //получаем значение ос�
                     if (property_exists($formatData, 'value')) {
                         if (property_exists($formatData->value, 'state')) {
                             $valueData['valueNull'] = false;
-                            $value = $formatData->value->state == 'on' ? 'on' : 'off';
+                            $valueData['value'] = $formatData->value->state == 'on' ? 1 : 0;
                         }
                     }
                 }
