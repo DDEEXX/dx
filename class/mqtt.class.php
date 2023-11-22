@@ -28,8 +28,8 @@ class mqttPublish
     }
 
     static public function log($level, $str) {
-        logger::writeLog('MQTT Publish. Level: '.$level.',  '.$str,
-            loggerTypeMessage::NOTICE, loggerName::DEBUG);
+//        logger::writeLog('MQTT Publish. Level: '.$level.',  '.$str,
+//            loggerTypeMessage::NOTICE, loggerName::DEBUG);
     }
 }
 

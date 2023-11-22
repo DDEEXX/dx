@@ -478,7 +478,7 @@ class daemonLoopHeating extends daemon
                     loggerTypeMessage::ERROR, loggerName::ERROR);
             }
         } catch (querySelectDBException $e) {
-            logger::writeLog('Ошибка при добавлении данных в базу данных (daemonLoopHeating.saveInJournal)',
+            logger::writeLog('Ошибка при добавлении данных в базу данных (daemonLoopHeating.saveInJournal)'.$e->getMessage(),
                 loggerTypeMessage::ERROR, loggerName::ERROR);
         }
     }

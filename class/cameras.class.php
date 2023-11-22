@@ -58,23 +58,18 @@ class managerCameras
             logger::writeLog('Камера ' . $cameraInfo, loggerTypeMessage::NOTICE, loggerName::CAMERAS);
 
             //1. Перемещаем файлы timelapse.avi и с датой меньшей чем сегодня в директорию камеры timelapse
-            logger::writeLog(' - перемещаем файлы timelapse.avi и с датой меньшей чем сегодня в директорию камеры timelapse', loggerTypeMessage::NOTICE, loggerName::CAMERAS);
             $camera->moveTimelapseFileInArchive();
 
             //2. Оставляем в каталоге timelapse не больше 30 самых последних файлов
-            logger::writeLog(' - оставляем в каталоге timelapse не больше 30 самых последних файлов', loggerTypeMessage::NOTICE, loggerName::CAMERAS);
             $camera->deleteTimelapseFileInArchive();
 
             //3. Объединяем все видео файлы за день в один и удаляем исходные файлы.
-            logger::writeLog(' - объединяем все видео файлы за день в один и удаляем исходные файлы.', loggerTypeMessage::NOTICE, loggerName::CAMERAS);
             $camera->concatenationVideoFile();
 
             //4. Оставляем в каталоге video не больше 90 самых последних файлов
-            logger::writeLog(' - оставляем в каталоге video не больше 90 самых последних файлов.', loggerTypeMessage::NOTICE, loggerName::CAMERAS);
             $camera->deleteVideoFileInArchive();
 
             //5. Перемещаем стоп кадры в архив, сохраняем только один кадр за час, все исходные кадры удаляем
-            logger::writeLog(' - перемещаем стоп кадры в архив, сохраняем только один кадр за час, все исходные кадры удаляем.', loggerTypeMessage::NOTICE, loggerName::CAMERAS);
             $camera->moveImageFileInArchive();
         }
 

@@ -39,8 +39,6 @@
 }
 .light_plan_lamp_click {
     position: absolute;
-    height: 40px;
-    width: 40px;
     border-radius: 50%;
     cursor: pointer;
 }

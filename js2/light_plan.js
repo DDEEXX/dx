@@ -22,7 +22,9 @@ const lampsData = [
     {"id": "light_plan_light_bathroom", "label": "light_bathroom", "payload": "pulse", "type": "light", "place": "235;755"},
     {"id": "light_plan_light_terrace", "label": "light_terrace", "payload": "pulse", "type": "light", "place": "85;15"},
     {"id": "light_plan_backlight_bedroom", "label": "backlight_bedroom", "payload": "", "type": "backlight", "place": "310;545"},
-    {"id": "light_plan_light_bedroom_Lera", "label": "light_bedroom_Lera", "payload": "pulse", "labelSensor": "sensor_light_bedroom_Lera", "type": "light", "place": "175;600"}
+    {"id": "light_plan_light_bedroom_Lera", "label": "light_bedroom_Lera", "payload": "pulse", "labelSensor": "sensor_light_bedroom_Lera", "type": "light", "place": "175;600"},
+    {"id": "light_plan_garland_home_1", "label": "garland_home_1", "payload": "", "type": "garland", "place": "400;350", "size": "50;50"},
+    {"id": "light_plan_garland_home_2", "label": "garland_home_2", "payload": "", "type": "garland", "place": "400;270", "size": "50;50"}
 ]
 
 function light_plan_updateAll() {
@@ -34,7 +36,8 @@ function light_plan_updateAll() {
         const type = val['type'];
         const payload = val['payload']===""?"":("&payload="+val['payload']);
         const sensor = val['labelSensor']?("&labelSensor="+val['labelSensor']):"";
-        const path = "getData.php?dev=light&label="+label+"&place="+place+"&img="+type+payload+sensor;
+        const size = val['size']?("&size="+val['size']):"";
+        const path = "getData.php?dev=light&label="+label+"&place="+place+"&img="+type+payload+sensor+size;
         $.get(path, function (data) {
             $("#"+id).html(data);
         })
@@ -85,9 +88,10 @@ function light_plan_checkLampStatus() {
                         const id = lampData.id;
                         const sensor = lampData.labelSensor?("&labelSensor="+lampData.labelSensor):"";
                         const payload = lampData.payload === "" ? "" : ("&payload=" + lampData.payload);
+                        const size = lampData.size?("&size="+lampData.size):"";
                         const place = lampData.place;
                         const type = lampData.type;
-                        const path = "getData.php?dev=light&label="+label+"&place="+place+"&img="+type+payload+sensor;
+                        const path = "getData.php?dev=light&label="+label+"&place="+place+"&img="+type+payload+sensor+size;
                         $.get(path, function (data) {
                             $("#" + id).html(data);
                         })

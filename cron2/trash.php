@@ -15,7 +15,7 @@ try {
     logger::writeLog('Ошибка при подключении к базе данных',
         loggerTypeMessage::ERROR, loggerName::ERROR);
 } catch (querySelectDBException $e) {
-    logger::writeLog('Ошибка при добавлении данных в базу данных',
+    logger::writeLog('Ошибка при добавлении данных в базу данных'.$e->getMessage(),
         loggerTypeMessage::ERROR, loggerName::ERROR);
 }
 
@@ -33,7 +33,7 @@ try {
     logger::writeLog('Ошибка при подключении к базе данных',
         loggerTypeMessage::ERROR, loggerName::ERROR);
 } catch (querySelectDBException $e) {
-    logger::writeLog('Ошибка при добавлении данных в базу данных',
+    logger::writeLog('Ошибка при добавлении данных в базу данных'.$e->getMessage(),
         loggerTypeMessage::ERROR, loggerName::ERROR);
 }
 

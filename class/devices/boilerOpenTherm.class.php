@@ -8,6 +8,10 @@ class formatterBoilerOpenTerm implements iFormatterValue
         $result = new stdClass();
         $result->value = new stdClass();
         try {
+            if (!isset($dValue->_spr)) {
+                logger::writeLog('formatterBoilerOpenTerm: преобразование в json. value = '.$value.', dValue = '.$dValue,
+                    loggerTypeMessage::ERROR, loggerName::ERROR);
+            }
             $result->value->_spr = $dValue->_spr; //целевая температура (установка)
             $result->value->ch = $dValue->ch;     //температура подачи контура СО
             $result->value->retb = $dValue->retb; //обратка СО

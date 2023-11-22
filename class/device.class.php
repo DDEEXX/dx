@@ -243,7 +243,7 @@ class deviceValueDB extends aDeviceValue
             logger::writeLog('Ошибка при подключении к базе данных',
                 loggerTypeMessage::ERROR, loggerName::ERROR);
         } catch (querySelectDBException $e) {
-            logger::writeLog('Ошибка при добавлении данных в базу данных',
+            logger::writeLog('Ошибка при добавлении данных в базу данных'.$e->getMessage(),
                 loggerTypeMessage::ERROR, loggerName::ERROR);
         }
 
@@ -697,7 +697,7 @@ abstract class aAlarmMQTT implements iAlarmMQTT
                     loggerTypeMessage::ERROR, loggerName::ERROR);
             }
         } catch (querySelectDBException $e) {
-            logger::writeLog('Ошибка при добавлении данных в базу данных',
+            logger::writeLog('Ошибка при добавлении данных в базу данных'.$e->getMessage(),
                 loggerTypeMessage::ERROR, loggerName::ERROR);
         }
     }
@@ -1308,7 +1308,7 @@ abstract class aSensorDevice extends aDevice implements iSensorDevice
             logger::writeLog('Ошибка при подключении к базе данных',
                 loggerTypeMessage::ERROR, loggerName::ERROR);
         } catch (querySelectDBException $e) {
-            logger::writeLog('Ошибка при добавлении данных в базу данных',
+            logger::writeLog('Ошибка при добавлении данных в базу данных'.$e->getMessage(),
                 loggerTypeMessage::ERROR, loggerName::ERROR);
         }
 

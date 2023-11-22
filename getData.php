@@ -215,6 +215,17 @@ elseif ($_REQUEST['dev'] == 'light') { //получаем значение ос�
     }
 
     $place = explode(';', $_GET['place']);
+    //$style = 'display: flex;align-items:center;justify-content:center;top:' . $place[0] . 'px;left:' . $place[1] . 'px';
+    $style = sprintf('display: flex;align-items:center;justify-content:center;top:%spx;left:%spx',
+        $place[0], $place[1]);
+    if (isset($_GET['size'])) {
+        $size = explode(';', $_GET['size']);
+        //$style = $style.';height: '.$size[0].'px;width: '.$size[1].'px';
+        $style = $style . sprintf(';height:%spx;width:%spx', $size[0], $size[1]);
+    }
+    else
+        $style = $style.';height: 40px;width: 40px';
+
     $nameImgFile = isset($_GET['img']) ? $_GET['img'] : 'light';
     if ($value == 'on') {
         $nameImgFile = 'img2/' . $nameImgFile . '_on.png';
@@ -222,10 +233,13 @@ elseif ($_REQUEST['dev'] == 'light') { //получаем значение ос�
         $nameImgFile = 'img2/' . $nameImgFile . '_off.png';
     }
 
-    echo '<div class="light_plan_lamp_click light_plan_lamp_'.$value.'" label="'.$label.
-        '"'.$labelSensor.' value="'.$value.'" payload="'.$payload.
-        '" style="top:' . $place[0] . 'px;left:' . $place[1] . 'px">';
-    echo '<div class="light_plan_lamp_img" style="top:5px;left:10px">';
+    $input = sprintf('<div class="light_plan_lamp_click light_plan_lamp_%s" label="%s" %s value="%s" payload="%s" style="%s">',
+        $value, $label, $labelSensor, $value, $payload, $style);
+    echo $input;
+
+//    echo '<div class="light_plan_lamp_click light_plan_lamp_'.$value.'" label="'.$label.
+//        '"'.$labelSensor.' value="'.$value.'" payload="'.$payload.' '.$style.'>';
+    echo '<div class="light_plan_lamp_img">';
     echo '<img class="' . $value . '_light" src="' . $nameImgFile . '">';
     echo '</div>';
     echo '</div>';

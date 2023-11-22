@@ -38,26 +38,26 @@
             "set_alarm" =>  $_REQUEST['setAlarm'],
         );
 
-        $device = managerDevices::createDevice($arDevice);
-
-        if (isset($_REQUEST['btAdd'])) { //Добавляем запись
-            try {
-                managerDevices::addDevice($device);
-                unset($device);
-                echo "<span style='color:blue;'>Устройство добавленно в базу данных</span>", "\n";
-            }
-            catch (Exception $e) { //надо прописать исключение для каждоко своего типа
-                unset($device);
-                echo "<span style='color:red;'>Произошла ошибка при добавлении устройства в БД</span>";
-                //echo $e->getErrorInfoHTML();
-            }
-
-        }
-        elseif (isset($_REQUEST['btUpdate'])) { //Изменяем запись
-
-        }
-
-        unset($device);
+//        $device = managerDevices::createDevice($arDevice);
+//
+//        if (isset($_REQUEST['btAdd'])) { //Добавляем запись
+//            try {
+//                managerDevices::addDevice($device);
+//                unset($device);
+//                echo "<span style='color:blue;'>Устройство добавленно в базу данных</span>", "\n";
+//            }
+//            catch (Exception $e) { //надо прописать исключение для каждоко своего типа
+//                unset($device);
+//                echo "<span style='color:red;'>Произошла ошибка при добавлении устройства в БД</span>";
+//                //echo $e->getErrorInfoHTML();
+//            }
+//
+//        }
+//        elseif (isset($_REQUEST['btUpdate'])) { //Изменяем запись
+//
+//        }
+//
+//        unset($device);
 
     }
 
