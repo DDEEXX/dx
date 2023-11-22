@@ -27,7 +27,19 @@ class formatterNewYearGarland_MQTT implements iFormatterValue
 
     function formatOutData($data)
     {
-        return $data;
+        $dataDecode = json_decode($data, true);
+        if (is_null($dataDecode)) {
+            return null;
+        }
+        $value = managerDevices::checkDataValue('value', $dataDecode);
+        if (!is_null($value)) {
+            if (strtolower($value) == 'on') {
+                return '{"state": "on"}';
+            } elseif (strtolower($value) == 'off') {
+                return '{"state": "off"}';
+            }
+        }
+        return null;
     }
 }
 
