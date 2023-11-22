@@ -199,7 +199,19 @@ elseif ($_REQUEST['dev'] == 'light') { //получаем значение ос�
             $valueData = $formatData->getDataArray();
         } else {
             $formatData = $unit->getData();
-            $valueData = $formatData->getDataArray();
+            if ($formatData instanceof iDeviceDataValue) {
+                $valueData = $formatData->getDataArray();
+            } else {
+                if ($unit instanceof newYearGarlandUnit) {
+                    $valueData = ['value'=>0, 'valueNull'=>true];
+                    if (property_exists($formatData, 'value')) {
+                        if (property_exists($formatData->value, 'state')) {
+                            $valueData['valueNull'] = false;
+                            $value = $formatData->value->state == 'on' ? 'on' : 'off';
+                        }
+                    }
+                }
+            }
         }
         if (!is_null($valueData)) {
             $valueNull = $valueData['valueNull'];

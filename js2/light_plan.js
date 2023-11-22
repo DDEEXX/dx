@@ -24,7 +24,8 @@ const lampsData = [
     {"id": "light_plan_backlight_bedroom", "label": "backlight_bedroom", "payload": "", "type": "backlight", "place": "310;545"},
     {"id": "light_plan_light_bedroom_Lera", "label": "light_bedroom_Lera", "payload": "pulse", "labelSensor": "sensor_light_bedroom_Lera", "type": "light", "place": "175;600"},
     {"id": "light_plan_garland_home_1", "label": "garland_home_1", "payload": "", "type": "garland", "place": "400;350", "size": "50;50"},
-    {"id": "light_plan_garland_home_2", "label": "garland_home_2", "payload": "", "type": "garland", "place": "400;270", "size": "50;50"}
+    {"id": "light_plan_garland_home_2", "label": "garland_home_2", "payload": "", "type": "garland", "place": "400;270", "size": "50;50"},
+    {"id": "light_plan_new_year_garland", "label": "new_year_garland", "payload": "", "type": "garland", "place": "10;10", "size": "50;50"}
 ]
 
 function light_plan_updateAll() {
