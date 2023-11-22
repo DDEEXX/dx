@@ -1,0 +1,36 @@
+{
+  "data": {
+    "id": "weather_sensor_humidity_tuya_1",
+    "html": "data/sensor_humidity.html",
+    "expand": true,
+    "value": {
+      "classDigit": "sensor_data",
+      "label": "humidity_tuya_sensor_1",
+      "dev": "humidity"
+    }
+  },
+  "widget": {
+    "id": "block_weather_tuya_1",
+    "properties": {
+      "label": "humidity_tuya_sensor_1",
+      "icon": {
+        "image": "img2/icon_medium/humidity.png",
+        "width": 24,
+        "height": 24
+      },
+      "currentValue": {
+        "show": true,
+        "top": "35px",
+        "left": "5px",
+        "postfix": "%"
+      },
+      "graph": {
+        "type": 0,
+        "variant": 0,
+        "width": 247,
+        "height": 101,
+        "count": 6
+      }
+    }
+  }
+}
