@@ -47,6 +47,24 @@ class _AliseFormatOn_4 implements iAliceFormatter
     }
 }
 
+//Входящие сообщение от Алисы 1 в сообщение dxhome {"value":"pulse"}, остальные игнорируются
+class _AliseFormatOn_5 implements iAliceFormatter
+{
+    function convert($value)
+    {
+        return $value == '1' ? '{"value":"pulse"}' : null;
+    }
+}
+
+//Входящие сообщение от Алисы 0 в сообщение dxhome {"value":"pulse"}, остальные игнорируются
+class _AliseFormatOn_6 implements iAliceFormatter
+{
+    function convert($value)
+    {
+        return $value == '0' ? '{"value":"pulse"}' : null;
+    }
+}
+
 //Входящие сообщение от Алисы 0..100 в сообщение dxhome 0..9 (0->8, 8->9)
 class _AliseFormatBrightness_1 implements iAliceFormatter
 {

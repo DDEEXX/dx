@@ -9,6 +9,8 @@ class AliceFormatter {
             case 2 : return new  _AliseFormatOn_2;
             case 3 : return new  _AliseFormatOn_3;
             case 4 : return new  _AliseFormatOn_4;
+            case 5 : return new  _AliseFormatOn_5;
+            case 6 : return new  _AliseFormatOn_6;
             default : return null;
         }
     }
@@ -109,19 +111,23 @@ class Alice
         $this->type = $options->type;
 
         foreach ($options->mqtt as $value) {
-            $data = new stdClass();
-            $data->instance = $value->type;
-            $data->typeTopic = typeTopic::SET;
-            $data->topic = $value->set;
-            $data->formater = AliceFormatter::create($data->instance, $data->typeTopic, $value->formatSet);
-            $this->mqtt[] = $data;
+            if (strlen(trim($value->set)) != 0 ) {
+                $data = new stdClass();
+                $data->instance = $value->type;
+                $data->typeTopic = typeTopic::SET;
+                $data->topic = trim($value->set);
+                $data->formater = AliceFormatter::create($data->instance, $data->typeTopic, $value->formatSet);
+                $this->mqtt[] = $data;
+            }
 
-            $data = new stdClass();
-            $data->instance = $value->type;
-            $data->typeTopic = typeTopic::STATUS;
-            $data->topic = $value->stat;
-            $data->formater = AliceFormatter::create($data->instance, $data->typeTopic, $value->formatStat);
-            $this->mqtt[] = $data;
+            if (strlen(trim($value->stat)) != 0 ) {
+                $data = new stdClass();
+                $data->instance = $value->type;
+                $data->typeTopic = typeTopic::STATUS;
+                $data->topic = trim($value->stat);
+                $data->formater = AliceFormatter::create($data->instance, $data->typeTopic, $value->formatStat);
+                $this->mqtt[] = $data;
+            }
         }
     }
 
