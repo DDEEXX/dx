@@ -1,15 +1,3 @@
-/*блок с содержимом*/
-#page_power .title_widget_sensor {
-    margin-top: 5px;
-    height: 110px
-}
-
-/*заголовок блока*/
-#page_power .title_widget_sensor_header {
-    margin-left: 5px;
-    padding-bottom: 5px
-}
-
 .flex {
     display: flex
 }

@@ -136,6 +136,13 @@ class makerKeyOutMQTT_1 implements iMaker
 
 class formatterKeyOutMQTT_2 extends aFormatterValue
 {
+    private $formatOutData; //флаг форматирования исходящих данных
+
+    public function __construct($formatOutData = true)
+    {
+        $this->formatOutData = $formatOutData;
+    }
+
     function formatRawValue($value)
     {
         $result = new formatDeviceValue();
@@ -173,9 +180,12 @@ class formatterKeyOutMQTT_2 extends aFormatterValue
         $dataDecode = json_decode(parent::formatOutData($data), true);
         if (is_null($dataDecode)) return null;
         if (!isset($dataDecode['value'])) return null;
-        $value = 'off';
-        if (is_numeric($dataDecode['value'])) $value = (int)$dataDecode['value'] > 0 ? 'on' : 'off';
-        elseif (strtolower($dataDecode['value']) == 'on') $value = 'on';
+        if ($this->formatOutData) {
+            $value = 'off';
+            if (is_numeric($dataDecode['value'])) $value = (int)$dataDecode['value'] > 0 ? 'on' : 'off';
+            elseif (strtolower($dataDecode['value']) == 'on') $value = 'on';
+        } else
+            $value = $dataDecode['value'];
         $result['value'] = $value;
 
         if (isset($dataDecode['status'])) $result['status'] = strtolower($dataDecode['status']);
@@ -356,9 +366,10 @@ class KeyOutMQQT extends aDeviceMakerPhysicMQTT
                 $result['maker'] = new makerKeyOutMQTT_1();
                 break;
             case 1 :
+            case 4 :
                 $mqttParameters['topicAvailability'] = '';
                 $result['selfState'] = true;
-                $result['formatter'] = new formatterKeyOutMQTT_2();
+                $result['formatter'] = new formatterKeyOutMQTT_2($parameters['valueFormat'] == 1);
                 $result['maker'] = new makerKeyOutMQTT_2();
                 break;
             case 2 :

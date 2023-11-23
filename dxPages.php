@@ -294,69 +294,9 @@ if ($p == 'power') {
             </div>
         </div>
         <div class="clear"></div>
-        <div class="grid_2 alpha">
-            <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor">
-                <h2 class="title_widget_sensor_header">Кухонная вытяжка</h2>
-                <div style="display: flex; align-items: flex-start">
-                    <div id="power_kitchen_hood"></div>
-                    <div id="power_kitchen_hood_setup" style="margin-left: 25px; height: 36px; width: 36px"></div>
-                </div>
-                <div id="power_kitchen_hood_dialogSetup">
-                    <div id="power_kitchen_hood_dialogSetup_content"></div>
-                </div>
-            </div>
-        </div>
-        <div class="grid_2">
-            <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor">
-                <h2 class="title_widget_sensor_header">Датчики газа</h2>
-                <div style="display: flex; align-items: flex-start">
-                    <div id="power_kitchen_gas_sensor" style="margin-left: 5px"></div>
-                    <div id="power_kitchen_gas_sensor_setup" style="margin-left: 25px; height: 36px; width: 36px"></div>
-                </div>
-                <div id="power_kitchen_gas_sensor_dialogSetup">
-                    <div id="power_kitchen_gas_sensor_dialogSetup_content"></div>
-                </div>
-            </div>
-        </div>
-        <div class="grid_2">
-            <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor">
-                <h2 style="margin-left:5px">Резерв</h2>
-            </div>
-        </div>
-        <div class="clear"></div>
-        <div class="grid_4 alpha">
-            <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor">
-                <h2 style="margin-left:5px">Гаражные ворота</h2>
-                <div id="label_garage_door" style="float:left;margin-left:8px;margin-top:2px"></div>
-                <button style="margin-left:20px;margin-top:10px;" class="upDown"></button>
-            </div>
-        </div>
-        <div class="grid_4 omega">
-            <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor">
-                <h2 style="margin-left:5px">Калитка</h2>
-            </div>
-        </div>
-        <div class="clear"></div>
-        <div class="grid_4 alpha">
-            <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor">
-                <div>
-                    <h2 style="margin-left:5px">Погреб</h2>
-                    <?php //echoRadioGroup('rg_g_vault', 'vault_vent', 'vault_off', 'vault_on', 'vault_auto') ?>
-                    <!--                    <div class="rg_g_vault" style="margin-left:5px;float:left">-->
-                    <!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
-                    <!--                               id="vault_off"><label for="vault_off">выкл</label>-->
-                    <!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
-                    <!--                               id="vault_on"><label for="vault_on">вкл</label>-->
-                    <!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
-                    <!--                               id="vault_auto"><label for="vault_auto">авто</label>-->
-                    <!--                    </div>-->
-                </div>
-<!--                <p>температура: &deg</p>-->
-<!--                <p>влажность: %</p>-->
-<!--                <p>вентиляция: </p>-->
-<!--                <p>свет: </p>-->
-            </div>
-        </div>
+        <?php
+            include 'data/power/power.php'
+        ?>
     </div>
     <?php
 }

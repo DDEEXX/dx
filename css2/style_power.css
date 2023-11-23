@@ -1,3 +1,15 @@
+/*блок с содержимом*/
+#page_power .title_widget_sensor {
+    margin-top: 5px;
+    height: 125px
+}
+
+/*заголовок блока*/
+#page_power .title_widget_sensor_header {
+    margin-left: 5px;
+    margin-bottom: 5px
+}
+
 .kh_setup_row {
     display: flex;
     align-items: center

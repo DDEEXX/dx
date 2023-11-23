@@ -20,6 +20,11 @@ function power_updateAll() {
             $("#" + val['id']).html(data);
         })
     })
+
+    $.get("data/power/gate.php?dev=loadData", function (data) {
+        $("#power_gate").html(data);
+    });
+
 }
 
 function power_checkVent_Status() {

@@ -23,7 +23,7 @@ if ($_REQUEST['dev'] == 'gasSensor') {
         $valueGas = $value->gas;
     }
 
-    echo '<div style="display: flex">';
+    echo '<div style="display: flex; margin-top: 10px">';
     echo '    <div style="width: 70px"><p>' . $title . '</p></div>';
     echo '    <div style="margin: 2px; width: 15px; height: 7px; background-color: ' . $colorSensor . '"></div>';
     echo '    <div style="margin-left: 5px">' . $valueGas . '</div>';

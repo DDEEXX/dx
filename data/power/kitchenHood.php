@@ -35,12 +35,10 @@ if ($_REQUEST['dev'] == 'kitchenHood') {
         echo '    <div>';
         echo '        <p>режим: <span style="color: ' . $colorMode . '">' . $mode . '</span></p>';
         echo '    </div>';
-        echo '    <div style="margin-top: 10px; display: flex">';
-        echo '        <div style="width: 74px">';
-        echo '            <div style="display: flex">';
-        echo '                <div style="margin: 2px; width: 15px; height: 7px; background-color: ' . $colorFan . '"></div>';
-        echo '                <div style="margin-left: 5px"><img src="img2/icon_big/fan.png" alt=""></div>';
-        echo '            </div>';
+        echo '    <div style="margin-top: 20px; display: flex">';
+        echo '        <div style="display: flex; width: 74px">';
+        echo '          <div style="margin: 2px; width: 15px; height: 7px; background-color: ' . $colorFan . '"></div>';
+        echo '          <div style="margin-left: 5px"><img src="img2/icon_big/fan.png" alt=""></div>';
         echo '        </div>';
         echo '        <div style="margin-left: 15px; margin-top: 5px">';
         echo '          <img id="power_kitchen_hood_light" value="' . $valueLight . '" src="img2/light_' . $valueLight . '.png" alt="">';
