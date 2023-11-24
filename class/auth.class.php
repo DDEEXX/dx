@@ -16,11 +16,39 @@ class auth
         return !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'unknown';
     }
 
-    private static function hash($password) {
+    public static function clientInSameSubnet($client_ip = false, $server_ip = false)
+    {
+        if (!$client_ip)
+            $client_ip = $_SERVER['REMOTE_ADDR'];
+        if (!$server_ip)
+            $server_ip = $_SERVER['SERVER_ADDR'];
+        // Extract broadcast and netmask from ifconfig
+        if (!($p = popen("ifconfig", "r"))) return false;
+        $out = '';
+        while (!feof($p))
+            $out .= fread($p, 1024);
+        fclose($p);
+        // This is because the php.net comment function does not
+        // allow long lines.
+        $match = '/^.*' . $server_ip;
+        $match .= '.*Bcast:(\d{1,3}\.\d{1,3}i\.\d{1,3}\.\d{1,3}).*';
+        $match .= 'Mask:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/im';
+        if (!preg_match($match, $out, $regs))
+            return false;
+        $bcast = ip2long($regs[1]);
+        $smask = ip2long($regs[2]);
+        $ipadr = ip2long($client_ip);
+        $nmask = $bcast & $smask;
+        return (($ipadr & $smask) == ($nmask & $smask));
+    }
+
+    private static function hash($password)
+    {
         return password_hash($password, PASSWORD_BCRYPT);
     }
 
-    public static function logout() {
+    public static function logout()
+    {
         session_start();
         $id = $_SESSION['idUser'];
         $user = DB::getUserId($id);
@@ -28,17 +56,18 @@ class auth
             DB::userLastActive($user, 0, true);
         }
         unset($_SESSION['idUser']); //удалятся переменная сессии
-       SetCookie('idUser', null, -1, '/');
-       SetCookie('password', null, -1, '/');
+        SetCookie('idUser', null, -1, '/');
+        SetCookie('password', null, -1, '/');
 
 //        SetCookie('idUser', ''); //удаляются cookie с логином
 //        SetCookie('password', ''); //удаляются cookie с паролем
         //header('index.php'); //перенаправление на главную страницу сайта }
         //session_destroy();
-        header('Location: https://'.$_SERVER['HTTP_HOST'].'/'); //перенаправление на главную страницу сайта
+        header('Location: https://' . $_SERVER['HTTP_HOST'] . '/'); //перенаправление на главную страницу сайта
     }
 
-    private static function lastAct($id) {
+    private static function lastAct($id)
+    {
         $tm = time();
         $user = DB::getUserId($id);
         if (isset($user)) {
@@ -48,12 +77,12 @@ class auth
 
     public static function login()
     {
-        ini_set ('session.use_trans_sid', true);
+        ini_set('session.use_trans_sid', true);
         session_start();
 
         if (isset($_SESSION['idUser'])) {   //если сессия есть
 
-            if(isset($_COOKIE['idUser']) && isset($_COOKIE['password'])) { //если cookie есть, обновляется время их жизни и возвращается true
+            if (isset($_COOKIE['idUser']) && isset($_COOKIE['password'])) { //если cookie есть, обновляется время их жизни и возвращается true
 
                 SetCookie('idUser', '', time() - 1, '/');
                 SetCookie('password', '', time() - 1, '/');
@@ -64,59 +93,56 @@ class auth
                 $id = $_SESSION['idUser'];
                 self::lastAct($id);
                 return true;
-            }
-            else //иначе добавляются cookie с логином и паролем, чтобы после перезапуска браузера сессия не слетала
+            } else //иначе добавляются cookie с логином и паролем, чтобы после перезапуска браузера сессия не слетала
             {
 
                 $user = DB::getUserId($_SESSION['idUser']);
 
                 if (!is_null($user)) { //если получены данные пользователя
 
-                    setcookie ('idUser', $user['ID'], time()+50000, '/');
+                    setcookie('idUser', $user['ID'], time() + 50000, '/');
                     $hash_pass = self::hash($user['Password']);
-                    setcookie ('password', $hash_pass, time() + 50000, '/');
+                    setcookie('password', $hash_pass, time() + 50000, '/');
 
                     $id = $_SESSION['idUser'];
                     self::lastAct($id);
                     return true;
 
-                }
-                else {
+                } else {
                     return false;
                 }
             }
-        }
-        else { //Сессии нет, проверяется существование cookie. Если они существуют, проверяется их валидность по базе данных
-            if(isset($_COOKIE['idUser']) && isset($_COOKIE['password'])) {//если куки существуют
+        } else { //Сессии нет, проверяется существование cookie. Если они существуют, проверяется их валидность по базе данных
+            if (isset($_COOKIE['idUser']) && isset($_COOKIE['password'])) {//если куки существуют
 
                 $user = DB::getUserId($_COOKIE['idUser']);
-                if (password_verify($user['Password'], $_COOKIE['password']))  {//если логин и пароль нашлись в базе данных
+                if (password_verify($user['Password'], $_COOKIE['password'])) {//если логин и пароль нашлись в базе данных
 
                     $_SESSION['idUser'] = $user['ID']; //записываем в сессии id
                     $id = $_SESSION['idUser'];
 
                     self::lastAct($id);
                     return true;
-                }
-                else {//если данные из cookie не подошли, эти куки удаляются
+                } else {//если данные из cookie не подошли, эти куки удаляются
 
                     SetCookie('idUser', '', time() - 360000, '/');
                     SetCookie('password', '', time() - 360000, '/');
                     return false;
 
                 }
-            }
-            else {//если куки не существуют
+            } else {//если куки не существуют
                 return false;
             }
         }
     }
 
-    public static function is_admin($UID) {
+    public static function is_admin($UID)
+    {
         return true;
     }
 
-    public static function enter() {
+    public static function enter()
+    {
 
         $error = []; //массив для ошибок
 
@@ -127,22 +153,20 @@ class auth
 
             if (isset($user)) { //если юзер существует в базе данных
 
-                    //пишутся логин и хэшированный пароль в cookie, также создаётся переменная сессии
-                    setcookie('idUser', $user['ID'], time() + 50000, '/');
-                    $hash_pass = self::hash($user['Password']);
-                    setcookie('password', $hash_pass, time() + 50000, '/');
-                    $_SESSION['idUser'] = $user['ID'];   //записываем в сессию id пользователя
+                //пишутся логин и хэшированный пароль в cookie, также создаётся переменная сессии
+                setcookie('idUser', $user['ID'], time() + 50000, '/');
+                $hash_pass = self::hash($user['Password']);
+                setcookie('password', $hash_pass, time() + 50000, '/');
+                $_SESSION['idUser'] = $user['ID'];   //записываем в сессию id пользователя
 
-                    $id = $_SESSION['idUser'];
-                    self::lastAct($id);
-                    return $error;
-            }
-            else {//если такого пользователя не найдено в базе данных
+                $id = $_SESSION['idUser'];
+                self::lastAct($id);
+                return $error;
+            } else {//если такого пользователя не найдено в базе данных
                 $error[] = 'Неверный пароль';
                 return $error;
             }
-        }
-        else {
+        } else {
             $error[] = 'Пароль не введен!';
             return $error;
         }
