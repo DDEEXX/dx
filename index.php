@@ -7,7 +7,7 @@ include_once ('class/auth.class.php');
 $UID = null;
 
 $ip = auth::getRealIP();
-if (auth::clientInSameSubnet($ip, '192.168.1.4')) {
+if (auth::net_match($ip, '192.168.1.1/100')) {
     $UID = 1;
 }
 else {

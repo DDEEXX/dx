@@ -16,30 +16,19 @@ class auth
         return !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'unknown';
     }
 
-    public static function clientInSameSubnet($client_ip = false, $server_ip = false)
+    public static function net_match($network, $ip)
     {
-        if (!$client_ip)
-            $client_ip = $_SERVER['REMOTE_ADDR'];
-        if (!$server_ip)
-            $server_ip = $_SERVER['SERVER_ADDR'];
-        // Extract broadcast and netmask from ifconfig
-        if (!($p = popen("ifconfig", "r"))) return false;
-        $out = '';
-        while (!feof($p))
-            $out .= fread($p, 1024);
-        fclose($p);
-        // This is because the php.net comment function does not
-        // allow long lines.
-        $match = '/^.*' . $server_ip;
-        $match .= '.*Bcast:(\d{1,3}\.\d{1,3}i\.\d{1,3}\.\d{1,3}).*';
-        $match .= 'Mask:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/im';
-        if (!preg_match($match, $out, $regs))
-            return false;
-        $bcast = ip2long($regs[1]);
-        $smask = ip2long($regs[2]);
-        $ipadr = ip2long($client_ip);
-        $nmask = $bcast & $smask;
-        return (($ipadr & $smask) == ($nmask & $smask));
+        // determines if a network in the form of 192.168.17.1/16 or
+        // 127.0.0.1/255.255.255.255 or 10.0.0.1 matches a given ip
+        $ip_arr = explode('/', $network);
+        $network_long = ip2long($ip_arr[0]);
+
+        $x = ip2long($ip_arr[1]);
+        $mask = long2ip($x) == $ip_arr[1] ? $x : 0xffffffff << (32 - $ip_arr[1]);
+        $ip_long = ip2long($ip);
+
+        // echo ">".$ip_arr[1]."> ".decbin($mask)."\n";
+        return ($ip_long & $mask) == ($network_long & $mask);
     }
 
     private static function hash($password)
