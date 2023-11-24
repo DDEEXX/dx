@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
+require_once(dirname(__FILE__) . '/../class/managerUnits.class.php');
 
 const statusKeyData = ['', 'движение', 'web', '', 'неизвестно', 'модуль', 'датчик', 'сенсор'];
 
