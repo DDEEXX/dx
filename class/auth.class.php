@@ -28,11 +28,11 @@ class auth
             DB::userLastActive($user, 0, true);
         }
         unset($_SESSION['idUser']); //удалятся переменная сессии
-//        SetCookie('idUser', '', time() - 1);
-//        SetCookie('password', '', time() - 1);
+       SetCookie('idUser', null, -1, '/');
+       SetCookie('password', null, -1, '/');
 
-        SetCookie('idUser', ''); //удаляются cookie с логином
-        SetCookie('password', ''); //удаляются cookie с паролем
+//        SetCookie('idUser', ''); //удаляются cookie с логином
+//        SetCookie('password', ''); //удаляются cookie с паролем
         //header('index.php'); //перенаправление на главную страницу сайта }
         //session_destroy();
         header('Location: http://'.$_SERVER['HTTP_HOST'].'/'); //перенаправление на главную страницу сайта

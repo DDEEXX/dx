@@ -69,12 +69,10 @@ if (!$UID) {
 
 LOG
     , $ip);
-
-    echo $ip;
     echo <<<LOG
-<form action="/" method="post">
-Пароль: <input type="password" name="auth_password" />
-<input type="submit" value="Войти" name="log_in" />
+<form action="" method="post">
+Пароль: <input type="password" name="auth_password">
+<input type="submit" value="Войти" name="log_in">
 </form>
 LOG
 ;
