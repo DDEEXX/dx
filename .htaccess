@@ -1,3 +1,9 @@
-    <Files init.php>
-        Deny from all
-    </Files>
+<Files init.php>
+    Deny from all
+</Files>
+<Files dxMainPage.php>
+    Deny from all
+</Files>
+<Files dxPages.php>
+    Deny from all
+</Files>

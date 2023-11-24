@@ -1,18 +1,19 @@
 <?php
 
-session_start();
+//session_start();
 
 include_once ('class/auth.class.php');
+
+$UID = null;
 
 if(isset($_GET['action']) && $_GET['action'] == 'out') { //если передана переменная action, выход
     auth::logout();
 }
 else {
     if (auth::login()) //вызываем функцию login, которая определяет, авторизирован пользователь или нет
-
     {
         $UID = isset($_SESSION['idUser']) ? $_SESSION['idUser'] : null; //если пользователь авторизирован, присваиваем переменной $UID его id
-        $admin = auth::is_admin($UID); //определяем, админ ли пользователь
+        //$admin = auth::is_admin($UID); //определяем, админ ли пользователь
     }
     else //если пользователь не авторизирован, проверяем, была ли нажата кнопка входа на сайт
     {
@@ -22,7 +23,7 @@ else {
             if (count($error) == 0) //если ошибки отсутствуют, авторизуем пользователя
             {
                 $UID = isset($_SESSION['idUser']) ? $_SESSION['idUser'] : null;
-                $admin = auth::is_admin($UID);
+                //$admin = auth::is_admin($UID);
             }
         }
     }

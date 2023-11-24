@@ -26,10 +26,10 @@ class auth
         SetCookie('idUser', '', time() - 1);
         SetCookie('password', '', time() - 1);
 
-//        SetCookie("idUser", ""); //удаляются cookie с логином
-//        SetCookie("password", ""); //удаляются cookie с паролем
+//        SetCookie('idUser', ''); //удаляются cookie с логином
+//        SetCookie('password', ''); //удаляются cookie с паролем
         //header('index.php'); //перенаправление на главную страницу сайта }
-        session_destroy();
+        //session_destroy();
         header('Location: http://'.$_SERVER['HTTP_HOST'].'/'); //перенаправление на главную страницу сайта
     }
 
@@ -43,9 +43,6 @@ class auth
 
     public static function login()
     {
-
-        return true; //TODO - go
-
         ini_set ('session.use_trans_sid', true);
         session_start();
 
@@ -53,8 +50,8 @@ class auth
 
             if(isset($_COOKIE['idUser']) && isset($_COOKIE['password'])) { //если cookie есть, обновляется время их жизни и возвращается true
 
-                SetCookie('idUser', '', time() - 360000, '/');
-                SetCookie('password', '', time() - 360000, '/');
+                SetCookie('idUser', '', time() - 1, '/');
+                SetCookie('password', '', time() - 1, '/');
 
                 SetCookie('idUser', $_COOKIE['idUser'], time() + 50000, '/');
                 SetCookie('password', $_COOKIE['password'], time() + 50000, '/');
@@ -118,7 +115,7 @@ class auth
 
         $error = []; //массив для ошибок
 
-        if ($_POST['auth_password'] != '') {//если поля заполнены
+        if (isset($_POST['auth_password']) && strlen(trim($_POST['auth_password']))) {//если поля заполнены
 
             $password = $_POST['auth_password'];
             $user = DB::getUserPassword($password);

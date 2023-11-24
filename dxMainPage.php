@@ -58,12 +58,16 @@
 
 <?php
 
-$UID = isset($_SESSION['idUser']) ? $_SESSION['idUser'] : false;
-
-$UID = true;
-
 if (!$UID) {
-    include_once 'login.php';
+    //include_once 'login.php';
+    echo sprintf(<<<LOG
+<form action="%s" method="post">
+Пароль: <input type="password" name="auth_password" />
+<input type="submit" value="Войти" name="log_in" />
+</form>
+LOG
+, $_SERVER['HTTP_HOST']);
+
 } else {
     ?>
 
@@ -118,7 +122,6 @@ if (!$UID) {
         </div>
 
         <?php
-        //include_once 'rgMode.php';
         include_once 'dxPages.php';
         ?>
 
