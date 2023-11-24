@@ -35,7 +35,7 @@ class auth
 //        SetCookie('password', ''); //удаляются cookie с паролем
         //header('index.php'); //перенаправление на главную страницу сайта }
         //session_destroy();
-        header('Location: http://'.$_SERVER['HTTP_HOST'].'/'); //перенаправление на главную страницу сайта
+        header('Location: https://'.$_SERVER['HTTP_HOST'].'/'); //перенаправление на главную страницу сайта
     }
 
     private static function lastAct($id) {
