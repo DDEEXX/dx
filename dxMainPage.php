@@ -60,14 +60,13 @@
 
 if (!$UID) {
     //include_once 'login.php';
-    echo sprintf(<<<LOG
-<form action="%s" method="post">
+    echo <<<LOG
+<form action="/" method="post">
 Пароль: <input type="password" name="auth_password" />
 <input type="submit" value="Войти" name="log_in" />
 </form>
 LOG
-, $_SERVER['HTTP_HOST']);
-
+;
 } else {
     ?>
 
