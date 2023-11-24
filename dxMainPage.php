@@ -68,7 +68,7 @@ if (!$UID) {
 </div>
 
 LOG
-    , $ip);
+    , $ip_client);
     echo <<<LOG
 <form action="" method="post">
 Пароль: <input type="password" name="auth_password">

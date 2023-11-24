@@ -16,8 +16,9 @@ class auth
         return !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'unknown';
     }
 
-    public static function net_match($network, $ip)
+    public static function net_match($ip)
     {
+        $network = '192.168.1.1/192.168.1.100';
         // determines if a network in the form of 192.168.17.1/16 or
         // 127.0.0.1/255.255.255.255 or 10.0.0.1 matches a given ip
         $ip_arr = explode('/', $network);

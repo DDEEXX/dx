@@ -6,8 +6,8 @@ include_once ('class/auth.class.php');
 
 $UID = null;
 
-$ip = auth::getRealIP();
-if (auth::net_match($ip, '192.168.1.1/100')) {
+$ip_client = auth::getRealIP();
+if (auth::net_match($ip_client)) {
     $UID = 1;
 }
 else {
