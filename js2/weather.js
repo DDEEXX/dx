@@ -57,7 +57,7 @@ function weather_loadSensorsOut() {
 }
 
 $(document).ready(function () {
-    $.get("weather.php", function (data) {
+    $.get("modules/weatherGismeteo.php", function (data) {
         $("#weather_forecast").html(data)
     });
     $("#weather_button_123").click(function () {
@@ -76,7 +76,7 @@ $(document).ready(function () {
 
 //Обновление прогноза погоды 1 раз в час
 $(document).everyTime("3600s", function () {
-    $.get("weather.php", function (data) {
+    $.get("modules/weatherGismeteo.php", function (data) {
         $("#weather_forecast").html(data)
     });
 });

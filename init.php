@@ -38,11 +38,11 @@ else {
 }
 
 $dir = dirname(__FILE__). '/';
-exec('php '.$dir.'loopMQTTfast.php &');
-exec('php '.$dir.'loopMQTT.php &');
-exec('php '.$dir.'loopMQTTalarm.php &');
-exec('php '.$dir.'loopMQTTtest.php &');
-exec('php '.$dir.'loopForever.php &');
-exec('php '.$dir.'loopHeating.php &');
-exec('php '.$dir.'loopAlice.php &');
-exec('php '.$dir.'runScripts.php &');
+exec('php '.$dir.'loop/loopMQTTfast.php &');
+exec('php '.$dir.'loop/loopMQTT.php &');
+exec('php '.$dir.'loop/loopMQTTalarm.php &');
+exec('php '.$dir.'loop/loopMQTTtest.php &');
+exec('php '.$dir.'loop/loopForever.php &');
+exec('php '.$dir.'loop/loopHeating.php &');
+exec('php '.$dir.'loop/loopAlice.php &');
+exec('php '.$dir.'loop/runScripts.php &');

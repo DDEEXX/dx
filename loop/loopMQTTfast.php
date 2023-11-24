@@ -1,6 +1,6 @@
 <?php
 /**
- * MQTT клиент, перевод команд yandex2mqtt
+ * MQTT клиент, реагирует на сообщения, на которые подписан. Для сообщений критичных к скорости
  * Created by PhpStorm.
  */
 
@@ -14,23 +14,22 @@ posix_setsid();
 // Дальнейший код выполнится только дочерним процессом, который уже отвязан от консоли
 
 $fileDir = dirname(__FILE__);
-require($fileDir. '/class/daemon.class.php');
-require($fileDir. '/class/mqtt.class.php');
+require($fileDir . '/class/daemon.class.php');
+require($fileDir . '/class/mqtt.class.php');
 
-ini_set('error_log',$fileDir.'/logs/errorLoopAlice.log');
+ini_set('error_log',$fileDir.'/logs/errorLoopMQTTfast.log');
 fclose(STDIN);
 fclose(STDOUT);
 fclose(STDERR);
 $STDIN = fopen('/dev/null', 'r');
 $STDOUT = fopen($fileDir.'/logs/application.log', 'ab');
-$STDERR = fopen($fileDir.'/logs/daemonLoopAlice.log', 'ab');
+$STDERR = fopen($fileDir.'/logs/daemonLoopMQTTfast.log', 'ab');
 
-class daemonLoopAlice extends daemon
+class daemonLoopMQTTfast extends daemon
 {
 
-    const NAME_PID_FILE = 'loopAlice.pid';
-    const PAUSE = 100000; //Пауза в основном цикле, в микросекундах (0.1 сек)
-    const INTERVAL_UPDATE_SUBSCRIBE = 600; //интервал обновления подписок в секундах
+    const NAME_PID_FILE = 'loopMQTTfast.pid';
+    const PAUSE = 10000; //Пауза в основном цикле, в микросекундах (0.01 сек)
 
     public function __construct($dirPidFile)
     {
@@ -41,20 +40,14 @@ class daemonLoopAlice extends daemon
     {
         parent::run();
 
-        $mqtt = new mqttAlice();
+        $mqtt = new mqttLoop(true, 1);
         $mqtt->connect();
-        $previousUpdateSubscibe = time();
 
         while (!$this->stopServer()) {
+
             $mqtt->loop();
 
-            $now = time();
-            if ($now - $previousUpdateSubscibe > self::INTERVAL_UPDATE_SUBSCRIBE) {
-                $mqtt->updateSubscribe();
-                $previousUpdateSubscibe = $now;
-            } else {
-                usleep(self::PAUSE);
-            }
+            usleep(self::PAUSE);
 
             pcntl_signal_dispatch(); //Вызывает обработчики для ожидающих сигналов
         }
@@ -65,14 +58,14 @@ class daemonLoopAlice extends daemon
 
 }
 
-$daemon = new daemonLoopAlice( $fileDir.'/tmp');
+$daemon = new daemonLoopMQTTfast( $fileDir.'/tmp');
 if ($daemon->isDaemonActive()) {
     exit();
 }
 $flag = 1;
 $mes = '';
 while ($flag != 0) {
-    logger::writeLog('Подключение к MQTT брокеру (из loopAlice). Попытка '.$flag, loggerTypeMessage::NOTICE, loggerName::MQTT);
+    logger::writeLog('Подключение к MQTT брокеру (из loopMQTTfast). Попытка '.$flag, loggerTypeMessage::NOTICE, loggerName::MQTT);
     try {
         $daemon->run();
         $flag = 0;
@@ -83,7 +76,7 @@ while ($flag != 0) {
     }
     if ($flag>10) {
         $flag = 0;
-        $mes = 'Не удалось подключиться к MQTT брокеру (из loopAlice). Проверьте параметры подключения и доступность брокера.';
+        $mes = 'Не удалось подключиться к MQTT брокеру (из loopMQTTfast). Проверьте параметры подключения и доступность брокера.';
     }
 }
 if (strlen($mes) > 0 ) {

@@ -1,6 +1,6 @@
 <?php
 /**
- * MQTT клиент, реагирует на сообщения, на которые подписан
+ * MQTT клиент, проверяет на доступность устройств в сети
  */
 
 //Создаем дочерний процесс весь код после pcntl_fork() будет выполняться двумя процессами: родительским и дочерним
@@ -13,21 +13,20 @@ posix_setsid();
 // Дальнейший код выполнится только дочерним процессом, который уже отвязан от консоли
 
 $fileDir = dirname(__FILE__);
-require($fileDir. '/class/daemon.class.php');
-require($fileDir. '/class/mqtt.class.php');
+require($fileDir . '/class/daemon.class.php');
+require($fileDir . '/class/mqtt.class.php');
 
-ini_set('error_log',$fileDir.'/logs/errorLoopMQTTalarm.log');
+ini_set('error_log',$fileDir.'/logs/errorLoopMQTT_Test.log');
 fclose(STDIN);
 fclose(STDOUT);
 fclose(STDERR);
 $STDIN = fopen('/dev/null', 'r');
 $STDOUT = fopen($fileDir.'/logs/application.log', 'ab');
-$STDERR = fopen($fileDir.'/logs/daemonLoopMQTTalarm.log', 'ab');
+$STDERR = fopen($fileDir.'/logs/daemonLoopMQTT_Test.log', 'ab');
 
-class daemonLoopMQTTalarm extends daemon
+class daemonLoopMQTTtest extends daemon
 {
-
-    const NAME_PID_FILE = 'loopMQTTalarm.pid';
+    const NAME_PID_FILE = 'loopMQTT_Test.pid';
     const PAUSE = 100000; //Пауза в основном цикле, в микросекундах (0.1 сек)
     const INTERVAL_UPDATE_SUBSCRIBE = 600; //интервал обновления подписок в секундах
 
@@ -40,13 +39,11 @@ class daemonLoopMQTTalarm extends daemon
     {
         parent::run();
 
-        $mqtt = new mqttAlarm();
+        $mqtt = new mqttTest();
         $mqtt->connect();
-
         $previousUpdateSubscibe = time();
 
         while (!$this->stopServer()) {
-
             $mqtt->loop();
 
             $now = time();
@@ -63,32 +60,34 @@ class daemonLoopMQTTalarm extends daemon
         $mqtt->disconnect();
         unset($mqtt);
     }
-
 }
 
-$daemon = new daemonLoopMQTTalarm( $fileDir.'/tmp');
+$daemon = new daemonLoopMQTTtest( $fileDir.'/tmp');
 if ($daemon->isDaemonActive()) {
     exit();
 }
 $flag = 1;
 $mes = '';
+const N_CONNECT = 10;
 while ($flag != 0) {
-    logger::writeLog('Подключение к MQTT брокеру (из loopMQTTalarm). Попытка '.$flag, loggerTypeMessage::NOTICE, loggerName::MQTT);
+    logger::writeLog('Подключение к MQTT брокеру (из loopMQTT_Test). Попытка '.$flag, loggerTypeMessage::NOTICE, loggerName::MQTT);
     try {
         $daemon->run();
-        $flag = 0;
+        $flag = 0; //штатный выход
     }
     catch (Exception $e) {
+        logger::writeLog('Подключение к MQTT брокеру (из loopMQTT_Test) прервано. '.$e->getMessage(),
+        loggerTypeMessage::NOTICE, loggerName::MQTT);
         $flag++;
         sleep(2);
     }
-    if ($flag>10) {
+    if ($flag>N_CONNECT) {
         $flag = 0;
-        $mes = 'Не удалось подключиться к MQTT брокеру (из loopMQTTalarm). Проверьте параметры подключения и доступность брокера.';
+        $mes = 'Не удалось подключиться к MQTT брокеру (из loopMQTT_Test). Проверьте параметры подключения и доступность брокера.';
+        mail('ddeexxdima@gmail.com', 'MQTT Broker fault', $mes);
     }
 }
-if (strlen($mes) > 0 ) {
+if (!$flag && strlen($mes)) {
     logger::writeLog($mes, loggerTypeMessage::ERROR, loggerName::MQTT);
     logger::writeLog($mes, loggerTypeMessage::ERROR, loggerName::ERROR);
 }
-
