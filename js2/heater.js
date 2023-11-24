@@ -1,8 +1,8 @@
 function heater_updateSchemeDelta() {
-    $.get("getData.php?dev=temp_delta&label1=temp_heater_boiler_out&label2=temp_heater_boiler_in", function (data) {
+    $.get("modules/getData.php?dev=temp_delta&label1=temp_heater_boiler_out&label2=temp_heater_boiler_in", function (data) {
         $("#heater_temp_boiler_delta_data").html(data);
     });
-    $.get("getData.php?dev=temp_delta&label1=temp_heater_floor_in&label2=temp_heater_floor_out", function (data) {
+    $.get("modules/getData.php?dev=temp_delta&label1=temp_heater_floor_in&label2=temp_heater_floor_out", function (data) {
         $("#heater_temp_floor_delta_data").html(data);
     });
 }

@@ -2,7 +2,7 @@
 
 function updateTestStatus() {
 
-    $.post("getData.php", {dev: "test_status"}, function (data) {
+    $.post("modules/getData.php", {dev: "test_status"}, function (data) {
         if (data.green) {
             $("#button_test_status #status_test_green").addClass('this_status');
         } else {

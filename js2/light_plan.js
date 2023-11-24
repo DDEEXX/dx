@@ -38,7 +38,7 @@ function light_plan_updateAll() {
         const payload = val['payload']===""?"":("&payload="+val['payload']);
         const sensor = val['labelSensor']?("&labelSensor="+val['labelSensor']):"";
         const size = val['size']?("&size="+val['size']):"";
-        const path = "getData.php?dev=light&label="+label+"&place="+place+"&img="+type+payload+sensor+size;
+        const path = "modules/getData.php?dev=light&label="+label+"&place="+place+"&img="+type+payload+sensor+size;
         $.get(path, function (data) {
             $("#"+id).html(data);
         })
@@ -69,7 +69,7 @@ function light_plan_checkLampStatus() {
         arLabels.push(curLabel);
     });
 
-    $.post("getData.php", {dev: "check_value", 'labels[]': arLabels}, function (jsonData) {
+    $.post("modules/getData.php", {dev: "check_value", 'labels[]': arLabels}, function (jsonData) {
         $('#light_plan').find('.light_plan_lamp_click').each(function (i, el) {
             const lamp = $(el);
             const label = lamp.attr("label");
@@ -92,7 +92,7 @@ function light_plan_checkLampStatus() {
                         const size = lampData.size?("&size="+lampData.size):"";
                         const place = lampData.place;
                         const type = lampData.type;
-                        const path = "getData.php?dev=light&label="+label+"&place="+place+"&img="+type+payload+sensor+size;
+                        const path = "modules/getData.php?dev=light&label="+label+"&place="+place+"&img="+type+payload+sensor+size;
                         $.get(path, function (data) {
                             $("#" + id).html(data);
                         })

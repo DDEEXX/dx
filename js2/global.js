@@ -14,7 +14,7 @@ function _updateSensorsData(selectorClass, urlJson) {
             const sensorDigit = $(selector).children("." + value["classDigit"]);
             if (sensorDigit.length>0) {
                 /* dev - тип событие, label - имя датчика в базе */
-                $.get("getData.php?dev=" + value["dev"] + "&label=" + value["label"], function (data) {
+                $.get("modules/getData.php?dev=" + value["dev"] + "&label=" + value["label"], function (data) {
                     $(sensorDigit[0]).html(data);
                 });
             }
@@ -78,7 +78,7 @@ function _loadSensorHtmlData(data, classData) {
             const sensorDigit = $(selector).find("." + value["classDigit"]);
             sensorDigit.addClass(classData);
             /* dev - тип событие, label - имя датчика в базе */
-            $.get("getData.php?dev=" + value["dev"] + "&label=" + value["label"], function (data) {
+            $.get("modules/getData.php?dev=" + value["dev"] + "&label=" + value["label"], function (data) {
                 $(sensorDigit).html(data);
             });
             if (sensorData.expand) {

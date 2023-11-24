@@ -43,7 +43,7 @@ function power_checkVent_Status() {
         } else {
             let arLabels = [];
             arLabels.push('light_kitchen_vent');
-            $.post("getData.php", {dev: "check_value", 'labels[]': arLabels}, function (jsonData) {
+            $.post("modules/getData.php", {dev: "check_value", 'labels[]': arLabels}, function (jsonData) {
                 let res = jsonData.find(i => i.label === 'light_kitchen_vent');
                 if (res) {
                     const value = $('#power_kitchen_hood_light').attr("value");

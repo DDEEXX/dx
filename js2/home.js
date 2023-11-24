@@ -42,7 +42,7 @@ function home_updateSensorsOutData() {
 }
 
 function home_updateTestStatusDevices() {
-    $.post("getData.php", {dev: "test_status"}, function (data) {
+    $.post("modules/getData.php", {dev: "test_status"}, function (data) {
         if (data.green) {
             $("#home_status_test_green").addClass('this_status');
         } else {

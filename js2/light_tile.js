@@ -44,7 +44,7 @@ function light_tile_updateAll() {
     $.each(lampsData,function(index, val) {
         const payload = val['payload']===""?"":("&payload="+val['payload']);
         const sensor = val['labelSensor']?("&labelSensor="+val['labelSensor']):"";
-        const path = "getData.php?dev=light_tile&label="+val['label']+payload+sensor;
+        const path = "modules/getData.php?dev=light_tile&label="+val['label']+payload+sensor;
         $.get(path, function (data) {
             $("#"+val['id']).html(data);
         })
@@ -64,7 +64,7 @@ function light_tile_checkLampStatus() {
         arLabels.push(curLabel);
     });
 
-    $.post("getData.php", {dev: "check_value", 'labels[]': arLabels}, function (jsonData) {
+    $.post("modules/getData.php", {dev: "check_value", 'labels[]': arLabels}, function (jsonData) {
         $('#light_tile').find('.light_tile_lamp_click').each(function (i, el) {
             const lamp = $(el);
             const label = lamp.attr("label");
@@ -84,7 +84,7 @@ function light_tile_checkLampStatus() {
                     if ((value === 'on' && res.value !== 1) ||
                         (value === 'off' && res.value === 1)) {
                         const sensor = lampData.labelSensor?("&labelSensor="+lampData.labelSensor):"";
-                        $.get("getData.php?dev=light_tile&label=" + label + payload + sensor, function (data) {
+                        $.get("modules/getData.php?dev=light_tile&label=" + label + payload + sensor, function (data) {
                             $("#" + id).html(data);
                         })
                     }
