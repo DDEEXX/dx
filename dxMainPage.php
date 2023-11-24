@@ -60,6 +60,16 @@
 
 if (!$UID) {
     //include_once 'login.php';
+    echo sprintf(<<<LOG
+<div>
+    <h1 style="color: #38b7ff">IP:
+        <span style="color: #ffffff">%s</span>
+    </h1>
+</div>
+
+LOG
+    , $ip);
+
     echo $ip;
     echo <<<LOG
 <form action="/" method="post">
