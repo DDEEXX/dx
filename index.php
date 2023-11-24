@@ -6,6 +6,8 @@ include_once ('class/auth.class.php');
 
 $UID = null;
 
+$ip = auth::getRealIP();
+
 if(isset($_GET['action']) && $_GET['action'] == 'out') { //если передана переменная action, выход
     auth::logout();
 }

@@ -11,6 +11,11 @@ require_once(dirname(__FILE__) . '/sqlDataBase.class.php');
 class auth
 {
 
+    public static function getRealIP()
+    {
+        return !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'unknown';
+    }
+
     private static function hash($password) {
         return password_hash($password, PASSWORD_BCRYPT);
     }

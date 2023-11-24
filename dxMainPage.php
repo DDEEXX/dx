@@ -60,6 +60,7 @@
 
 if (!$UID) {
     //include_once 'login.php';
+    echo $ip;
     echo <<<LOG
 <form action="/" method="post">
 Пароль: <input type="password" name="auth_password" />
