@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__FILE__) . '/class/sqlDataBase.class.php');
+require_once(dirname(__FILE__) . '../class/sqlDataBase.class.php');
 
 class widgetWeather
 {
@@ -16,7 +16,7 @@ class widgetWeather
             $cityId = DB::getConst('WeatherCityId');
             self::$city_id = $cityId;
         }
-        if (is_null(self::$cache_file)) self::$cache_file = 'cache/weather_' . self::$city_id . '.xml';
+        if (is_null(self::$cache_file)) self::$cache_file = '../cache/weather_' . self::$city_id . '.xml';
         if (is_null(self::$url)) self::$url = 'http://informer.gismeteo.ru/xml/' . self::$city_id . '.xml';
     }
 
@@ -151,7 +151,7 @@ class widgetWeather
             $myRow = $myRow . '_st';
         }
 
-        $bk = "background:url(img2/weather/$myRow.png) no-repeat scroll 0 0 transparent";
+        $bk = "background:url(../img2/weather/$myRow.png) no-repeat scroll 0 0 transparent";
 
         return "<div class='$myRow' style='$bk;height:55px;width:55px'></div>";
     }
