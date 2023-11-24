@@ -77,7 +77,7 @@ $(document).ready(function () {
     $(".TekDate").html(date());
     $(".TekTime").html(clock());
 
-    $("#home_cameraFullSize").html('<img src="http://192.168.1.4:8081/" alt="http://192.168.1.4:8081/">');
+    $("#home_cameraFullSize").html('<img src="https://192.168.1.4/camera_0" alt="https://192.168.1.4/camera_0">');
 
     home_loadSensors();
     home_updateTestStatusDevices();

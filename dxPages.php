@@ -171,7 +171,7 @@ if ($p == 'home' || empty($p)) {
 
         <div class="grid_5 alpha">
             <div id="home_cam" class="ui-corner-all ui-state-default" style="text-align: center; min-height: 276px">
-                <img src="http://192.168.1.4:8081/" alt="http://192.168.1.4:8081/"
+                <img src="https://192.168.1.4/camera_0" alt="https://192.168.1.4/camera_0"
                      style="margin: 5px; height: 266px; width: 470px">
                 <div id="home_cameraFullSize" style="padding: 0"></div>
             </div>
@@ -573,7 +573,7 @@ if ($p == 'cam') {
             <div class="grid_4 alpha">
                 <div class="ui-corner-all ui-state-default ui-widget-content" style="min-height: 255px">
                     <div id="cam_monitor_1" class="camera_monitor">
-                        <img src="http://192.168.1.4:8081/" alt="http://192.168.1.4:8081/"
+                        <img src="https://192.168.1.4/camera_0" alt="https://192.168.1.4/camera_0"
                              style="width:375px;height:213px">
                     </div>
                     <div id="cam_Monitor_1_full_size" style="padding: 0"></div>

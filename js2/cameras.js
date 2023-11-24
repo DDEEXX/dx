@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    $("#cam_Monitor_1_full_size").html('<img src="http://192.168.1.4:8081/" alt="http://192.168.1.4:8081/">');
+    $("#cam_Monitor_1_full_size").html('<img src="https://192.168.1.4/camera_0" alt="https://192.168.1.4/camera_0">');
 
 })
 
