@@ -52,7 +52,7 @@ function light_plan_setEvent() {
         const lamp = $(this);
         const label = lamp.attr("label");
         const value = lamp.attr("payload");
-        $.get("powerKey.php?label="+label+"&value="+value+"&status=web", function () {});
+        $.get("modules/powerKey.php?label="+label+"&value="+value+"&status=web", function () {});
     });
 
 }

@@ -1,9 +1,9 @@
 <?php
 
-require_once(dirname(__FILE__) . '/class/managerUnits.class.php');
-require_once(dirname(__FILE__) . '/class/mqtt.class.php');
-require_once(dirname(__FILE__) . '/class/globalConst.interface.php');
-require_once(dirname(__FILE__) . '/class/logger.class.php');
+require_once(dirname(__FILE__) . '/../class/managerUnits.class.php');
+require_once(dirname(__FILE__) . '/../class/mqtt.class.php');
+require_once(dirname(__FILE__) . '/../class/globalConst.interface.php');
+require_once(dirname(__FILE__) . '/../class/logger.class.php');
 
 /**
  * Событие на "нажатие" на модуль с именем $label

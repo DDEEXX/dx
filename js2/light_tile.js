@@ -34,7 +34,7 @@ function light_tile_setEvent() {
         const lamp = $(this);
         const label = lamp.attr("label");
         const value = lamp.attr("payload");
-        $.get("powerKey.php?label="+label+"&value="+value+"&status=web", function () {});
+        $.get("modules/powerKey.php?label="+label+"&value="+value+"&status=web", function () {});
     });
 
 }
@@ -102,7 +102,7 @@ $(document).ready(function () {
     $("#backlight_hall .button").button( {showLabel: false} );
     $('#backlight_hall .button').click(function () {
         const value = $(this).attr("value");
-        $.get("powerKey.php?label=backlight_first_floor&value=" + value, function () {});
+        $.get("modules/powerKey.php?label=backlight_first_floor&value=" + value, function () {});
     });
     $( "#backlight_hall_slider" ).slider({
         min: 0,
@@ -111,7 +111,7 @@ $(document).ready(function () {
             let value = ui.value;
             if (value === 0) {value = 8} //min
             else if (value === 8) {value = 9} //max
-            $.get("powerKey.php?label=backlight_first_floor&value=" + value, function () {});
+            $.get("modules/powerKey.php?label=backlight_first_floor&value=" + value, function () {});
         }
     });
 

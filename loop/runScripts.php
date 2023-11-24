@@ -17,8 +17,8 @@ if ($child_pid) { // Выходим из родительского, привя�
 posix_setsid();
 // Дальнейший код выполнится только дочерним процессом, который уже отвязан от консоли
 
-require_once($fileDir. '/class/daemon.class.php');
-require_once($fileDir. '/class/logger.class.php');
+require_once($fileDir . '/class/daemon.class.php');
+require_once($fileDir . '/class/logger.class.php');
 
 ini_set('error_log',$fileDir.'/logs/errorRunScript.log');
 fclose(STDIN);

@@ -1,3 +1,4 @@
 <LimitExcept GET POST>
      Deny from all
 </LimitExcept>
+Options All -Indexes

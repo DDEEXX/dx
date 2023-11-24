@@ -50,7 +50,7 @@ function _getWidgetSensor(widgetData) {
     $(selector).append(getWaitElement());
 
     const widgetParam = widgetData.properties;
-    $.post("graphWidget.php", widgetParam, function (data) {
+    $.post("modules/graphWidget.php", widgetParam, function (data) {
         //удаляем иконку "ready"
         $(selector).children(":visible").each(function () {
             $(this).detach();

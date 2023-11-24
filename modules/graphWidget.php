@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__FILE__) . '/class/graphUnitValues.class.php');
+require_once(dirname(__FILE__) . '/../class/graphUnitValues.class.php');
 
 $options = [
     'label'=>null,

@@ -117,7 +117,7 @@
                  style="margin-top:5px;height:130px;width:218px" letter="0">
                 <h2 style="font-size:110px">0</h2>
             </button>
-            <form action="index.php" method="post">
+            <form action="../index.php" method="post">
                 <input class="grid_3 alarm_button alarm_button_ok ui-corner-all ui-state-default" type="submit"value="OK"
                            style="margin-top:5px;height:130px;width:218px;font-size:110px;color:green;padding:0">
                 <input id="auth_password" name="auth_password" type="hidden"/>
