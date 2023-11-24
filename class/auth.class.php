@@ -18,18 +18,9 @@ class auth
 
     public static function net_match($ip)
     {
-        $network = '192.168.1.2/192.168.1.100';
-        // determines if a network in the form of 192.168.17.1/16 or
-        // 127.0.0.1/255.255.255.255 or 10.0.0.1 matches a given ip
-        $ip_arr = explode('/', $network);
-        $network_long = ip2long($ip_arr[0]);
-
-        $x = ip2long($ip_arr[1]);
-        $mask = long2ip($x) == $ip_arr[1] ? $x : 0xffffffff << (32 - $ip_arr[1]);
-        $ip_long = ip2long($ip);
-
-        // echo ">".$ip_arr[1]."> ".decbin($mask)."\n";
-        return ($ip_long & $mask) == ($network_long & $mask);
+        $ip_begin = '192.168.1.2';
+        $ip_end = '192.168.1.100';
+        return (ip2long($ip)>=ip2long($ip_begin) && ip2long($ip)<=ip2long($ip_end));
     }
 
     private static function hash($password)
