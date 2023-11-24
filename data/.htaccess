@@ -1,3 +1,4 @@
-    <Files *.php>
-        Deny from all
-    </Files>
+<LimitExcept GET POST>
+     Deny from all
+</LimitExcept>
+Options All -Indexes
