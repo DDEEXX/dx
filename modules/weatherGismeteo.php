@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__FILE__) . '../class/sqlDataBase.class.php');
+require_once(dirname(__FILE__) . '/../class/sqlDataBase.class.php');
 
 class widgetWeather
 {
@@ -151,7 +151,7 @@ class widgetWeather
             $myRow = $myRow . '_st';
         }
 
-        $bk = "background:url(../img2/weather/$myRow.png) no-repeat scroll 0 0 transparent";
+        $bk = "background:url(img2/weather/$myRow.png) no-repeat scroll 0 0 transparent";
 
         return "<div class='$myRow' style='$bk;height:55px;width:55px'></div>";
     }
@@ -209,26 +209,23 @@ class widgetWeather
     }
 }
 
-?>
-
+echo <<<GIS
 <style>
     /*noinspection CssUnusedSymbol*/
     .temp_plus {
         color: #ffb687;
     }
-
     /*noinspection CssUnusedSymbol*/
     .temp_minus {
         color: #caffff;
     }
-
     div.w_line {
         line-height: 1.2
     }
 </style>
 
 <div class="weather_home" style="width:800px">
-    <?php
+GIS;
 
     $w = widgetWeather::getWeather();
 
@@ -243,18 +240,19 @@ class widgetWeather
     $wind = $w[0]['wind'];
     $wind_dir = widgetWeather::get_wind($w[0]['wind_dir']);
     $relwet = $w[0]['relwet'];
-    ?>
 
-    <div class='temp_now' style='width:200px;float:left;margin-left:5px'>
+    echo sprintf(<<<GIS
+ <div class='temp_now' style='width:200px;float:left;margin-left:5px'>
         <h3 class="Title1">Прогноз погоды</h3>
-        <div class='w_line' style='color:#DDDDDD;float:left;font-size:85%'>
-            <p>давление: <?php echo "$pressure" ?> мм</p>
-            <p>ветер: <?php echo "$wind" ?> м/с <?php echo "$wind_dir" ?></p>
-            <p>влажность: <?php echo "$relwet" ?>%</p>
+        <div class='w_line' style='color:#DDDDDD;float:left;font-size:85%%'>
+            <p>давление: %s мм</p>
+            <p>ветер: %s м/с %s</p>
+            <p>влажность: %s%%</p>
         </div>
     </div>
+GIS
+    , $pressure, $wind, $wind_dir, $relwet);
 
-    <?php
     for ($i = 0; $i <= 3; $i++) {
         $temp_class = $w[$i]['temp_class'];
         $temp = $w[$i]['temp'];
@@ -264,18 +262,17 @@ class widgetWeather
             $w[$i]['rainPower'],
             $w[$i]['snowPower']);
         $dayPart = widgetWeather::getDayPart($w[$i]['tod']);
-        ?>
 
+        echo sprintf(<<<GIS
         <div class='temp_other' style='width:140px;float:left;display:block'>
-            <div style='width:140px;float:left;font-size:80%'><?php echo "$dayPart" ?></div>
+            <div style='width:140px;float:left;font-size:80%%'>%s</div>
             <div style="display:inline;">
-                <div style="float:left;margin-top: 5px;"><?php echo "$img" ?></div>
-                <div class='<?php echo "$temp_class" ?>' style='float:left;margin-top:5px;margin-left:5px;font-size:160%'> <?php echo "$temp" ?>&deg</div>
+                <div style="float:left;margin-top: 5px;">%s</div>
+                <div class='%s' style='float:left;margin-top:5px;margin-left:5px;font-size:160%%'> %s&deg</div>
             </div>
         </div>
-
-        <?php
+GIS
+            , $dayPart, $img, $temp_class, $temp);
     }
-    ?>
 
-</div>
+echo '</div>';
