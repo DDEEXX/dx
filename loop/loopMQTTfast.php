@@ -13,7 +13,7 @@ if ($child_pid) { // Выходим из родительского, привя�
 posix_setsid();
 // Дальнейший код выполнится только дочерним процессом, который уже отвязан от консоли
 
-$fileDir = dirname(__FILE__);
+$fileDir = dirname(__FILE__).'/..';
 require($fileDir . '/class/daemon.class.php');
 require($fileDir . '/class/mqtt.class.php');
 
