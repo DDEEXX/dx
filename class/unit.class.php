@@ -605,3 +605,20 @@ class newYearGarlandUnit extends moduleUnit
         }
     }
 }
+
+class zemismartZM16Unit extends moduleUnit
+{
+
+    public function __construct(array $options)
+    {
+        parent::__construct($options, typeUnit::COVER_MOTOR_ZM16);
+    }
+
+    function setData($data)
+    {
+        $device = $this->getDevice();
+        if ($device instanceof iMakerDevice) {
+            $device->setData($data);
+        }
+    }
+}

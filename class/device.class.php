@@ -1361,6 +1361,7 @@ require_once dirname(__FILE__) . '/devices/boilerOpenTherm.class.php';
 require_once dirname(__FILE__) . '/devices/radiatorValve.class.php';
 require_once dirname(__FILE__) . '/devices/newYearGarland.class.php';
 require_once dirname(__FILE__) . '/devices/zigbeeSwitchTS.class.php';
+require_once dirname(__FILE__) . '/devices/zemismartZM16.class.php';
 
 class labelSensorDevice extends aSensorDevice
 {

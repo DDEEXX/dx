@@ -31,6 +31,7 @@ interface typeDevice{
     const RADIATOR_VALVE    = 13;//Головка радиатора
     const NEW_YEAR_GARLAND  = 14;//Новогодняя гирлянда
     const SWITCH_TUYA_TS    = 15;//Switch TuYa S
+    const COVER_MOTOR_ZM16  = 16;//COVER MOTOR
 }
 
 interface typeUnit{
@@ -48,6 +49,7 @@ interface typeUnit{
     const BOILER_PID        = 12;//Котел отопления
     const RADIATOR_VALVE    = 13;//Головка радиатора
     const NEW_YEAR_GARLAND  = 14;//Новогодняя гирлянда
+    const COVER_MOTOR_ZM16  = 16;//COVER MOTOR
 }
 
 interface graphType {

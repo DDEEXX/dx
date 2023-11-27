@@ -22,11 +22,6 @@
         </div>
     </div>
 </div>
-<div class="grid_2">
-    <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor">
-        <h2 style="margin-left:5px">Резерв</h2>
-    </div>
-</div>
 <div class="clear"></div>
 <div class="grid_3 alpha">
     <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor">
@@ -34,37 +29,11 @@
         <div id="power_gate" style="display: flex; margin-left: 5px"></div>
     </div>
 </div>
-<div class="grid_4 alpha">
+<div class="grid_3 alpha">
     <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor">
         <h2 style="margin-left:5px">Гаражные ворота</h2>
         <div id="label_garage_door" style="float:left;margin-left:8px;margin-top:2px"></div>
         <button style="margin-left:20px;margin-top:10px;" class="upDown"></button>
     </div>
 </div>
-<div class="grid_4 omega">
-    <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor">
-        <h2 style="margin-left:5px">Калитка</h2>
-    </div>
-</div>
 <div class="clear"></div>
-<div class="grid_4 alpha">
-    <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor">
-        <div>
-            <h2 style="margin-left:5px">Погреб</h2>
-            <?php //echoRadioGroup('rg_g_vault', 'vault_vent', 'vault_off', 'vault_on', 'vault_auto') ?>
-            <!--                    <div class="rg_g_vault" style="margin-left:5px;float:left">-->
-            <!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
-            <!--                               id="vault_off"><label for="vault_off">выкл</label>-->
-            <!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
-            <!--                               id="vault_on"><label for="vault_on">вкл</label>-->
-            <!--                        <input type="radio" name="1" dev_type="temp_out_1"-->
-            <!--                               id="vault_auto"><label for="vault_auto">авто</label>-->
-            <!--                    </div>-->
-        </div>
-        <!--                <p>температура: &deg</p>-->
-        <!--                <p>влажность: %</p>-->
-        <!--                <p>вентиляция: </p>-->
-        <!--                <p>свет: </p>-->
-    </div>
-</div>
-

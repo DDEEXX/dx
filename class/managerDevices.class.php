@@ -85,6 +85,9 @@ class deviceFactory
             case typeDevice::SWITCH_TUYA_TS :
                 $className = 'zigbeeSwitchTS';
                 break;
+            case typeDevice::COVER_MOTOR_ZM16 :
+                $className = 'zemismartZM16';
+                break;
             default :
                 return null;
         }

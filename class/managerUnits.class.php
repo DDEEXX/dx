@@ -60,6 +60,9 @@ class unitFactory
             case typeUnit::NEW_YEAR_GARLAND :
                 $className = 'newYearGarlandUnit';
                 break;
+            case typeUnit::COVER_MOTOR_ZM16 :
+                $className = 'zemismartZM16Unit';
+                break;
             default :
                 $className = '';
         }
