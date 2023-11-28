@@ -101,6 +101,7 @@ class daemonLoopHeating extends daemon
                 $doStepB = true; $dt = ($now - $predStepB); $predStepB = $now;
                 $optionsPID = $this->getLastHeatingData();
                 $dataBoiler = $this->getLastBoilerData();
+                if (is_null($dataBoiler)) return;
 
                 $ch = $dataBoiler->ch;
                 $_spr = $dataBoiler->_spr;
@@ -236,6 +237,7 @@ class daemonLoopHeating extends daemon
     private function checkBoilerData($mqtt, $topic, $b_op) {
         $optionsPID = $this->getLastHeatingData();
         $dataBoiler = $this->getLastBoilerData();
+        if (is_null($dataBoiler)) return;
         if ($dataBoiler->_mode == boilerMode::MQTT || $dataBoiler->_mode == boilerMode::MANUAL) {
             // включение СО
             if ($optionsPID->get('b_pwr') != $dataBoiler->_chena) {
