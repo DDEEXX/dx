@@ -136,6 +136,7 @@ interface testDeviceCode {
 }
 
 const MQTT_CODE_SEPARATOR = ';';
+const LABELS_SEPARATOR = ';';
 
 interface valuePrecision { //точность значения
     const TEMPERATURE = 2;
