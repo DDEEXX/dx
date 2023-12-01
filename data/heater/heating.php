@@ -26,6 +26,7 @@ function getDataBoiler($label)
     if (is_null($unitBoiler)) return new stdClass();
     $boilerData = $unitBoiler->getData();
     $value = $boilerData->value;
+    if (is_null($value)) $value = new stdClass();
     $value->date = $boilerData->date;
     return $value;
 }

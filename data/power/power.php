@@ -1,3 +1,11 @@
+<div class="grid_3 alpha">
+    <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor" style="height: 136px">
+        <h2 style="margin-left:5px">Жалюзи эркер</h2>
+        <div id="jalousie_hall_1" style="display: flex; margin-left: 5px; margin-right: 5px"></div>
+    </div>
+</div>
+<div class="clear"></div>
+
 <div class="grid_2 alpha">
     <div class="ui-corner-all ui-state-default ui-widget-content title_widget_sensor">
         <h2 class="title_widget_sensor_header">Кухонная вытяжка</h2>

@@ -7,8 +7,7 @@ class formatterBoilerOpenTerm implements iFormatterValue
         $dValue = json_decode($value);
         $result = new stdClass();
         if (is_null($dValue)) {
-            $result->value = null;
-            return $result;
+            return null;
         }
 
         $result->value = new stdClass();
@@ -64,6 +63,13 @@ class boilerOpenTherm_MQTT extends aDeviceMakerPhysicMQTT
             $testPayload = $this->value->getFormatTestCode($testPayload);
         }
         return parent::formatTestPayload($testPayload, $ignoreUnknown);
+    }
+
+    function setValue($value)
+    {
+        if (!is_null(json_decode($value))) {
+            parent::setValue($value);
+        }
     }
 
 }

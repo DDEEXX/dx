@@ -25,6 +25,10 @@ function power_updateAll() {
         $("#power_gate").html(data);
     });
 
+    $.get("data/power/jalousie.php?dev=loadData", function (data) {
+        $("#jalousie_hall_1").html(data);
+    });
+
 }
 
 function power_checkVent_Status() {
