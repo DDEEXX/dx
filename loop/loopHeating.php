@@ -521,7 +521,13 @@ class daemonLoopHeating extends daemon
 $daemon = new daemonLoopHeating($fileDir . '/tmp');
 $daemonActive = $daemon->isDaemonActive();
 if ($daemonActive == 0) {
-    $daemon->run();
+    try {
+        $daemon->run();
+    } catch (Exception $e) {
+        logger::writeLog('Ошибка при работе демона loopHeating.php. ' . $e->getMessage(),
+            loggerTypeMessage::FATAL, loggerName::ERROR);
+        return;
+    }
 } else {
     logger::writeLog('Невозможно запустить демона daemonLoopHeating, код возврата - ' . $daemonActive,
         loggerTypeMessage::ERROR, loggerName::ERROR);
