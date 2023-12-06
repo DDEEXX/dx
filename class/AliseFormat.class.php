@@ -65,6 +65,15 @@ class _AliseFormatOn_6 implements iAliceFormatter
     }
 }
 
+//Входящие сообщение от Алисы 0|1 в сообщение dxhome {"state":"OPEN"}|{"state":"CLOSE"}
+class _AliseFormatOn_7 implements iAliceFormatter
+{
+    function convert($value)
+    {
+        return $value == '1' ? '{"state":"OPEN"}' : '{"state":"CLOSE"}';
+    }
+}
+
 //Входящие сообщение от Алисы 0..100 в сообщение dxhome 0..9 (0->8, 8->9)
 class _AliseFormatBrightness_1 implements iAliceFormatter
 {
@@ -106,6 +115,17 @@ class _AliseFormatChannel_1 implements iAliceFormatter
         return '{"ledMode":'.(int)$value.'}';
     }
 }
+
+//Входящие сообщение от Алисы 0..n в сообщение dxhome {"position":0..n}
+class _AliseFormatOpen_1 implements iAliceFormatter
+{
+    function convert($value)
+    {
+        if (!is_numeric($value)) return '';
+        return '{"position":'.(int)$value.'}';
+    }
+}
+
 
 //__STATUS__
 
@@ -169,7 +189,7 @@ class _AliseFormatProgramStat_1 implements iAliceFormatter
     }
 }
 
-//от устройства on|off в Алису 0|1
+//от устройства {"ledMode":0..n} в Алису 0..n
 class _AliseFormatChannelStat_1 implements iAliceFormatter
 {
     function convert($value)
@@ -178,6 +198,21 @@ class _AliseFormatChannelStat_1 implements iAliceFormatter
         if (array_key_exists('ledMode', $data)) {
             if (is_int($data['ledMode'])) {
                 return strval($data['ledMode']);
+            }
+        }
+        return null;
+    }
+}
+
+//от устройства {"position":0..n} в Алису 0..n
+class _AliseFormatOpenStat_1 implements iAliceFormatter
+{
+    function convert($value)
+    {
+        $data = json_decode($value, true);
+        if (array_key_exists('position', $data)) {
+            if (is_int($data['position'])) {
+                return strval($data['position']);
             }
         }
         return null;
