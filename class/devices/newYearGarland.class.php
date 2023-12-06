@@ -32,12 +32,15 @@ class formatterNewYearGarland_MQTT implements iFormatterValue
             return null;
         }
         $value = managerDevices::checkDataValue('value', $dataDecode);
-        if (!is_null($value)) {
+        if (!is_null($value)) { //если есть value значит значение там
             if (strtolower($value) == 'on') {
                 return '{"state": "on"}';
             } elseif (strtolower($value) == 'off') {
                 return '{"state": "off"}';
             }
+        }
+        else { //иначе значение в $date
+            return $data;
         }
         return null;
     }

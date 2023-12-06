@@ -33,7 +33,9 @@ class formatterZemismartZM16 implements iFormatterValue
         }
         $value = managerDevices::checkDataValue('value', $dataDecode);
         if (!is_null($value)) {
-            return $value;
+            return $value; //если есть value значит значение там
+        }  else { //иначе значение в $date
+            return $data;
         }
         return null;
     }
