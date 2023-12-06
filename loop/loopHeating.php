@@ -480,7 +480,8 @@ class daemonLoopHeating extends daemon
                     loggerTypeMessage::ERROR, loggerName::ERROR);
             }
         } catch (querySelectDBException $e) {
-            logger::writeLog('Ошибка при добавлении данных в базу данных (daemonLoopHeating.saveInJournal)'.$e->getMessage(),
+            logger::writeLog('Ошибка при добавлении данных в базу данных (daemonLoopHeating.saveInJournal). '.
+                $e->getMessage() .' '.$e->getTraceAsString(),
                 loggerTypeMessage::ERROR, loggerName::ERROR);
         }
     }
@@ -503,7 +504,8 @@ class daemonLoopHeating extends daemon
 
     private function getLastHeatingData() {
         $unitPID = managerUnits::getUnitLabel('boiler_pid');
-        return is_null($unitPID) ? null : $unitPID->getOptions();
+        if (is_null($unitPID)) return null;
+        return $unitPID->getOptions();
     }
 
     private function getLastBoilerData() {

@@ -472,7 +472,7 @@ class DB
                             loggerTypeMessage::ERROR, loggerName::ERROR);
                     }
                 } catch (querySelectDBException $e) {
-                    logger::writeLog('Ошибка при добавлении данных в базу данных. '.$e->getMessage(),
+                    logger::writeLog('Ошибка при добавлении данных в базу данных. '.$e->getMessage().' '.$e->getTraceAsString(),
                         loggerTypeMessage::ERROR, loggerName::ERROR);
                 } finally {
                     return;
@@ -506,7 +506,7 @@ class DB
                     loggerTypeMessage::ERROR, loggerName::ERROR);
             }
         } catch (querySelectDBException $e) {
-            logger::writeLog('Ошибка при добавлении данных в базу данных. '.$e->getMessage(),
+            logger::writeLog('Ошибка при добавлении данных в базу данных. '.$e->getMessage().' '.$e->getTraceAsString(),
                 loggerTypeMessage::ERROR, loggerName::ERROR);
         }
     }

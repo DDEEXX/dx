@@ -81,7 +81,7 @@ class uniteOptionsJSON extends aUniteOptions
             logger::writeLog('Ошибка при подключении к базе данных',
                 loggerTypeMessage::ERROR, loggerName::ERROR);
         } catch (querySelectDBException $e) {
-            logger::writeLog('Ошибка при добавлении данных в базу данных'.$e->getMessage(),
+            logger::writeLog('Ошибка при добавлении данных в базу данных. '.$e->getMessage().' '.$e->getTraceAsString(),
                 loggerTypeMessage::ERROR, loggerName::ERROR);
         }
         unset($con);
