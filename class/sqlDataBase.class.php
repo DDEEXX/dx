@@ -112,6 +112,12 @@ class sqlDataBase implements iSqlDataBase
             $config = new sqlConfig();
             self::$db = new sqlDataBase($config);
             unset($config);
+        } else {
+            if (!mysqli_ping(self::$db->getConnect())) {
+                $config = new sqlConfig();
+                self::$db = new sqlDataBase($config);
+                unset($config);
+            }
         }
         return self::$db;
     }

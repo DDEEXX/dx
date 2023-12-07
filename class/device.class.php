@@ -214,7 +214,7 @@ class deviceValueDB extends aDeviceValue
     }
 
     /**
-     * В базе, данные храняться в "сыром" виде
+     * В базе, данные хранятся в "сыром" виде
      * @param $value - "сырые" данные
      * @return void
      */
