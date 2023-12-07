@@ -4,18 +4,23 @@ require_once(dirname(__FILE__) . '/class/sharedMemory.class.php');
 require_once(dirname(__FILE__) . '/class/logger.class.php');
 require_once(dirname(__FILE__) . '/class/sqlDataBase.class.php');
 
-sleep(30);
+sleep(10);
 
-$i = 50;
-while ($i>0) {
+$connectToDB = false;
+while (!$connectToDB) {
     try {
         $con = sqlDataBase::Connect();
-        unset($con);
-        break;
+        if (mysqli_ping($con->getConnect())) {
+            logger::writeLog('Доступ к базе данных присутствует',
+                loggerTypeMessage::NOTICE ,loggerName::ACCESS);
+            $connectToDB = true;
+            unset($con);
+        }
     } catch (connectDBException $e) {
-        sleep(2);
-        $i--;
+        logger::writeLog('Нет доступа к базе данных',
+            loggerTypeMessage::WARNING ,loggerName::ACCESS);
     }
+    sleep(2);
 }
 
 $resInitConst = managerSharedMemory::initConst();
