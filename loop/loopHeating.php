@@ -32,7 +32,7 @@ class daemonLoopHeating extends daemon
     const NAME_PID_FILE = 'loopHeating.pid';
     const PAUSE_B = 30; //Пауза в цикле отопления котла (сек)
     const PAUSE_BOILER_DATA = 10; //Пауза между диалогом с котлом отопления
-    const PAUSE_F = 300; //Пауза в цикле теплых полов (сек)
+    const PAUSE_F = 30; //Пауза в цикле теплых полов (сек)
     const INTERVAL_UPDATE_BOILER_DATA = 600; //пауза между обновлениями данных (топиков) котла отопления
 
     public function __construct($dirPidFile)
