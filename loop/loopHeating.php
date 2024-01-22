@@ -33,8 +33,8 @@ class daemonLoopHeating extends daemon
     const PAUSE_B = 30; //Пауза в цикле отопления котла (сек)
     const PAUSE_BOILER_DATA = 10; //Пауза между диалогом с котлом отопления
     const PAUSE_F = 60; //Пауза в цикле теплых полов (сек)
-    const FLOOR_ON = 45; //Значение термо головки на 100%
-    const FLOOR_OFF = 5; //Значение термо головки на 0%
+//    const FLOOR_ON = 45; //Значение термо головки на 100%
+//    const FLOOR_OFF = 5; //Значение термо головки на 0%
     const INTERVAL_UPDATE_BOILER_DATA = 600; //пауза между обновлениями данных (топиков) котла отопления
 
     public function __construct($dirPidFile)
@@ -159,7 +159,7 @@ class daemonLoopHeating extends daemon
                     $optionsFloor1 = (int)($optionsPID->get('f_mode'));
 
                     if ($optionsFloor1 == 0) { //режим ПИД регулятора
-                        $fCurValve = $dataFloor1->current_heating_setpoint == self::FLOOR_ON ? 1 : 0;
+                        $fCurValve = $dataFloor1->current_heating_setpoint == '{"state":"off"}' ? 1 : 0;
 
                         $f_op = $this->floor_1($optionsPID, $floorTempCurrentLast, $iErrorF, $dtF, $log);
                         $fTarValve = null; //положение не меняем
@@ -168,8 +168,8 @@ class daemonLoopHeating extends daemon
 
                         if (!is_null($fTarValve)) {
                             if ($fCurValve != $fTarValve) {
-                                if ($fTarValve) $payload = '{"current_heating_setpoint":'.self::FLOOR_ON.'}';
-                                else $payload = '{"current_heating_setpoint":'.self::FLOOR_OFF.'}';
+                                if ($fTarValve) $payload = '{"state":"off"}'; //открываем головку
+                                else $payload = '{"state":"on"}'; //закрываем головку
 
                                 if (strlen($topicFloorSet)) {
                                     $mqttF = mqttSend::connect('heatingF'.time());

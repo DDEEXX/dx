@@ -25,6 +25,12 @@ class formatterRadiatorValve implements iFormatterValue
         return $testCode;
     }
 
+
+    /**
+     * Преобразует данные dxhome в данные понятные датчику
+     * @param $data
+     * @return string|null
+     */
     function formatOutData($data)
     {
         $dataDecode = json_decode($data, true);
@@ -33,10 +39,10 @@ class formatterRadiatorValve implements iFormatterValue
         }
         $value = managerDevices::checkDataValue('value', $dataDecode);
         if (!is_null($value)) {
-            if (strtolower($value) == 'on') {
-                return '{"current_heating_setpoint":45}';
+            if (strtolower($value) == 'on') { //включить отопление - это выключить головку
+                return '{"state":"off"}';
             } elseif (strtolower($value) == 'off') {
-                return '{"current_heating_setpoint":5}';
+                return '{"state":"on"}';
             }
         }
         return null;
