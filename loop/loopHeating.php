@@ -176,6 +176,10 @@ class daemonLoopHeating extends daemon
                                         $mqttF->publish($topicFloorSet, $payload);
                                         unset($mqttF);
                                         $log['sent'] = $fTarValve ? 1 : 0;
+
+                                        $mss = 'sent '.$payload;
+                                        logger::writeLog($mss, loggerTypeMessage::NOTICE, loggerName::DEBUG);
+
                                     }
 
                                 }
