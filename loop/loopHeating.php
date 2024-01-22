@@ -151,72 +151,77 @@ class daemonLoopHeating extends daemon
                 $optionsPID = $this->getLastHeatingData();
                 $dataFloor1= $this->getLastFloorData();
 
-                if ($optionsPID->get('f_pwr')) {
-                    $log = [];
+                if (isset($optionsPID)) {
+                    if ($optionsPID->get('f_pwr')) {
+                        $log = [];
 
-                    $optionsFloor1 = (int)($optionsPID->get('f_mode'));
+                        $optionsFloor1 = (int)($optionsPID->get('f_mode'));
 
-                    if ($optionsFloor1 == 0) { //режим ПИД регулятора
-                        $fCurValve = $dataFloor1->state == 'off' ? 1 : 0;
+                        if ($optionsFloor1 == 0) { //режим ПИД регулятора
+                            $fCurValve = $dataFloor1->state == 'off' ? 1 : 0;
 
-                        $f_op = $this->floor_1($optionsPID, $floorTempCurrentLast, $iErrorF, $dtF, $log);
-                        $fTarValve = null; //положение не меняем
-                        if (round($f_op, 1) > round($floorTempCurrentLast, 1)) $fTarValve = 1;
-                        elseif (round($f_op, 1) < round($floorTempCurrentLast, 1) - 0.2) $fTarValve = 0;
+                            $f_op = $this->floor_1($optionsPID, $floorTempCurrentLast, $iErrorF, $dtF, $log);
+                            $fTarValve = null; //положение не меняем
+                            if (round($f_op, 1) > round($floorTempCurrentLast, 1)) $fTarValve = 1;
+                            elseif (round($f_op, 1) < round($floorTempCurrentLast, 1) - 0.2) $fTarValve = 0;
 
-                        if (!is_null($fTarValve)) {
-                            if ($fCurValve != $fTarValve) {
-                                if ($fTarValve) $payload = '{"state":"off"}'; //открываем головку
-                                else $payload = '{"state":"on"}'; //закрываем головку
+                            if (!is_null($fTarValve)) {
+                                if ($fCurValve != $fTarValve) {
+                                    if ($fTarValve) $payload = '{"state":"off"}'; //открываем головку
+                                    else $payload = '{"state":"on"}'; //закрываем головку
 
-                                if (strlen($topicFloorSet)) {
-                                    $mqttF = mqttSend::connect('heatingF'.time());
-                                    usleep(100000); //0.1 sec
-                                    $mqttF->publish($topicFloorSet, $payload);
-                                    unset($mqttF);
-                                    $log['sent'] = $fTarValve ? 1 : 0;
+                                    $mss = 'f_op = '.$f_op.', $fCurValve = '.$fCurValve.', $fTarValve'.$fTarValve.', f_val = '.$log['f_val'];
+                                    logger::writeLog($mss, loggerTypeMessage::NOTICE, loggerName::DEBUG);
+
+                                    if (strlen($topicFloorSet)) {
+                                        $mqttF = mqttSend::connect('heatingF'.time());
+                                        usleep(100000); //0.1 sec
+                                        $mqttF->publish($topicFloorSet, $payload);
+                                        unset($mqttF);
+                                        $log['sent'] = $fTarValve ? 1 : 0;
+                                    }
+
                                 }
-
+                                else $log['sent'] = '_';
                             }
-                            else $log['sent'] = '_';
+                            else $log['sent'] = 'null';
+
                         }
-                        else $log['sent'] = 'null';
+                        elseif ($optionsFloor1 == 2) { //ручной режим головка сама регулирует
 
+                            $spr = $optionsPID->get('f_spr');
+                            $in = $optionsPID->get('b_tfIn');
+                            $in1 = $optionsPID->get('b_tfIn1');
+
+                            //температура в зале по умолчанию держим 25
+                            $currentInT = 25;
+                            $flagTemp = false; //флаг есть актуальная температура
+                            $this->getTemp($in, $currentInT, $flagTemp);
+                            if (!$flagTemp) $this->getTemp($in1, $currentInT, $flagTemp);
+
+                            $fCurValve = $dataFloor1->current_heating_setpoint;
+                            //if ($fCurValve != $spr) {
+                                if (strlen($topicFloorSet)) {
+                                    $payload = '{"current_heating_setpoint":'.$spr.'}';
+                                    usleep(100000); //0.1 sec
+                                    $mqtt->publish($topicFloorSet, $payload);
+                                }
+                            //}
+
+                            $local_temperature_calibration = (int)(round($currentInT - $dataFloor1->local_temperature, 0));
+                            //if ($local_temperature_calibration != $dataFloor1->local_temperature_calibration) {
+                                if (strlen($topicFloorSet)) {
+                                    $payload = '{"local_temperature_calibration":'.$local_temperature_calibration.'}';
+                                    usleep(100000); //0.1 sec
+                                    $mqtt->publish($topicFloorSet, $payload);
+                                }
+                            //}
+
+                        }
+
+                        $log['f_val'] = $fCurValve;
+                        $this->saveInJournal(json_encode($log), 'fl');
                     }
-                    elseif ($optionsFloor1 == 2) { //ручной режим головка сама регулирует
-
-                        $spr = $optionsPID->get('f_spr');
-                        $in = $optionsPID->get('b_tfIn');
-                        $in1 = $optionsPID->get('b_tfIn1');
-
-                        //температура в зале по умолчанию держим 25
-                        $currentInT = 25;
-                        $flagTemp = false; //флаг есть актуальная температура
-                        $this->getTemp($in, $currentInT, $flagTemp);
-                        if (!$flagTemp) $this->getTemp($in1, $currentInT, $flagTemp);
-
-                        $fCurValve = $dataFloor1->current_heating_setpoint;
-                        //if ($fCurValve != $spr) {
-                            if (strlen($topicFloorSet)) {
-                                $payload = '{"current_heating_setpoint":'.$spr.'}';
-                                usleep(100000); //0.1 sec
-                                $mqtt->publish($topicFloorSet, $payload);
-                            }
-                        //}
-
-                        $local_temperature_calibration = (int)(round($currentInT - $dataFloor1->local_temperature, 0));
-                        //if ($local_temperature_calibration != $dataFloor1->local_temperature_calibration) {
-                            if (strlen($topicFloorSet)) {
-                                $payload = '{"local_temperature_calibration":'.$local_temperature_calibration.'}';
-                                usleep(100000); //0.1 sec
-                                $mqtt->publish($topicFloorSet, $payload);
-                            }
-                        //}
-
-                    }
-
-                    $log['f_val'] = $fCurValve;
-                    $this->saveInJournal(json_encode($log), 'fl');
                 }
             }
 
