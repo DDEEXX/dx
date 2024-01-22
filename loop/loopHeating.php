@@ -32,7 +32,7 @@ class daemonLoopHeating extends daemon
     const NAME_PID_FILE = 'loopHeating.pid';
     const PAUSE_B = 30; //Пауза в цикле отопления котла (сек)
     const PAUSE_BOILER_DATA = 10; //Пауза между диалогом с котлом отопления
-    const PAUSE_F = 30; //Пауза в цикле теплых полов (сек)
+    const PAUSE_F = 300; //Пауза в цикле теплых полов (сек)
     const INTERVAL_UPDATE_BOILER_DATA = 600; //пауза между обновлениями данных (топиков) котла отопления
 
     public function __construct($dirPidFile)
@@ -176,10 +176,6 @@ class daemonLoopHeating extends daemon
                                         $mqttF->publish($topicFloorSet, $payload);
                                         unset($mqttF);
                                         $log['sent'] = $fTarValve ? 1 : 0;
-
-                                        $mss = 'sent '.$payload;
-                                        logger::writeLog($mss, loggerTypeMessage::NOTICE, loggerName::DEBUG);
-
                                     }
 
                                 }
@@ -222,10 +218,6 @@ class daemonLoopHeating extends daemon
 
                         $log['f_val'] = $fCurValve;
                         $this->saveInJournal(json_encode($log), 'fl');
-
-                        $mss = 'state = '.$dataFloor1->state.', f_op = '.$f_op.', $floorTempCurrentLast = '.$floorTempCurrentLast.', $fCurValve = '.$fCurValve.', $fTarValve = '.$fTarValve.', f_val = '.$fCurValve;
-                        logger::writeLog($mss, loggerTypeMessage::NOTICE, loggerName::DEBUG);
-
                     }
                 }
             }
