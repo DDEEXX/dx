@@ -217,7 +217,7 @@ class daemonLoopHeating extends daemon
 
                     }
 
-                    $log['f_val'] = $fCurValve;
+                    $log['f_val'] = $fCurValve ? 0 : 1;
                     $this->saveInJournal(json_encode($log), 'fl');
                 }
             }

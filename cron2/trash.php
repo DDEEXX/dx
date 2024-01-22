@@ -20,7 +20,7 @@ try {
 }
 
 //1. удаление историю лога отопления старше недели
-$query = 'DELETE FROM tvalue_1 WHERE Date < DATE_SUB(NOW(), INTERVAL 1 WEEK)';
+$query = 'DELETE FROM t_heatingJournal WHERE Date < DATE_SUB(NOW(), INTERVAL 1 WEEK)';
 
 try {
     $con = sqlDataBase::Connect();
