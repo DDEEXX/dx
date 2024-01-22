@@ -170,7 +170,7 @@ class daemonLoopHeating extends daemon
                                     if ($fTarValve) $payload = '{"state":"off"}'; //открываем головку
                                     else $payload = '{"state":"on"}'; //закрываем головку
 
-                                    $mss = 'f_op = '.$f_op.', $fCurValve = '.$fCurValve.', $fTarValve'.$fTarValve.', f_val = '.$log['f_val'];
+                                    $mss = 'f_op = '.$f_op.', $fCurValve = '.$fCurValve.', $fTarValve = '.$fTarValve.', f_val = '.$fCurValve;
                                     logger::writeLog($mss, loggerTypeMessage::NOTICE, loggerName::DEBUG);
 
                                     if (strlen($topicFloorSet)) {
