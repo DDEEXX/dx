@@ -223,7 +223,7 @@ class daemonLoopHeating extends daemon
                         $log['f_val'] = $fCurValve;
                         $this->saveInJournal(json_encode($log), 'fl');
 
-                        $mss = 'f_op = '.$f_op.', $floorTempCurrentLast = '.$floorTempCurrentLast.', $fCurValve = '.$fCurValve.', $fTarValve = '.$fTarValve.', f_val = '.$fCurValve;
+                        $mss = 'state = '.$dataFloor1->state.', f_op = '.$f_op.', $floorTempCurrentLast = '.$floorTempCurrentLast.', $fCurValve = '.$fCurValve.', $fTarValve = '.$fTarValve.', f_val = '.$fCurValve;
                         logger::writeLog($mss, loggerTypeMessage::NOTICE, loggerName::DEBUG);
 
                     }
