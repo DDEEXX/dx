@@ -95,7 +95,7 @@ class mqttConfig implements iConfigMQTT
     private $mqtt_host;
     private $mqtt_user;
     private $mqtt_pwd;
-    private $mqtt_port;
+    private int $mqtt_port;
     //private $err_rep = 32759; // -1, 0, E_ALL, 32759 as (E_ALL ^ E_NOTICE), etc...
 
     /**
@@ -131,7 +131,7 @@ class mqttConfig implements iConfigMQTT
         return $this->mqtt_pwd;
     }
 
-    public function getPort()
+    public function getPort(): int
     {
         return $this->mqtt_port;
     }
