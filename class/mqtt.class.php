@@ -23,7 +23,12 @@ class mqttPublish
         //$client->onLog('mqttPublish::log');
         $client->setCredentials($configMQTT->getUser(), $configMQTT->getPassword());
         $client->connect($configMQTT->getHost(), $configMQTT->getPort());
-        $client->publish($topic, $payload, $qos, $retain);
+        sleep(1);
+        try {
+            $client->publish($topic, $payload, $qos, $retain);
+        } catch (Mosquitto\Exception $e) {
+
+        }
         $client->disconnect();
     }
 
